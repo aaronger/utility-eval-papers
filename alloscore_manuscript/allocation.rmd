@@ -59,6 +59,8 @@ operations research work on constrained allocation
 
 \section{Methods}
 
+Note: it may make sense to talk about less theory in this article?
+
 \subsection{A review of probabilistic forecasting and the decision-theoretic set up for scoring rules}
 
 General notation. scoring functions, scoring rules.
@@ -92,20 +94,9 @@ A figure with one or two sub-panels to illustrate.  What figures?
 
 Description of what happens if there is uncertainty about the costs $O$, $U$, or the constraint $K$.  Integration across those results in something like a forecaster-specific weighted CRPS.
 
-\section{Applications}
+\section{Application}
 
-\subsection{Application with a quantile elicitation problem}
-
-Consider one of the following problems?
-\begin{itemize}
-\item "should we expand hospital bed capacity"
-\item "should impose a stay at home order".
-\end{itemize}
-for individual locations with specific costs for taking the action and possible costs for "under-acting". Both are I think hard to operationalize in the sense that it's not immediate what specifically those costs should be.
-
-\subsection{Application with an allocation problem}
-
-Hospital admissions in the U.S.
+We illustrate with an application to hospital admissions in the U.S., considering the problem of allocation of a limited supply of medical resources to the states.
 
 Case study heading into the Omicron wave. Some more detailed discussion of implications of bad forecasts for specific decision-making purposes -- take a "deep dive" into one or two example states like FL.
 
