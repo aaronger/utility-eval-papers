@@ -1,1 +1,3 @@
 # utility-eval-papers
+
+A place to collect work on forecast evaluation via allocation scoring rules and social utility in general...
