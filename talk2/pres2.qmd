@@ -1,0 +1,110 @@
+---
+title: "alloscore talk 2"
+format:
+  revealjs: 
+    width: 1500
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+```
+
+## Agenda
+
+Intuitive understanding of expected unmet/overmet need
+
+-   i.e. of "hockey-stick" or "piece-wise linear" loss $\max(0,Y - x)= (Y-x)_+$ and $\min(0,Y - x)= (Y-x)_-$
+
+-   more broadly, quantile scores and therefore also WIS, CRPS, and who knows what else
+
+-   a meta-theorem going back to Savage: all loss functions (for estimation or prediction) are enhancements of either the squared-error or piece-wise linear error.
+
+My own experience: the more I tried to think about this, the more I realized I did not understand what a mean of a RV is.
+
+## The "survival formula" for expectation
+
+For a non-negative RV $Y$
+
+$$
+\mathbb{E}[Y]=\int_0^{\infty} \mathbb{P}(Y>y) \mathrm{d} y = \int_0^{\infty}(1- F_Y(y))dy
+$$
+
+Appears (unhelpfully) as an exercise at the beginning of many math-stats books
+
+## Basic idea
+
+Take sample points $y_i = ih$ and assume $Nh$ large enough that $F_Y(Nh)$ close to 1. 
+$$
+\mathbb{E}[Y] \approx \sum_{i=1}^{N} y_if_Y(y_i) = \sum_{i=1}^{N}ih f_Y(ih) = \\
+\begin{array} 
+& & & & & & \vdots \\
+& & & & hf_Y(3h) + \cdots\\
+& & hf_Y(2h) &+ &hf_Y(3h) + \cdots\\
+ hf_Y(h) &+ &hf_Y(2h) &+ &hf_Y(3h) + \cdots
+\end{array}\\
+\ \\
+\approx \int_0^{\infty}(1- F_Y(y))dy
+$$
+
+## Resclicing picture
+
+```{r echo=FALSE}
+f <- function(y) 5*(.3*dnorm(y-3, sd = .8) + .7*dnorm(y-7,sd=2))
+fplt <- function(y) 10*f(y)
+x0 <- -2
+xl <- 4
+xu <- 15
+width <- xu-xl
+N <- 20
+h <- width/N
+
+# dat <- tibble(yis = seq(x0,xu,by=h), heights = pmax(0,yis-xl), fis = f(yis)*(heights>0), fyis = heights*fis)
+dat <- tibble(
+  yis = seq(xl+h,xu,by=h), 
+  heights = yis-xl, 
+  fis = f(yis), 
+  fyis = heights*fis
+  )
+y1 <- dat$yis[1]
+ylast <- tail(dat$yis,1)
+
+p <- ggplot(data = dat) + geom_function(fun = fplt, n = 1000) +
+  geom_function(fun = function(y) pmax(0,y-xl)) +
+  scale_y_continuous(breaks = dat$heights) +
+  scale_x_continuous(breaks = dat$yis, limits = c(x0,xu)) +
+  theme_minimal() +
+  theme(panel.grid = element_blank(),
+        panel.grid.major.y = element_line(color = "lightgrey")
+        )
+p
+
+p <- p + geom_rect(aes(xmin=yis-.1*h, xmax=yis+.1*h, ymin=0, ymax=heights), alpha=.2)
+p
+p <- p + geom_rect(aes(xmin=yis+.15*h, xmax=yis+.35*h, ymin=0, ymax=fyis)) 
+p
+p <- p + map(1:N, function(idx){
+      geom_rect(data = dat %>% slice_tail(n = N + 1 - idx), 
+                      aes(xmin=.data$yis+.4*h, 
+                          xmax=.data$yis+.6*h, 
+                          ymin=.data$heights[1] - h, 
+                          ymax=.data$heights[1] - h + h*.data$fis))
+    })
+p
+
+# p <- p + map(1:N, ~geom_line(
+#     data = tibble(x=seq(xl+h*., ylast, length.out = 500), y = dat$yis[.]-y1+h*f(x)),
+#     aes(x=x,y=y)
+#     )) 
+# p
+```
+
+## 
+
+So 
+$$
+\mathbb{E}[(Y-x)_+]= \int_x^{\infty}(1- F_Y(y))dy
+$$
+

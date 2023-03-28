@@ -1,0 +1,1088 @@
+---
+title: " Allocation scoring rules as a generalization of quantile scoring rules"
+date: "`r Sys.Date()`"
+output: 
+    pdf_document:
+        latex_engine: xelatex
+urlcolor: blue
+bibliography: allocation.bib 
+header-includes:
+   - \usepackage{amsmath}
+   - \usepackage{algorithm}
+   - \usepackage[noend]{algpseudocode}
+   - \usepackage{amsthm}
+   - \usepackage{bm}
+   - \usepackage{cases}
+   - \usepackage{caption}
+   - \usepackage{unicode-math}
+   - \usepackage{hyperref}
+   - \DeclareMathOperator*{\argmin}{argmin}
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+    echo = FALSE, 
+    message = FALSE, 
+    warning = FALSE,
+    fig.width=10, 
+    fig.height=6)
+library(tidyverse)
+library(patchwork)
+```
+<!-- $ ...to toggle Latexyz math scope off -->
+\newcommand{\del}[2]{\frac{\partial {#1} }{\partial {#2}} }
+\newcommand{\dby}[2]{\frac{d {#1} }{d {#2}} }
+\newcommand{\sbar}{\overline{s}}
+\newtheorem{proposition}{Proposition}
+
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+\section{Quantile Scoring Rules}
+
+A forecaster is asked to recommend, that is, \emph{predict}, the appropriate supply $x$ of some good or investment in some precautionary measure intended to satisfy a random future demand or need $Y$. As a running example, we will consider the provision of a limited supply of a limited health care resource such as oxygen or ventilators. Suppose there is an incremental loss $O \geq 0$ incurred when over-prediction leads to unused supply and an incremental loss $U > 0$ incurred when under-prediction leads to unmet demand or need. Let $g$ be a non-decreasing function that expresses a utility associated with the good or misfortune to which $Y$ refers. This function can be thought of as specifying the rate at which costs accrue depending on the scale of need, through a mechanism that will be made precise below.
+
+For notation, we will let
+\begin{itemize}
+\item $\mathcal{F_0}$ be the class of probability measures on the Borel-Lebesgue sets of $\mathbb{R}$
+\item a probability measure $P \in \mathcal{F_0}$ induced by a random variable $X$ be identified by its cumulative distribution function $F_X$
+\item $F$ denote the forecast distribution for the level of future need $Y$
+\item $Y \sim G$
+\item $Q_F := F^{-1}: [0,1] \rightrightarrows \mathbb{R}$ be the (set-valued) quantile function which maps a probability level $\alpha \in [0, 1]$ to the corresponding quantile set $\left[q_{\alpha, F}^{-}, q_{\alpha, F}^{+}\right]$ of $F$ where $q_{\alpha, F}^{-} := \sup \{x \mid F(x) < \alpha\}$ and 
+$q_{\alpha, F}^{+} := \sup \{x \mid F(x) \leq \alpha\}$
+\item $Q_\alpha: \mathcal{F_0} \rightrightarrows \mathbb{R}$ be the functional which maps a distribution $F$ to its $\alpha$-level quantile set
+\item $q_{\alpha, F}$ be a (usually unique) element of $Q_F(\alpha) = Q_{\alpha}(F)$. 
+\end{itemize}
+
+We measure the forecaster's performance when the realized need is $y$ with the scoring function
+\begin{align}
+s(x,y)=s_{O,U}(x,y) &= O(g(x) - g(y))\sb{+} + U(g(x)-g(y))\sb{-}. \label{eqn:scalar_score} \\
+&= \kappa((1-\alpha)(g(x) - g(y))\sb{+} + \alpha(g(x)-g(y))\sb{-}) \label{eqn:scalar_score_alpha} \\
+&= \kappa(\mathbb{1}\{x>y\} - \alpha)(g(x)-g(y)) \label{eqn:scalar_score_ident}\\
+&:= s_{\kappa, \alpha}(x,y) := \kappa s_{\alpha}(x,y),
+\end{align}
+where $\alpha = U/(U+O)$, $\kappa = U+O$,
+$u_+ := \max(u,0)$, $u_- := \max(-u,0) = (-u)_+$, and $\mathbb{1}\{A\}$ is the indicator function of the event $A$.
+This scoring function $s$ is negatively oriented, i.e., a smaller score indicates better performance corresponding to a smaller cost due to under- or over-prediction.
+
+By making the forecaster aware of $s$ prior to prediction, we elicit an $\alpha$-level quantile $q_{\alpha,F}$ of the forecast distribution $F$ for $Y$. That is, if a forecaster believes that $Y \sim F$, then according to this belief they minimize their expected score
+\begin{align} 
+\sbar_F(x) = E_F[s(x,Y)]  &= O E_F[(g(x) - g(Y))\sb{+}] + U E_F[(g(x) - g(Y))\sb{-}] \label{eqn:scalar_obj}\\
+&= O\int_{-\infty}^x(g(x) - g(y))f(y)dy + U\int_x^{\infty}(g(y) - g(x))f(y)dy \label{eqn:scalar_obj_int}
+\end{align}
+by forecasting a quantile $q_{\alpha, F} \in Q_F\left(\alpha\right)$ which solves the first order equation
+\begin{align}
+\nonumber 0 =\frac{d}{dx}\sbar_F(x) 
+&= O E_F\left[\frac{d}{dx}(g(x) - g(Y))\sb{+}\right] + U E_F\left[\frac{d}{dx}(g(x) - g(Y))\sb{-}\right] \\
+&= O E_F[g^{\prime}(x)\mathbb{1}\{Y < x\}] + U E_F[-g^{\prime}(x)\mathbb{1}\{Y \geq x\}] \\
+&= O g^{\prime}(x) \mathbb{P}_F(Y<x) - U g^{\prime}(x) \mathbb{P}_F(Y\geq x) \\
+&= g^{\prime}(x)\left( O F(x) - U (1-F(x))\right) \\
+&= \kappa g^{\prime}(x)\left(F(x) - \alpha\right) \label{scalar_Z_deriv}.
+\end{align}
+(See \hyperref[scalar_Z_deriv_detail]{appendix} for an alternative derivation in terms of a density.)
+The critical point $q_{\alpha, F}$ is actually a minimum since \eqref{scalar_Z_deriv} is non-positive on $\{x<q_{\alpha, F}\}$ and non-negative on $\{x>q_{\alpha, F}\}$.
+ When $g^{\prime}(q)>0$, this minimum is unique since
+\begin{align}
+   \frac{d^2}{dx^2}\sbar_F(x)\big|_{x=q_{\alpha, F}} &= 
+   \kappa\left(g^{\prime}(x)f(x) + g^{\prime \prime}(x)\left(F(x) - \alpha\right)\right)\big|_{x=q_{\alpha, F}} \label{scalar_Z_deriv2}\\
+   &=\kappa(g^{\prime}(q_{\alpha, F})f(q_{\alpha, F}) + g^{\prime \prime}(q_{\alpha, F})\cdot 0) >0.
+\end{align}
+
+If $g^{\prime}(q_{\alpha, F})=0$ or does not exist, or $Q_F(\alpha)$ is not a singleton set, we'll need to adopt additional criteria for whether $q_{\alpha, F}$ is optimal. One possibility is to take $q_{\alpha, F}=\min \left\{x \mid F_X(x) \geq \alpha\right\}$, and if $g^{\prime}(q_{\alpha, F})=0$ we choose the prediction $x$ to be the infimum of the region around $q_{\alpha, F}$ where $g$ is flat. One example of such a $g$ is the \emph{power curve} of a wind turbine which becomes constant above a certain wind speed. Here $x$ would be a forecast of future wind speed $Y$ at time $t$ and $g(x)$ would be the power a turbine operator commits to supplying the electric grid at $t$. Taking $g$ to be constant below a certain point could also serve to express the futility or lack of meaning of forecasts below that point, such as when a forecast user is only able to sell a commodity for which demand can become negative, turning into supply.
+
+Note that $\frac{d}{dx}\sbar_F(x) =\frac{d}{dx}E_F[s(x,Y)] = h(x)E_F[V(x,Y)]$, where $h(x) = \kappa g^{\prime}(x)$ and 
+\begin{align}
+V(x,y) &\coloneq (1-\alpha)\mathbb{1}\{y<x\} - \alpha \mathbb{1}\{y \geq x\} \mathrel{\phantom{=}}\\
+&= (1-\alpha)\mathbb{1}\{y<x\} - \alpha \left(1 - \mathbb{1}\{y<x\}\right) \\
+&= \mathbb{1}\{y<x\} - \alpha. 
+\end{align}
+By virtue of $E_F[V(Q_F(\alpha),Y)]=0$, $V$ is said to be an \emph{identification function} for the $\alpha$ quantile. The fact that, generally speaking, any elicitable functional (such as a quantile) has an identification function is known as \emph{Osband's principle}.
+
+Forecasting the minimizer of $\sbar_F(x) = E_F[s_{\kappa,\alpha}(x,Y)]$ in this situation is known as the \emph{Bayes act} $a_F$ under $s_\alpha$ for the forecaster. Assuming a forecaster is informed, rational, and risk-neutral enough to take $a_F$, we can evaluate $F$, implicitly, as a distributional forecast, by the \emph{scoring rule} $S_{\alpha}$ induced by $s_{\alpha}$:
+\begin{align}
+S_{\alpha}(F,y) := s_{\alpha}(Q_F(\alpha), y).
+\end{align}
+If $y$ is generated by $Y \sim G$ then $S_{\alpha}(F,y)$ is an estimate of 
+\begin{align}
+S_{\alpha}(F,G) &:= E_G[S_{\alpha}(F,Y)] = E_G[s_{\alpha}(Q_{F}(\alpha),Y)].
+\end{align}
+This defines a functional on $\mathcal{F_0}$, the class of measures on the Borel-Lebesgue sets of $\mathbb{R}$ by
+\begin{align}
+\mathcal{\overline{S}}_{G,\alpha}(F) := \sbar_G(Q_{\alpha}(F))
+\end{align}
+where $Q_{\alpha}$ is the $\alpha$ quantile functional.
+
+Using $u_- = u_+ - u$, the objective function \eqref{eqn:scalar_obj} can also be helpfully rewritten as
+\begin{align}
+\nonumber \sbar_F(x) &= OE_F[(g(x) - g(Y))\sb{+}] + U E_F[(g(x) - g(Y))\sb{+}] - U E_F[(g(x) - g(Y))] \\ 
+\nonumber  &= (O+U)E_F[(g(x) - g(Y))\sb{+}] - U E_F[(g(x) - g(Y))] \\
+&= (O+U) \int_{-\infty}^{x} (g(x) - g(y))f(y)dy - Ug(x)+ U \overline{g}\sb{F} \label{obj_integral}\\
+&= (O+U)\left(g(x)F(x) - \overline{g}_F(x) \right) - Ug(x) + U\overline{g}\sb{F}) \label{obj_sep}\\
+&= \kappa\left[g(x)(F(x) - \alpha) -\overline{g}_F(x) + \alpha \overline{g}\sb{F}\right] \label{obj_pexp} 
+\end{align}
+where $\overline{g}_F(x) = E_F[g(Y)\mathbb{1}\{Y \leq x\}]$, and $\overline{g}\sb{F} = E_F[g(Y)]$.
+
+The function $\overline{g}_F(x)$ sometimes goes by the name of ``partial expectation" (Schlaifer Raiffa, p. 109) and can often be made more explicit for certain $F$ and $g$. 
+
+##  Alternative Notation Possibilities
+
+Let $Y \sim F,F_i$ be various forecaster beliefs and $Y \sim G$ be reality.
+\begin{align}
+\overline{s}_{F,\kappa,\alpha}(x) &:= s_{\kappa,\alpha}(x,F) := E_F[s_{\kappa,\alpha}(x,Y)] \\
+\overline{s}_{\kappa,\alpha}(x) &:= s_{\kappa,\alpha}(x,G) \\
+s_{\symbfit{\kappa},\symbfit{\alpha}}(\mathbf{x}, \mathbf{F}) &:= 
+\overline{s}_{\mathbf{F},\symbfit{\kappa},\symbfit{\alpha}}(\mathbf{x}) = 
+\sum_{i}^{\mathrm{dim}\mathbf{x}} s_{\kappa_i,\alpha_i}(x_i, F_i) \\
+S(F,y) &:= s(q_{F,\alpha}, y) \\
+S(F_1,F_2) &:= E_{F_2}[S(F_1,Y)] = s(q_{F_1,\alpha}, F_2) \\
+\overline{S}(F) &:= E_G[s(q_{F, \alpha}, Y)]
+\end{align}
+
+Define the $s$-entropy of an arbitrary $F$ 
+\begin{align}
+e_s(F) &:= E_F[S(F, Y)] = E_F[s(q_{F,\alpha}, Y)] = s(q_{F,\alpha}, F) \\
+\end{align}
+and of the RV $Y$ as
+\begin{align}
+e_s(Y) &:= e_s(G).
+\end{align}
+Define the $s$-divergence between two forecasts as
+\begin{align}
+d_s(F_1,F_2) &:= S(F_1,F_2) - S(F_2,F_2) = S(F_1,F_2) - e_s(F_2)
+\end{align}
+and the $s$-divergence from $F$ to $Y$ as
+\begin{align}
+d_s(F,Y) &:= S(F,G) - e(Y).
+\end{align}
+
+Thus, $\overline{S}(F) = d_s(F,Y) + e_s(Y)$.
+
+## Examples for various forecaster beliefs
+
+### 1) $Y \sim U[a,b]$
+
+Here $F(x) = \mathbb{1}\{a<x<b\}(x-a)/(b-a) + \mathbb{1}\{b \leq x\}$ in \eqref{obj_pexp} gives 
+<!--  
+&= 
+\begin{cases}
+\frac{U}{b-a}\int_a^b (g(y) - g(x))dy & x\leq a \\[8pt]
+\frac{O}{b-a}\int_a^x (g(x) - g(y))dy + \frac{U}{b-a}\int_x^b (g(y) - g(x))dy & a < x < b \\[8pt]
+\frac{O}{b-a}\int_a^b (g(x) - g(y))dy & b \leq x 
+\end{cases} \\ 
+-->
+\begin{align}
+\sbar_F(x) &= 
+\begin{cases}
+\frac{\kappa}{b-a}\left( - \alpha(b-a)g(x) + \alpha\int_a^b g(y)dy\right) & x\leq a \\[8pt]
+\frac{\kappa}{b-a}\left((x-a- \alpha(b-a))g(x) - \int_a^x g(y)dy + \alpha\int_a^b g(y)dy\right) & a < x < b \\[8pt]
+\frac{\kappa}{b-a}\left((1-\alpha)(b-a)g(x) -(1-\alpha)\int_a^b g(y)dy \right) & b \leq x
+\end{cases} 
+\end{align}
+
+When $g(x)=x$ this becomes
+\begin{align}
+\sbar_F(x) &= 
+\begin{cases}
+\frac{\kappa}{b-a}\left( - \alpha(b-a)x + \frac{\alpha}{2}(b^2-a^2)\right) & x\leq a \\[8pt]
+\frac{\kappa}{b-a}\left((x-a- \alpha(b-a))x - \frac{1}{2}(x^2 - a^2) + \frac{\alpha}{2}(b^2-a^2)\right) & a < x < b \\[8pt]
+\frac{\kappa}{b-a}\left((1-\alpha)(b-a)x -\frac{(1-\alpha)}{2}(b^2-a^2)\right) & b \leq x
+\end{cases} \\
+&= 
+\begin{cases}
+-\kappa\alpha\left[x - \frac{a+b}{2}\right] & x\leq a \\[8pt]
+\frac{\kappa}{2}\left[\frac{1}{b-a}(x - (a+\alpha(b-a)))^2 +\alpha(1-\alpha)(b-a)\right] & a < x < b \\[8pt]
+\kappa(1-\alpha)\left[ x - \frac{a+b}{2}\right] & b \leq x
+\end{cases}
+\end{align}
+
+Thus $\sbar_F(x)$ has the form of pinball loss centered on the mean $\mu_Y = \frac{a+b}{2}$ and interpolated on $(a,b)$ 
+ by a quadratic centered at the quantile $a+\alpha(b-a)$ with slopes matching the linear tails at $a$ and $b$.
+
+```{r echo = FALSE, cache=TRUE}
+unif_loss <- function(alpha, min, max) {
+  f <- function(x){
+    (x <= min)*(-alpha)*(x - (max+min)/2) +
+    ((min < x) & (x < max))*.5*((1/(max-min))*(x - (min+alpha*(max-min)))^2 + alpha*(1-alpha)*(max-min)) +
+    (x >= max)*(1-alpha)*(x - (max+min)/2)
+  }
+  return(f)
+}
+plot_loss <- function(
+    alphas,
+    lossfun, 
+    parms, 
+    pfun, 
+    qfun,
+    mag, 
+    xl, 
+    xr,
+    yb,
+    yexpand = c(0,.1)) {
+  p <- ggplot() + xlim(xl,xr)+ map(
+    alphas,
+    function(alpha) {
+      geom_function(aes(color = as_factor(alpha)), 
+                    fun = rlang::exec(lossfun, alpha, !!!parms), n = 500)
+    }
+  ) + map(
+    alphas,
+    function(alpha) {   
+      geom_segment(aes(color = as_factor(alpha), 
+                       x = rlang::exec(qfun, alpha, !!!parms), 
+                       y = yb,
+                       xend = rlang::exec(qfun, alpha, !!!parms),
+                       yend = mag*alpha),
+                   alpha = .5)
+    }
+  ) + map(
+    alphas,
+    function(alpha) {
+      geom_segment(aes(color = as_factor(alpha),
+                       x = rlang::exec(qfun, alpha, !!!parms),
+                       y = mag*alpha,
+                       xend = xl, 
+                       yend = mag*alpha),
+                   alpha = .5)
+    }
+  ) + 
+    geom_function(fun = function(q) mag*rlang::exec(pfun, q, !!!parms), n=500) +
+    scale_y_continuous(expand = yexpand,
+                       labels = function(y) y/mag, 
+                       breaks = mag*alphas, 
+                       limits = c(yb, mag*1.1)) +
+    scale_x_continuous(expand = c(0,.1), limits = c(xl,xr)) +
+    theme_classic() +
+    theme(legend.position = "none",
+          axis.title = element_blank())
+  return(p)
+}
+
+alphas = c(.1,.4,.5,.9)
+p_unif <- plot_loss(
+  alphas = alphas,
+  lossfun = unif_loss, 
+  parms = list(min = 0, max = 1), 
+  pfun = punif, 
+  qfun = qunif,
+  mag = 1, 
+  xl = -1.5, 
+  xr = 2.5,
+  yb = 0
+  ) + ggtitle("Unif(0,1)")
+```
+
+### 2) $g(x)=x$ and $F_Y=F_{\mu, \sigma}$ lies in a location-scale family
+
+That is, $Y = \mu + \sigma Z$ and $Z \sim F_Z = F_0$. Then $f_Y(y) = \dby{}{z} F_Z\left(\frac{y-\mu}{\sigma}\right)\dby{z}{y} = f_Z(z)/\sigma$ and so
+\begin{align}
+\overline{g}_F(x) = \int_a^x y f_Y(y)dy &= \int_{\frac{a-\mu}{\sigma}}^{\frac{x-\mu}{\sigma}}(\mu + \sigma z)f_Z(z)dz \\
+& = \mu F_Z\left(\frac{x-\mu}{\sigma}\right) + \sigma \int_{\frac{a-\mu}{\sigma}}^{\frac{x-\mu}{\sigma}}zf_Z(z)dz\\
+& =\mu F_Y(x) + \sigma \mu_{F_0}\left(\frac{x-\mu}{\sigma}\right).
+\end{align}
+where $\mu_{F_0}(u) = \int_{\frac{a-\mu}{\sigma}}^{u} zf_0(z)dz$. This gives
+<!-- With the change of variables $y=Q_F(\alpha) = F^{-1}(\alpha), dy =  d(F^{-1}(\alpha)) = \frac{d\alpha}{f(y)}$, we have
+\begin{align}
+\overline{g}_F(x) = \int_a^x y f_Y(y)dy = \int_{0}^{F(x)}Q_F(\alpha)d\alpha 
+& = \mu F(x) + \sigma \int_0^{F(x)} Q_0(\alpha)d\alpha \\
+& =\mu F(x) + \sigma \mu_{F_0}\left(\frac{x-\mu}{\sigma}\right).
+\end{align} -->
+\begin{align}
+\nonumber \sbar_F(x) &= \kappa\left[x(F(x) - \alpha) - \mu F(x) - 
+\nonumber \sigma \mu_{F_0}\left(\frac{x-\mu}{\sigma}\right) + \alpha \mu \right]  \\
+&= \kappa\left[\left(F(x) - \alpha\right)(x-\mu)- \sigma \mu_{F_0}\left(\frac{x-\mu}{\sigma}\right) \right]
+\label{lc-form}
+\end{align}
+
+### 3) $g(x)=x$ and $Y \sim N(\mu,\sigma)$
+
+When $F=\Phi_{\mu,\sigma}$, $\mu_{F_0}\left(\frac{x-\mu}{\sigma}\right)=-\sigma \varphi_{\mu, \sigma}(x)$, giving $q(\alpha)$ as the minimum of 
+$$
+Z_F(x) = \kappa\left[(\Phi_{\mu,\sigma}(x) - \alpha)(x-\mu) + \sigma^2 \varphi_{\mu, \sigma}(x)\right].
+$$
+
+```{r echo = FALSE, cache=TRUE}
+norm_loss <- function(alpha, mean, sd) {
+  f <- function(x){
+    alpha^(-1)*((pnorm(x, mean, sd)-alpha)*(x-mean) + sd^2*dnorm(x,mean,sd))
+  }
+  return(f)
+}
+parms = list(mean = 0, sd = 2)
+p_norm <- plot_loss(
+    alphas = alphas,
+    lossfun = norm_loss, 
+    parms = parms, 
+    pfun = pnorm, 
+    qfun = qnorm,
+    mag = 10, 
+    xl = -6, 
+    xr = 6,
+    yb = 0
+) + ggtitle("Normal(0,2)")
+```
+
+### 4) $g(x)=x$ and $Y \sim \mathrm{Exp}(1/\sigma)$
+
+Taking $\mu \equiv 0, Y = \sigma Z$ and $F_Z(x) = F_0(x) = \mathbb{1}\{0 \leq x\}(1 - e^{-x})$ we have
+ $\mu_{F_0}(x) = \mathbb{1}\{0 \leq x\}(1 - e^{-x}(1+x))$. Then \eqref{lc-form} is
+
+\begin{align}
+\nonumber \sbar_F(x) &= 
+\mathbb{1}\{0 \leq x\}\kappa\left[F(x)x - \sigma \mu_{F_0}\left(\frac{x}{\sigma}\right) \right] - \kappa\alpha x\\
+&= \mathbb{1}\{0 \leq x\}\kappa
+\left[
+\left(1 - e^{-x/\sigma}\right)x - \sigma \left(1- e^{-x/\sigma}\left(1+\frac{x}{\sigma}\right) \right)
+\right] - \kappa\alpha x\\
+&= \mathbb{1}\{0 \leq x\}\kappa\left[ \sigma e^{-x/\sigma} + x - \sigma \right] - \kappa\alpha x
+\end{align}
+
+```{r echo = FALSE, cache=TRUE}
+exp_loss <- function(alpha, rate) {
+  f <- function(x){
+    ((exp(-x*rate)*rate^(-1) + x - rate^(-1)))*(x>0) - alpha*x
+  }
+  return(f)
+}
+parms = list(rate = 1)
+p_exp <- plot_loss(
+    alphas = alphas,
+    lossfun = exp_loss, 
+    parms = parms, 
+    pfun = pexp, 
+    qfun = qexp,
+    mag = 3, 
+    xl = -2, 
+    xr = 5,
+    yb = -1
+) + ggtitle("Exp(1)")
+```
+
+```{r, fig.cap="Plots of CDFs and expected quantile scores at levels .1, .4, .5, and .9"}
+p_unif + p_norm + p_exp + plot_layout(ncol = 2)
+```
+
+## Another form for $\sbar_F(x)$
+
+There also may be situations where it is convenient to integrate the $(O+U)$-term in \eqref{obj_sep} by parts to get 
+\begin{align}
+\sbar_F(x) = \kappa\left[\int_a^x g^{\prime}(y)F(y)dy - \alpha(g(x) - \overline{g}\sb{F})\right]. \label{obj_intF}
+\end{align}
+
+## Newsvendor parameters
+
+In the inventory management literature, minimization of an expectation of the form of $\sbar_F(x)$ for a given $F$ arises in the \emph{newsvendor problem}.  This involves the ordering decision faced by a retailer of a perishable good (such as newpapers) when customer demand is uncertain. Because the focus here is on revenues and expenditures, terms other than just the over- and underprediction penalties in \eqref{eqn:scalar_score} often appear, giving a retailer's scoring function as
+\begin{align}
+s_n(x,y) & = a_x x +a_y y +a_{+}(x-y)_+ + a_{-}(x-y)_-.
+\end{align}
+We might have, for example, the score given by net value transfers
+\begin{align}
+s_n(x,y) = cx-py - u(x-y)_+ + (p+r)(x-y)_-
+\end{align}
+where $x$ newspapers are ordered at price $c$, $y - (x-y)_-$ are sold at retail price $p$, $(x-y)_+$ are sold at salvage price $u$, 
+and $r(x-y)_-$ of customer "goodwill" is lost. 
+This can be rewritten as
+\begin{align}
+s_n(x,y) &= (a_{+} + a_x)(x-y)_+ + (a_{-} - a_x)(x-y)_- +(a_x + a_y)y \\
+&= (c-u)(x-y)_+ + (p+r-c)(x-y)_- -(p-c)y
+\end{align}
+giving the retailer's objective function under a demand distribution $F$ as
+\begin{align}
+\sbar_{n,F}(x) = (a_{+} + a_x)E_F[(x-Y)_+] + (a_{-} - a_x)E_F[(x-Y)_-] +(a_x + a_y)E[Y].
+\end{align}
+This differs by a constant from our $\sbar_F(x)$ in \eqref{eqn:scalar_obj} after taking $g(x)=x$, $O=a_{+} + a_x=c-u$ 
+and $U=a_{-} - a_=p+r-c$, and so has the same minimizer   
+\begin{align}
+Q = F^{-1}\left(\frac{U}{O+U}\right) =  F^{-1}\left(\frac{a_{-} - a_x}{a_{-} + a_{+}}\right) 
+= F^{-1}\left(\frac{p+r-c}{p+r-u}\right).
+\end{align}
+Note, for reference, that in the literature $\sbar_{n,F}(x)$ is often encountered in the form of \eqref{obj_integral}:
+\begin{align}
+&(O+U) \int_{0}^{x} (x - y)f(y)dy - Ux+ (U+a_x+a_y)E[Y] \\
+=\,&(p+r-u) \int_{0}^{x} (x - y)f(y)dy - (p+r-c)x+ rE[Y]
+\end{align}
+
+## Meteorologist parameters
+
+Similarly, a weather forecaster might be judged by the cost $Cx$ of recommended protection $x$ against a level $y$ of adverse weather (e.g., rainfall) added to any loss $L(x-y)_-$ resulting from underprediction, leading to the scoring function 
+\begin{align}
+s_m(x,y) = Cx + L(x-y)_-,
+\end{align}
+which rearranges to 
+\begin{align}
+s_m(x,y) = C(x-y)_+ + (L-C)(x-y)_- + Cy.
+\end{align}
+The minimizer of $\sbar_{m,F}(x) = E_F[s_m(x,Y)]$ given the forecaster's belief $Y \sim F$ is now
+\begin{align}
+Q = F^{-1}\left(\frac{L-C}{C+L -C}\right) =F^{-1}\left(1-\frac{C}{L}\right).
+\end{align}
+In particular, faced with the classical binary decision problem of whether to recommend an additional unit of protection given a current level of protection $x$, the forecaster's optimal decision rule under $s_m$ is to recommend adding protection if $x < F^{-1}\left(1-\frac{C}{L}\right)$, that is, if 
+\begin{align}
+1-F(x) = \mathbb{P}_F\{y>x\} > \frac{C}{L},
+\end{align}
+the \emph{cost-loss ratio} of the problem.
+
+# Multipoint Quantile Scoring Rules
+
+Suppose we ask a forecaster to provide a set of point forecasts $\{x_1,x_2\}$ to be rewarded according to the aggregate scoring function 
+\begin{align}
+s(x_1,x_2,y) &= s_{O_1,U_1}(x_1,y) + s_{O_2,U_2}(x_2,y).
+\end{align}
+
+
+
+# Allocation scoring rules
+We now develop \emph{allocation scoring functions} that elicit forecasts $x_i$ for outcomes $y_i, i = 1,\ldots,N$, each with it's own incremental cost $O_i$ and loss $U_i$ as for a quantile scoring rule, but with the additional constraint 
+\begin{align} 
+ \sum_{i=1}^N w_i x_i = \mathbf{w}^T \mathbf{x} \leq K
+\end{align} 
+on the total provision available with $w_i>0$. We assume $K>0$, that only non-negative forecasts $x_i$, i.e., recommended allocations, are accepted, and that 
+\begin{align}
+ g_i^{\prime}(x_i)>0 \text{ for } x_i \geq 0,
+\end{align} 
+though it may be interesting to introduce regions where $g_i(x_i)$ is constant, such as for the wind speed power curve mentioned above.
+
+According to \eqref{eqn:scalar_obj_int} and \eqref{obj_pexp} the objective function is now
+\begin{align}
+\sbar_F(\mathbf{x})&= \sum_{i=1}^{N} \sbar_{F_i}(x_i) = \sum_{i=1}^{N} \left\{O_i\int_{-\infty}^{x_i}(g_i(x_i) - g_i(y))f_i(y)dy + 
+U_i\int_{x_i}^{\infty}(g_i(y) - g_i(x_i))f_i(y)dy \right\} \\
+&= \sum_{i=1}^{N} \kappa_i
+\left[
+g_i(x_i)(F_i(x_i) - \alpha_i) -\overline{g_i}_{F_i}(x_i) + \alpha_i \overline{g_i}\sb{F_i}
+\right] 
+\end{align}
+
+and the elicited forecasts solve the allocation problem (AP)
+\begin{align}
+    \underset{\mathbf{x}\in \mathbb{R}^N, 0 \leq \mathbf{x}}{\mathrm{minimize}}\,\, \sbar_F(\mathbf{x}) \text{ subject to } 
+    \mathbf{w}^T\mathbf{x} \leq K. \label{AP}
+\end{align}
+
+As a separable problem, this is amenable to being solved via its dual (see [@ruszczynski2011nonlinear], section 4.4). With the Lagrangian
+\begin{align}
+L(\mathbf{x}, \lambda; K) = \sum_{i=1}^{N} \sbar_{F_i}(x_i) + \lambda \left(\sum_{i=1}^{N}w_i x_i - K\right) \label{Lagrangian}
+\end{align}
+we have the dual problem of maximizing over $\lambda \geq 0$ the objective function
+\begin{align}
+L_D(\lambda; K) &= \min_{0 \leq \mathbf{x}} L(\mathbf{x}, \lambda) = 
+-\lambda K + \sum_{i=1}^{N} \underset{0 \leq x_i}{\min} \left\{\lambda w_i x_i + \sbar_{F,i}(x_i)\right\} \label{dual_eq}
+\end{align}
+which gives lower bounds on $\sbar_F(\mathbf{x}^{\star})$ at a solution $\mathbf{x}^{\star}$ to the primal AP. In particular, when $O_i>0$ for all $i$, $L_D(0)$ gives the total score $\sbar_F(\mathbf{q}_{\symbfit{\alpha}, F})$ when the constraint does not prevent the forecaster from giving the quantiles in each component. When the constraint is active, the forecaster will generally not be able to attain a total score this low and the greatest lower bound on their score will correspond the maximizer $\lambda^{\star} = \lambda^{\star}(K)$ of \eqref{dual_eq}.
+
+The advantage of this dual formulation under separability is that when considering a candidate $\lambda$ for $\lambda^{\star}$,
+ we can calculate each summand 
+$L_{D,i}(\lambda):=\underset{0 \leq x}{\min} \left\{\lambda w_i x + \sbar_{F,i}(x)\right\}$ independently. 
+To this end, let $Z_{\lambda,i}$ be the set of $x \in \mathbb{R}$ where the weighted subgradient of $-\sbar_{F_i}(x)$ contains 
+$\lambda$ (c.f. \eqref{scalar_Z_deriv}):
+\begin{align}
+Z_{\lambda,i} := \left\{x \mid 
+\lambda \in -w_i^{-1}\partial\sbar_{F_i}(x) = w_i^{-1}\kappa_i g_i'(x)(\alpha_i - [F_i(x-), F_i(x)])\right\}. \label{dual_comp_deriv}
+\end{align}
+Then for $\lambda>0$ we have
+\begin{align}
+L_{D,i}(\lambda) = \min \left\{\lambda w_i x + \sbar_{F_i}(x) \mid x \in \{0\} \cup \{Z_{\lambda,i} \cap (0,\infty)\}  \right\}
+\end{align}
+Note that 
+\begin{itemize}
+\item $Z_{\lambda,i}$ will contain any (necessarily closed) interval where $\sbar_{F_i}$ is linear with slope $-\lambda w_i$,
+\item unless $\lambda=0=O_i$, we have $\sup Z_{\lambda,i} < \infty$ since in this case $\lambda w_i x + \sbar_{F,i}(x)$ is 
+eventually monotonically increasing in $x$,
+\item $Z_{\lambda,i}\cap [0,\infty) = \varnothing$ for $\lambda > \max_{x\geq 0}\{w_i^{-1}\kappa_i g_i'(x)(\alpha_i - F_i(x))\}$.
+\end{itemize}
+
+In the case that we will usually restrict to where $g_i'$ is non-vanishing and non-increasing, $Z_{\lambda,i}$ will consist at most of a single interval 
+(usually of width 0), and in the typical "pinball loss" case of $g_i'(x) \equiv 1$,
+\begin{align}
+Z_{\lambda,i}= 
+\begin{cases}
+Q_i(\alpha_i - \kappa_i^{-1}w_i\lambda)  & \text{ if } \alpha_i - \kappa_i^{-1}w_i\lambda > 0 \\
+\varnothing & \text{ otherwise}.
+\end{cases}
+\end{align}
+
+Let $Z_{\lambda} = \{\mathbf{x} \mid x_i \in Z_{\lambda,i}\}$ and $\Delta_{\sbar_{F},K,\pm}(\lambda)= \mathbf{w}^{T}\mathbf{x}_{\pm}(\lambda)-K$ where
+\begin{align}
+x_{-,i}(\lambda) = \min Z_{\lambda,i}\cap [0,\infty) \text{  and  } x_{+,i}(\lambda) = \max Z_{\lambda,i}\cap [0,\infty)
+\end{align}
+and write $\Delta_{\sbar_{F},K,\pm}(\lambda)=\Delta_{\sbar_{F},K}(\lambda)$ when $\# Z_{\lambda} = 1$.
+If $\Delta_{\sbar_{F},K,\pm}(\lambda) > 0$, the constraint is violated everywhere in $Z_{\lambda}\cap [0,\infty)^N$, and from \eqref{Lagrangian} we see that 
+$0 > \sup(\partial L_D(\lambda))$ so that $\lambda^{\star} > \lambda$, whereas
+if $\Delta_{\sbar_{F},K,\pm}(\lambda) < 0$ there is under-utilization everywhere in $Z_{\lambda}\cap [0,\infty)^N$, 
+$0 < \inf(\partial L_D(\lambda))$, and $\lambda^{\star} < \lambda$. But if 
+$\Delta_{\sbar_{F},K,-}(\lambda) \leq 0 \leq \Delta_{\sbar_{F},K,+}(\lambda)$, we have $\lambda^{\star} = \lambda$ and a solution $\mathbf{x}^{\star}$ to the
+AP is obtained by solving $\mathbf{w}^{T}\mathbf{x}=K$ on $Z_{\lambda}\cap [0,\infty)^N$. For example, take $N=2$, $F_1 = \mathrm{Unif}[a,b]$, 
+$F_2 = N(a,a/2)$ with $a>0$, $\alpha_1 = .5, \alpha_2 = .6$, $\kappa_i=g_i'=w_i=1$, and let $q=Q_{N(a,a/2)}(.1)$. Then the allocation 
+$(a,q)\in Z_{.5}$ violates
+a constraint of $K=a$, but the allocation with $(0,q)\in Z_{.5}$ leaves slack. Thus the solution $(a-q,q)$ lies in $Z_{.5}$.
+ 
+<!-- At $\lambda=0$, we have
+\begin{align}
+L_{D,i}(0) = 
+\begin{cases}
+ \sbar_{F_i}(\max \{0, q_{\alpha_i,F_i}^{+}\}) & \text{ if }O_i >0 \\
+ \underset{x\to \infty}{\lim}U_i\int_{x}^{\infty}(g_i(y) - g_i(x))f_i(y)dy = 0 & \text{ if } O_i = 0
+\end{cases}
+\end{align}
+(assuming a reasonable bound on the growth rate of $g_i$).
+ -->
+
+As such, we can solve, at least approximately, the AP as follows.  We first determine, from representations of the $F_i$, the finite set 
+\begin{align}
+I_{\sbar_{F}} := \left\{\lambda \mid \# Z_{\lambda} > 1\right\}
+\end{align}
+and check whether for any $\lambda \in I_{\sbar_{F}}$ we can solve $\mathbf{w}^T \mathbf{x} = K$ with $\mathbf{x}\in Z_{\lambda}$. If possible,
+we have found the maximizer $\lambda^{\star}$ as well as a solution $\mathbf{x}$ to the AP. 
+
+If $I_{\sbar_{F}}$ does not yield an immediate solution, we proceed to a binary search for $\lambda^{\star}$
+working inward from the interval $[\lambda_L, \lambda_U]$ where
+\begin{align}
+\lambda_L &= \max \left\{ \lambda \in \bar{I}_{\sbar_{F}} \mid \Delta_{\sbar_{F},K,-}(\lambda_{\tau})>0 \right\} \\
+\lambda_U &= \min \left\{ \lambda \in \bar{I}_{\sbar_{F}} \mid \Delta_{\sbar_{F},K,+}(\lambda_{\tau})<0 \right\} \\
+\bar{I}_{\sbar_{F}} &= \{I_{\sbar_{F}}, 0, \max_{i,x}\{w_i^{-1}\kappa_i g_i'(x)(\alpha_i - F_i(x))\} \}.
+\end{align}
+At each step $\tau$ of the search, we take 
+$\lambda_{\tau}= 1/2(\lambda_{U,\tau}+\lambda_{L,\tau})$ and
+either discard the upper half of the current search interval if $\Delta_{\sbar_{F},K}(\lambda_{\tau})<0$, setting $\lambda_{U,\tau+1}= \lambda_{\tau}$,
+ or discard the bottom half if not, setting $\lambda_{L,\tau+1}= \lambda_{\tau}$.
+We continue until $\Delta_{\sbar_{F},K}(\lambda_{\tau})$ is sufficiently small.
+
+If we also impose convexity on $\sbar_F(\mathbf{x})$ by requiring that all $g_i$ have non-positive second derivatives, then since the constraint 
+$\mathbf{w}^T \mathbf{x} \leq K$ is affine and the domain $\{\mathbf{x} \geq 0 \}$ is convex, we have strong duality so that the optimal value 
+$L_D(\lambda^{\star})$ of the dual problem is also the attained minimum of the primal AP. An optimal allocation is then given by taking
+\begin{align}
+q_{i,K} \in \argmin \left\{ \lambda^{\star} w_i x + \sbar_{F_i}(x) \mid x \in Z_{\lambda^{\star},i}\right\}.
+\end{align}
+Note that in the "easy" case of $g_i (x)=x$ for all $i$ and $K$ not too small, this becomes
+\begin{align}
+q_{i,K} = Q_i(\alpha_i - \kappa_i^{-1}w_i\lambda^{\star})
+\end{align}
+where $\lambda^{\star}$ is found as a root of
+\begin{align}
+\sum_{i=1}^{N}w_i Q_i(\alpha_i - \kappa_i^{-1}w_i\lambda^{\star}) = K.
+\end{align}
+This partial solution to the AP seems to have first appeared in [@hadleywhitin1963].
+
+
+See the \hyperref[KKT_derivation]{appendix} for a derivation and discussion of this solution method via Karush-Kuhn-Tucker equations rather than duality theory.
+
+
+### Marginal benefit interpretation of the dual variable
+
+Equation \eqref{dual_comp_deriv} can be viewed as defining functions 
+\begin{align}
+\lambda_i(x_i): = -\frac{1}{w_i}\del{\sbar_F}{x_i}(x_i)= 
+w_i^{-1}\kappa_i g_i^{\prime}(x_i)(\alpha_i - F_i(x_i)) \label{eqn:marg}
+\end{align}
+which can each be interpeted as a \emph{marginal expected unit benefit} of $x_i$. That is,
+if $F_i(x_i) < \alpha_i$ we receive the positive "benefit" of reducing $\sbar_F$ at a rate of $\lambda_i(x_i)$ 
+per additional unit of capacity allocated to the $i$'th target at "price" $w_i$. Note that with $\mathcal{S}_i$ the support of $F_i$ we have
+\begin{align}
+ \lambda_i(x_i) =
+\begin{cases}
+  \alpha_i w_i^{-1}\kappa_i g_i^{\prime}(x_i) & x_i \leq \inf(\mathcal{S}_i) \\
+ -(1-\alpha_i)w_i^{-1}\kappa_i g_i^{\prime}(x_i) & x_i \geq \sup(\mathcal{S}_i),
+ \end{cases}
+\end{align}
+as in the [uniform][1) $Y \sim U[a,b]$] and [exponential][4) $g(x)=x$ and $Y \sim \mathrm{Exp}(1/\sigma)$] examples.
+
+We can demonstrate the KKT condition \eqref{eqn:lam_Qnz} directly in terms of the $\lambda_i$:
+
+\begin{proposition}
+\label{LM_prop}{}
+For a solution $\mathbf{Q} = (Q_1,\ldots,Q_N)$ of the AP we have
+\begin{align}
+ \lambda_i(Q_i) = \lambda_j(Q_j) \text{ whenever } Q_i, Q_j > 0. \label{lambda_eq}
+\end{align}
+\end{proposition}
+\begin{proof}
+Assume instead we had $\lambda_i(Q_i) > \lambda_j(Q_j)$ and $Q_i, Q_j > 0$. 
+Moving away from $\mathbf{Q}$ in the direction $\mathbf{d}_{ij} = w_i^{-1}\mathbf{e}_i - w_j^{-1}\mathbf{e}_j$ we remain 
+in $\mathbb{R}^N_+$ while respecting the constraint ($\langle \nabla  \mathbf{w}^T \mathbf{x}, \mathbf{d}_{ij}\rangle = 0$) but reducing $\sbar_F$:
+\begin{align}
+    \langle \nabla \sbar_F(\mathbf{Q}), \mathbf{d}_{ij} \rangle = 
+    w_i^{-1} \frac{\partial \sbar_F}{\partial x_i}(Q_i) -
+    w_j^{-1}\frac{\partial \sbar_F}{\partial x_j}(Q_j)  =  \lambda_j(Q_j) - \lambda_i(Q_i)  < 0. \label{descent}
+\end{align}
+Therefore $\mathbf{Q}$ cannot be a constrained minimum of $\sbar_F$. 
+\end{proof}
+But in line with KKT complementary slack conditions, the argument does not apply when $Q_j=0$ and $\mathbf{d}_{ij}$ 
+takes us immediately out of $\mathbb{R}^N_+$. This shows again how the set of indices $\{i \big| Q_i = 0\}$ arises as another variable of the problem.
+
+<!-- 
+We can, however, confine our search to two classes of solutions.
+\begin{proposition}
+\label{two_classes_prop}
+For a solution $\mathbf{Q} = (Q_1,\ldots,Q_N)$ of the AP we have $F_i(Q_i) \leq \alpha_i$ for all $i$.  
+Also, either 
+\begin{itemize}
+    \item[(I)]  for all $i$, $F_i(Q_i) = \alpha_i$, that is, 
+        $\mathbf{Q} = \mathbf{Q}(\symbfit{\alpha}) = (Q_1(\alpha_1),\ldots,Q_N(\alpha_N))$ is a vector of quantiles of the $F_i$
+    \item[] or
+    \item[(II)] $\mathbf{w}^T \mathbf{Q}=K$ and for all $i$, $F_i(Q_i) < \alpha_i$ whenever $Q_i>0$.
+\end{itemize}
+\end{proposition}
+\begin{proof}
+    First note that $F_i(Q_i) > \alpha_i$ is not possible for any $i$ since this would make decrease along the coordinate $x_i$  
+    a feasible direction of descent. In other words, just as for quantile scoring rules, forecasters do not benefit in increasing a forecast beyond their quantile for any target. 
+
+    If $F_i(Q_i) = \alpha_i$ for all $i$ and $\sum w_i Q_i \leq K$, then $\mathbf{Q}$ is a feasible point 
+    where $\nabla \sbar_F=0$ (cf. \eqref{scalar_Z_deriv}) and is therefore a minimum. 
+
+    Now assume $F_i(Q_i) < \alpha_i$ for some $i$. 
+    If $F_j(Q_j)=\alpha_j$ and $Q_j > 0$ for some $j$ then, as in \eqref{descent}, we would have a feasible direction 
+    of descent $\mathbf{d}_{ij}$. This forces either $Q_j = 0$ or $F_j(Q_j)<\alpha_j$ for all $j$. Finally, if in this case 
+    we had $\mathbf{w}^T \mathbf{Q}<K$, then increase along any coordinate $x_j$ with $F_j(Q_j)<\alpha_j$ would be a feasible direction of descent. If there is no such coordinate, we are in case I.
+\end{proof} -->
+
+\subsubsection{Allocation scoring rule definition}
+
+Collect the AP parameters into $\symbfit{\beta}:= \left\{\mathbf{w}, K, \symbfit{\alpha}, \symbfit{\kappa}\right\}$. The resulting $Q_i^{\symbfit{\beta}}= Q_i(\symbfit{\beta})$ form the Bayes act for the the forecast $\mathbf{F}$ and the realized losses and costs defines the scoring rule evaluated on $\mathbf{F}$:
+\begin{align}
+S_{\symbfit{\beta}}(\mathbf{F},\mathbf{y}) = 
+s_{\symbfit{\beta}}(\mathbf{Q}^{\symbfit{\beta}}, \mathbf{y})&=\sum O_i(g_i(Q_i^{\symbfit{\beta}}) - g_i(y_i))_+ + U_i(g_i(Q_i^{\symbfit{\beta}})-g_i(y_i))_-
+\\
+&= \sum((U_i+O_i)\mathbb{1}\{Q_i^{\symbfit{\beta}}>y_i\} - U_i)(g_i(Q_i^{\symbfit{\beta}})- g_i(y_i)) \\
+&= \sum \kappa_i (\mathbb{1}\{Q_i^{\symbfit{\beta}}>y_i\}-\alpha_i)(g_i(Q_i^{\symbfit{\beta}})- g_i(y_i))
+\end{align}
+
+Remarks:
+
+- Quantile rules allow you to vary cost ratios while allocation rules add capacity as a parameter.
+
+- While quantile rules are undefined for zero overprediction costs, allocation rules (with $K<\infty$) are defined even when some $\alpha_i = 1$. This covers one of the problems originally motivating this project: find the Bayes act for allocation $\mathbf{x}$ of hospital supplies to locations $l_i, i=1,\ldots,N$ given distributions $F_i$ of need $Y_i$, a total available stock $K$ of supplies, and a loss function
+\begin{align}
+l(\mathbf{x}, \mathbf{y}) = U\sum_{i=1}^{N} (x_i - y_i)_-.
+\end{align}
+
+- $s_{\symbfit{\beta}}$ is consistent by definition for the functional $\mathbf{Q}_{\symbfit{\beta}}$ and $S_{\symbfit{\beta}}$ is proper since
+\begin{align}
+S_{\symbfit{\beta}}(\mathbf{F}, \mathbf{F}) = s_{\symbfit{\beta}}(\mathbf{q}_{\symbfit{\beta}, \mathbf{F}},\mathbf{F}) \leq 
+ s_{\symbfit{\beta}}(\mathbf{q}_{\symbfit{\beta}, \mathbf{F}'},\mathbf{F}) = S_{\symbfit{\beta}}(\mathbf{F}', \mathbf{F})
+\end{align}
+but is not strictly proper
+
+\subsubsection{An Oracle Adjustment}
+
+Differences of $s_{\symbfit{\beta}}$ and $S_{\symbfit{\beta}}$ between forecasts may become difficult to compare as $K$ becomes small. To remedy this we can adjust scores by that of an "oracle" who sees into the future and allocates according to the point mass forecast $\delta_{\mathbf{y}}$. That is, the oracle solves the deterministic version of the AP with $\sbar_F(\mathbf{x})$ replaced by $s(\mathbf{x},\mathbf{y})$. Since the oracle knows there is no benefit to allocating more than $y_i$ to the $i$'th component, we can pose this problem as
+\begin{align}
+    \underset{\mathbf{x}\in \mathbb{R}^N, 0 \leq \mathbf{x}\leq \mathbf{y}}{\mathrm{minimize}}\,\, 
+    s(\mathbf{x},\mathbf{y})\vert_{\mathbf{x}\leq \mathbf{y}} = \sum_{i=1}^{N} -U_i (g_i(x_i)-g_i(y_i))
+    \text{ subject to } 
+    \sum_{i=1}^{N} w_i x_i \leq K. \label{DAP}
+\end{align}
+which we can again solve via its dual. The Lagrangian is now
+\begin{align}
+L(\mathbf{x}, \lambda) = \sum_{i=1}^{N} -U_i (g_i(x_i)-g_i(y_i)) + \lambda \left(\sum_{i=1}^{N}w_i x_i - K\right)
+\end{align}
+giving the dual problem of maximizing
+\begin{align}
+L_D(\lambda) &= \min_{0 \leq \mathbf{x}\leq \mathbf{y}} L(\mathbf{x}, \lambda) \\
+&= -\lambda K + \sum_{i=1}^{N} \underset{0 \leq x_i \leq y_i}{\min} \left(\lambda w_i x_i - U_i g_i(x_i) + U_ig_i(y_i)\right)
+\end{align}\
+subject to $\lambda \geq 0$. We have
+\begin{align}
+L_{D,i}(\lambda) &:= \underset{0 \leq x_i \leq y_i}{\min} \left(\lambda w_i x_i - U_i g_i(x_i) + U_ig_i(y_i)\right) \\
+&= \min \left\{ \lambda w_i x - U_i g_i(x) + U_ig_i(y_i) \mid x \in Z_{o,\lambda,i} \right\}
+\end{align}
+where
+\begin{align}
+ Z_{o,\lambda,i} = \{0, y_i\} \cup \{Z_{o,\lambda,i}' \cap (0,y_i)\}
+\end{align}
+and $Z_{o,\lambda, i}'$ is the possibly empty set of critical points solving
+\begin{align}
+\lambda = w_i^{-1}U_i g_i'(x) = w_i^{-1}\kappa_i \alpha_i g_i'(x).
+\end{align}
+Note that $L_D(0) = L(\mathbf{y}, 0) = 0$ is the oracle's score when the outcome $\mathbf{y}$ does not activate the constraint.
+
+We can again find a best lower bound on the oracle's score by approximating a maximizer $\lambda^{\star}$ with a binary search starting at $\lambda_L=0$ and 
+$\lambda_U > \max_{i,x} \{w_i^{-1}\kappa_i \alpha_i g_i'(x)\}$. And with our standard assumption that $g_i''(x) \leq 0$ for all $i$, under which the primal objective is convex and $\max_{i,x} \{w_i^{-1}\kappa_i \alpha_i g_i'(x)\} = \max_{i} \{w_i^{-1}\kappa_i \alpha_i g_i'(0)\}$, strong duality gives the oracle's score as $L_D(\lambda^{\star})$, corresponding to an allocation
+\begin{align}
+q_{o,i,K} \in \argmin \left\{ \lambda^{\star} w_i x - U_i g_i(x_i) \mid x \in Z_{o,\lambda^{\star},i}\right\}.
+\end{align}
+
+In the pinball loss case of $g_i(x)=x$ for all $i$, oracle allocation reduces to a linear program with piecewise linear dual
+\begin{align}
+L_D(\lambda) &= -\lambda K + \sum_{i=1}^{N} \underset{0 \leq x_i \leq y_i}{\min} \left(\lambda w_i x_i - U_i x_i + U_i y_i\right) \\
+&=  -\lambda K + \sum_{i=1}^{N} \min \left\{ U_i y_i, \lambda w_i y_i\right\} \\
+&= -\lambda K + \sum_{i=1}^{N} \left(U_i\mathbb{1}\{\lambda \geq U_i / w_i \} + \lambda w_i \mathbb{1}\{\lambda < U_i / w_i \}\right)y_i.
+\end{align}\
+The maximizer $\lambda^{\star}$ of $L_D(\lambda)$ for $\lambda \geq 0$ can now be found by evaluating at the $N+1$ points $\{\lambda_0 = 0, \lambda_i = U_i/w_i\}$. Again, $\lambda^{\star}=0$ corresponds to an inactive constraint under which the oracle can allocate $q_{o,i,K}=y_i$. 
+When $\lambda^\star = U_{i^\star}/w_{i^\star}$, we get
+\begin{align}
+q_{o,i,K} &= \argmin_{0 \leq x \leq y_i} \left\{\frac{U_{i^\star}}{w_{i^\star}} w_i x - U_i x + U_i y_i\right\} \\
+&= \argmin_{0 \leq x \leq y_i} \left\{\left(\frac{U_{i^\star}}{w_{i^\star}} w_i  - U_i\right) x\right\} \\
+&= \begin{cases}
+0 & \text{ if } \frac{U_{i^\star}}{w_{i^\star}} > \frac{U_{i}}{w_{i}} \\
+y_i & \text{ if } \frac{U_{i^\star}}{w_{i^\star}} < \frac{U_{i}}{w_{i}}.
+\end{cases}
+\end{align}
+If there is a single $i^{\star}$ for which $\lambda^\star = U_{i}/w_{i}$, the oracle's allocation in this coordinate is determined by the (now active) constraint as
+\begin{align}
+q_{o,i^\star,K} = w_{i^\star}^{-1}\left(K - \sum_{i \mid \frac{U_{i^\star}}{w_{i^\star}} < \frac{U_{i}}{w_{i}}} w_i y_i \right).
+\end{align}
+If $I_K = \{i \mid \lambda^\star = U_{i}/w_{i}\}$ includes $n_K > 1$ indices, then the solutions $q_{o,i,K} \in [0,y_i]$ for $i \in I_K$
+are not unique because the oracle's score will be constant on
+\begin{align}
+\left\{ \mathbf{x} \mid \sum_{i \in I_K}w_i x_i = K -  \sum_{\frac{U_{i^\star}}{w_{i^\star}} < \frac{U_{i}}{w_{i}}}w_i y_i,\,\, x_i = q_{o,i,K} \text{ for } i \notin I_K \right\}.
+\end{align}
+(Note that restricted to the coordinates in $I_K$, the score level sets are parallel to the affine constraint hyperplane.)
+If a specific solution is desired, additional criteria could be invoked.  A fairness criterion, for example, might require 
+the remaining resources $K - \sum_{\frac{U_{i^\star}}{w_{i^\star}} < \frac{U_{i}}{w_{i}}}w_i y_i$ to be divided equally among the $n_K$ recipients.
+
+
+## Special Case I: $F_i$ from same location-scale family and $w_i = 1$, $O_i = O, U_i = 1$.
+
+Also assume the constraint is active, i.e., 
+\begin{align}
+K < \sum F_i^{-1}(\alpha)= \sum \mu_i + \sigma_i\Phi^{-1}(\alpha)
+\end{align}
+where $\Phi$ is the standard CDF for the family and $\alpha = (1+O)^{-1}$. Then setting
+\begin{align}
+\sum F_i^{-1}(\alpha - \lambda) = \sum \mu_i + \sigma_i\Phi^{-1}(\alpha - \lambda) = K
+\end{align}
+we get
+\begin{align}
+\alpha - \lambda = 
+\Phi\left(\frac{K - \sum \mu_j}{\sum \sigma_j} \right):= F(K)
+\end{align}
+
+and the Bayes act when the constraint is set to $K$ is 
+\begin{align} 
+ \nonumber Q_i(K) = F_i^{-1}(F(K)) &= \mu_i +\sigma_i\Phi^{-1}(F(K)) \\ 
+ \nonumber &= \mu_i + \sigma_i\left(\frac{K - \sum \mu_j}{\sum \sigma_j} \right) \\
+ &= \mu_i + \tilde{\sigma}_i(K - \sum \mu_j)
+\end{align}
+
+where $\tilde{\sigma_i}$ is the proportion of $F$'s scale (e.g. SD) "due" to $F_i$. 
+
+Remarks:
+
+- $Q_i(K)$ here does not depend on $O$ unlike when the constraint is inactive or the $O_i$ differ.
+
+- An "excess or shortage in mean" $K - \sum \mu_j$ is divided among the components in proportion to their scale factors as adjustmments up or down from their locations $\mu_i$.  This suggests an interpretation of under-dispersion of a forecast in one component as leading to that component not receiving as much additional recources as it should when there is an excess or other components not recieving as much of scarce resources as they should when there is a shortage.
+
+The score for the forecast $\{F_i\}$ is
+
+\begin{align}
+s_K(\mathbf{Q}, \mathbf{y})&=
+ \sum(1-(1+O)\mathbb{1}
+\left\{\frac{K - \sum \mu_i}{\sum \sigma_i}> 
+\frac{y_i - \mu_i}{\sigma_i}\right\})
+(g_i(y_i) -g_i(Q_i(K))) 
+\end{align}
+
+In the motivating case that $O=0$, this becomes
+\begin{align}
+s_K(\mathbf{Q}, \mathbf{y})=
+ \sum \mathbb{1}
+\left\{\frac{K - \sum \mu_i}{\sum \sigma_i}\leq 
+\frac{y_i - \mu_i}{\sigma_i}\right\}
+(g_i(y_i) -g_i(Q_i(K))) 
+\end{align}
+
+That is, a $Q_i$ is only penalized when the standardized observed excess demand in component $i$ exceeds the standardized excess in resources or the standardized observed shortfall in demand is not as large as the standardized shortage of resources.
+
+## Special Case II: $F_i$ uniform on $[a_i,b_i]$
+
+\noindent\fbox{
+\parbox{\textwidth}{
+\textbf{Problem:}
+This does not seem to work. Take $F_1=F_2=F_{[0,1]}, \alpha_1=\alpha_2=.5, w_1=1, w_2=2$. Then
+$$
+    \lambda = \frac{3/2 - K}{1/2 + 4/2} = \frac{3-2K}{5} > \frac{1}{2}
+$$
+for $K<1/4$, so that $Q_2(\alpha_2(1-w_2 \lambda))$ is undefined. The minimizer here is $Q_1=K, Q_2=0$, which does satisfy the KKT equations \eqref{eqn:lam_Qnz} and \eqref{eqn:mu_Qz}. $Q_1=0, Q_2=K/2$ does not.
+}
+}
+
+Following [@abdel2004exact], we can directly evaluate \eqref{lambda_eq} to solve for $\lambda$ in the case of the uniform location-scale family ($\mu_i = a_i, \sigma = b_i - a_i$):
+\begin{align}
+K &=\sum w_i F_{[a_i,b_i]}^{-1}\left(\alpha_i(1 - w_i \lambda)\right) \\
+&=\sum w_i Q_{[a_i,b_i]}\left(\alpha_i(1 - w_i \lambda)\right) \\
+&= \sum w_i\left[ a_i + (b_i-a_i)(\alpha_i -  w_i \alpha_i\lambda)\right] \\
+&= \sum w_i Q_{[a_i,b_i]}(\alpha_i) - (b_i-a_i)w_i^2 \alpha_i \lambda \label{lambda_eval}
+\end{align} 
+
+Writing $D = \sum w_i Q_{[a_i,b_i]}(\alpha_i) -K$ for the ``deficit" of the unconstrained solution, we have
+
+\begin{align}
+\lambda &= \frac{D}{\sum (b_j-a_j)w_j^2 \alpha_j} \\
+\end{align}
+
+and from ??,
+\begin{align}
+Q_i &= F_{[a_i,b_i]}^{-1}\left(\alpha_i\left(1- \frac{w_iD}{\sum_j (b_j-a_j)w_j^2 \alpha_j}\right)\right) \\
+&= Q_{[a_i,b_i]}(\alpha_i) - \frac{(b_i-a_i)w_i \alpha_i D}{\sum (b_j-a_j)w_j^2 \alpha_j}.
+\end{align}
+
+That is, each constrained $Q_i$ is obtained by reducing the $\alpha_i$ quantile by an amount of the deficit proportional to the product of spread, resource weighting, and cost/loss ratio (what should this be called?) of the corresponding prediction target.
+
+## General solution method 
+
+\noindent\fbox{
+\parbox{\textwidth}{
+Is there anything we can salvage here?
+}
+}
+
+Again following [@abdel2004exact], we can use this solution for uniform $F_i$ as the basis of an iterative procedure for approximating the $Q_i$ under a constraint for general predictive distributions. Assuming that the unconstrained solution 
+$\{Q_i(\alpha_i)\}$ is not feasible and that we can evaluate $F_i$, $F_i^{-1}$ and $f_i$ at least approximately at arbitrary $x_i$, we 
+first linearize the equations \eqref{lambda_eq} at 
+$\{(\alpha_i,Q_i(\alpha_i))\}$ by replacing the $F_i^{-1}$ with the tangential approximations
+\begin{align}
+\left(F_{i}^{(1)}\right)^{-1}(p) := Q_i(\alpha_i) + \frac{p - \alpha_i}{f_i(Q_i(\alpha_i))},
+\end{align}
+that is, the quantile functions of the uniform cdf's
+\begin{align}
+F_{i}^{(1)} := \min(0,\max(1,\alpha_i + f_i(Q_i(\alpha_i))(x_i - Q_i(\alpha_i)))).
+\end{align}
+
+As before, these equations 
+\begin{align}
+   K &= \left(F_{i}^{(1)}\right)^{-1}(\alpha_i(1-w_i \lambda)) \\
+     &= \sum w_i Q_i(\alpha_i) - \frac{w_i^2 \alpha_i \lambda}{f_i(Q_i(\alpha_i))}  
+\end{align}
+are linear in $\lambda$ and have the solution
+\begin{align}
+    \lambda^{(1)} = \frac{D}{\sum \frac{w_j^2 \alpha_j}{f_j(Q_j(\alpha_j))}}.
+\end{align}
+This provides the first iterate
+\begin{align}
+    Q_i^{(1)} = F_i^{-1}(\alpha_i(1-w_i \lambda^{(1)}))
+\end{align}
+and a new deficit (or negative surplus?) 
+\begin{align}
+    D^{(1)} = \sum w_i Q_i^{(1)} - K.
+\end{align}
+Now we can repeat the process with new tengential approximations
+\begin{align}
+\left(F_{i}^{(2)}\right)^{-1}(p) := Q_i^{(1)} + \frac{p - \alpha_i^{(1)}}{f_i\left(Q_i^{(1)}\right)}
+\end{align}
+where $\alpha_i^{(1)}:=\alpha_i(1-w_i \lambda^{(1)})$ to get the next $\lambda$ iterate
+\begin{align}
+    \lambda^{(2)} = \frac{D^{(1)}}{\sum \frac{w_j^2 \alpha_j^{(1)}}{f_j\left(Q_j^{(1)}\right)}},
+\end{align}
+continuing with $\alpha_i^{(\tau)}:=\alpha_i^{(\tau -1)}(1-w_i \lambda^{(\tau)})$ until the relative error at the $\tau$'th iteration
+\begin{align}
+    \varepsilon^{(\tau)} = D^{(\tau)}/K
+\end{align}
+is sufficiently small.
+
+<!-- ## Requiring non-negative allocations
+
+Nothing in this procedure imposes the constraint that the $Q_i^{(\tau)}$ be non-negative which they will often be despite the support of the $F_i$ being non-negative.  We can, however, check before beginning the procedure whether this is the case using the lower bound on the budget required by non-negativity of all forecasts:
+\begin{align}
+    \sum w_i F_i^{-1}(\alpha_i(1-w_i \lambda^{-}))
+\end{align}
+where
+\begin{align}
+    \lambda^{-} := \min(\lambda_i(0)),
+\end{align}
+the minumum of the marginal expected benifits \eqref{marg} at $x_i=0$...  Following [@abdel2005analysis]
+ -->
+## References
+
+<div id="refs"></div>`
+
+\newcounter{appendix}
+\refstepcounter{appendix}
+\setcounter{equation}{0}
+
+\renewcommand{\theequation}{\Alph{appendix}.\arabic{equation}}
+\renewcommand{\theHequation}{\Alph{appendix}.\arabic{equation}}
+
+\section{Appendix A. Derivation Details}
+
+\subsubsection{Differentiation of $\sbar_F(x)$ in terms of a density $f$: \label{scalar_Z_deriv_detail}}
+\begin{align}
+\frac{d}{dx}\sbar_F(x) &= \frac{d}{dx} \left[ O\int_{-\infty}^x(g(x) - g(y))f(y)dy + 
+U\int_x^{\infty}(g(y) - g(x))f(y)dy \right]  \\
+&= O(g(x) - g(x))f(x) + O\int_{-\infty}^x\frac{d}{dx} \left[(g(x) - g(y))f(y)\right]dy \\
+&- U(g(x) - g(x))f(x) + U\int_x^{\infty}\frac{d}{dx} \left[(g(y) - g(x))f(y) \right]dy \\
+&= O\int_{-\infty}^x g^{\prime}(x) f(y)dy - U\int_x^{\infty} g^{\prime}(x)f(y) dy \\
+&= g^{\prime}(x)\left(OF(x) - U(1-F(x)) \right) \\
+&= g^{\prime}(x)(O+U)\left(F(x) - \frac{U}{O+U}\right) \\
+&= \kappa g^{\prime}(x)\left(F(x) - \alpha\right) 
+\end{align}
+
+\subsubsection{Comments on the dual problem formulation: \label{dual_setup}}
+
+In the main text, we noted that after defining
+\begin{align}
+L(\mathbf{x}, \lambda) = \sum_{i=1}^{N} \sbar_{F_i}(x_i) + \lambda \left(\sum_{i=1}^{N}w_i x_i - K\right),
+\end{align}
+we have the dual problem of maximizing over $\lambda \geq 0$ the objective function
+\begin{align}
+L_D(\lambda) &= \min_{0 \leq \mathbf{x}} L(\mathbf{x}, \lambda) = 
+-\lambda K + \sum_{i=1}^{N} \underset{0 \leq x_i}{\min} \left\{\lambda w_i x_i + \sbar_{F,i}(x_i)\right\}.
+\end{align}
+The solution to this dual problem gives lower bounds on a solution to the primal AP; we verify this in more detail here.
+
+First, note that for any $\mathbf{x}$ that is a feasible value for the AP, the constraint $\mathbf{w}^T\mathbf{x} \leq K$ holds, so that $\mathbf{w}^T\mathbf{x} - K \leq 0$ and for any $\lambda \geq 0$, $\lambda \left(\sum_{i=1}^{N}w_i x_i - K\right) \leq 0$. Therefore, for any feasible $\mathbf{x}$ and $\lambda \geq 0$,
+
+\begin{align}
+L(\mathbf{x}, \lambda) &= \sum_{i=1}^{N} \sbar_{F_i}(x_i) + \lambda \left(\sum_{i=1}^{N}w_i x_i - K\right) \leq \sbar_{\mathbf{F}}(\mathbf{x}).
+\end{align}
+
+Thus, for a fixed $\lambda \geq 0$,
+
+\begin{align}
+\min_{0 \leq \mathbf{x}, \mathbf{w}^T\mathbf{x} \leq K} L(\mathbf{x}, \lambda) \leq \min_{0 \leq \mathbf{x}, \mathbf{w}^T\mathbf{x} \leq K} \sbar_{\mathbf{F}}(\mathbf{x})
+\end{align}
+
+Now since $\{\mathbf{x}: 0 \leq \mathbf{x}, \mathbf{w}^T\mathbf{x} \leq K\} \subseteq \{\mathbf{x}: 0 \leq \mathbf{x}\}$ and using the fact that if $B \subseteq A$ then $\min_{x \in A} f(x) \leq \min_{x \in B} f(x)$, we have
+
+\begin{align}
+L_D(\lambda) &= \min_{0 \leq \mathbf{x}} L(\mathbf{x}, \lambda) \\
+&\leq \min_{0 \leq \mathbf{x}, \mathbf{w}^T\mathbf{x} \leq K} L(\mathbf{x}, \lambda) \\
+&\leq \min_{0 \leq \mathbf{x}, \mathbf{w}^T\mathbf{x} \leq K} \sbar_{\mathbf{F}}(\mathbf{x}), \label{eqn:appendix_weak_duality}
+\end{align}
+where the right hand side of Equation \eqref{eqn:appendix_weak_duality} is the optimal value of the AP.
+Since this holds for all $\lambda$ and in particular for the maximizer $\lambda^\star$, we have $L_D(\lambda^\star) \leq \sbar_{\mathbf{F}}(\mathbf{x}^\star)$, where $\mathbf{x}^\star$ denotes the AP solution. This inequality goes by the name of weak duality.
+
+\subsubsection{Solution of the AP via KKT equations: \label{KKT_derivation}}
+
+To describe forecasts solving the AP \eqref{AP} without the direct use of duality theory, we begin by stating the necessary Karush-Kuhn–Tucker (KKT) conditions for a point $\mathbf{Q} \in C_K$ to be a solution of the AP.
+Since the feasible set $C_K$ is a polyhedron on which $\sbar_F$ is smooth, these are: there exists
+a vector of multipliers $\symbfit{\mu} = (\lambda, \mu_1, \ldots,\mu_N) \in \mathbb{R}^{1+N}$ such that 
+\begin{align}
+\lambda, \mu_1, \ldots,\mu_N &\geq 0 \label{mult_pos} \\
+-\nabla \sbar_F (\mathbf{Q}) &= D^T \symbfit{\mu} \label{lagrange_eq}\\
+\lambda (\mathbf{w}^T \mathbf{Q} - K) &= 0 \label{comp_slack_lam}\\
+\mu_i Q_i &= 0,\quad i = 1,\ldots,N \label{comp_slack_mu}
+\end{align}
+(see for example, [@Nocedal2006], Theorem 12.1). These equations express the fact that at a minimizer, either the gradient
+ $\nabla \sbar_F$ must vanish (so that $\symbfit{\mu}=\mathbf{0}$), or the direction of greatest descent $-\nabla \sbar_F$ must 
+ lie in the normal (outwardly pointing) cone of $C_K$, which is the non-negative span of some subset (generically a single one) of the columns of $D^T$. This subset corresponds to which constraints (i.e. "sides" of $C_K$) are active, allowing the corresponding multipliers in the "complementary slackness" equations \eqref{comp_slack_lam} and \eqref{comp_slack_mu} to be positive.
+
+From \eqref{scalar_Z_deriv}, using $\mathbf{e}_i$ to denote the $i$th coordinate vector, the "Lagrange multiplier" equation \eqref{lagrange_eq} becomes
+\begin{align}
+-\sum_{i=1}^{N}\kappa_i g^{\prime}_i(Q_i) (F_i(Q_i) - \alpha_i)\mathbf{e}_i = 
+[\mathbf{w}\big| -\mathrm{Id}_N]\symbfit{\mu} =
+\sum_{i=1}^{N} (\lambda w_i - \mu_i)\mathbf{e}_i \label{eqn:lagrange_coords}
+\end{align}
+which decomposes to 
+\begin{align}
+\lambda = w_i^{-1}(\kappa_i g_i^{\prime}(Q_i)(\alpha_i - F_i(Q_i)) + \mu_i), \quad i = 1,\ldots,N. 
+\label{eqn:lagrange_decomp}
+\end{align}
+Using \eqref{comp_slack_mu}, we can write this as
+\begin{numcases} {\lambda = }
+w_i^{-1} \kappa_i g_i^{\prime}(Q_i)(\alpha_i - F_i(Q_i)) & for  $Q_i > 0$ \label{eqn:lam_Qnz}\\
+w_i^{-1} (\kappa_i g_i^{\prime}(0)(\alpha_i-F_i(0)) + \mu_i) & for $Q_i = 0$. \label{eqn:mu_Qz}
+\end{numcases} 
+
+This leaves us with two alternatives. 
+\begin{itemize}
+\item[(I)]$\lambda = 0$, i.e., the constraint $K$ on the total resources allocated is not active. Then \eqref{eqn:lam_Qnz} forces
+\begin{align}
+F_i(Q_i) = \alpha_i \text{  for } Q_i > 0,
+\end{align}
+and \eqref{eqn:mu_Qz} forces
+\begin{align}
+F_i(0) = \alpha_i + \mu_i/\kappa_i g_i^{\prime}(0) \geq \alpha_i \text{  for } Q_i = 0.
+\end{align}
+That is, $\mathbf{Q}$ is a vector with entries $Q_i = \max(Q_i(\alpha_i),0)$.
+\item[(II)] $\lambda > 0$, so that the constraint $K$ is active. In this case \eqref{eqn:lam_Qnz} forces
+\begin{align}
+F_i(Q_i) < \alpha_i \text{  for } Q_i > 0,
+\end{align}
+and for any $i$ with $Q_i=0$, \eqref{eqn:mu_Qz} along with $\mu_i \geq 0$ gives a lower bound on $\lambda$,
+\begin{align}
+\lambda \geq w_i^{-1}\kappa_i g_i^{\prime}(0)(\alpha_i-F_i(0)).
+\end{align}
+And from \eqref{comp_slack_lam}, the constraint must be active, i.e., 
+\begin{align}
+\mathbf{w}^{T}\mathbf{Q} = K. \label{active_constraint}
+\end{align}
+\end{itemize}
+
+Now since $\sbar_F$ is a continuous function on the compact set $C_K$, some solution $\mathbf{Q}\in C_K$ of the AP exists.
+Uniqueness, however, requires some additional conditions on the $g_i$ over the simplex
+$\{\mathbf{x} \in C_K \mid \mathbf{w}^T\mathbf{x}=K\}$. One such set of conditions -- that for convenience we'll require over all of $C_K$
+-- is that the $g_i$ have non-positive second derivatives, 
+\begin{align}
+g_i^{\prime \prime}(x_i) \leq 0 \text{  whenever  } F_i(x_i) < \alpha_i \label{g_pos_cond}
+\end{align}
+so that from \eqref{scalar_Z_deriv2}, the second partial derivatives $\sbar_{F,x_i x_i}$ are all non-negative on $C_K$. Because $\sbar_{F,x_i x_j}=0, i \neq j$, the Hessian $\nabla^2 \sbar_F$ is then positive semi-definite on $C_K$ so that $\sbar_F$ in convex on $C_K$ and any local minimizer for the AP is actually global. (Note that we might have to consider minimizing sets if any of the densities $f_i$ vanish at a minimizer, but we'll set aside this possibility for now.) And along with \eqref{eqn:lagrange_decomp}, requiring \eqref{g_pos_cond} gives 
+the upper bound
+\begin{align}
+\lambda \leq \min_i w_i^{-1}(\kappa_i g_i^{\prime}(0)(\alpha_i-F_i(0)) + \mu_i). \label{eqn:lam_upper_bound}
+\end{align}
+
+Finding this unique $\mathbf{Q}$ can sometimes be straightforward. Suppose, for example, there are no point masses,
+$F_i:[0,\varepsilon_i] \rightarrow [0,\delta_i]$ are bijective for some $\varepsilon_i, \delta_i>0$ and all $i$, and $g_i^{\prime}$ are all identically 1, and that the constraint is active with $\mathbf{w}^T \mathbf{Q}_{\mathbf{F}}(\symbfit{\alpha}) = K_1 > K$.
+Then we can write the equations \eqref{eqn:lam_Qnz} as
+\begin{align}
+Q_i(\lambda) = F_i^{-1}(\alpha_i- \lambda w_i/ \kappa_i ) = F_i^{-1}(\alpha_i(1 - \lambda w_i/ U_i ))
+\end{align}
+which are all defined for $\lambda$ in the interval $I=[0,\lambda_0 = \min (U_i/w_i )]$. By our assumptions, the left hand side of 
+the constraint equation \eqref{active_constraint}
+\begin{align}
+\sum_{i=1}^{N} w_i Q_i(\lambda) = K.
+\end{align}
+is a continuous function 
+mapping $I$ to $[K_1, \sum_{i=1}^{N} w_i Q_i(\lambda_0)]$.  If $K$ is sufficently close to $K_1$, 
+we will have a root $0< \lambda^{\star} < \lambda_0$ which can be easily found
+using a formal or numerical search in $I$.  And since our assumptions imply that $Q_i(\lambda^{\star})>0$, the KKT conditions \eqref{eqn:lam_Qnz} and \eqref{eqn:mu_Qz} are met.
+
+But if the constraint is too tight or the lower bounds of the supports of the $F_i$ differ, we will potentially need to repeat the root search for each possible set $\{i \mid Q_i = 0\}$, facing intractability for large $N$. Our convexity assumption 
+\eqref{g_pos_cond}, however, besides ensuring existence and uniqueness, makes available a 
+binary search method of [@zhang2009binary] which is only of polynomial complexity in $N$. In particular \eqref{g_pos_cond} 
+guarantees that the functions \eqref{eqn:marg} are decreasing in $x_i$ (cf. \eqref{scalar_Z_deriv2}) from
+\begin{align}
+ \lambda_i(0) = w_i^{-1}\kappa_i g_i^{\prime}(0)(\alpha_i -F_i(0)) \quad \text{to} \quad \lambda_i(Q_i(\alpha_i)) = 0.
+\end{align}
+They can therefore can be inverted to give decreasing functions $x_i(\lambda_i)$ with 
+\begin{align}
+x_i(0) = Q_i(\alpha_i)\quad \text{and} \quad x_i( w_i^{-1}\kappa_i g_i^{\prime}(0)(\alpha_i -F_i(0))) = 0.
+\end{align}
+
+\newcommand\comwidth{.4}
+\begin{algorithm}
+\begin{algorithmic}
+\caption*{ZXH binary search algorithm}
+\State{\textbf{Input:} $F_i, Q_i, \kappa_i, \alpha_i, w_i, g_i, i=1,\ldots,N$,} 
+\State{$K, \varepsilon_K, \varepsilon_\lambda, \mathrm{root}(f,I)$}
+\Comment{\parbox[t]{\comwidth\linewidth}{$\mathrm{root}$ a function returning a root of function $f$ on interval $I$}}
+\For{$i=1$ to $N$}
+    \State $x_i \gets \max(0,\min(Q_i(\alpha_i), w_i^{-1}2K))$ 
+\Comment{\parbox[t]{\comwidth\linewidth}{ensure constraint is violated if any $\alpha_i=1$}}
+\EndFor 
+\If{$\mathbf{w}^T \mathbf{x} \leq K$} 
+\Return $\mathbf{Q}=\mathbf{x}$ 
+\Comment{\parbox[t]{\comwidth\linewidth}{return quantiles if they satisfy constraint}}
+\EndIf 
+\State $\lambda_1 \gets \lambda_L \gets 0$,
+$\lambda_U \gets \max_i{\lambda_i(0)}$, $\tau \gets 2$ 
+\If{$\lambda_U \leq 0$} \State \Return $\mathbf{Q}=\mathbf{0}$
+\Comment{\parbox[t]{\comwidth\linewidth}{handle case where all expected component scores increasing at 0}}
+\EndIf 
+\While{$\lvert(\mathbf{w}^T \mathbf{x} - K)/ K \lvert > \varepsilon_K$ or $\lambda_U - \lambda_L > \varepsilon_\lambda$}
+    \State $\lambda_\tau \gets (\lambda_U + \lambda_L)/2$
+    \For{$i=1$ to $N$}
+        \If{$\lambda_\tau < \lambda_i(0)$}
+        \Comment{\parbox[t]{\comwidth\linewidth}{that is, if, from \eqref{eqn:mu_Qz} and \eqref{g_pos_cond}, $\lambda_\tau$ cannot be a multiplier for $x_i=0$}}
+            \If{$\lambda_\tau < \lambda_{\tau-1}$}
+            \State{$I_{i,\tau} \gets [x_i, Q_i(\alpha_i)]$} 
+            \Else \State{$I_{i,\tau} \gets [0, x_i]$}
+            \EndIf
+            \State{$x_i \gets \mathrm{root}(\lambda_i(x)-\lambda_\tau, I_{i,\tau})$}
+            \Comment{\parbox[t]{\comwidth\linewidth}{well-defined since $\lambda_i$, defined by \eqref{eqn:marg}, is decreasing}}
+        \Else \State{$x_i \gets 0$} 
+        \Comment{\parbox[t]{\comwidth\linewidth}{prevent decrease past $0$ if $\lambda_\tau > \lambda_{\tau-1}$ 
+        and maintain at $0$ if $\lambda_i(0) < \lambda_\tau < \lambda_{\tau-1}$}}
+        \EndIf
+    \EndFor
+        \If{$\mathbf{w}^T \mathbf{x} < K$}
+        \State{$\lambda_U \gets \lambda_\tau$}
+        \Comment{\parbox[t]{\comwidth\linewidth}{unused capacity so $\lambda_{\tau+1}<\lambda_\tau$ and any $x_i$ could be increased but none will decrease}}
+        \Else \State{$\lambda_L \gets \lambda_\tau$}
+        \Comment{\parbox[t]{\comwidth\linewidth}{capacity exceeded so $\lambda_{\tau+1}>\lambda_\tau$ and no $x_i$ will increase so any set to $0$ will remain so}}
+        \EndIf
+    \State{$\tau \gets \tau+1$}
+\EndWhile
+\State \Return $\mathbf{Q}=\mathbf{x}$ 
+\end{algorithmic}
+\end{algorithm}
+
