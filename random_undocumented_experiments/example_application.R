@@ -1,9 +1,27 @@
 library(tidyverse)
 library(covidHubUtils)
+if (!require("distfromq")) {
+  devtools::install_github("reichlab/distfromq")
+}
 library(distfromq)
+if (!require("alloscore")) {
+  devtools::install_github("aaronger/alloscore")
+}
 library(alloscore)
 
-hub_repo_path <- "~/research/epi/covid/covid19-forecast-hub/"
+# Load the gh package to check for recent and probably crucial commits to alloscore
+if (!require("gh")) {
+  install.packages("gh")
+}
+if (
+  gh::gh("/repos/aaronger/alloscore/commits", .limit = 1)[[1]]$commit$committer$date > packageDate("alloscore")
+) {
+  message("Alloscore may be out of date...")
+}
+
+
+#hub_repo_path <- "~/research/epi/covid/covid19-forecast-hub/"
+hub_repo_path <- "~/covid/covid19-forecast-hub/"
 
 inc_hosp_targets <- paste(0:30, "day ahead inc hosp")
 forecasts_hosp <- load_forecasts(
@@ -92,6 +110,7 @@ names(Kdf) <- paste0("K=",Ks)
         dg = 1,
         eps_K = .01,
         eps_lam = 1e-5,
+        verbose = TRUE,
         against_oracle = TRUE
         ))
   ))
