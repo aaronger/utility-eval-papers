@@ -122,6 +122,10 @@ $\frac{\partial}{\partial x_i} \sbar_F(\mathbf{x}) = L[F_i(x_i) - 1]$ (see the s
 In words, at the allocation given by the Bayes act, the rate of change of the expected score as a function of the amount allocated to location $i$ is given by $\lambda^{\star}$.
 This derivative is the same for all locations, so the optimal allocation divides the available resources across all locations in such a way that according to $F$, the expected benefit of 1 additional unit of resources is the same in all locations.
 
+\textbf{1st attempt by APG to rephrase last paragraph}
+
+A key observation here is that the Bayes act results from using a \textbf{shared} probability level, $1 - \lambda^{\star}/L$, to determine allocations as the corresponding quantiles of the location-specific forecast distributions $F_i$ which sum to the constraint $K$.
+
 \paragraph{Step 3: Define the scoring rule.} We can now define a proper scoring rule for the probabilistic forecast $F$ as
 \begin{equation}
 S(F, y) = s(\mathbf{x}^F, y) = \sum_{i=1}^n L (F_i^{-1}(1 - \lambda^{\star}/L) - y_i)_-
