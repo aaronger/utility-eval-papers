@@ -124,8 +124,14 @@ This derivative is the same for all locations, so the optimal allocation divides
 
 \textbf{1st attempt by APG to rephrase last paragraph}
 
-A key observation here is that the Bayes act results from using a \textbf{shared} probability level, $1 - \lambda^{\star}/L$, to determine allocations as the corresponding quantiles of the location-specific forecast distributions $F_i$ which sum to the constraint $K$.
-
+The central mathematical ideas in this construction are that 
+\begin{itemize}
+\item optimization under a \emph{single} constraint requires the rates of change of (a probabilistic forecast's) expected benefit with respect to our decision variables, $x_i$, to be the same for all locations 
+\item these rates of change can be identified with probabilities
+\item and therefore the Bayes act results from using a \emph{shared} probability level, $1 - \lambda^{\star}/L$, to determine allocations as the corresponding quantiles of the location-specific forecast distributions $F_i$ which satisfy the constraint.
+\end{itemize}
+(See the supplement for detailed discussion and derivations of these points.)
+ 
 \paragraph{Step 3: Define the scoring rule.} We can now define a proper scoring rule for the probabilistic forecast $F$ as
 \begin{equation}
 S(F, y) = s(\mathbf{x}^F, y) = \sum_{i=1}^n L (F_i^{-1}(1 - \lambda^{\star}/L) - y_i)_-
