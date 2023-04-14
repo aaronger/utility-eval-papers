@@ -1,0 +1,147 @@
+---
+title: "Connection between allocation scoring rules an CRPS: example with exponential forecasts"
+date: "`r Sys.Date()`"
+output: 
+    pdf_document:
+        latex_engine: xelatex
+urlcolor: blue
+bibliography: allocation.bib 
+header-includes:
+   - \usepackage{amsmath}
+   - \usepackage{algorithm}
+   - \usepackage[noend]{algpseudocode}
+   - \usepackage{amsthm}
+   - \usepackage{bm}
+   - \usepackage{cases}
+   - \usepackage{caption}
+   - \usepackage{unicode-math}
+   - \usepackage{hyperref}
+   - \DeclareMathOperator*{\argmin}{argmin}
+---
+
+\newcommand{\sbar}{\overline{s}}
+
+```{r}
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+```
+
+Consider a simplified setting where $O_i = 0$ and $U_i = U$ are shared for all $i$, and $g_i(x_i) = x_i$. This is the setting we have laid out in the initial alloscore manuscript. We consider three settings:
+
+ 1. The decision maker is fixed with a fixed, known, constraint on the total allocation, $K$.
+ 2. The decision maker has some uncertainty about the total constraint $K$.
+ 3. We would like to understand the relationship between the allocation score and CRPS by exhibiting the distribution on $K$ that would lead to an "equally-weighted" CRPS.
+
+Throughout, we will suppose there are $n = 2$ locations, and a forecaster produces the forecasts $Y_1 \sim Exp(1/\sigma_1)$ with $\sigma_1 = 1$ and $Y_2 \sim Exp(1 / \sigma_2)$ with $\sigma_2 = 5$. The quantile functions corresponding to these forecasts are given by $F_i^{-1}(\tau) = -\sigma_i \log(1 - \tau)$, where $\tau$ is a probability level which we take to be in $(0, 1)$.
+
+If I've correctly translated from the notes document, the expected loss function is
+\begin{equation*}
+\bar{s}_F(\mathbf{x}) = \sum_{i=1}^2 \mathbb{1}\{0 \leq x_i\}\left[ \sigma e^{-x_i/\sigma} - \sigma \right]
+\end{equation*}
+
+I'm going with this below because I think it's close, but I don't actually think it's correct because it leads to negative loss values.
+
+\section{Fixed $K$}
+
+At a fixed constraint $K$, in our simplified setting the solution of the allocation problem is given by the quantiles $(F_1^{-1}(\tau), F_2^{-1}(\tau))$ at a probability level $\tau$ (connecting to notation elsewhere, $\tau = 1 - \lambda^\star$) such that
+\begin{align*}
+K &= F_1^{-1}(\tau) + F_2^{-1}(\tau) \\
+  &= -\log(1 - \tau) (\sigma_1 + \sigma_2) \\
+  &= h(\tau)
+\end{align*}
+We can rearrange to obtain
+\begin{equation}
+\tau = h^{-1}(K) = 1 - \exp[-K/(\sigma_1 + \sigma_2)]. \label{eqn:tau_fn_K}
+\end{equation}
+
+We can visualize this in terms of the expected loss function (shown in shades of blue and yellow) as follows:
+
+```{r, cache = TRUE}
+sigma_1 <- 1
+sigma_2 <- 5
+
+K <- 5
+
+tau <- 1 - exp(-K/(sigma_1 + sigma_2))
+
+x_1 <- qexp(tau, rate = 1 / sigma_1)
+x_2 <- qexp(tau, rate = 1 / sigma_2)
+
+n_grid <- 1001
+grid_l <- 0.01
+grid_u <- 6.0
+y_grid <- tidyr::expand_grid(
+    y_1 = seq(from = grid_l, to = grid_u, length.out = n_grid),
+    y_2 = seq(from = grid_l, to = grid_u, length.out = n_grid)
+)
+
+joint_dist <- y_grid %>%
+    dplyr::mutate(
+        s_bar = sigma_1 * exp(-y_1 / sigma_1) - sigma_1 +
+                sigma_2 * exp(-y_2 / sigma_2) - sigma_2
+    )
+
+ggplot(data = joint_dist) +
+    geom_raster(aes(x = y_1, y = y_2, fill = s_bar)) +
+    geom_contour(mapping = aes(x = y_1, y = y_2, z = s_bar)) +
+    geom_abline(intercept = K, slope = -1) +
+    geom_point(x = x_1, y = x_2, color = "orange") +
+    scale_fill_viridis_c() +
+    xlim(0, 6) +
+    ylim(0, 6) +
+    theme_bw()
+```
+
+
+\section{Obtaining the CRPS weighting associated with a distribution on $K$}
+
+Suppose that the decision maker has some uncertainty about the level of the constraint $K$, expressed by the distribution $F_K$.  For concreteness, here we take this distribution to be $Gamma(500, 0.01)$ using a shape and scale parameterization. Here's a picture of this distribution, which is concentrated near $K = 5$:
+
+```{r}
+curve(dgamma(x, shape = 500, scale = 0.01), from = 0, to = 10, n = 1001)
+```
+
+As discussed above, given fixed forecasts $F_1$ and $F_2$, for each value of the constraint $K$, a quantile probability level $\tau = h^{-1}(K) = 1 - \exp[-K/(\sigma_1 + \sigma_2)]$ is determined. We can therefore use a change of variables to obtain a density for $\tau$ from the density for $K$ as follows:
+
+\begin{align*}
+f_T(\tau) &= f_{K}(h(\tau)) \left\vert \frac{d}{d\tau} h(\tau) \right\vert \\
+&= f_{K}(-\log(1 - \tau) (\sigma_1 + \sigma_2)) \frac{(\sigma_1 + \sigma_2)}{1 - \tau} \\
+\end{align*}
+
+Here's a plot of this induced density on $\tau$:
+
+```{r}
+tau <- seq(from = 0.001, to = 0.999, length.out = 10000)
+
+d_tau <- function(tau) {
+    dgamma(-log(1 - tau) * (sigma_1 + sigma_2), shape = 500, scale = 0.01) *
+                ((sigma_1 + sigma_2) / (1 - tau))
+}
+
+plot(tau, d_tau(tau), "l")
+
+# note that this is a density
+sum(d_tau(tau) * diff(tau)[1])
+```
+
+We can think of the allocation score determined by $F_K$ as corresponding to a weighted CRPS with the weighting expressed by the above density on quantile levels. However, note that this interpretation is specific to this forecast. A different forecast would translate to a different weighting on quantile levels.
+
+\section{Reproducing equally weighted CRPS}
+
+Going in the other direction, given forecasts $F_1$ and $F_2$, we can determine the distribution on values of the constraint $K$ that corresponds to an equal weighting of all quantile levels, as is done in CRPS.  Again, this implied distribution on $K$ depends on the forecasts and will be different for different forecasters.
+
+In this setting, we start with $\tau \sim Unif(0, 1)$, and note that given a value of $\tau$ we can calculate $K = h(\tau) = -\log(1 - \tau) (\sigma_1 + \sigma_2)$. This induces a distribution on $K$ with density
+\begin{align*}
+f_K(K) &= f_{T}(h^{-1}(K)) \left\vert \frac{d}{dK} h^{-1}(K) \right\vert \\
+&= 1 \cdot (\sigma_1 + \sigma_2)^{-1} \exp[-K/(\sigma_1 + \sigma_2)]
+\end{align*}
+This is the density of an $Exp(\sigma_1 + \sigma_2)$ random variable.
+
+Thus, with our forecasts, CRPS corresponds to the weighting on resource constraints illustrated in the following figure:
+
+```{r}
+curve(dexp(x, rate = 1 / (sigma_1 + sigma_2)), 0, 20)
+```
+
+This corresponds to placing large mass on small values of the constraint $K$, which may not correspond well to actual knowledge about the resource constraints.
