@@ -142,14 +142,14 @@ Taking, for example, $g(x)=x$ and $F = \mathrm{Exp}(1/\sigma)$, we have
 \begin{align}
 \overline{g}_{F}(x) = \int_{0}^{\max(0,x)} y \frac{e^{-y/\sigma}}{\sigma}dy = \mathbb{1}\{x \geq 0\} \left[\sigma-e^{-x / \sigma}(\sigma+x)\right]
 \end{align}
-so that
+so that \eqref{eqn:obj_pexp} is
 \begin{align}
 \sbar_{\mathrm{Exp}(1/\sigma)}(x) 
 &= \kappa\left[x(\mathbb{1}\{x \geq 0\} \left[1 -e^{-x / \sigma}\right]  - \alpha) - \mathbb{1}\{x \geq 0\} \left[\sigma-e^{-x / \sigma}(\sigma+x)\right] + \alpha\sigma\right] \\
 &= \kappa\left[\mathbb{1}\{x \geq 0\}\sigma e^{-x / \sigma} + (\mathbb{1}\{x \geq 0\} - \alpha)(x-\sigma)\right].
 \end{align}
 
-If, on the other hand, $F=F_{\mu, \sigma}$ lies in a location-scale family, that is, $F(x)= F_0\left(\frac{x-\mu}{\sigma}\right)$, we have
+And if $F=F_{\mu, \sigma}$ lies in a location-scale family, that is, $F(x)= F_0\left(\frac{x-\mu}{\sigma}\right)$, we have
 \begin{align}
 \int_{-\infty}^{x} y dF(y) &= \int_{-\infty}^{\frac{x-\mu}{\sigma}}(\mu + \sigma z)dF_0(z) \\
 & = \mu F(x) + \sigma \int_{-\infty}^{\frac{x-\mu}{\sigma}}zdF_0(z).
