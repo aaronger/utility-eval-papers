@@ -2,10 +2,10 @@
 title: " Allocation scoring rules as a generalization of quantile scoring rules"
 date: "`r Sys.Date()`"
 output: 
-    pdf_document:
-        latex_engine: xelatex
+  pdf_document:
+    latex_engine: xelatex
 urlcolor: blue
-bibliography: allocation.bib 
+bibliography: allocation_notes.bib 
 header-includes:
    - \usepackage{amsmath}
    - \usepackage{algorithm}
@@ -17,7 +17,6 @@ header-includes:
    - \usepackage{unicode-math}
    - \usepackage{hyperref}
    - \DeclareMathOperator*{\argmin}{argmin}
-
 ---
 
 ```{r setup, include=FALSE}
@@ -66,20 +65,20 @@ where $\alpha = U/(U+O)$, $\kappa = U+O$,
 $u_+ := \max(u,0)$, $u_- := \max(-u,0) = (-u)_+$, and $\mathbb{1}\{A\}$ is the indicator function of the event $A$.
 This scoring function $s$ is negatively oriented, i.e., a smaller score indicates better performance corresponding to a smaller cost due to under- or over-prediction.
 
-By making the forecaster aware of $s$ prior to prediction, we elicit an $\alpha$-level quantile $q_{\alpha,F}$ of the forecast distribution $F$ for $Y$. That is, if a forecaster believes that $Y \sim F$, then according to this belief they minimize their expected score
+By making the forecaster aware of $s$ prior to prediction, we elicit an $\alpha$-level quantile $q_{\alpha,F}$ of the forecast distribution $F$ for $Y$. To see this, notice that if a forecaster believes that $Y \sim F$, they will calculate their expected score to be
 \begin{align} 
-\sbar_F(x) = E_F[s(x,Y)]  &= O E_F[(g(x) - g(Y))\sb{+}] + U E_F[(g(x) - g(Y))\sb{-}] \label{eqn:scalar_obj}\\
-&= O\int_{-\infty}^x(g(x) - g(y))f(y)dy + U\int_x^{\infty}(g(y) - g(x))f(y)dy \label{eqn:scalar_obj_int}
+\sbar_F(x) = E_F[s(x,Y)]  &= O E_F[(g(x) - g(Y))\sb{+}] + U E_F[(g(x) - g(Y))\sb{-}]. \label{eqn:scalar_obj}
 \end{align}
-by forecasting a quantile $q_{\alpha, F} \in Q_F\left(\alpha\right)$ which solves the first order equation
+In order to minimize this expectation, they must forecast a solution of the first order equation
 \begin{align}
 \nonumber 0 =\frac{d}{dx}\sbar_F(x) 
 &= O E_F\left[\frac{d}{dx}(g(x) - g(Y))\sb{+}\right] + U E_F\left[\frac{d}{dx}(g(x) - g(Y))\sb{-}\right] \\
 &= O E_F[g^{\prime}(x)\mathbb{1}\{Y < x\}] + U E_F[-g^{\prime}(x)\mathbb{1}\{Y \geq x\}] \\
 &= O g^{\prime}(x) \mathbb{P}_F(Y<x) - U g^{\prime}(x) \mathbb{P}_F(Y\geq x) \\
 &= g^{\prime}(x)\left( O F(x) - U (1-F(x))\right) \\
-&= \kappa g^{\prime}(x)\left(F(x) - \alpha\right) \label{scalar_Z_deriv}.
+&= \kappa g^{\prime}(x)\left(F(x) - \alpha\right), \label{scalar_Z_deriv}
 \end{align}
+that is, a quantile $q_{\alpha, F} \in Q_F\left(\alpha\right)$.
 (See \hyperref[scalar_Z_deriv_detail]{appendix} for an alternative derivation in terms of a density.)
 The critical point $q_{\alpha, F}$ is actually a minimum since \eqref{scalar_Z_deriv} is non-positive on $\{x<q_{\alpha, F}\}$ and non-negative on $\{x>q_{\alpha, F}\}$.
  When $g^{\prime}(q)>0$, this minimum is unique since
@@ -93,9 +92,9 @@ If $g^{\prime}(q_{\alpha, F})=0$ or does not exist, or $Q_F(\alpha)$ is not a si
 
 Note that $\frac{d}{dx}\sbar_F(x) =\frac{d}{dx}E_F[s(x,Y)] = h(x)E_F[V(x,Y)]$, where $h(x) = \kappa g^{\prime}(x)$ and 
 \begin{align}
-V(x,y) &\coloneq (1-\alpha)\mathbb{1}\{y<x\} - \alpha \mathbb{1}\{y \geq x\} \mathrel{\phantom{=}}\\
-&= (1-\alpha)\mathbb{1}\{y<x\} - \alpha \left(1 - \mathbb{1}\{y<x\}\right) \\
-&= \mathbb{1}\{y<x\} - \alpha. 
+V(x,y) &\coloneq (1-\alpha)\mathbb{1}\{y < x\} - \alpha \mathbb{1}\{y \geq x\} \mathrel{\phantom{=}}\\
+&= (1-\alpha)\mathbb{1}\{y < x\} - \alpha \left(1 - \mathbb{1}\{y < x\}\right) \\
+&= \mathbb{1}\{y < x\} - \alpha. 
 \end{align}
 By virtue of $E_F[V(Q_F(\alpha),Y)]=0$, $V$ is said to be an \emph{identification function} for the $\alpha$ quantile. The fact that, generally speaking, any elicitable functional (such as a quantile) has an identification function is known as \emph{Osband's principle}.
 
@@ -113,82 +112,63 @@ This defines a functional on $\mathcal{F_0}$, the class of measures on the Borel
 \end{align}
 where $Q_{\alpha}$ is the $\alpha$ quantile functional.
 
-Using $u_- = u_+ - u$, the objective function \eqref{eqn:scalar_obj} can also be helpfully rewritten as
+## Examples of forecaster expected scores
+
+Corresponding to the two expressions of an expectation $E_F[h(y)\mathbb{1}\{a < y<b\}]$ as either side of the Riemann-Stieltjes integration-by-parts 
+formula $\int_{a}^{b}h(y)dF(y) = h(y)F(y) \big|_{a}^{b} - \int_{a}^{b}F(y)dh(y)$, the expected score \eqref{eqn:scalar_obj}
+can be written as either
 \begin{align}
-\nonumber \sbar_F(x) &= OE_F[(g(x) - g(Y))\sb{+}] + U E_F[(g(x) - g(Y))\sb{+}] - U E_F[(g(x) - g(Y))] \\ 
-\nonumber  &= (O+U)E_F[(g(x) - g(Y))\sb{+}] - U E_F[(g(x) - g(Y))] \\
-&= (O+U) \int_{-\infty}^{x} (g(x) - g(y))f(y)dy - Ug(x)+ U \overline{g}\sb{F} \label{obj_integral}\\
-&= (O+U)\left(g(x)F(x) - \overline{g}_F(x) \right) - Ug(x) + U\overline{g}\sb{F}) \label{obj_sep}\\
-&= \kappa\left[g(x)(F(x) - \alpha) -\overline{g}_F(x) + \alpha \overline{g}\sb{F}\right] \label{obj_pexp} 
+\sbar_F(x) &= O \int_{\mathbb{R}} \int_{\mathbb{R}} \mathbb{1}\{Y \leq u < x\}dg(u) dF(y) + U \int_{\mathbb{R}} \int_{\mathbb{R}} \mathbb{1}\{x \leq u < Y\}dg(u) dF(y) \\
+&= O \int_{\mathbb{R}} \mathbb{1}\{u < x\} F(u) dg(u) + U \int_{\mathbb{R}} \mathbb{1}\{u \geq x\} (1-F(u)) dg(u) \\
+&= O \int_{-\infty}^x F(u) dg(u) + U \int_{x}^{\infty}(1-F(u)) dg(u), \label{eqn:scalar_obj_cdf_form} 
 \end{align}
-where $\overline{g}_F(x) = E_F[g(Y)\mathbb{1}\{Y \leq x\}]$, and $\overline{g}\sb{F} = E_F[g(Y)]$.
-
-The function $\overline{g}_F(x)$ sometimes goes by the name of ``partial expectation" (Schlaifer Raiffa, p. 109) and can often be made more explicit for certain $F$ and $g$. 
-
-##  Alternative Notation Possibilities
-
-Let $Y \sim F,F_i$ be various forecaster beliefs and $Y \sim G$ be reality.
+or
 \begin{align}
-\overline{s}_{F,\kappa,\alpha}(x) &:= s_{\kappa,\alpha}(x,F) := E_F[s_{\kappa,\alpha}(x,Y)] \\
-\overline{s}_{\kappa,\alpha}(x) &:= s_{\kappa,\alpha}(x,G) \\
-s_{\symbfit{\kappa},\symbfit{\alpha}}(\mathbf{x}, \mathbf{F}) &:= 
-\overline{s}_{\mathbf{F},\symbfit{\kappa},\symbfit{\alpha}}(\mathbf{x}) = 
-\sum_{i}^{\mathrm{dim}\mathbf{x}} s_{\kappa_i,\alpha_i}(x_i, F_i) \\
-S(F,y) &:= s(q_{F,\alpha}, y) \\
-S(F_1,F_2) &:= E_{F_2}[S(F_1,Y)] = s(q_{F_1,\alpha}, F_2) \\
-\overline{S}(F) &:= E_G[s(q_{F, \alpha}, Y)]
+\nonumber \sbar_F(x) &= O\int_{-\infty}^x(g(x) - g(y))dF(y) + U\int_x^{\infty}(g(y) - g(x))dF(y)\\ 
+&= O\left(g(x)F(x) - \int_{-\infty}^x g(y)dF(y) \right) + U \left( \int_x^{\infty} g(y)dF(y) - g(x)(1-F(x))\right) \\
+&= g(x)\left((O+U)F(x) - U\right) -  (O+U)\int_{-\infty}^x g(y)dF(y) + U \int_{\mathbb{R}} g(y)dF(y) \\
+&= \kappa\left[g(x)(F(x) - \alpha) -\overline{g}_{F}(x) + \alpha \overline{g}\sb{F}\right] \label{eqn:obj_pexp} 
+\end{align}
+where 
+\begin{align}
+\overline{g}_F(x) &= E_{F}[g(Y)\mathbb{1}\{Y \leq x\}] \label{eqn:gbarx} \\
+\overline{g}\sb{F} &= E_{F}[g(Y)]. \label{eqn:gbar}
 \end{align}
 
-Define the $s$-entropy of an arbitrary $F$ 
+The function $\overline{g}_F(x)$ sometimes goes by the name of ``partial expectation" (Schlaifer Raiffa, p. 109) and can often be made more explicit
+for certain $F$ and $g$. 
+
+Taking, for example, $g(x)=x$ and $F = \mathrm{Exp}(1/\sigma)$, we have
 \begin{align}
-e_s(F) &:= E_F[S(F, Y)] = E_F[s(q_{F,\alpha}, Y)] = s(q_{F,\alpha}, F) \\
+\overline{g}_{F}(x) = \int_{0}^{\max(0,x)} y \frac{e^{-y/\sigma}}{\sigma}dy = \mathbb{1}\{x \geq 0\} \left[\sigma-e^{-x / \sigma}(\sigma+x)\right]
 \end{align}
-and of the RV $Y$ as
+so that
 \begin{align}
-e_s(Y) &:= e_s(G).
-\end{align}
-Define the $s$-divergence between two forecasts as
-\begin{align}
-d_s(F_1,F_2) &:= S(F_1,F_2) - S(F_2,F_2) = S(F_1,F_2) - e_s(F_2)
-\end{align}
-and the $s$-divergence from $F$ to $Y$ as
-\begin{align}
-d_s(F,Y) &:= S(F,G) - e(Y).
+\sbar_{\mathrm{Exp}(1/\sigma)}(x) 
+&= \kappa\left[x(\mathbb{1}\{x \geq 0\} \left[1 -e^{-x / \sigma}\right]  - \alpha) - \mathbb{1}\{x \geq 0\} \left[\sigma-e^{-x / \sigma}(\sigma+x)\right] + \alpha\sigma\right] \\
+&= \kappa\left[\mathbb{1}\{x \geq 0\}\sigma e^{-x / \sigma} + (\mathbb{1}\{x \geq 0\} - \alpha)(x-\sigma)\right].
 \end{align}
 
-Thus, $\overline{S}(F) = d_s(F,Y) + e_s(Y)$.
+If, on the other hand, $F=F_{\mu, \sigma}$ lies in a location-scale family, that is, $F(x)= F_0\left(\frac{x-\mu}{\sigma}\right)$, we have
+\begin{align}
+\int_{-\infty}^{x} y dF(y) &= \int_{-\infty}^{\frac{x-\mu}{\sigma}}(\mu + \sigma z)dF_0(z) \\
+& = \mu F(x) + \sigma \int_{-\infty}^{\frac{x-\mu}{\sigma}}zdF_0(z).
+\end{align}
+Then \eqref{eqn:obj_pexp} becomes
+\begin{align}
+\sbar_F(x) &= \kappa\left[x(F(x) - \alpha) - \mu F(x) - \sigma \int_{-\infty}^{\frac{x-\mu}{\sigma}}zdF_0(z)  + \alpha E_F[Y]\right] \\
+&= \kappa\left[F(x)(x-\mu) - \alpha(x - E_F[Y]) - \sigma \int_{-\infty}^{\frac{x-\mu}{\sigma}}zdF_0(z)\right] \label{eqn:lc-form}
+\end{align}
 
-## Examples for various forecaster beliefs
-
-### 1) $Y \sim U[a,b]$
-
-Here $F(x) = \mathbb{1}\{a<x<b\}(x-a)/(b-a) + \mathbb{1}\{b \leq x\}$ in \eqref{obj_pexp} gives 
-<!--  
-&= 
-\begin{cases}
-\frac{U}{b-a}\int_a^b (g(y) - g(x))dy & x\leq a \\[8pt]
-\frac{O}{b-a}\int_a^x (g(x) - g(y))dy + \frac{U}{b-a}\int_x^b (g(y) - g(x))dy & a < x < b \\[8pt]
-\frac{O}{b-a}\int_a^b (g(x) - g(y))dy & b \leq x 
-\end{cases} \\ 
--->
+For example, if $F = U[a,b]$ is uniform we can take $F_0 = U[0,1], \mu = a, \sigma = b-a$, and \eqref{eqn:lc-form} is
 \begin{align}
 \sbar_F(x) &= 
 \begin{cases}
-\frac{\kappa}{b-a}\left( - \alpha(b-a)g(x) + \alpha\int_a^b g(y)dy\right) & x\leq a \\[8pt]
-\frac{\kappa}{b-a}\left((x-a- \alpha(b-a))g(x) - \int_a^x g(y)dy + \alpha\int_a^b g(y)dy\right) & a < x < b \\[8pt]
-\frac{\kappa}{b-a}\left((1-\alpha)(b-a)g(x) -(1-\alpha)\int_a^b g(y)dy \right) & b \leq x
-\end{cases} 
-\end{align}
-
-When $g(x)=x$ this becomes
-\begin{align}
-\sbar_F(x) &= 
-\begin{cases}
-\frac{\kappa}{b-a}\left( - \alpha(b-a)x + \frac{\alpha}{2}(b^2-a^2)\right) & x\leq a \\[8pt]
-\frac{\kappa}{b-a}\left((x-a- \alpha(b-a))x - \frac{1}{2}(x^2 - a^2) + \frac{\alpha}{2}(b^2-a^2)\right) & a < x < b \\[8pt]
-\frac{\kappa}{b-a}\left((1-\alpha)(b-a)x -\frac{(1-\alpha)}{2}(b^2-a^2)\right) & b \leq x
+-\alpha\kappa\left[x - \frac{a+b}{2}\right] & x\leq a \\[8pt]
+\kappa\left[\frac{x-a}{b-a}(x-a) -\alpha\left(x - \frac{a+b}{2}\right) -  (b-a) \frac{1}{2}\left(\frac{x-a}{b-a}\right)^2\right] & a < x < b \\[8pt]
+\kappa\left[x - a -\alpha\left(x - \frac{a+b}{2}\right) - \frac{b-a}{2}\right] & b \leq x
 \end{cases} \\
-&= 
+&=
 \begin{cases}
 -\kappa\alpha\left[x - \frac{a+b}{2}\right] & x\leq a \\[8pt]
 \frac{\kappa}{2}\left[\frac{1}{b-a}(x - (a+\alpha(b-a)))^2 +\alpha(1-\alpha)(b-a)\right] & a < x < b \\[8pt]
@@ -196,8 +176,19 @@ When $g(x)=x$ this becomes
 \end{cases}
 \end{align}
 
-Thus $\sbar_F(x)$ has the form of pinball loss centered on the mean $\mu_Y = \frac{a+b}{2}$ and interpolated on $(a,b)$ 
- by a quadratic centered at the quantile $a+\alpha(b-a)$ with slopes matching the linear tails at $a$ and $b$.
+Thus, outside $(a,b)$, $\sbar_{U[a.b]}(x)$ has the form of pinball loss centered on the mean $m_F = \frac{a+b}{2}$ and is interpolated on $(a,b)$ 
+ by a quadratic centered at the quantile $a+\alpha(b-a)$ with slopes matching the linear tails at $a$ and $b$ (see figure 1).
+
+Or if $F=\Phi_{\mu,\sigma}$ is normal with location $\mu = E_F[Y]$ and scale $\sigma = \sqrt{\mathrm{Var}(Y)}$, 
+we have 
+\begin{align}
+\int_{-\infty}^{\frac{x-\mu}{\sigma}}zdF_0(z)=-\frac{1}{\sqrt{2\pi}}\exp\left\{-\frac{(x-\mu)^2}{2 \sigma^2}\right\} = - \sigma\varphi_{\mu, \sigma}(x)
+\end{align}
+so that
+\begin{align}
+\sbar_F(x) = \kappa\left[(\Phi_{\mu,\sigma}(x) - \alpha)(x-\mu) + \sigma^2 \varphi_{\mu, \sigma}(x)\right].
+\end{align}
+
 
 ```{r echo = FALSE, cache=TRUE}
 unif_loss <- function(alpha, min, max) {
@@ -270,38 +261,7 @@ p_unif <- plot_loss(
   xr = 2.5,
   yb = 0
   ) + ggtitle("Unif(0,1)")
-```
 
-### 2) $g(x)=x$ and $F_Y=F_{\mu, \sigma}$ lies in a location-scale family
-
-That is, $Y = \mu + \sigma Z$ and $Z \sim F_Z = F_0$. Then $f_Y(y) = \dby{}{z} F_Z\left(\frac{y-\mu}{\sigma}\right)\dby{z}{y} = f_Z(z)/\sigma$ and so
-\begin{align}
-\overline{g}_F(x) = \int_a^x y f_Y(y)dy &= \int_{\frac{a-\mu}{\sigma}}^{\frac{x-\mu}{\sigma}}(\mu + \sigma z)f_Z(z)dz \\
-& = \mu F_Z\left(\frac{x-\mu}{\sigma}\right) + \sigma \int_{\frac{a-\mu}{\sigma}}^{\frac{x-\mu}{\sigma}}zf_Z(z)dz\\
-& =\mu F_Y(x) + \sigma \mu_{F_0}\left(\frac{x-\mu}{\sigma}\right).
-\end{align}
-where $\mu_{F_0}(u) = \int_{\frac{a-\mu}{\sigma}}^{u} zf_0(z)dz$. This gives
-<!-- With the change of variables $y=Q_F(\alpha) = F^{-1}(\alpha), dy =  d(F^{-1}(\alpha)) = \frac{d\alpha}{f(y)}$, we have
-\begin{align}
-\overline{g}_F(x) = \int_a^x y f_Y(y)dy = \int_{0}^{F(x)}Q_F(\alpha)d\alpha 
-& = \mu F(x) + \sigma \int_0^{F(x)} Q_0(\alpha)d\alpha \\
-& =\mu F(x) + \sigma \mu_{F_0}\left(\frac{x-\mu}{\sigma}\right).
-\end{align} -->
-\begin{align}
-\nonumber \sbar_F(x) &= \kappa\left[x(F(x) - \alpha) - \mu F(x) - 
-\nonumber \sigma \mu_{F_0}\left(\frac{x-\mu}{\sigma}\right) + \alpha \mu \right]  \\
-&= \kappa\left[\left(F(x) - \alpha\right)(x-\mu)- \sigma \mu_{F_0}\left(\frac{x-\mu}{\sigma}\right) \right]
-\label{lc-form}
-\end{align}
-
-### 3) $g(x)=x$ and $Y \sim N(\mu,\sigma)$
-
-When $F=\Phi_{\mu,\sigma}$, $\mu_{F_0}\left(\frac{x-\mu}{\sigma}\right)=-\sigma \varphi_{\mu, \sigma}(x)$, giving $q(\alpha)$ as the minimum of 
-$$
-Z_F(x) = \kappa\left[(\Phi_{\mu,\sigma}(x) - \alpha)(x-\mu) + \sigma^2 \varphi_{\mu, \sigma}(x)\right].
-$$
-
-```{r echo = FALSE, cache=TRUE}
 norm_loss <- function(alpha, mean, sd) {
   f <- function(x){
     alpha^(-1)*((pnorm(x, mean, sd)-alpha)*(x-mean) + sd^2*dnorm(x,mean,sd))
@@ -320,27 +280,10 @@ p_norm <- plot_loss(
     xr = 6,
     yb = 0
 ) + ggtitle("Normal(0,2)")
-```
 
-### 4) $g(x)=x$ and $Y \sim \mathrm{Exp}(1/\sigma)$
-
-Taking $\mu \equiv 0, Y = \sigma Z$ and $F_Z(x) = F_0(x) = \mathbb{1}\{0 \leq x\}(1 - e^{-x})$ we have
- $\mu_{F_0}(x) = \mathbb{1}\{0 \leq x\}(1 - e^{-x}(1+x))$. Then \eqref{lc-form} is
-
-\begin{align}
-\nonumber \sbar_F(x) &= 
-\mathbb{1}\{0 \leq x\}\kappa\left[F(x)x - \sigma \mu_{F_0}\left(\frac{x}{\sigma}\right) \right] - \kappa\alpha x\\
-&= \mathbb{1}\{0 \leq x\}\kappa
-\left[
-\left(1 - e^{-x/\sigma}\right)x - \sigma \left(1- e^{-x/\sigma}\left(1+\frac{x}{\sigma}\right) \right)
-\right] - \kappa\alpha x\\
-&= \mathbb{1}\{0 \leq x\}\kappa\left[ \sigma e^{-x/\sigma} + x - \sigma \right] - \kappa\alpha x
-\end{align}
-
-```{r echo = FALSE, cache=TRUE}
 exp_loss <- function(alpha, rate) {
   f <- function(x){
-    ((exp(-x*rate)*rate^(-1) + x - rate^(-1)))*(x>0) - alpha*x
+    exp(-x*rate)*(rate^(-1))*(x>=0) + ((x>=0) - alpha)*(x - rate^(-1))
   }
   return(f)
 }
@@ -362,12 +305,49 @@ p_exp <- plot_loss(
 p_unif + p_norm + p_exp + plot_layout(ncol = 2)
 ```
 
-## Another form for $\sbar_F(x)$
-
-There also may be situations where it is convenient to integrate the $(O+U)$-term in \eqref{obj_sep} by parts to get 
+We finally note that for non-trivial $g$'s it may be helpful to make the substitution $v=g(u)$ in \eqref{eqn:scalar_obj_cdf_form} to get
 \begin{align}
-\sbar_F(x) = \kappa\left[\int_a^x g^{\prime}(y)F(y)dy - \alpha(g(x) - \overline{g}\sb{F})\right]. \label{obj_intF}
+\sbar_F(x) &=  O \int_{-\infty}^{g(x)} F(g^{-1}(u)) du + U \int_{g(x)}^{\infty}(1-F(g^{-1}(u))) du
 \end{align}
+and in \eqref{eqn:gbarx} to get
+\begin{align}
+\overline{g}_F(x) &= \int_{-\infty}^{g(x)}v d(F \circ g^{-1})(v).
+\end{align}
+
+
+##  Alternative Notation Possibilities
+
+Let $Y \sim F,F_i$ be various forecaster beliefs and $Y \sim G$ be reality.
+\begin{align}
+\overline{s}_{F,\kappa,\alpha}(x) &:= s_{\kappa,\alpha}(x,F) := E_F[s_{\kappa,\alpha}(x,Y)] \\
+\overline{s}_{\kappa,\alpha}(x) &:= s_{\kappa,\alpha}(x,G) \\
+s_{\symbfit{\kappa},\symbfit{\alpha}}(\mathbf{x}, \mathbf{F}) &:= 
+\overline{s}_{\mathbf{F},\symbfit{\kappa},\symbfit{\alpha}}(\mathbf{x}) = 
+\sum_{i}^{\mathrm{dim}\mathbf{x}} s_{\kappa_i,\alpha_i}(x_i, F_i) \\
+S(F,y) &:= s(q_{F,\alpha}, y) \\
+S(F_1,F_2) &:= E_{F_2}[S(F_1,Y)] = s(q_{F_1,\alpha}, F_2) \\
+\overline{S}(F) &:= E_G[s(q_{F, \alpha}, Y)]
+\end{align}
+
+Define the $s$-entropy of an arbitrary $F$ 
+\begin{align}
+e_s(F) &:= E_F[S(F, Y)] = E_F[s(q_{F,\alpha}, Y)] = s(q_{F,\alpha}, F) \\
+\end{align}
+and of the RV $Y$ as
+\begin{align}
+e_s(Y) &:= e_s(G).
+\end{align}
+Define the $s$-divergence between two forecasts as
+\begin{align}
+d_s(F_1,F_2) &:= S(F_1,F_2) - S(F_2,F_2) = S(F_1,F_2) - e_s(F_2)
+\end{align}
+and the $s$-divergence from $F$ to $Y$ as
+\begin{align}
+d_s(F,Y) &:= S(F,G) - e(Y).
+\end{align}
+
+Thus, $\overline{S}(F) = d_s(F,Y) + e_s(Y)$.
+
 
 ## Newsvendor parameters
 
@@ -396,11 +376,13 @@ and $U=a_{-} - a_=p+r-c$, and so has the same minimizer
 Q = F^{-1}\left(\frac{U}{O+U}\right) =  F^{-1}\left(\frac{a_{-} - a_x}{a_{-} + a_{+}}\right) 
 = F^{-1}\left(\frac{p+r-c}{p+r-u}\right).
 \end{align}
-Note, for reference, that in the literature $\sbar_{n,F}(x)$ is often encountered in the form of \eqref{obj_integral}:
+Note, for reference, that in the literature $\sbar_{n,F}(x)$ is often encountered in the form
 \begin{align}
-&(O+U) \int_{0}^{x} (x - y)f(y)dy - Ux+ (U+a_x+a_y)E[Y] \\
+&(O+U) \int_{0}^{x} (x - y)f(y)dy - Ux+ (U+a_x+a_y)E[Y] \\{}
 =\,&(p+r-u) \int_{0}^{x} (x - y)f(y)dy - (p+r-c)x+ rE[Y]
 \end{align}
+
+
 
 ## Meteorologist parameters
 
@@ -422,6 +404,10 @@ In particular, faced with the classical binary decision problem of whether to re
 \end{align}
 the \emph{cost-loss ratio} of the problem.
 
+
+There is considerable opportunity here for confusion as to the role of $x$ if one is following (as we mostly are) the notation of [@ehm2016quantiles].
+
+
 # Multipoint Quantile Scoring Rules
 
 Suppose we ask a forecaster to provide a set of point forecasts $\{x_1,x_2\}$ to be rewarded according to the aggregate scoring function 
@@ -442,7 +428,7 @@ on the total provision available with $w_i>0$. We assume $K>0$, that only non-ne
 \end{align} 
 though it may be interesting to introduce regions where $g_i(x_i)$ is constant, such as for the wind speed power curve mentioned above.
 
-According to \eqref{eqn:scalar_obj_int} and \eqref{obj_pexp} the objective function is now
+According to \eqref{eqn:scalar_obj} and \eqref{eqn:obj_pexp} the objective function is now
 \begin{align}
 \sbar_F(\mathbf{x})&= \sum_{i=1}^{N} \sbar_{F_i}(x_i) = \sum_{i=1}^{N} \left\{O_i\int_{-\infty}^{x_i}(g_i(x_i) - g_i(y))f_i(y)dy + 
 U_i\int_{x_i}^{\infty}(g_i(y) - g_i(x_i))f_i(y)dy \right\} \\
