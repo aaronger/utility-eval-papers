@@ -5,7 +5,7 @@ output:
     pdf_document:
         latex_engine: xelatex
 urlcolor: blue
-bibliography: allocation.bib 
+bibliography: allocation_notes.bib 
 header-includes:
    - \usepackage{amsmath}
    - \usepackage{algorithm}
@@ -35,12 +35,10 @@ Consider a simplified setting where $O_i = 0$ and $U_i = U$ are shared for all $
 
 Throughout, we will suppose there are $n = 2$ locations, and a forecaster produces the forecasts $Y_1 \sim Exp(1/\sigma_1)$ with $\sigma_1 = 1$ and $Y_2 \sim Exp(1 / \sigma_2)$ with $\sigma_2 = 5$. The quantile functions corresponding to these forecasts are given by $F_i^{-1}(\tau) = -\sigma_i \log(1 - \tau)$, where $\tau$ is a probability level which we take to be in $(0, 1)$.
 
-If I've correctly translated from the notes document, the expected loss function is
+The expected loss function is
 \begin{equation*}
-\bar{s}_F(\mathbf{x}) = \sum_{i=1}^2 \mathbb{1}\{0 \leq x_i\}\left[ \sigma e^{-x_i/\sigma} - \sigma \right]
+\bar{s}_F(\mathbf{x}) = \sum_{i=1}^2 \mathbb{1}\{x_i < 0\}(\sigma - x_i) + \mathbb{1}\{0 \leq x_i\}\sigma e^{-x_i/\sigma}.
 \end{equation*}
-
-I'm going with this below because I think it's close, but I don't actually think it's correct because it leads to negative loss values.
 
 \section{Fixed $K$}
 
@@ -65,31 +63,35 @@ K <- 5
 
 tau <- 1 - exp(-K/(sigma_1 + sigma_2))
 
-x_1 <- qexp(tau, rate = 1 / sigma_1)
-x_2 <- qexp(tau, rate = 1 / sigma_2)
+x_1star <- qexp(tau, rate = 1 / sigma_1)
+x_2star <- qexp(tau, rate = 1 / sigma_2)
 
-n_grid <- 1001
-grid_l <- 0.01
-grid_u <- 6.0
+n_grid <- 101
+grid_l <- -2.0
+grid_u <- 9.0
 y_grid <- tidyr::expand_grid(
     y_1 = seq(from = grid_l, to = grid_u, length.out = n_grid),
     y_2 = seq(from = grid_l, to = grid_u, length.out = n_grid)
 )
 
+s_bar <- function(x_1, x_2) {
+    sigma_1 * exp(-x_1 / sigma_1)*(x_1>=0) + sigma_2 * exp(-x_2 / sigma_2)*(x_2>=0) +
+    (sigma_1 - x_1)*(x_1<0) + (sigma_2 - x_2)*(x_2<0) 
+}
+
 joint_dist <- y_grid %>%
     dplyr::mutate(
-        s_bar = sigma_1 * exp(-y_1 / sigma_1) - sigma_1 +
-                sigma_2 * exp(-y_2 / sigma_2) - sigma_2
+        s_bar = s_bar(y_1, y_2)
     )
 
 ggplot(data = joint_dist) +
     geom_raster(aes(x = y_1, y = y_2, fill = s_bar)) +
-    geom_contour(mapping = aes(x = y_1, y = y_2, z = s_bar)) +
+    geom_contour(mapping = aes(x = y_1, y = y_2, z = s_bar), breaks = s_bar(x_1star, x_2star)%%1 + seq(0, 10, by = .5)) +
     geom_abline(intercept = K, slope = -1) +
-    geom_point(x = x_1, y = x_2, color = "orange") +
+    geom_point(x = x_1star, y = x_2star, color = "orange") +
     scale_fill_viridis_c() +
-    xlim(0, 6) +
-    ylim(0, 6) +
+    xlim(grid_l, grid_u) +
+    ylim(grid_l, grid_u) +
     theme_bw()
 ```
 
