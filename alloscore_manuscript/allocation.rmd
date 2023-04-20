@@ -41,9 +41,7 @@ library(patchwork)
 
 \section{Introduction}
 
-Infectious disease forecasts have been used as an input to public health decision-making processes such as ...
-
-In this manuscript we argue that for many decision-making problems, it is possible and valuable to develop scoring rules for probabilistic forecasts that are responsive to that decision-making context.
+Infectious disease forecasts have been used to inform decision-making about a wide variety of measures designed to reduce disease spread and/or mitigate the severity of disease outcomes, including the allocation of limited medical supplies such as ventilators [@bertsimas2021predictionsCOVID], implementation of social distancing measures such as stay-at-home policies, and planning site selection for vaccine trials [@bertsimas2021predictionsCOVID]. In this manuscript we argue that for many decision-making problems, it is possible and valuable to develop scoring rules for probabilistic forecasts that are responsive to that decision-making context.
 
 \subsection{Literature review}
 
