@@ -39,27 +39,45 @@ library(patchwork)
 \theoremstyle{remark}
 \newtheorem*{remark}{Remark}
 
+\section{Abstract}
+
+The COVID-19 pandemic has led to rapid innovation in methods for eliciting and evaluating forecasts of infectious disease burdens, with a primary goal being to help public health workers make informed decisions about how to manage these burdens. However, explicit descriptions or quantifications of the value forecasts add to society through the decisions they support are elusive.  Moreover, there has only been limited discussion of how predominant forecast evaluation metrics might indicate the success of policies based in part those forecasts.
+
+Here we pursue one possible tether between multivariate forecasts and policy: the allocation of limited medical resources in response to COVID-19 hospitalizations in various regions so as to minimize expected unmet need. Given probabilistic forecasts of hospitalizations in each region, we formulate an allocation algorithm following techniques developed in operations research. We then score forecasts according to how much unmet need their associated allocations would have allowed. We illustrate this scheme with quantile forecasts of COVID-19 hospitalizations in the US at the state level that are recorded in the COVID-19 Forecast Hub, with the goal of determining the allocation of a hypothetical limited resource across the states. The forecast skill ranking given by this allocation scoring rule can vary substantially from the ranking given by the weighted interval score now used by the CDC, especially during surges in hospitalizations such as in late 2021 as the Omicron wave began. We see this as strong evidence that the allocation scoring rule detects forecast value that is missed by traditional accuracy measures and that the general strategy of designing scoring rules directly linked to policy performance is a promising research direction for epidemic forecast evaluation.
+
 \section{Introduction}
 
-Infectious disease forecasts have been used to inform decision-making about a wide variety of measures designed to reduce disease spread and/or mitigate the severity of disease outcomes, including the allocation of limited medical supplies such as ventilators [@bertsimas2021predictionsCOVID], implementation of social distancing measures such as stay-at-home policies, and planning site selection for vaccine trials [@bertsimas2021predictionsCOVID]. In this manuscript we argue that for many decision-making problems, it is possible and valuable to develop scoring rules for probabilistic forecasts that are responsive to that decision-making context.
+High level points to cover in introduction:
+\begin{itemize}
+\item People are using infectious disease forecasts as an input to decision making
+\item There are standard ways to evaluate forecasts that are responsive to decision making context, and use of those methods is relatively common in other fields like economics and meteorology
+\item However, there's not much work in infectious disease that does this
+\item In practice, infectious disease forecasts have typically been evaluated with "off the shelf" scoring rules such as the WIS which is an approximation to CRPS, log score, and so on.
+\item In this work, our goal is to begin to address that gap. We focus on a resource allocation setting.
+\item There is past work focusing on resource allocation in the operations research literature, but it doesn't take the step of getting to a measure of forecast skill.
+\end{itemize}
 
-\subsection{Literature review}
+Infectious disease forecasts have been used to inform decision-making about a wide variety of measures designed to reduce disease spread and/or mitigate the severity of disease outcomes. Such decision-making applications include the allocation of limited medical supplies such as ventilators [@bertsimas2021predictionsCOVID], implementation of social distancing measures such as stay-at-home policies, planning site selection for vaccine trials [@bertsimas2021predictionsCOVID], and strategies for public health communication campaigns.
 
-Previous work in infectious disease forecasting where applications of forecasting to decision-making problems have been developed
+In decision-making settings where it is possible to quantify the utility or loss associated with a particular action, standard tools of decision theory provide a procedure for developing forecast scoring rules that measure the value of forecasts through the quality of the decisions that they lead to. We give an overview of these procedures in Section \ref{sec:methods.decisiontheory}. These methods have been applied with some regularity in fields such as economics and meteorology. [review previous applications of decision-theoretic evaluation to fields like economics and high level description of scoring procedures they use]
 
-Theoretic work on decision-theoretic set up for forecast evaluation
+However, we are aware of only a limited body of work that explicitly attempts to measure the value of infectious disease forecasts through their impact on policy, and much of this discussion has proceeded informally. For example, [@ioannidis2022forecastingCOVIDfailed] discuss the possible negative consequences of inaccurate forecasts of infectious disease, but do not attempt to quantify the utility or loss incurred as a result of those forecasts. Separately, there is a thread of literature that does quantify the link between infectious disease modeling and policy making, but this work has been done outside of a forecasting context. As an example, [@Probert2016decisionMakingFootMouth] develop measures of the cost of actions designed to control a hypothetical outbreak of foot-and-mouth disease and use this framework to explore policy recommendations from a variety of simulation-based projection models.
 
-Previous applications of decision-theoretic evaluation to fields like economics
+In practice, probablistic infectious disease forecasts have most often been evaluated with standard, off-the-shelf scoring rules such as the log score, continuous ranked probability score (CRPS), or weighted interval score (WIS). [cite some examples] While some of these scores can be interpreted through the lens of decision theory [thinking here of WIS/quantile loss], these connections are not a common focus of infectious disease forecast evaluation.
 
-Previous decision-theoretic work in infectious disease forecast evaluation.  I think there are at least a couple of papers out there at some level of formality.  Maybe Kat Shea has something?
+In this work, we address this gap between the ways in which infectious disease forecasts have been used to support public health policy and the ways in which they have traditionally been evaluated. We work with a motivating example where forecasts are used to help set the allocation of a limited quantity of medical supplies across multiple regions.
 
 operations research work on constrained allocation
 
+The remainder of this article is organized as follows. In Section \ref{sec:methods}, we review the general framework for developing scoring rules for probabilistic forecasts using the tools of decision theory, develop a novel scoring rule that is motivated by the problem of allocating limited medical supplies, and explore the relationship between the proposed allocation score and existing scoring rules such as CRPS. We then illustrate the scoring rule through an application to short-term forecasts of COVID-19 hospital admissions in the US in section \ref{sec:application}. Section \ref{sec:discussion} summarizes our contributions and discusses opportunities for further extensions in future work.
+
 \section{Methods}
+\label{sec:methods}
 
 We first give a high-level review of a general procedure for developing proper scoring rules that are tailored to a specific decision-making task, and then use that procedure to develop a score that is suitable for evaluation of forecasts in the context of decisions about allocation of limited resources across multiple locations.
 
 \subsection{The decision-theoretic setup for forecast evaluation}
+\label{sec:methods.decisiontheory}
 
 In this section, we give an overview of the decision-theoretic setup for developing proper scoring rules that measure the value of a forecast as an input to decision making. We keep the discussion here at a somewhat informal level; we refer the reader to [some subset of Brehmer and Gneiting; Grünwald and Dawid; Dawid; Granger and Pesaran 2000; Granger and Machina 2006; Ehm et al. 2016] for more technically precise discussion.
 
@@ -143,6 +161,7 @@ $$S(F, y) = \int S_K(F,y) p(K) \, d K$$
 as our final score.
 
 \section{Application}
+\label{sec:application}
 
 We illustrate with an application to hospital admissions in the U.S., considering the problem of allocation of a limited supply of medical resources to the states.
 
@@ -151,6 +170,7 @@ Case study heading into the Omicron wave. Some more detailed discussion of impli
 Look at results over a broader range of time.
 
 \section{Discussion}
+\label{sec:discussion}
 
 We often conceive of infectious disease forecasts as being useful for decision-making purposes, but it is rare for forecast evaluation to be tied directly to the value of the forecasts for informing those decisions. This work seeks to address that gap.
 
