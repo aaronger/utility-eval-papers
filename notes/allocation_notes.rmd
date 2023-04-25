@@ -179,7 +179,7 @@ For example, if $F = U[a,b]$ is uniform we can take $F_0 = U[0,1], \mu = a, \sig
 Thus, outside $(a,b)$, $\sbar_{U[a.b]}(x)$ has the form of pinball loss centered on the mean $m_F = \frac{a+b}{2}$ and is interpolated on $(a,b)$ 
  by a quadratic centered at the quantile $a+\alpha(b-a)$ with slopes matching the linear tails at $a$ and $b$ (see figure 1).
 
-Or if $F=\Phi_{\mu,\sigma}$ is normal with location $\mu = E_F[Y]$ and scale $\sigma = \sqrt{\mathrm{Var}(Y)}$, 
+Or if $F=\Phi_{\mu,\sigma}$ is normal with location $\mu = E_F[Y]$ and scale $\sigma = \sqrt{\mathrm{Var}_F(Y)}$, 
 we have 
 \begin{align}
 \int_{-\infty}^{\frac{x-\mu}{\sigma}}zdF_0(z)=-\frac{1}{\sqrt{2\pi}}\exp\left\{-\frac{(x-\mu)^2}{2 \sigma^2}\right\} = - \sigma\varphi_{\mu, \sigma}(x)
