@@ -1,36 +1,27 @@
----
-title: "Evaluating infectious disease forecasts with allocation scoring rules"
-date: "`r Sys.Date()`"
-output: 
-    pdf_document:
-        latex_engine: xelatex
-urlcolor: blue
-bibliography: allocation.bib 
-header-includes:
-   - \usepackage{amsmath}
-   - \usepackage{algorithm}
-   - \usepackage[noend]{algpseudocode}
-   - \usepackage{amsthm}
-   - \usepackage{bm}
-   - \usepackage{cases}
-   - \usepackage{caption}
-   - \usepackage{unicode-math}
-   - \usepackage{hyperref}
-   - \DeclareMathOperator*{\argmin}{argmin}
+\documentclass{article}
 
----
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(
-    echo = FALSE, 
-    message = FALSE, 
-    warning = FALSE,
-    fig.width=10, 
-    fig.height=6)
-library(tidyverse)
-library(patchwork)
-```
-<!-- $ ...to toggle Latexyz math scope off -->
+\usepackage{amsmath, amsfonts, amssymb}
+\usepackage{graphicx}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\usepackage{amsthm}
+\usepackage{bm}
+\usepackage{cases}
+\usepackage{caption}
+\usepackage{hyperref}
+
+\DeclareMathOperator*{\argmin}{argmin}
+
+\usepackage{biblatex}
+\addbibresource{allocation.bib}
+
+\title{Evaluating infectious disease forecasts with allocation scoring rules}
+\author{Authors}
+
+\begin{document}
+
 \newcommand{\del}[2]{\frac{\partial {#1} }{\partial {#2}} }
 \newcommand{\dby}[2]{\frac{d {#1} }{d {#2}} }
 \newcommand{\sbar}{\overline{s}}
@@ -39,11 +30,15 @@ library(patchwork)
 \theoremstyle{remark}
 \newtheorem*{remark}{Remark}
 
-\section{Abstract}
+\maketitle
+
+\begin{abstract}
 
 The COVID-19 pandemic has led to rapid innovation in methods for eliciting and evaluating forecasts of infectious disease burdens, with a primary goal being to help public health workers make informed decisions about how to manage these burdens. However, explicit descriptions or quantifications of the value forecasts add to society through the decisions they support are elusive.  Moreover, there has only been limited discussion of how predominant forecast evaluation metrics might indicate the success of policies based in part those forecasts.
 
 Here we pursue one possible tether between multivariate forecasts and policy: the allocation of limited medical resources in response to COVID-19 hospitalizations in various regions so as to minimize expected unmet need. Given probabilistic forecasts of hospitalizations in each region, we formulate an allocation algorithm following techniques developed in operations research. We then score forecasts according to how much unmet need their associated allocations would have allowed. We illustrate this scheme with quantile forecasts of COVID-19 hospitalizations in the US at the state level that are recorded in the COVID-19 Forecast Hub, with the goal of determining the allocation of a hypothetical limited resource across the states. The forecast skill ranking given by this allocation scoring rule can vary substantially from the ranking given by the weighted interval score now used by the CDC, especially during surges in hospitalizations such as in late 2021 as the Omicron wave began. We see this as strong evidence that the allocation scoring rule detects forecast value that is missed by traditional accuracy measures and that the general strategy of designing scoring rules directly linked to policy performance is a promising research direction for epidemic forecast evaluation.
+
+\end{abstract}
 
 \section{Introduction}
 
@@ -63,11 +58,11 @@ High level points to cover in introduction:
 little seems to have been said on how forecasts can be evaluated by how well they convert a problem of DM under uncertainty to a problem of DM under risk.
 \end{itemize}
 
-Infectious disease forecasts have been used to inform decision-making about a wide variety of measures designed to reduce disease spread and/or mitigate the severity of disease outcomes. Such decision-making applications include the allocation of limited medical supplies such as ventilators [@bertsimas2021predictionsCOVID], implementation of social distancing measures such as stay-at-home policies, planning site selection for vaccine trials [@bertsimas2021predictionsCOVID], and strategies for public health communication campaigns.
+Infectious disease forecasts have been used to inform decision-making about a wide variety of measures designed to reduce disease spread and/or mitigate the severity of disease outcomes. Such decision-making applications include the allocation of limited medical supplies such as ventilators \cite{bertsimas2021predictionsCOVID}, implementation of social distancing measures such as stay-at-home policies, planning site selection for vaccine trials \cite{bertsimas2021predictionsCOVID}, and strategies for public health communication campaigns.
 
 In decision-making settings where it is possible to quantify the utility or loss associated with a particular action, standard tools of decision theory provide a procedure for developing forecast scoring rules that measure the value of forecasts through the quality of the decisions that they lead to. We give an overview of these procedures in Section \ref{sec:methods.decisiontheory}. These methods have been applied with some regularity in fields such as economics and meteorology. [review previous applications of decision-theoretic evaluation to fields like economics and high level description of scoring procedures they use]
 
-However, we are aware of only a limited body of work that explicitly attempts to measure the value of infectious disease forecasts through their impact on policy, and much of this discussion has proceeded informally. For example, [@ioannidis2022forecastingCOVIDfailed] discuss the possible negative consequences of inaccurate forecasts of infectious disease, but do not attempt to quantify the utility or loss incurred as a result of those forecasts. Separately, there is a thread of literature that does quantify the link between infectious disease modeling and policy making, but this work has been done outside of a forecasting context. As an example, [@Probert2016decisionMakingFootMouth] develop measures of the cost of actions designed to control a hypothetical outbreak of foot-and-mouth disease and use this framework to explore policy recommendations from a variety of simulation-based projection models.
+However, we are aware of only a limited body of work that explicitly attempts to measure the value of infectious disease forecasts through their impact on policy, and much of this discussion has proceeded informally. For example, \cite{ioannidis2022forecastingCOVIDfailed} discuss the possible negative consequences of inaccurate forecasts of infectious disease, but do not attempt to quantify the utility or loss incurred as a result of those forecasts. Separately, there is a thread of literature that does quantify the link between infectious disease modeling and policy making, but this work has been done outside of a forecasting context. As an example, \cite{Probert2016decisionMakingFootMouth} develop measures of the cost of actions designed to control a hypothetical outbreak of foot-and-mouth disease and use this framework to explore policy recommendations from a variety of simulation-based projection models.
 
 In practice, probablistic infectious disease forecasts have most often been evaluated with standard, off-the-shelf scoring rules such as the log score, continuous ranked probability score (CRPS), or weighted interval score (WIS). [cite some examples] While some of these scores can be interpreted through the lens of decision theory [thinking here of WIS/quantile loss], these connections are not a common focus of infectious disease forecast evaluation.
 
@@ -75,7 +70,7 @@ In this work, we address this gap between the ways in which infectious disease f
 
 operations research work on constrained allocation
 
-The remainder of this article is organized as follows. In Section \ref{sec:methods}, we review the general framework for developing scoring rules for probabilistic forecasts using the tools of decision theory, develop a novel scoring rule that is motivated by the problem of allocating limited medical supplies, and explore the relationship between the proposed allocation score and existing scoring rules such as CRPS. We then illustrate the scoring rule through an application to short-term forecasts of COVID-19 hospital admissions in the US in section \ref{sec:application}. Section \ref{sec:discussion} summarizes our contributions and discusses opportunities for further extensions in future work.
+The remainder of this article is organized as follows. In section \ref{sec:methods}, we review the general framework for developing scoring rules for probabilistic forecasts using the tools of decision theory, develop a novel scoring rule that is motivated by the problem of allocating limited medical supplies, and explore the relationship between the proposed allocation score and existing scoring rules such as CRPS. We then illustrate the scoring rule through an application to short-term forecasts of COVID-19 hospital admissions in the US in section \ref{sec:application}. Section \ref{sec:discussion} summarizes our contributions and discusses opportunities for further extensions in future work.
 
 \section{Methods}
 \label{sec:methods}
@@ -91,25 +86,25 @@ In the framework of decision theory, a decision corresponds to the selection of 
 
 We can formalize the preceding discussion with the following three-step procedure for developing scoring rules for probabilistic forecasts:
 \begin{enumerate}
-\item Specify a \textit{loss function} $s(x, y)$ that measures the loss associated with taking action $x$ when outcome $y$ eventually occurs. We use the letter $s$ for this function to align with the literature on forecast evaluation, in which context $s$ may be used as a \textit{scoring function}.
-\item Given a probabilistic forecast $F$, determine the \textit{Bayes act} $x^F$ that minimizes the expected loss under the distribution $F$.
-\item The \textit{scoring rule} for $F$ calculates the score as the loss incurred when the Bayes act was used: $S(F, y) = s(x^F, y)$.
+\item Specify a \emph{loss function} $s(x, y)$ that measures the loss associated with taking action $x$ when outcome $y$ eventually occurs. We use the letter $s$ for this function to align with the literature on forecast evaluation, in which context $s$ may be used as a \emph{scoring function}.
+\item Given a probabilistic forecast $F$, determine the \emph{Bayes act} $x^F$ that minimizes the expected loss under the distribution $F$.
+\item The \emph{scoring rule} for $F$ calculates the score as the loss incurred when the Bayes act was used: $S(F, y) = s(x^F, y)$.
 \end{enumerate}
 This is a general procedure that may be applied in settings where it is possible to specify a quantitative loss function. Subject to certain technical conditions, scoring rules obtained from this procedure are proper (cite cite).
 
-<!-- , and we illustrate the ideas with two running examples: (1) some problem that results in quantile elicitation, (2) some allocation problem.
+% , and we illustrate the ideas with two running examples: (1) some problem that results in quantile elicitation, (2) some allocation problem.
 
-A forecaster is asked to recommend, that is, \emph{predict}, the appropriate supply $x$ of some good or investment in some precautionary measure intended to satisfy a random future demand or need $Y$. As a running example, we will consider the provision of a limited supply of a limited health care resource such as oxygen or ventilators. Suppose there is an incremental loss $O \geq 0$ incurred when over-prediction leads to unused supply and an incremental loss $U > 0$ incurred when under-prediction leads to unmet demand or need. -->
+%A forecaster is asked to recommend, that is, \emph{predict}, the appropriate supply $x$ of some good or investment in some precautionary measure intended to satisfy a random future demand or need $Y$. As a running example, we will consider the provision of a limited supply of a limited health care resource such as oxygen or ventilators. Suppose there is an incremental loss $O \geq 0$ incurred when over-prediction leads to unused supply and an incremental loss $U > 0$ incurred when under-prediction leads to unmet demand or need.
 
 \subsection{A review of quantile loss, CRPS, and the weighted interval score}
 
 I haven't written anything here.  Fill it in, or delete this section?
 
-<!-- Set up of decision-making problem with costs for over-/under-prediction. Quantile/pinball loss.
+%Set up of decision-making problem with costs for over-/under-prediction. Quantile/pinball loss.
 
-Statement that this loss elicits quantiles as the Bayes act, derivations deferred to a supplement.
+%Statement that this loss elicits quantiles as the Bayes act, derivations deferred to a supplement.
 
-Interpretation of CRPS as an integral of quantile loss over quantile levels, WIS as a discrete approximation of CRPS. -->
+%Interpretation of CRPS as an integral of quantile loss over quantile levels, WIS as a discrete approximation of CRPS.
 
 \subsection{The allocation score}
 
@@ -136,11 +131,10 @@ It can be shown that with the loss function given in Equation \eqref{eqn:loss_fn
 This partial solution to the allocation problem seems to have first appeared in [@hadleywhitin1963]; see the supplemental materials for a derivation.
 
 One interpretation of this result is that the Bayes act sets the allocation in each location $i$ to a quantile of the forecast distribution $F_i$ for that location. The quantile is at a probability level $(1 - \lambda^{\star}/L)$ that is the same for all locations, and is chosen such that the constraint is satisfied. An alternative interpretation comes from noting that for each location $i$, $\frac{\partial}{\partial x_i} \sbar_F(\mathbf{x}) \vert_{\mathbf{x}=\mathbf{x}^F} = \lambda^{\star}$ (see the supplement for a proof).
-<!-- 
-$\frac{\partial}{\partial x_i} \sbar_F(\mathbf{x}) = L[F_i(x_i) - 1]$ (see the supplement for a derivation), and evaluating at the Bayes allocation we arrive at
-\begin{align}
-\frac{\partial}{\partial x_i} \sbar_F(\mathbf{x}) \vert_{\mathbf{x}=\mathbf{x}^F} &= L[F_i(x^F_i) - 1] = L[F_i(F_i^{-1}(1 - \lambda^{\star}/L)) - 1] = \lambda^{\star}.
-\end{align} -->
+%$\frac{\partial}{\partial x_i} \sbar_F(\mathbf{x}) = L[F_i(x_i) - 1]$ (see the supplement for a derivation), and evaluating at the Bayes allocation we arrive at
+%\begin{align}
+%\frac{\partial}{\partial x_i} \sbar_F(\mathbf{x}) \vert_{\mathbf{x}=\mathbf{x}^F} &= L[F_i(x^F_i) - 1] = L[F_i(F_i^{-1}(1 - \lambda^{\star}/L)) - 1] = \lambda^{\star}.
+%\end{align}
 In words, at the allocation given by the Bayes act, the rate of change of the expected score as a function of the amount allocated to location $i$ is given by $\lambda^{\star}$.
 This derivative is the same for all locations, so the optimal allocation divides the available resources across all locations in such a way that according to $F$, the expected benefit of 1 additional unit of resources is the same in all locations.
 
@@ -194,3 +188,6 @@ There is much more to do in this general area.
 
 \section{References}
 
+\printbibliography
+
+\end{document}
