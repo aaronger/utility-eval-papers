@@ -20,6 +20,7 @@
 \usepackage{soul}
 \usepackage{color}
 \def\elr#1{{\color{cyan}\textbf{ELR:[#1]}}}
+\def\apg#1{{\color{red}\textbf{APG:[#1]}}}
 
 \title{Evaluating infectious disease forecasts with allocation scoring rules}
 \author{Authors}
@@ -133,10 +134,12 @@ S_Q(F, y; C, L) &= s_Q(x^F, y; C, L) = Cx^F + L(x^F-y)_- \\
 
 This scoring rule evaluates the forecast distribution $F$ only through its $\alpha$ quantile. While this is faithful to the context of the decision-making problem, it may not be satisfying as a measure of the quality of the full forecast distribution. For this purpose, one option is to integrate the quantile loss across different values of the quantile level $\alpha$, or, equivalently, across different values of the decision problem's parameters $C$ and $L$. This gives rise to the (weighted) CRPS:
 \begin{align*}
-    S_{CRPS}(F, y) &= \int S_Q(F, y; C, L) h(C, L) \, dC dL
+    S_{CRPS}(F, y) &= \int S_Q(F, y; C, L) p(C, L) \, dC dL
 \end{align*}
-The usual CRPS results from taking a distribution $h$ such that the induced distribution on the probability level $\alpha = 1 - C/L$ is $\text{Uniform}(0,1)$.
-The weighted interval score (WIS) can be used when the full forecast distribution $F$ is not available, and amounts to an approximation of CRPS where the distribution $h$ is discrete with point masses at the quantile levels corresponding to the endpoints of a finite set of prediction intervals.
+The usual CRPS results from taking $p$ to be the density of a distribution such that the induced distribution on the probability level $\alpha = 1 - C/L$ is $\text{Uniform}(0,1)$.
+The weighted interval score (WIS) can be used when the full forecast distribution $F$ is not available, and amounts to an approximation of CRPS where the distribution $p$ is discrete with point masses at the quantile levels corresponding to the endpoints of a finite set of prediction intervals.
+
+\elr{maybe better to use different notation for this integral that's less specific about whether $p$ is discrete or continuous?}
 
 % The below was an unsuccessful attempt to connect to a more usual notation for CRPS just in terms of integrating across quantile levels. It resulted in a notational quagmire, but I'm keeping it here for now in case it seems like a better way to go...
 %
@@ -177,11 +180,11 @@ As in the previous section, $(x_i - y_i)_-$ is $0$ if the amount $x_i$ allocated
     \sum_{i=1}^N x_i \leq K \text{, where} \label{AP} \\
     \sbar_A^F(\mathbf{x}; L) &= \mathbb{E}_{F} [s_A(\mathbf{x}, \mathbf{Y}; L)] = \sum_{i=1}^{N} \mathbb{E}_{F_i}[s_A(x_i, Y_i; L)] \label{eqn:sbar}
 \end{align}
-It can be shown that with the loss function given in Equation \eqref{eqn:loss_fn}, the Bayes act has $x^F_i = F_i^{-1}(1 - \lambda^{\star}/L)$, where $\lambda^{\star}$ is chosen so as to satisfy the equation
+It can be shown that with the loss function given in Equation \eqref{eqn:loss_fn}, the Bayes act has $x^F_i = F_i^{-1}(1 - \lambda^{\star}/L)$, where $\lambda^{\star}$ depends on the problem parameters $K$ and $L$ as well as the forecast distributions and is chosen so as to satisfy the equation
 \begin{align}
 \sum_{i=1}^{N}F_i^{-1}(1 - \lambda^{\star}/L) = K.
 \end{align}
-This partial solution to the allocation problem seems to have first appeared in \cite{hadleywhitin1963}; see the supplemental materials for a derivation.
+This partial solution to the allocation problem seems to have first appeared in \cite{hadleywhitin1963}; see the supplemental materials for a derivation. Figure *** panel (a) \elr{TODO: first figure from notes crps\_connection\_exp.Rmd} illustrates the expected loss function $\sbar_A^F$ and the allocation given by the Bayes act in a simple example with $n = 2$ locations, $L = 1$, $K = 5$, and forecasts $Y_1 \sim \text{Exp}(1 / \sigma_1)$ and $Y_2 \sim \text{Exp}(1 / \sigma_2)$, using a scale parameterization of the exponential distribution with $\sigma_1 = 1$ and $\sigma_2 = 5$.
 
 One interpretation of this result is that the Bayes act sets the allocation in each location $i$ to a quantile of the forecast distribution $F_i$ for that location. The quantile is at a probability level $\alpha = 1 - \lambda^{\star}/L$ that is the same for all locations, and is chosen such that the constraint is satisfied. An alternative interpretation comes from noting that for each location $i$, $\frac{\partial}{\partial x_i} \sbar_A^F(\mathbf{x}) \vert_{\mathbf{x}=\mathbf{x}^F} = \lambda^{\star}$ (see the supplement for a proof).
 %$\frac{\partial}{\partial x_i} \sbar_F(\mathbf{x}) = L[F_i(x_i) - 1]$ (see the supplement for a derivation), and evaluating at the Bayes allocation we arrive at
@@ -191,27 +194,30 @@ One interpretation of this result is that the Bayes act sets the allocation in e
 In words, at the allocation given by the Bayes act, the rate of change of the expected score as a function of the amount allocated to location $i$ is given by $\lambda^{\star}$.
 This derivative is the same for all locations, so the optimal allocation divides the available resources across all locations in such a way that according to $F$, the expected benefit of 1 additional unit of resources is the same in all locations.
 
-\textbf{1st attempt by APG to rephrase last paragraph}
-
-The central mathematical ideas in this construction are that 
+\apg{
+first attempt by APG to rephrase last paragraph: The central mathematical ideas in this construction are that 
 \begin{itemize}
 \item optimization under a \emph{single} constraint requires the rates of change of (a probabilistic forecast's) expected benefit with respect to our decision variables, $x_i$, to be the same for all locations 
 \item these rates of change can be identified with probabilities
 \item and therefore the Bayes act results from using a \emph{shared} probability level, $1 - \lambda^{\star}/L$, to determine allocations as the corresponding quantiles of the location-specific forecast distributions $F_i$ which satisfy the constraint.
 \end{itemize}
 (See the supplement for detailed discussion and derivations of these points.)
+}
  
 \paragraph{Step 3: Define the scoring rule.} We can now define a proper scoring rule for the probabilistic forecast $F$ as
 \begin{equation}
-S(F, y) = s(\mathbf{x}^F, y) = \sum_{i=1}^n L (F_i^{-1}(1 - \lambda^{\star}/L) - y_i)_-
+S_A(F, y; L, K) = s_A(\mathbf{x}^F, y; L) = \sum_{i=1}^n L (F_i^{-1}(1 - \lambda^{\star}/L) - y_i)_-
 \end{equation}
 This score measures the total unmet need across all locations that results from using the Bayes allocation associated with the forecast $F$ when the actual level of need in each location is observed to be $y_i$.
 
-\textbf{ELR: This section would likely benefit from a figure or two to illustrate the ideas...?}
+As with the quantile score $S_Q$, the allocation score $S_A$ measures the skill of the forecast distributions $F$ based on a single probability level $\alpha$. By analogy to the method for obtaining CRPS by integrating the quantile score, we develop an \emph{integrated allocation score} (IAS) \elr{open to better names} that integrates the allocation score across values of the problem parameters, weighting by a distribution $p$:
+$$S_{IAS}(F, y) = \int S_A(F,y; L, K) p(L, K) \, dL dK$$
 
-Description of what happens if there is uncertainty about the the constraint $K$. Integration across $K$ results in something like a forecaster-specific weighted CRPS. It might help to introduce notation like $\lambda^{\star}(K)$ or $S_K(F, y)$ throughout all of the above discussion? Then if we have a prior $p(K)$ on $K$, we get to something like
-$$S(F, y) = \int S_K(F,y) p(K) \, d K$$
-as our final score.
+We illustrate the relationship between the IAS and the CRPS in our example with two locations and forecasts given by $\text{Exp}(1/\sigma_i)$ distributions with $\sigma_1 = 1$ and $\sigma_2 = 5$. Note that the quantile functions corresponding to these forecasts are given by $F_i^{-1}(\alpha) = -\sigma_i \log(1 - \alpha)$. For simplicity, we keep $L = 1$ fixed (i.e., $p$ places probability 1 on $L = 1$), and only address varying $K$. As discussed above, each value of the constraint $K$ determines a quantile probability level $\alpha$ corresponding to the Bayes act such that $K = F_1^{-1}(\alpha) + F_2^{-1}(\alpha) = -\log(1 - \alpha) (\sigma_1 + \sigma_2)$; solving for $\alpha$, we obtain $\alpha = 1 - \exp[-K/(\sigma_1 + \sigma_2)]$. This link between the constraint level $K$ and the probability level $\alpha$ is the key to the link between the IAS and the CRPS.
+
+We use this link to explore the relationship between IAS and CRPS from two directions. First, suppose the decision-maker has some uncertainty about the value of $K$, which they express through $p$. Because $\alpha$ can be regarded as a function of $K$, this distribution on the resource constraint induces a distribution on quantile levels. Figure *** panel (b) \elr{TODO, figures from crps\_connection\_exp} illustrates with a $\text{Gamma}(500, 0.01)$ distribution for $K$, and the implied distribution on quantile levels is shown in panel (c). The IAS determined by $p$ corresponds to a weighted CRPS with this induced weighting on quantile levels. However, note that this weighting is specific to this pair of Exponential forecasts; a different pair of forecasts would translate to a different weighting on quantile levels.
+
+Figure *** panel (d) \elr{TODO, figures from crps\_connection\_exp} illustrates this link by going in the other direction: given a forecast $F$, we exhibit the distribution on $K$ that would lead to equally weighted CRPS. Now we use the fact that $K$ can be written as a function of $\alpha$ to obtain the distribution on $K$ that corresponds to a $\text{Uniform}(0,1)$ distribution on $\alpha$. In this example, the implied distribution is $K \sim \text{Exp}(\sigma_1 + \sigma_2)$. We observe that this is a right-skewed distribution that places much of its mass on constraint values near 0, which may not correspond well to actual knowledge about the resource constraints. Again, the distribution on resource constraints that corresponds to unweighted CRPS depends on the forecast distributions.
 
 \section{Application}
 \label{sec:application}
