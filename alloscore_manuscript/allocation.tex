@@ -104,16 +104,55 @@ This is a general procedure that may be applied in settings where it is possible
 \subsection{A review of quantile loss, CRPS, and the weighted interval score}
 \label{sec:methods.quantileloss}
 
-\subsubsection{Quantile loss}
+We review here how quantile loss arises from a particular decision-making problem, and how CRPS can be obtained by integrating across values of the parameters of that decision-making problem. These results have been thoroughly discussed in the literature [cite cite cite].
 
+Suppose that a decision-maker is tasked with determining the quantity $x$ of a protective measure to procure; for example, $x$ might represent the number of hospital beds or amount of medicine to purchase. Additionally, suppose that each unit of this good has cost $C$ so that the total cost of procurement is $Cx$. The variable $y$ denotes the eventual realized need for this resource, e.g. the number of patients in need of a hospital bed or the amount of medication that is needed. We assume that each unit of unmet need incurs a loss denoted by $L$, so that if the selected procurement level $x$ is less than the realized need $y$, a loss of $L(x-y)$ results. With this formalization of a decision-making task, we can proceed to develop a proper scoring rule using the procedure outlined in section \ref{sec:methods.decisiontheory}.
 
-I haven't written anything here.  Fill it in, or delete this section?
+\paragraph{Step 1: specify a loss function.} Combining the cost of procuring goods at level $x$ with losses due to unmet need, we arrive at the overall loss function
+\begin{align}
+s_Q(x,y; C, L) = Cx + L(x-y)_-.
+\end{align}
+Here, $(x - y)_- := \max(-(x - y),0)$ is $0$ if the amount procured, $x$, is greater than or equal to the realized demand $y$; otherwise, it is $y - x$, the amount of unmet need.
 
-%Set up of decision-making problem with costs for over-/under-prediction. Quantile/pinball loss.
+\paragraph{Step 2: Given a probabilistic forecast $F$, identify the Bayes act.} It can be shown that under the loss function $s_Q$, the Bayes act is a quantile of the forecast distribution at the probability level $\alpha = 1 - C/L$:
+\begin{align}
+x^F = F^{-1}(\alpha).
+\end{align}
+See the supplement for a verification of this result.
+%In particular, faced with the classical binary decision problem of whether to recommend an additional unit of protection given a current level of protection $x$, the forecaster's optimal decision rule under $s_m$ is to recommend adding protection if $x < F^{-1}\left(1-\frac{C}{L}\right)$, that is, if 
+%\begin{align}
+%1-F(x) = \mathbb{P}_F\{y>x\} > \frac{C}{L},
+%\end{align}
+%the \emph{cost-loss ratio} of the problem.
 
-%Statement that this loss elicits quantiles as the Bayes act, derivations deferred to a supplement.
+\paragraph{Step 3: Define the scoring rule.} Following the procedures outlined above, we could score the forecast distribution $F$ with the scoring rule
+\begin{align}
+S_Q(F, y; C, L) &= s_Q(x^F, y; C, L) = Cx^F + L(x^F-y)_- \\
+&= C F^{-1}(\alpha) + L \left(F^{-1}(\alpha) - y\right)_-
+\end{align}
 
-%Interpretation of CRPS as an integral of quantile loss over quantile levels, WIS as a discrete approximation of CRPS.
+This scoring rule evaluates the forecast distribution $F$ only through its $\alpha$ quantile. While this is faithful to the context of the decision-making problem, it may not be satisfying as a measure of the quality of the full forecast distribution. For this purpose, one option is to integrate the quantile loss across different values of the quantile level $\alpha$, or, equivalently, across different values of the decision problem's parameters $C$ and $L$. This gives rise to the (weighted) CRPS:
+\begin{align*}
+    S_{CRPS}(F, y) &= \int S_Q(F, y; C, L) h(C, L) \, dC dL
+\end{align*}
+The usual CRPS results from taking a distribution $h$ such that the induced distribution on the probability level $\alpha = 1 - C/L$ is $\text{Uniform}(0,1)$.
+The weighted interval score (WIS) can be used when the full forecast distribution $F$ is not available, and amounts to an approximation of CRPS where the distribution $h$ is discrete with point masses at the quantile levels corresponding to the endpoints of a finite set of prediction intervals.
+
+% The below was an unsuccessful attempt to connect to a more usual notation for CRPS just in terms of integrating across quantile levels. It resulted in a notational quagmire, but I'm keeping it here for now in case it seems like a better way to go...
+%
+%To make the connection to the usual notation, we can divide the loss function $s_Q$ by $L$ to obtain an expression in terms of only $\alpha$.
+%\begin{align*}
+%s_Q(x,y; \alpha) &= s_Q(x,y; C, L)/L \\
+%&= (C/L)x + (x-y)_- \\
+%&= (1 - \alpha)x + (x-y)_-
+%\end{align*}
+%Because these loss functions are equal up to a constant of proportionality, the Bayes act is the same for both. We can how obtain a weighted CRPS by integrating the quantile score across values of $C$ and $L$ or across values of $\alpha$:
+%\begin{align*}
+%S_{CRPS}(F, y) &= \int S_Q(F, y; C, L) h(C, L) \, dC dL %\\
+%&= \int S_Q(F, y; \alpha) h(\alpha) \, d\alpha
+%\end{align*}
+%The usual CRPS results from taking $h$ such that the distribution on the probability level $\alpha$ is $\text{Uniform}(0,1)$.
+
 
 \subsection{The allocation score}
 \label{sec:methods.allocation}
