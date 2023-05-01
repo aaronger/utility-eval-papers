@@ -46,9 +46,15 @@ We begin with a basic task in public health: triage at the unit level, that is, 
 
 A decision problem is...
 
-Unit-level decision problem: allocate to potential case in location $a$ or $b$. With a decision variable $d$ we write this as $d=a$ or $d=b$.
+### The unit-level decision problem: 
 
-- elicit forecast $P(Y_a=1) = p$ where $Y_a=1$ if a case in addition to what is currently provided for at horizon $h$ occurs during the day at horizon $h$ in $a$, and 0 otherwise.  $p$ can in particular come from a distributional incidence forecast $F_a$ via $p = 1-F_a(x)$ where $x$ is the number of cases currently provided for in $h$ days.
+Assume that there are currently resources allocated to care for $x_a$ and $x_b$ many cases in locations $a$ and $b$.  Another resource unit becomes availible and we must decide whether to allocate it to a new potential case in location $a$ or $b$. In terms of a decision variable $d$ the decision is whether to set $d=a$ or $d=b$.
+
+To support our decision making process we elicit forecasts $p_a$ of $P(Y_a=1)$ and $p_b$ of $P(Y_b=1)$ where $Y_a, Y_b = 1$ if a case in addition to what is currently provided for at horizon $h$ occurs during the day at horizon $h$ in $a,b$, and 0 otherwise.  
+
+
+
+$p_{a,b}$ can in particular come from a distributional incidence forecast $F_a$ via $p = 1-F_a(x)$ where $x$ is the number of cases currently provided for in $h$ days.
 
 - fix prob $\beta$ of additional case in $b$, via
 
@@ -59,6 +65,7 @@ Unit-level decision problem: allocate to potential case in location $a$ or $b$. 
 	- $F_{\sum i \neq a}(x) = \int_{\mathbb{R}^n}\mathbb{1}\{\sum_{i \neq a} x_i \leq x\}dF$ if $b$ is a collection of locations and $F$ is a given joint distribution for all coations other than $a$.
 
 We define a loss function for the decision problem that encodes the dilemma faced when balancing the risk of a case of unmet need in $a$ incurred when $d=b$ is chosen against the guaranteed "average" unmet need of $\beta$ in $b$ that is incurred when $d=a$ is chosen. This is the function of the decision $d$ and outcome $Y_a$ 
+
 $$
 l(d,Y) = \mathbb{1}\{d=a\}\beta + \mathbb{1}\{d=b\}Y_a,
 $$
