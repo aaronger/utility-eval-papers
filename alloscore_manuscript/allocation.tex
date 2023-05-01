@@ -136,6 +136,7 @@ This scoring rule evaluates the forecast distribution $F$ only through its $\alp
 \begin{align*}
     S_{CRPS}(F, y) &= \int S_Q(F, y; C, L) p(C, L) \, dC dL
 \end{align*}
+\apg{Quick note that I don't think this will work without some more identifications. The integral needs to be over probability levels and thresholds and without the some discussion like the one commented out (currently) at line 123 or (better in my mind) one like I'm trying to do with binary choices at the unit-level, I don't think we have a threshold.}
 The usual CRPS results from taking $p$ to be the density of a distribution such that the induced distribution on the probability level $\alpha = 1 - C/L$ is $\text{Uniform}(0,1)$.
 The weighted interval score (WIS) can be used when the full forecast distribution $F$ is not available, and amounts to an approximation of CRPS where the distribution $p$ is discrete with point masses at the quantile levels corresponding to the endpoints of a finite set of prediction intervals.
 

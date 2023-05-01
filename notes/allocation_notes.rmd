@@ -375,7 +375,7 @@ and $U=a_{-} - a_=p+r-c$, and so has the same minimizer
 \begin{align}
 Q = F^{-1}\left(\frac{U}{O+U}\right) =  F^{-1}\left(\frac{a_{-} - a_x}{a_{-} + a_{+}}\right) 
 = F^{-1}\left(\frac{p+r-c}{p+r-u}\right).
-\end{align}
+\end{align} 
 Note, for reference, that in the literature $\sbar_{n,F}(x)$ is often encountered in the form
 \begin{align}
 &(O+U) \int_{0}^{x} (x - y)f(y)dy - Ux+ (U+a_x+a_y)E[Y] \\{}
@@ -398,6 +398,8 @@ The minimizer of $\sbar_{m,F}(x) = E_F[s_m(x,Y)]$ given the forecaster's belief 
 \begin{align}
 Q = F^{-1}\left(\frac{L-C}{C+L -C}\right) =F^{-1}\left(1-\frac{C}{L}\right).
 \end{align}
+
+
 In particular, faced with the classical binary decision problem of whether to recommend an additional unit of protection given a current level of protection $x$, the forecaster's optimal decision rule under $s_m$ is to recommend adding protection if $x < F^{-1}\left(1-\frac{C}{L}\right)$, that is, if 
 \begin{align}
 1-F(x) = \mathbb{P}_F\{y>x\} > \frac{C}{L},
