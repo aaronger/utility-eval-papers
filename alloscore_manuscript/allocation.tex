@@ -17,6 +17,10 @@
 \usepackage{biblatex}
 \addbibresource{allocation.bib}
 
+\usepackage{soul}
+\usepackage{color}
+\def\elr#1{{\color{cyan}\textbf{ELR:[#1]}}}
+
 \title{Evaluating infectious disease forecasts with allocation scoring rules}
 \author{Authors}
 
@@ -75,21 +79,22 @@ The remainder of this article is organized as follows. In section \ref{sec:metho
 \section{Methods}
 \label{sec:methods}
 
-We first give a high-level review of a general procedure for developing proper scoring rules that are tailored to a specific decision-making task, and then use that procedure to develop a score that is suitable for evaluation of forecasts in the context of decisions about allocation of limited resources across multiple locations.
+We give a high-level review of a general procedure for developing proper scoring rules that are tailored to a specific decision-making task in section \ref{sec:methods.decisiontheory}. In section \ref{sec:methods.quantileloss} we review how quantile loss can be obtained within this framework in a setting where a decision-maker is required to determine the quantity of a good to procure while balancing the cost of purchasing an additional unit of the good with loss that may result from under-procurement. We then discuss how the continuous ranked probability score (CRPS) can be obtained as an integral of the quantile loss across values of the cost/loss ratio. These developments mirror the structure of section \ref{sec:methods.allocation}. There, we develop a novel \emph{allocation score} that is analogous to the quantile score but is suitable for evaluation of forecasts in the context of decisions about allocation of limited resources across multiple locations when the resource constraint is known. We then describe an \emph{integrated allocation score} that is analogous to the CRPS and is obtained by integrating the allocation score across values of the resource constraint.
 
 \subsection{The decision-theoretic setup for forecast evaluation}
 \label{sec:methods.decisiontheory}
 
 In this section, we give an overview of the decision-theoretic setup for developing proper scoring rules that measure the value of a forecast as an input to decision making. We keep the discussion here at a somewhat informal level; we refer the reader to [some subset of Brehmer and Gneiting; Grünwald and Dawid; Dawid; Granger and Pesaran 2000; Granger and Machina 2006; Ehm et al. 2016] for more technically precise discussion.
 
-In the framework of decision theory, a decision corresponds to the selection of an action $x$ from some set of possible actions $\mathcal{X}$. For example, $x$ may correspond to the level of investment in a measure designed to mitigate severe disease outcomes, with $\mathcal{X}$ being the set of all possible levels of investment that we might select. The quality of a decision to take a particular action $x$ is measured in relation to an outcome $y$ that is unknown at the time the decision is made. For example, $y$ may correspond to the number of individuals who eventually become sick and would benefit from the mitigation measure, and informally, an action $x$ is successful to the extent that it meets the realized demand. In the face of uncertainty, a decision-maker may use a forecast $F$ of the random variable $Y$ to help inform the selection of the action to take. We measure the value of a forecast as an input to this decision-making process by the quality of the decisions that it leads to.
+In the framework of decision theory, a decision corresponds to the selection of an action $x$ from some set of possible actions $\mathcal{X}$. For example, $x$ may correspond to the level of investment in a measure designed to mitigate severe disease outcomes such as hospital beds, ventilators, medication, or medical staff, with $\mathcal{X}$ being the set of all possible levels of investment that we might select. The quality of a decision to take a particular action $x$ is measured in relation to an outcome $y$ that is unknown at the time the decision is made. For example, $y$ may correspond to the number of individuals who eventually become sick and would benefit from the mitigation measure, and informally, an action $x$ is successful to the extent that it meets the realized need. In the face of uncertainty, a decision-maker may use a forecast $F$ of the random variable $Y$ to help inform the selection of the action to take. We measure the value of a forecast as an input to this decision-making process by the quality of the decisions that it leads to.
 
 We can formalize the preceding discussion with the following three-step procedure for developing scoring rules for probabilistic forecasts:
 \begin{enumerate}
-\item Specify a \emph{loss function} $s(x, y)$ that measures the loss associated with taking action $x$ when outcome $y$ eventually occurs. We use the letter $s$ for this function to align with the literature on forecast evaluation, in which context $s$ may be used as a \emph{scoring function}.
+\item Specify a \emph{loss function} $s(x, y)$ that measures the loss associated with taking action $x$ when outcome $y$ eventually occurs.
 \item Given a probabilistic forecast $F$, determine the \emph{Bayes act} $x^F$ that minimizes the expected loss under the distribution $F$.
 \item The \emph{scoring rule} for $F$ calculates the score as the loss incurred when the Bayes act was used: $S(F, y) = s(x^F, y)$.
 \end{enumerate}
+We use the letter $s$ for the loss function to align with the literature on evaluation of forecasts of continuous outcomes, in which context we can often identify the action $x$ with a functional (i.e., a numeric summary such as a mean or a quantile) of the forecast distribution $F$. In this context, $s$ may be used as a \emph{scoring function}. \elr{Consider moving preceding sentences to a footnote or just deleting them?}
 This is a general procedure that may be applied in settings where it is possible to specify a quantitative loss function. Subject to certain technical conditions, scoring rules obtained from this procedure are proper (cite cite).
 
 % , and we illustrate the ideas with two running examples: (1) some problem that results in quantile elicitation, (2) some allocation problem.
@@ -97,6 +102,10 @@ This is a general procedure that may be applied in settings where it is possible
 %A forecaster is asked to recommend, that is, \emph{predict}, the appropriate supply $x$ of some good or investment in some precautionary measure intended to satisfy a random future demand or need $Y$. As a running example, we will consider the provision of a limited supply of a limited health care resource such as oxygen or ventilators. Suppose there is an incremental loss $O \geq 0$ incurred when over-prediction leads to unused supply and an incremental loss $U > 0$ incurred when under-prediction leads to unmet demand or need.
 
 \subsection{A review of quantile loss, CRPS, and the weighted interval score}
+\label{sec:methods.quantileloss}
+
+\subsubsection{Quantile loss}
+
 
 I haven't written anything here.  Fill it in, or delete this section?
 
@@ -107,6 +116,7 @@ I haven't written anything here.  Fill it in, or delete this section?
 %Interpretation of CRPS as an integral of quantile loss over quantile levels, WIS as a discrete approximation of CRPS.
 
 \subsection{The allocation score}
+\label{sec:methods.allocation}
 
 We now develop a scoring rule for probabilistic forecasts that measures the value of a forecast as an input to decision making about how to allocate limited resources to meet demand across multiple locations. As a concrete example, we take the resource to be a good such as ventilators or oxygen supply. An administrator is tasked with determining where to send these resources so as to meet demand among hospital patients in different facilities or states.
 
