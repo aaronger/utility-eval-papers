@@ -1,0 +1,9 @@
+name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
+data|stem|9cbea00a06381e4a|43fae4011a0626f4|136bf5e07fbd9b1c|1588979285||t19489.5302954925s|d07e2e962de596ec|1750|rds|local|vector|||1.918||
+forecast_data|stem|219e2a54ce1ee447|9a0ff480fdddd6f4|19acc71901f13d15|2053382514||t19489.6562136008s|782a35cdee6fb0da|122590|rds|local|vector|||64.246|lengthx  2  1 in coercion to logical1. lengthx  2  1 in coercion to logical1. lengthx  2  1 in coercion to logical1|
+get_forecast_data|function|be33a49edb6ec65f|||||||||||||||
+get_forecast_scores|function|80d5f618d881b03b|||||||||||||||
+get_truth_data|function|0b921511357a382e|||||||||||||||
+model|stem|53fb25f673bb3609|ae83bc723fe2997c|79f49ddb6ed47a98|1816327236||t19489.5302958434s|1254f8a9a0ffbd1f|107|rds|local|vector|||0.002||
+score_data|stem|6b28d0038b9855a4|9929d49cc92b0dbb|17976472af6de281|-880466632||t19489.6573687845s|01d81702c2bf364a|28558|rds|local|vector|||1.851||
+truth_data|stem|e6fffdab9b3086c1|1aaaa66b4a509b69|766c12ce0397936d|359122932||t19489.6532895649s|1d554b97ebca3189|686049|rds|local|vector|||0.521||
