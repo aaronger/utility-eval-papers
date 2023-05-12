@@ -32,14 +32,14 @@ plot_K_v_alloscore <- function(alloscores) {
     geom_line() +
     scale_color_manual(values = palette) +
     scale_linetype_manual(values = linetypes) +
-    geom_vline(xintercept = unique(ascores$ytot), linetype = 2) +
+    geom_vline(xintercept = unique(alloscores$ytot), linetype = 2) +
     xlab("Total Allocation Constraint (K)") +
     ylab("Allocation Score\n(Excess unmet need)") +
     theme_bw()
 
-  pdf("allo_scores_wide.pdf", width = 7, height = 3.5)
+  pdf("figures/allo_scores_wide.pdf", width = 7, height = 3.5)
   print(p)
   dev.off()
 
-  "allo_scores_wide.pdf"
+  "figures/allo_scores_wide.pdf"
 }
