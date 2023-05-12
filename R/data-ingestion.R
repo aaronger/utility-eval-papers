@@ -49,7 +49,7 @@ process_forecast_data <- function(forecast_data, truth_data){
              "USC-SI_kJalpha",
              "UVA-Ensemble")
 
-  fhosp1 <- forecasts_hosp |>
+  forecast_data |>
     dplyr::select(-type) |>
     nest(ps = quantile, qs = value) |>
     relocate(ps, qs) |>
@@ -66,7 +66,4 @@ process_forecast_data <- function(forecast_data, truth_data){
     left_join(
       truth_data |> select(location, target_end_date, value),
       by = c("location", "target_end_date"))
-
-  # rename 4 week ensemble to ensemble for plot legend purposes
-  mkeep[mkeep == "COVIDhub-4_week_ensemble"] <- "COVIDhub-ensemble"
 }

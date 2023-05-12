@@ -37,3 +37,6 @@ run_alloscore <- function(forecast_data_processed){
 
   return(ascores_long)
 }
+
+
+
