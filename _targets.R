@@ -7,7 +7,6 @@ library(targets)
 tar_option_set(
   packages = c("tidyverse", "covidHubUtils", "distfromq", "alloscore", "gh"), # packages that your targets need to run
   format = "rds" # default storage format
-  # Set other options as needed.
 )
 
 ## for custom package install
@@ -18,14 +17,10 @@ tar_option_set(
 # tar_make_clustermq() configuration (okay to leave alone):
 options(clustermq.scheduler = "multicore")
 
-# tar_make_future() configuration (okay to leave alone):
-# Install packages {{future}}, {{future.callr}}, and {{future.batchtools}} to allow use_targets() to configure tar_make_future() options.
-
-# Run the R scripts in the R/ folder with your custom functions:
+# Run the R scripts in the R/ folder:
 tar_source()
-# source("other_functions.R") # Source other scripts as needed. # nolint
 
-# Replace the target list below with your own:
+# List of targets:
 list(
   tar_target(
     name = forecast_data_raw,
