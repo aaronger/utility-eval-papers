@@ -55,7 +55,7 @@ High level points to cover in introduction:
 \item In practice, infectious disease forecasts have typically been evaluated with "off the shelf" scoring rules such as the WIS which is an approximation to CRPS, log score, and so on.
 \item In this work, our goal is to begin to address that gap. We focus on a resource allocation setting.
 \item There is past work focusing on resource allocation in the operations research literature, but it doesn't take the step of getting to a measure of forecast skill.
-\item That is, while there is plenty of work on 
+\item That is, while there is plenty of work on
 \begin{itemize}
 \item DM under risk, where probabilities are taken as known and expected utility is maximized
 \item DM under uncertainty, where probabilities are taken as unknown and robust (i.e. maximin) decisions are sought
@@ -69,7 +69,12 @@ In decision-making settings where it is possible to quantify the utility or loss
 
 However, we are aware of only a limited body of work that explicitly attempts to measure the value of infectious disease forecasts through their impact on policy, and much of this discussion has proceeded informally. For example, \cite{ioannidis2022forecastingCOVIDfailed} discuss the possible negative consequences of inaccurate forecasts of infectious disease, but do not attempt to quantify the utility or loss incurred as a result of those forecasts. Separately, there is a thread of literature that does quantify the link between infectious disease modeling and policy making, but this work has been done outside of a forecasting context. As an example, \cite{Probert2016decisionMakingFootMouth} develop measures of the cost of actions designed to control a hypothetical outbreak of foot-and-mouth disease and use this framework to explore policy recommendations from a variety of simulation-based projection models.
 
-In practice, probablistic infectious disease forecasts have most often been evaluated with standard, off-the-shelf scoring rules such as the log score, continuous ranked probability score (CRPS), or weighted interval score (WIS). [cite some examples] While some of these scores can be interpreted through the lens of decision theory [thinking here of WIS/quantile loss], these connections are not a common focus of infectious disease forecast evaluation.
+In practice, probablistic infectious disease forecasts have most often been evaluated with standard, ``off-the-shelf'' scoring rules.
+For example, seasonal influenza forecasts in the US and dengue forecasts for Peru and Puerto Rico used log-score to evaluate forecast skill \cite{mcgowan_collaborative_2019,reich_collaborative_2019,johansson_open_2019}.
+Pandemic COVID-19 forecasts in the US and Europe were evaluated using the weighted interval score (WIS), an approximation of the continuous ranked probability score (CRPS), and prediction interval coverage\cite{cramer_evaluation_2022}.
+Similarly, CRPS was also used to assess probabilistic forecasts of dengue outbreaks in Vietnam\cite{colon-gonzalez_probabilistic_2021}.
+While some of these scores can be interpreted through the lens of decision theory, and all of the application-specific papers cited above had authors from public health agencies, none of them make explicit connections between a forecast evaluation and how a forecast was used in practice.
+In general, explicit links between how forecasts are evaluated and how they are scored are not a common focus of infectious disease forecast evaluations.
 
 In this work, we address this gap between the ways in which infectious disease forecasts have been used to support public health policy and the ways in which they have traditionally been evaluated. We work with a motivating example where forecasts are used to help set the allocation of a limited quantity of medical supplies across multiple regions.
 
@@ -123,7 +128,7 @@ Here, $(x - y)_- := \max(-(x - y),0)$ is $0$ if the amount procured, $x$, is gre
 x^F = F^{-1}(\alpha).
 \end{align}
 See the supplement for a verification of this result.
-%In particular, faced with the classical binary decision problem of whether to recommend an additional unit of protection given a current level of protection $x$, the forecaster's optimal decision rule under $s_m$ is to recommend adding protection if $x < F^{-1}\left(1-\frac{C}{L}\right)$, that is, if 
+%In particular, faced with the classical binary decision problem of whether to recommend an additional unit of protection given a current level of protection $x$, the forecaster's optimal decision rule under $s_m$ is to recommend adding protection if $x < F^{-1}\left(1-\frac{C}{L}\right)$, that is, if
 %\begin{align}
 %1-F(x) = \mathbb{P}_F\{y>x\} > \frac{C}{L},
 %\end{align}
@@ -185,7 +190,7 @@ As in the previous section, $(x_i - y_i)_-$ is $0$ if the amount $x_i$ allocated
 
 \paragraph{Step 2: Given a probabilistic forecast $F$, identify the Bayes act.} The Bayes act is the allocation that minimizes the expected loss:
 \begin{align}
-    \mathbf{x}^F &= \underset{\mathbf{x}\in \mathbb{R}^N, 0 \leq \mathbf{x}}{\mathrm{arg min}}\,\, \sbar_A^F(\mathbf{x}; L) \text{ subject to } 
+    \mathbf{x}^F &= \underset{\mathbf{x}\in \mathbb{R}^N, 0 \leq \mathbf{x}}{\mathrm{arg min}}\,\, \sbar_A^F(\mathbf{x}; L) \text{ subject to }
     \sum_{i=1}^N x_i \leq K \text{, where} \label{AP} \\
     \sbar_A^F(\mathbf{x}; L) &= \mathbb{E}_{F} [s_A(\mathbf{x}, \mathbf{Y}; L)] = \sum_{i=1}^{N} \mathbb{E}_{F_i}[s_A(x_i, Y_i; L)] \label{eqn:sbar}
 \end{align}
@@ -204,15 +209,15 @@ In words, at the allocation given by the Bayes act, the rate of change of the ex
 This derivative is the same for all locations, so the optimal allocation divides the available resources across all locations in such a way that according to $F$, the expected benefit of 1 additional unit of resources is the same in all locations.
 
 \apg{
-first attempt by APG to rephrase last paragraph: The central mathematical ideas in this construction are that 
+first attempt by APG to rephrase last paragraph: The central mathematical ideas in this construction are that
 \begin{itemize}
-\item optimization under a \emph{single} constraint requires the rates of change of (a probabilistic forecast's) expected benefit with respect to our decision variables, $x_i$, to be the same for all locations 
+\item optimization under a \emph{single} constraint requires the rates of change of (a probabilistic forecast's) expected benefit with respect to our decision variables, $x_i$, to be the same for all locations
 \item these rates of change can be identified with probabilities
 \item and therefore the Bayes act results from using a \emph{shared} probability level, $1 - \lambda^{\star}/L$, to determine allocations as the corresponding quantiles of the location-specific forecast distributions $F_i$ which satisfy the constraint.
 \end{itemize}
 (See the supplement for detailed discussion and derivations of these points.)
 }
- 
+
 \paragraph{Step 3: Define the scoring rule.} We can now define a proper scoring rule for the probabilistic forecast $F$ as
 \begin{equation}
 S_A(F, y; L, K) = s_A(\mathbf{x}^F, y; L) = \sum_{i=1}^n L (F_i^{-1}(1 - \lambda^{\star}/L) - y_i)_-
