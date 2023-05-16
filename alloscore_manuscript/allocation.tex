@@ -14,8 +14,6 @@
 
 \DeclareMathOperator*{\argmin}{argmin}
 
-\usepackage{biblatex}
-\addbibresource{allocation.bib}
 
 \usepackage{soul}
 \usepackage{color}
@@ -159,7 +157,7 @@ The scoring rule $S_Q$ of Equation \eqref{eqn:S_Q_alpha} evaluates the forecast 
 \begin{align*}
 S_{CRPS}(F, y; p) &= \int S_Q(F, y; \alpha) p(\alpha) \, d\alpha.
 \end{align*}
-This weighted form of CRPS has appeared in the literature before, e.g. see \textcite{gneiting2011weightedScoringRules}. The usual CRPS results from taking $p$ corresponding to a $\text{Uniform}(0,1)$ distribution, equally weighting all probability levels.
+This weighted form of CRPS has appeared in the literature before, e.g. see \cite{gneiting2011weightedScoringRules}. The usual CRPS results from taking $p$ corresponding to a $\text{Uniform}(0,1)$ distribution, equally weighting all probability levels.
 
 We emphasize that because $\alpha = 1 - C/L$, the distribution $p(\alpha)$ can be interpreted as expressing incomplete knowledge about the cost/loss ratio in the decision-making problem. The equal weighting used by the ordinary CRPS may be appropriate in the absence of any knowledge about the context in which forecasts will be used to support decision-making, but may be inappropriate if more information is known about the cost/loss ratio for a specific decision-making task.
 
@@ -261,6 +259,7 @@ There is much more to do in this general area.
 
 \section{References}
 
-\printbibliography
+\bibliographystyle{unsrt}
+\bibliography{allocation.bib}
 
 \end{document}
