@@ -1,6 +1,5 @@
-*
-!.gitignore
-!objects
-!meta
+*.DS_Store
+scratch/*
+user/*
 meta/*
 !meta/meta
