@@ -1,4 +1,4 @@
-run_alloscore <- function(forecast_data, truth_data){
+run_alloscore <- function(forecast_data, truth_data, one_forecast_date){
   require(tidyverse)
   require(alloscore)
   require(distfromq)
@@ -17,6 +17,8 @@ run_alloscore <- function(forecast_data, truth_data){
 
   ## process forecast data, adding distfromq output
   forecast_data_processed <- forecast_data |>
+    ## forecast dates are different but reference dates are Mondays
+    dplyr::filter(reference_date == one_forecast_date) |>
     dplyr::select(-type) |>
     nest(ps = quantile, qs = value) |>
     relocate(ps, qs) |>
