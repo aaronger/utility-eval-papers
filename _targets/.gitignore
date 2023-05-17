@@ -1,5 +1,6 @@
 *
 !.gitignore
+!objects
 !meta
 meta/*
 !meta/meta
