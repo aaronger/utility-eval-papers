@@ -8,7 +8,7 @@ library(crew)
 
 # Set target options:
 tar_option_set(
-  controller = crew_controller_local(workers = 4),
+  controller = crew_controller_local(workers = 8),
   packages = c("tidyverse", "covidHubUtils", "distfromq", "alloscore", "gh"), # packages that your targets need to run
   format = "rds" # default storage format
 )
@@ -22,7 +22,7 @@ tar_option_set(
 tar_source()
 
 ## create a group of alloscore targets
-values <- tibble(forecast_dates = as.character(seq.Date(as.Date("2021-12-13"), as.Date("2021-12-27"), by = "7 days")))
+values <- tibble(forecast_dates = as.character(seq.Date(as.Date("2021-11-22"), as.Date("2022-02-28"), by = "7 days")))
 
 # List of targets:
 list(

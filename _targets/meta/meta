@@ -3,10 +3,11 @@ alloscore_18974|stem||218c05edef47203b|495e3757f243761c|2042352558||t19494.79475
 alloscore_2021.12.13|stem|2194e4699d3fc95d|4022f716d86fa093|5ca978a8f2767e73|-700340831||t19494.8315503843s|1c9233f60312682c|5654|rds|local|vector|||360.696||
 alloscore_2021.12.20|stem|da8cee966659cd90|8bdbd82cd3dff5e2|5ca978a8f2767e73|-622383116||t19494.8323180152s|fb55d4cb9d8b24b4|7070|rds|local|vector|||424.162||
 alloscore_2021.12.27|stem|30f0504954169782|ed5a3ae27f78cf3f|5ca978a8f2767e73|-1712181725||t19494.8334544157s|17172c7c6f03f6ec|9737|rds|local|vector|||520.336||
+alloscore_2022.01.31|stem||b8022260321242d6|fdc0bc3463e503e1|419407013||t19494.8531845236s||0|rds|local|vector|||3.208||ℹ In argument across....ℹ In group 1 model  BPaganoRtDriven.Caused by error in across Cant compute column K5000.Caused by error in uniroot f values at end points not of opposite sign
 alloscores|stem|30f0504954169782|cff6158d34310137|fc208c75e48603dc|-644053256||t19494.7597361448s|17172c7c6f03f6ec|9737|rds|local|vector|||506.481||
 figure_K_v_alloscore|stem|7cf7772fc875ecec|6665005a73085174|3e7da60ca6fc9522|495805280|figures/allo_scores_wide.pdf|t19494.6546559176s|39b36f0a55425e31|11212|file|local|vector|||0.251||
 figure_K_v_alloscore_2021.12.13|stem|b96cd9cdd1e9ced9|a8a246ee12cc5973|5cb395a0c45bd88a|696583683|figures/allo_scores_wide.pdf|t19494.8367815521s|36f88f36881edc80|8647|file|local|vector|||1.083||
-forecast_data|stem|46fffce25b469565|4c0fa3508b267648|f23cea8c912412f0|2053382514||t19494.8077058897s|744526f90e288c1d|292813|rds|local|vector|||96.223|lengthx  2  1 in coercion to logical1. lengthx  2  1 in coercion to logical1. lengthx  2  1 in coercion to logical1|
+forecast_data|stem|5925bcec5dd06d15|4c0fa3508b267648|e0dab83ffa0bc5de|2053382514||t19494.8530727673s|80a94679248cf5a8|1693820|rds|local|vector|||371.259|lengthx  2  1 in coercion to logical1. lengthx  2  1 in coercion to logical1. lengthx  2  1 in coercion to logical1|
 forecast_dates|object|9c7eb9e7417c765e|||||||||||||||
 get_forecast_data|function|be33a49edb6ec65f|||||||||||||||
 get_forecast_scores|function|80d5f618d881b03b|||||||||||||||
@@ -16,4 +17,4 @@ process_forecast_data|function|3c4acb653761cb5e|||||||||||||||
 run_alloscore|function|9f632407a8687687|||||||||||||||
 score_data|stem|f0479958bcb91f59|9929d49cc92b0dbb|e6988ee00cf1205b|-880466632||t19494.7923586722s|03edac1f1e112949|74989|rds|local|vector|||4.607||
 truth_data|stem|901b3ed4a5964f8c|1aaaa66b4a509b69|766c12ce0397936d|359122932||t19494.6488493301s|045e5b9edbb3236c|691888|rds|local|vector|||4.233||
-values|object|973b26f9152db871|||||||||||||||
+values|object|3767a4c750331c2e|||||||||||||||
