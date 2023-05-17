@@ -23,7 +23,7 @@ tar_source()
 # List of targets:
 list(
   tar_target(
-    name = forecast_data_raw,
+    name = forecast_data,
     command = get_forecast_data("2021-12-27")
   ),
   tar_target(
@@ -32,15 +32,11 @@ list(
   ),
   tar_target(
     name = score_data,
-    command = get_forecast_scores(forecast_data_raw, truth_data)
-  ),
-  tar_target(
-    name = forecast_data_processed,
-    command = process_forecast_data(forecast_data_raw, truth_data)
+    command = get_forecast_scores(forecast_data, truth_data)
   ),
   tar_target(
     name = alloscores,
-    command = run_alloscore(forecast_data_processed)
+    command = run_alloscore(forecast_data, truth_data)
   ),
   tar_target(
     name = figure_K_v_alloscore,
