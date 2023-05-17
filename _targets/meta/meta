@@ -1,10 +1,10 @@
 name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
-alloscores|stem|30f0504954169782|ca5167c4fc3a1d0d|a77480e541edf352|-644053256||t19489.8095987921s|17172c7c6f03f6ec|9737|rds|local|vector|||491.117||
+alloscores|stem|23fe46ab6373db70|ca5167c4fc3a1d0d|e64525b0d10d241a|-644053256||t19494.6357227578s|15ca0a468fd692f4|9735|rds|local|vector|||1218.029||
 data|stem|9cbea00a06381e4a|43fae4011a0626f4|136bf5e07fbd9b1c|1588979285||t19489.5302954925s|d07e2e962de596ec|1750|rds|local|vector|||1.918||
-figure_K_v_alloscore|stem|555ca4b440e92c46|6665005a73085174|3e7da60ca6fc9522|495805280|figures/allo_scores_wide.pdf|t19489.8112801051s|39b36f0a55425e31|11212|file|local|vector|||0.173||
+figure_K_v_alloscore|stem|544bdd54567acdd7|6665005a73085174|7f6b52b5e0dea410|495805280|figures/allo_scores_wide.pdf|t19494.6357280646s|39b36f0a55425e31|11212|file|local|vector|||0.448||
 forecast_data|stem|219e2a54ce1ee447|9a0ff480fdddd6f4|19acc71901f13d15|2053382514||t19489.6562136008s|782a35cdee6fb0da|122590|rds|local|vector|||64.246|lengthx  2  1 in coercion to logical1. lengthx  2  1 in coercion to logical1. lengthx  2  1 in coercion to logical1|
-forecast_data_processed|stem|b76fef186ba8d70e|ffcc2ee48e2e53de|1ef244eedb38927f|-1517263688||t19489.8039143918s|eb9320a052fb4e9c|12635389|rds|local|vector|||1.489||
-forecast_data_raw|stem|219e2a54ce1ee447|9a0ff480fdddd6f4|19acc71901f13d15|413524792||t19489.801842265s|782a35cdee6fb0da|122590|rds|local|vector|||63.701|lengthx  2  1 in coercion to logical1. lengthx  2  1 in coercion to logical1. lengthx  2  1 in coercion to logical1|
+forecast_data_processed|stem|77b2d770b42484d2|ffcc2ee48e2e53de|01eae4c7b9941473|-1517263688||t19494.6216249559s|a68aabc8b144eaee|12635376|rds|local|vector|||3.293||
+forecast_data_raw|stem|219e2a54ce1ee447|9a0ff480fdddd6f4|19acc71901f13d15|413524792||t19493.824602074s|782a35cdee6fb0da|122590|rds|local|vector|||63.701|lengthx  2  1 in coercion to logical1. lengthx  2  1 in coercion to logical1. lengthx  2  1 in coercion to logical1|
 get_forecast_data|function|be33a49edb6ec65f|||||||||||||||
 get_forecast_scores|function|80d5f618d881b03b|||||||||||||||
 get_truth_data|function|0b921511357a382e|||||||||||||||
@@ -12,5 +12,5 @@ model|stem|53fb25f673bb3609|ae83bc723fe2997c|79f49ddb6ed47a98|1816327236||t19489
 plot_K_v_alloscore|function|158c8470584f6eb4|||||||||||||||
 process_forecast_data|function|3c4acb653761cb5e|||||||||||||||
 run_alloscore|function|08b2166a0c21c14a|||||||||||||||
-score_data|stem|6b28d0038b9855a4|0ac50cee6be168ca|75e1e8e7dcceea1b|-880466632||t19489.8022481458s|01d81702c2bf364a|28558|rds|local|vector|||1.86||
-truth_data|stem|e6fffdab9b3086c1|1aaaa66b4a509b69|766c12ce0397936d|359122932||t19489.6532895649s|1d554b97ebca3189|686049|rds|local|vector|||0.521||
+score_data|stem|0f7079cae6e3fbd8|0ac50cee6be168ca|e1e9de7d6d02b085|-880466632||t19494.6215555828s|aadda4d501fb4549|28438|rds|local|vector|||3.363||
+truth_data|stem|901b3ed4a5964f8c|1aaaa66b4a509b69|766c12ce0397936d|359122932||t19494.6215158868s|045e5b9edbb3236c|691888|rds|local|vector|||2.036||
