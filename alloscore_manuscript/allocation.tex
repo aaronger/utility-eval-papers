@@ -15,6 +15,9 @@
 \DeclareMathOperator*{\argmin}{argmin}
 
 
+\usepackage{setspace}
+\onehalfspacing
+
 \usepackage{soul}
 \usepackage{color}
 \def\elr#1{{\color{cyan}\textbf{ELR:[#1]}}}
@@ -45,40 +48,51 @@ Here we pursue one possible tether between multivariate forecasts and policy: th
 
 \section{Introduction}
 
-High level points to cover in introduction:
-\begin{itemize}
-\item People are using infectious disease forecasts as an input to decision making
-\item There are standard ways to evaluate forecasts that are responsive to decision making context, and use of those methods is relatively common in other fields like economics and meteorology
-\item However, there's not much work in infectious disease that does this
-\item In practice, infectious disease forecasts have typically been evaluated with "off the shelf" scoring rules such as the WIS which is an approximation to CRPS, log score, and so on.
-\item In this work, our goal is to begin to address that gap. We focus on a resource allocation setting.
-\item There is past work focusing on resource allocation in the operations research literature, but it doesn't take the step of getting to a measure of forecast skill.
-\item That is, while there is plenty of work on
-\begin{itemize}
-\item DM under risk, where probabilities are taken as known and expected utility is maximized
-\item DM under uncertainty, where probabilities are taken as unknown and robust (i.e. maximin) decisions are sought
-\end{itemize}
-little seems to have been said on how forecasts can be evaluated by how well they convert a problem of DM under uncertainty to a problem of DM under risk.
-\end{itemize}
+%High level points to cover in introduction:
+%\begin{itemize}
+%\item People are using infectious disease forecasts as an input to decision making
+%\item There are standard ways to evaluate forecasts that are responsive to decision making context, and use of those methods is relatively common in other fields like economics and meteorology
+%\item However, there's not much work in infectious disease that does this
+%\item In practice, infectious disease forecasts have typically been evaluated with "off the shelf" scoring rules such as the WIS which is an approximation to CRPS, log score, and so on.
+%\item In this work, our goal is to begin to address that gap. We focus on a resource allocation setting.
+%\item There is past work focusing on resource allocation in the operations research literature, but it doesn't take the step of getting to a measure of forecast skill.
+%\item That is, while there is plenty of work on
+%\begin{itemize}
+%\item DM under risk, where probabilities are taken as known and expected utility is maximized
+%\item DM under uncertainty, where probabilities are taken as unknown and robust (i.e. maximin) decisions are sought
+%\end{itemize}
+%little seems to have been said on how forecasts can be evaluated by how well they convert a problem of DM under uncertainty to a problem of DM under risk.
+%\end{itemize}
 
 Infectious disease forecasts have been used to inform decision-making about a wide variety of measures designed to reduce disease spread and/or mitigate the severity of disease outcomes. Such decision-making applications include the allocation of limited medical supplies such as ventilators \cite{bertsimas2021predictionsCOVID}, implementation of social distancing measures such as stay-at-home policies, planning site selection for vaccine trials \cite{bertsimas2021predictionsCOVID}, and strategies for public health communication campaigns.
 
 In decision-making settings where it is possible to quantify the utility or loss associated with a particular action, standard tools of decision theory provide a procedure for developing forecast scoring rules that measure the value of forecasts through the quality of the decisions that they lead to. We give an overview of these procedures in Section \ref{sec:methods.decisiontheory}. These methods have been applied with some regularity in fields such as economics and meteorology. [review previous applications of decision-theoretic evaluation to fields like economics and high level description of scoring procedures they use]
 
-However, we are aware of only a limited body of work that explicitly attempts to measure the value of infectious disease forecasts through their impact on policy, and much of this discussion has proceeded informally. For example, \cite{ioannidis2022forecastingCOVIDfailed} discuss the possible negative consequences of inaccurate forecasts of infectious disease, but do not attempt to quantify the utility or loss incurred as a result of those forecasts. Separately, there is a thread of literature that does quantify the link between infectious disease modeling and policy making, but this work has been done outside of a forecasting context. As an example, \cite{Probert2016decisionMakingFootMouth} develop measures of the cost of actions designed to control a hypothetical outbreak of foot-and-mouth disease and use this framework to explore policy recommendations from a variety of simulation-based projection models.
+However, we are aware of only a limited body of work that explicitly attempts to measure the value of infectious disease forecasts through their impact on policy, and much of this discussion has proceeded informally. For example, Ioannidis et al. \cite{ioannidis2022forecastingCOVIDfailed} discuss the possible negative consequences of inaccurate forecasts of infectious disease, but do not attempt to quantify the utility or loss incurred as a result of those forecasts. Separately, there is a thread of literature that does quantify the link between infectious disease modeling and policy making, but this work has been done outside of a forecasting context. As an example, Probert et al. \cite{Probert2016decisionMakingFootMouth} develop measures of the cost of actions designed to control a hypothetical outbreak of foot-and-mouth disease and use this framework to explore policy recommendations from a variety of simulation-based projection models.
 
-In practice, probablistic infectious disease forecasts have most often been evaluated with standard, ``off-the-shelf'' scoring rules.
-For example, seasonal influenza forecasts in the US and dengue forecasts for Peru and Puerto Rico used log-score to evaluate forecast skill \cite{mcgowan_collaborative_2019,reich_collaborative_2019,johansson_open_2019}.
-Pandemic COVID-19 forecasts in the US and Europe were evaluated using the weighted interval score (WIS), an approximation of the continuous ranked probability score (CRPS), and prediction interval coverage\cite{cramer_evaluation_2022}.
-Similarly, CRPS was also used to assess probabilistic forecasts of dengue outbreaks in Vietnam\cite{colon-gonzalez_probabilistic_2021}.
-While some of these scores can be interpreted through the lens of decision theory, and all of the application-specific papers cited above had authors from public health agencies, none of them make explicit connections between a forecast evaluation and how a forecast was used in practice.
-In general, explicit links between how forecasts are evaluated and how they are scored are not a common focus of infectious disease forecast evaluations.
+In practice, probabilistic infectious disease forecasts have most often been made for observations that emerge from public health surveillance systems and evaluated with standard, ``off-the-shelf'' scoring rules.
+For example, seasonal influenza forecasts in the US and dengue forecasts for Peru and Puerto Rico targeted public health surveillance measures of incidence over time and space, and used log-score and mean absolute errors to evaluate forecast skill \cite{mcgowan_collaborative_2019,reich_collaborative_2019,johansson_open_2019}.
+Pandemic COVID-19 forecasts of observed cases, hospitalizations and/or deaths in the US and Europe, as reported by municipal, state, or federal surveillance systems, were evaluated using the weighted interval score (WIS, which is an approximation of the continuous ranked probability score, or CRPS), and prediction interval coverage\cite{cramer_evaluation_2022,fox_real-time_2022,sherratt2023predictive}.
+Similarly, CRPS was also used to assess probabilistic forecasts of dengue incidence at the district level in Vietnam\cite{colon-gonzalez_probabilistic_2021}.
+While some of these scores can be interpreted through the lens of decision theory, and all of the application-specific papers cited above had authors from public health agencies, none of them (including some for which we were co-authors) make explicit connections between forecast evaluation and how a forecast was used in practice.
 
-In this work, we address this gap between the ways in which infectious disease forecasts have been used to support public health policy and the ways in which they have traditionally been evaluated. We work with a motivating example where forecasts are used to help set the allocation of a limited quantity of medical supplies across multiple regions.
+The motivating application of this work is one where forecasts of standard public health surveillance metrics (1) are used to help determine the allocation of a limited quantity of medical supplies across multiple regions, and (2) are later evaluated based on their recommended allocations.  
+The analysis presented is ``synthetic'' in that it does not correspond to an actual analysis that supported decision-making in real-time.
+However, the framework described in this paper corresponds to real-world decisions that must be made by public health administrators around the globe, and could be adapted in the future for such real-time situations.  
+For example, forecasts for districts in Sierra Leone of bed demand to care for patients with Ebola was the subject of a real-time modeling study in late 2014 and early 2015\cite{camacho2015-ebola-bed}.
+And, in 2020, a model developed by an academic research group turned predictions of COVID-19 hospitalizations into estimates of ventilator usage and and shortages. This framework was used by the Hartford HealthCare system in Connecticut ``to align ventilator supply with projected demand at a time where the [COVID-19] pandemic was on the rise''\cite{bertsimas2021predictionsCOVID}. 
+These examples illustrate the potential for forecasts to inform decisions about how to allocate limited supplies such as temporary hospital beds, ventilators, personal protective equipment, or other supplies that are known to be effective at reducing transmission or severity of disease.
 
-operations research work on constrained allocation
+As described above, there exists both a rich literature on outbreak forecast evaluation and an emerging body of work on turning forecasts into resource allocation decisions. 
+However, there has been far less attention paid (no papers that we could identify) to exploring whether standard forecast accuracy metrics are sufficient for evaluating forecasts that are used to make allocation decisions.
+In this work, we address the gap between the ways in which infectious disease forecasts have been used to support public health policy and the ways in which they have traditionally been evaluated. 
+Specifically, we define a new forecast scoring rule --the {\em allocation score}-- that explicitly evaluates forecasts based on how accurate their implied allocations would turn out to be.
+This stands in contrast to standard evaluation metrics that evaluate the accuracy of a forecast relative to the surveillance data being forecasted.
 
-The remainder of this article is organized as follows. In section \ref{sec:methods}, we review the general framework for developing scoring rules for probabilistic forecasts using the tools of decision theory, develop a novel scoring rule that is motivated by the problem of allocating limited medical supplies, and explore the relationship between the proposed allocation score and existing scoring rules such as CRPS. We then illustrate the scoring rule through an application to short-term forecasts of COVID-19 hospital admissions in the US in section \ref{sec:application}. Section \ref{sec:discussion} summarizes our contributions and discusses opportunities for further extensions in future work.
+The remainder of this article is organized as follows. 
+In Section \ref{sec:methods}, we review the general framework for developing scoring rules for probabilistic forecasts using the tools of decision theory, develop a novel scoring rule that is motivated by the problem of allocating limited medical supplies, and explore the relationship between the proposed allocation score and existing scoring rules such as CRPS. 
+In Section \ref{sec:application} we then illustrate the scoring rule through an application to short-term forecasts of COVID-19 hospital admissions in the US. 
+Section \ref{sec:discussion} summarizes our contributions and discusses opportunities for further extensions in future work.
 
 \section{Methods}
 \label{sec:methods}
