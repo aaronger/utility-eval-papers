@@ -51,6 +51,4 @@ list(
     command = plot_K_v_alloscore(alloscore_2021.12.13),
     format = "file"
   )
-
-
 )
