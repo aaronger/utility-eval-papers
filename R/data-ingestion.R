@@ -33,3 +33,10 @@ get_forecast_scores <- function(forecast_data, truth_data){
   )
 }
 
+filter_problematic_data <- function(forecast_data){
+  require(tidyverse)
+  forecast_data |>
+    ## this removes two state-week-model that has a deterministically zero forecast.
+    filter(!(abbreviation=="KS" & reference_date=="2022-02-21" & model=="CU-select")) |>
+    filter(!(abbreviation=="WA" & reference_date=="2022-02-28" & model=="CU-select"))
+}

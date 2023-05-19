@@ -37,7 +37,7 @@ run_alloscore <- function(forecast_data, truth_data, one_forecast_date){
       by = c("location", "target_end_date"))
 
   ## run alloscore
-  Ks <- seq(from = 5000, to = 80000, by = 500)
+  Ks <- seq(from = 500, to = 80000, by = 500)
   Kdf <- data.frame(matrix(Ks,nrow = 1))
   names(Kdf) <- paste0("K=",Ks)
 

@@ -30,6 +30,10 @@ list(
     name = forecast_data,
     command = get_forecast_data(values$forecast_dates)
   ),
+  # tar_target(
+  #   name = filtered_forecast_data,
+  #   command = filter_problematic_data(forecast_data)
+  # ),
   tar_target(
     name = truth_data,
     command = get_truth_data()
