@@ -3,7 +3,7 @@ tar_load(forecast_data)
 
 ## create a group of alloscore targets
 values <- tibble(forecast_dates = as.character(seq.Date(as.Date("2021-11-22"), as.Date("2022-02-28"), by = "7 days")))
-one_forecast_date <- values$forecast_dates[11]
+one_forecast_date <- values$forecast_dates[14]
 
 forecast_data_processed <- forecast_data |>
   ## forecast dates are different but reference dates are Mondays
@@ -25,8 +25,8 @@ forecast_data_processed <- forecast_data |>
     truth_data |> select(location, target_end_date, value),
     by = c("location", "target_end_date"))
 
-ascores <- forecast_data_processed %>% filter(model == "BPagano-RtDriven")
-with(ascores[5:50,] ,
+ascores <- forecast_data_processed %>% filter(model == "CU-select")
+with(ascores,
       allocate(
   F = F,
   Q = Q,
@@ -39,6 +39,10 @@ with(ascores[5:50,] ,
   eps_lam = 1e-5,
   verbose = TRUE
 ))
+
+map2_dbl(ascores$Q[1:16], .5, exec)
+ascores$Q[[17]](.5)
+map2_dbl(ascores$Q[18:51], .5, exec)
 
 nrow(ascores)
 ggplot() + map(2:5, function(i) {
