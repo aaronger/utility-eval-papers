@@ -68,7 +68,8 @@ run_alloscore <- function(forecast_data, truth_data, one_forecast_date){
       names_prefix = "K=",
       names_to = "K"
     ) |>
-    dplyr::mutate(K = as.numeric(K))
+    dplyr::mutate(K = as.numeric(K),
+                  forecast_date = one_forecast_date)
 
   return(ascores_long)
 }
