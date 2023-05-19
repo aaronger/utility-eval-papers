@@ -455,7 +455,9 @@ we have the dual problem of maximizing over $\lambda \geq 0$ the objective funct
 L_D(\lambda; K) &= \min_{0 \leq \mathbf{x}} L(\mathbf{x}, \lambda) = 
 -\lambda K + \sum_{i=1}^{N} \underset{0 \leq x_i}{\min} \left\{\lambda w_i x_i + \sbar_{F,i}(x_i)\right\} \label{dual_eq}
 \end{align}
-which gives lower bounds on $\sbar_F(\mathbf{x}^{\star})$ at a solution $\mathbf{x}^{\star}$ to the primal AP. In particular, when $O_i>0$ for all $i$, $L_D(0)$ gives the total score $\sbar_F(\mathbf{q}_{\symbfit{\alpha}, F})$ when the constraint does not prevent the forecaster from giving the quantiles in each component. When the constraint is active, the forecaster will generally not be able to attain a total score this low and the greatest lower bound on their score will correspond the maximizer $\lambda^{\star} = \lambda^{\star}(K)$ of \eqref{dual_eq}.
+which gives lower bounds on $\sbar_F(\mathbf{x}^{\star})$ at a solution $\mathbf{x}^{\star}$ to the primal AP. In particular, when $O_i>0$ for all $i$, $L_D(0; K)$ gives the total score $\sbar_F(\mathbf{q}_{\symbfit{\alpha}, F})$ when the constraint does not prevent the forecaster from giving the quantiles in each component. 
+When the constraint is active, the forecaster will generally not be able to attain a total score this low and the greatest lower bound on their score will
+ be $L_D(\lambda^{\star}; K)$ where $\lambda^{\star} = \lambda^{\star}(K)$ is the maximizer of \eqref{dual_eq}.
 
 The advantage of this dual formulation under separability is that when considering a candidate $\lambda$ for $\lambda^{\star}$,
  we can calculate each summand 
