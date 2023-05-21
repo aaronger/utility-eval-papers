@@ -1,0 +1,85 @@
+---
+title: "Comments on set up for application"
+date: "`r Sys.Date()`"
+output: 
+  pdf_document:
+    latex_engine: xelatex
+urlcolor: blue
+header-includes:
+   - \usepackage{amsmath}
+   - \usepackage{algorithm}
+   - \usepackage[noend]{algpseudocode}
+   - \usepackage{amsthm}
+   - \usepackage{bm}
+   - \usepackage{cases}
+   - \usepackage{caption}
+   - \usepackage{unicode-math}
+   - \usepackage{hyperref}
+   - \DeclareMathOperator*{\argmin}{argmin}
+---
+<!-- $ ...to toggle Latexyz math scope off -->
+\newcommand{\del}[2]{\frac{\partial {#1} }{\partial {#2}} }
+\newcommand{\dby}[2]{\frac{d {#1} }{d {#2}} }
+\newcommand{\sbar}{\overline{s}}
+\newtheorem{proposition}{Proposition}
+
+Notation:
+\begin{itemize}
+\item $s$ is the date a forecast is made
+\item $t$ is the target date for a forecast
+\item $y_t = (y_{1,t}, \ldots, y_{l,t}, \ldots, y_{L,t})$ is the vector of realized resource need in each of $L$ locations on the target date $t$
+\item $K_t$ is the constraint on available resources that is in effect for target date $t$. For example, this may change over time if the planning agency is going to ramp up (or down) production of the resource in question over time.
+\item $x_t = (x_{1,t}, \ldots, x_{l,t}, \ldots, x_{L,t})$ is the vector of resource allocation levels for target date $t$, with $\sum_l x_{l,t} \leq K_t$.
+\end{itemize}
+
+Preliminary comments:
+\begin{itemize}
+\item The introduction of the time indices $s$ and $t$ is new in this document.  Everything in our main manuscript is framed for a single forecast (so, one value of $s$) for a single target date $t$.  But our application now considers multiple forecast dates and target end dates, so we need this notation to think carefully about what's going on.
+\item Our goal is to figure out how to apply the ideas we've already developed to multiple forecast dates in a justifiable way.  Other work (e.g. Bertsimas et al.) has more carefully considered how to set up the allocation problem in a way that incorporates planning over time, but we don't want to go there for this paper.
+\end{itemize}
+
+Concerns, high level:
+\begin{enumerate}
+\item Currently, a working decision was made in the application to take ``the alloscore value that was for the $K$ closest to the actual total observations," which I'll denote here as $y^{tot}_t = \sum_l y_{l,t}$. I think there are two problems with this:
+    \begin{enumerate}
+    \item I believe that this choice for $K_t$ likely yields an improper score. The basic reason is that the score depends on the value of the random variable/vector that is being forecasted and generally this is not allowed. A little more below.
+    \item It's hard to see how to justify this choice for $K_t$ in a way that corresponds to the set up of the decision-making problem. The implication is that at each time $t$, we have exactly enough resources to meet what will be the eventually-realized need (if an oracle forecast is used). But this is not realistic.
+    \end{enumerate}
+\item Closely related to 1 (b): How are we thinking about the set up of the decision making problem across multiple dates? Is there a way we could summarize overall model performance across the time span under consideration with a single number? To the extent possible, I think we should try to start from a plausible multi-time-step decision making set up that can fit within our set up and go from there.
+    \begin{enumerate}
+    \item As described in 1.b., I don't think setting $K_t = y^{tot}_t = \sum_l y_{l,t}$ can be justified as corresponding to any natural decision making set up. In general, $K_t$ will not be equal to $y^{tot}_t$; our resource planning is not that good/lucky.
+    \item If I remember right, on our call a few weeks ago Ben suggested something like ``Suppose you get one chance to allocate resources with a constraint $K$, and then those allocation levels are fixed and carry through the wave under consideration." This seems like a justifiable idea, but it doesn't line up well with the kind of analysis we think we'd like to do in our application where we consider multiple forecast dates $s$. Looking at multiple forecast dates only makes sense if we can update our allocations based on the information in those forecasts.
+    \item Another idea is to say that we have $K$ units of resources and on each forecast date $s$, we get to decide how they will be allocated on target date $t = s + h$.
+        \begin{itemize}
+        \item This is a little dicey if the resource is something fixed like ventilators or hospital beds because some of the resources we had previously allocated might still be in use by the time $t$ rolls around (e.g. if someone is hospitalized or on a ventilator for multiple weeks)
+        \item Could make more sense for something like supply of oxygen or medication, if $K$ new units of the resource are manufactured each week.
+        \item Recognize that maybe we don't want to talk too much about how this connects to real life in the manuscript...
+        \item But I don't have any great ideas for how we might motivate any particular fixed value of $K$ of interest ahead of time without trying to connect to context (e.g. look up some information somewhere about total oxygen supplies and average amounts used per admitted hospital patient...)
+        \item The strategy I took when talking through things in london was to try not to fixate too much on any particular value of K, but to note that model rankings were fairly stable across values of $K$.
+        \end{itemize}
+    \item Returning to the question I raised above about how we might summarize overall model performance across the time span under consideration: it seems like maybe if we pre-specify a grid of values of $K$ that are used for all target dates $t$, for each of those values of $K$ maybe we could average scores across the target dates? I think this is basically Ben's suggestion, but without the idea that we only get to specify an allocation once.  We'd maybe end up with something like the peaked plot, but with multiple peaks, one for each target date...?  If you had enough target dates, maybe you'd get to something relatively smooth/domed.  This is still not a single number, and there is still the question of how to summarize across $K$'s to get to a single number.
+    \end{enumerate}
+\end{enumerate}
+
+
+A few more thoughts about issues with propriety when setting $K_t = y^{tot}_t$:
+\begin{enumerate}
+\item Intuition:
+    \begin{itemize}
+    \item I think a slightly more careful (but still informal) definition of propriety than the informal one we usually use goes something like: in expectation, a proper scoring rule maximally rewards a forecast that corresponds to the conditional distribution of the random variable in question given all information available at the time $s$ that the forecast is produced.
+    \item $y^{tot}_t$ was not observable at time $s$. A ``forecast" that knows $y^{tot}_t$ and conditions on that quantity in addition to other available information at time $s$ will be different (in general, probably narrower/more concentrated) than a forecast that conditions only on the information available at time $s$.
+    \item Rephrasing the previous point: if I am omnipotent and I tell a forecaster, ``you will be scored using an allocation score using $K_t = 22,000$ because there will be 22,000 hospital admissions on the target date," I have leaked information about the future to that forecaster, and they will produce a forecast that differs from the forecast that would have been produced using only information available as of time $s$.
+    \item In expectation, my score will likely reward the information-privileged forecaster more than the forecast corresponding to the conditional distribution of the random variable in question given all information available at time $s$. Therefore, it's not a proper score.
+    \item The intuition in the above points is pretty rough.  I'd like to be able to state/prove this more precisely.
+    \item I think the fact that we did this in our initial analysis and nobody immediately raised any red flags is a sign of how unclear all of this is. It feels kind of important that we say something about the fact that you can't do this in the manuscript, to warn readers/users off of this kind of analysis (assuming of course that I'm right about the resulting score being improper).
+    \end{itemize}
+\item More generally, for the integrated allocation score we probably need to pre-specify what the distribution over $K$ is. This makes perfect sense from the real-life perspective of a public health decision maker, it just gets tricky when you try to think about how to set up an evaluation exercise in an abstract setting without specific knowledge about $K$...
+\item Rough start at an attempt to be a little more formal:
+    \begin{itemize}
+    \item Let $\mathcal{F}_s$ denote the sub $\sigma$-algebra generated by the collection $O_t$ of everything that's observable as of time $s$. Intuitively, this captures the set of all available information as of the time the forecast is generated.
+    \item Let $\tilde{\mathcal{F}}_s$ denote the sub $\sigma$-algebra generated by $\tilde{O}_s = O_s \cup Y^{tot}_t$.  Noting that $Y^{tot}_t$ was not observable at time $s$, $\mathcal{F}_s \subset \tilde{\mathcal{F}}_s$.
+    \item Maybe propriety is a statement about maximally rewarding the distribution of the random variable $Y_t$ given the sub $\sigma$ algebra $\mathcal{F}_s$, which is different from its distribution given $\tilde{\mathcal{F}}_s$? Where ``maximally rewarding" is in expectation with respect to... unclear \textemdash $\mathcal{F}_s$??
+    \item I only half remember how this stuff works; will have to think a bit more to put the pieces together.
+    \end{itemize}
+\end{enumerate}
+
