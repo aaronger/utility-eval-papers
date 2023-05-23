@@ -48,7 +48,7 @@ list(
   tar_target(
     name = score_data,
     command = get_forecast_scores(forecast_data, truth_data)
-  ),
+   ),
   tar_map(
     values = values,
     tar_target(alloscore, run_alloscore(forecast_data, truth_data, forecast_dates))
