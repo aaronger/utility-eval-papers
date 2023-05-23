@@ -5,6 +5,8 @@ library(targets)
 library(tarchetypes)
 library(tibble)
 library(crew)
+library(covidHubUtils)
+data("hub_locations")
 
 # Set target options:
 tar_option_set(
@@ -24,16 +26,21 @@ tar_source()
 ## create a group of alloscore targets
 values <- tibble(forecast_dates = as.character(seq.Date(as.Date("2021-11-22"), as.Date("2022-02-28"), by = "7 days")))
 
+## set of required locations: all states + DC
+reqd_locs <- hub_locations |>
+  dplyr::filter(geo_type == "state", !(geo_value %in% c("us", "as", "gu", "mp", "pr", "um", "vi"))) |>
+  dplyr::pull(fips)
+
 # List of targets:
 list(
   tar_target(
-    name = forecast_data,
-    command = get_forecast_data(values$forecast_dates)
+    name = eligible_models,
+    command = determine_eligible_models(values$forecast_dates, locations = reqd_locs)
   ),
-  # tar_target(
-  #   name = filtered_forecast_data,
-  #   command = filter_problematic_data(forecast_data)
-  # ),
+  tar_target(
+    name = forecast_data,
+    command = get_forecast_data(values$forecast_dates, models = eligible_models, locations = reqd_locs)
+  ),
   tar_target(
     name = truth_data,
     command = get_truth_data()
@@ -45,10 +52,10 @@ list(
   tar_map(
     values = values,
     tar_target(alloscore, run_alloscore(forecast_data, truth_data, forecast_dates))
-  ),
-  tar_target(
-    name = figure_K_v_alloscore_2021.12.13,
-    command = plot_K_v_alloscore(alloscore_2021.12.13),
-    format = "file"
   )
+  # tar_target(
+  #   name = figure_K_v_alloscore_2021.12.13,
+  #   command = plot_K_v_alloscore(alloscore_2021.12.13),
+  #   format = "file"
+  # )
 )

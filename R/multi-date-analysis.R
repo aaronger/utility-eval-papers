@@ -11,9 +11,10 @@ alloscore_data <- do.call(rbind, mget(ls()))
 alloscore_data_summaries <- alloscore_data |>
   mutate(Kdiff = abs(ytot-K)) |>
   group_by(forecast_date) |>
-  filter(Kdiff == min(Kdiff))|>
+  #filter(Kdiff == min(Kdiff))|>
+  filter(K == 15000)|>
   mutate(nmodels = n(),
-         allo_rank = rank(value, ties.method = "random"),
+         allo_rank = rank(value, ties.method = "min"),
          allo_rank_std = 1- (allo_rank-1)/(nmodels-1)) |>
   ungroup() |>
   complete(model, forecast_date)
@@ -39,7 +40,7 @@ score_data_summaries <- score_data |>
   ungroup() |>
   group_by(reference_date) |>
   mutate(nmodels = n(),
-         mwis_rank = rank(mwis, ties.method = "random"),
+         mwis_rank = rank(mwis, ties.method = "min"),
          mwis_rank_std = 1- (mwis_rank-1)/(nmodels-1)) |>
   ungroup() |>
   complete(model, reference_date)
@@ -55,6 +56,8 @@ p4 <- ggplot(score_data_summaries,
   xlab(NULL)
 
 gridExtra::grid.arrange(p1, p2, p3, p4, nrow=2)
+
+gridExtra::grid.arrange(p2, p4, nrow=2)
 
 all_data <- left_join(alloscore_data_summaries |> mutate(forecast_date = as.Date(forecast_date)),
                       score_data_summaries |> rename(forecast_date = reference_date))
