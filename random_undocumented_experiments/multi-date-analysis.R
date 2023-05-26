@@ -63,8 +63,11 @@ all_data <- left_join(alloscore_data_summaries |> mutate(forecast_date = as.Date
                       score_data_summaries |> rename(forecast_date = reference_date))
 
 ggplot(all_data, aes(x=mwis_rank_std, y=allo_rank_std, color=model)) +
-  geom_point() + xlim(0,1) + ylim(0,1) +
-  scale_color_brewer(palette="Paired")
+  geom_point() + xlim(0,1) + ylim(0,1)
+
+ggplot(all_data, aes(x=mwis, y=value, color=model)) +
+  geom_point(alpha=.7)
+
 
 ## faceted by model, colored by model
 ggplot(all_data, aes(x=mwis_rank_std, y=allo_rank_std, color=model)) +
@@ -86,10 +89,21 @@ ggplot(all_data, aes(x=mwis_rank_std, y=allo_rank_std, color=ytot)) +
   facet_wrap(.~model) +
   geom_abline(slope=1, intercept=0, linetype=2, color="gray")
 
+## sized by ytot
 ggplot(all_data, aes(x=mwis_rank_std, y=allo_rank_std, color=forecast_date, size=ytot)) +
   geom_point(alpha=.8) + xlim(0,1) + ylim(0,1) +
   facet_wrap(.~model) +
   geom_abline(slope=1, intercept=0, linetype=2, color="gray")
+
+## scatterplot of wis and alloscore
+ggplot(all_data, aes(x=mwis, y=value, color=forecast_date, size=ytot)) +
+  geom_point(alpha=.8) + scale_y_log10() + scale_x_log10() +
+  facet_wrap(.~model) +
+  geom_abline(slope=1, intercept=0, linetype=2, color="gray")
+
+## distribution of alloscores, by model
+ggplot(all_data, aes(x=value, y=model)) +
+  geom_boxplot()
 
 
 ggplot(all_data, aes(x=mwis_rank_std, y=allo_rank_std, color=model)) +

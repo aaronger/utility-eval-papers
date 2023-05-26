@@ -3,18 +3,6 @@ run_alloscore <- function(forecast_data, truth_data, one_forecast_date){
   require(alloscore)
   require(distfromq)
 
-  # keep selected models
-  mkeep <- c("BPagano-RtDriven",
-             "COVIDhub-4_week_ensemble",
-             "COVIDhub-baseline",
-             "CU-select",
-             "IHME-CurveFit",
-             "JHUAPL-Bucky",
-             "JHUAPL-Gecko",
-             "MUNI-ARIMA",
-             "USC-SI_kJalpha",
-             "UVA-Ensemble")
-
   ## process forecast data, adding distfromq output
   forecast_data_processed <- forecast_data |>
     ## forecast dates are different but reference dates are Mondays
@@ -25,10 +13,6 @@ run_alloscore <- function(forecast_data, truth_data, one_forecast_date){
     mutate(
       ps = map(ps, deframe),
       qs = map(qs, deframe)
-    ) |>
-    dplyr::filter(model %in% mkeep) %>%
-    dplyr::mutate(
-      model = ifelse(model == "COVIDhub-4_week_ensemble", "COVIDhub-ensemble", model)
     ) |>
     add_pdqr_funs(dist = "distfromq", types = c("p", "q")) |>
     relocate(dist, F, Q) |>
