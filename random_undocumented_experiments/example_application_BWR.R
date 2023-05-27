@@ -1,3 +1,5 @@
+#Changed example allocation as a couple of covidhubUtil functions were not working.
+
 library(tidyverse)
 library(covidHubUtils)
 if (!require("distfromq")) {
@@ -19,9 +21,105 @@ if (
   message("Alloscore may be out of date...")
 }
 
-# hub_repo_path <- "~/Documents/Research/covid19-forecast-hub/"
+
+########################
+### Working versions of required covidHubUtils functions:
+
+align_forecasts_one_temporal_resolution <- function(
+    forecasts,
+    reference_dates,
+    reference_weekday,
+    reference_windows,
+    drop_nonpos_relative_horizons
+) {
+  if (length(unique(forecasts$temporal_resolution)) > 1) {
+    stop("standardize_forecasts_one_temporal_resolution only supports forecasts at a single temporal resolution.")
+  }
+  
+  if (is.null(reference_windows)) {
+    if (reference_weekday == "Saturday") {
+      reference_windows <- -4:2
+    } else if (reference_weekday == "Monday") {
+      reference_windows <- -6:0
+    } else {
+      stop("Reference windows undefined")
+    }
+  }
+  
+  if (!is.list(reference_windows)) {
+    reference_windows <- list(reference_windows)
+  }
+  
+  if (!is.null(reference_dates)) {
+    # ensure we have dates
+    reference_dates <- as.Date(reference_dates)
+  } else {
+    # every date from that of first forecast - diameter of first window
+    # to that of last forecast + diameter of last window
+    all_dates <- seq(
+      min(forecasts$forecast_date) - (
+        max(sort(reference_windows[[1]])) -
+          min(sort(reference_windows[[1]]))
+      ),
+      max(forecasts$forecast_date) + (
+        max(sort(reference_windows[[length(reference_windows)]])) -
+          min(sort(reference_windows[[length(reference_windows)]])) 
+      ),
+      by = 1
+    )
+    
+    # keep the dates identified above that are the specified reference_weekday
+    reference_dates <- all_dates[weekdays(all_dates) == reference_weekday]
+  }
+  
+  # create a tibble where each row contains:
+  # - a possible forecast date
+  # - a reference date to which that forecast date should be assigned
+  ref_df <- tibble(
+    reference_date = reference_dates,
+    forecast_date = purrr::map2(
+      reference_date, 
+      reference_windows, 
+      ~.x+.y
+    )
+  ) %>% unnest(cols = forecast_date)
+  
+  # ensure that in the tibble constructed above, each forecast date is
+  # associated with at most one reference date
+  # this could be violated if some windows are overlapping
+  reps <- ref_df %>%
+    dplyr::group_by(forecast_date) %>%
+    dplyr::tally() %>% 
+    dplyr::filter(n > 1)
+  if (nrow(reps) > 0) {
+    stop(paste0(
+      "The following forecast dates are associated with multiple reference dates: ",
+      paste(reps %>% dplyr::pull(forecast_date), collapse = ", ")
+    ))
+  }
+  
+  # join with the reference date lookup table above
+  # and calculate the relative horizon
+  forecasts <- forecasts %>% 
+    dplyr::left_join(ref_df, by = "forecast_date") %>% 
+    dplyr::mutate(
+      ts_days = ifelse(temporal_resolution == "wk", 7, 1),
+      relative_horizon = 
+        ceiling(as.numeric((target_end_date - reference_date) / ts_days))
+    ) %>%
+    dplyr::select(-ts_days)
+  
+  if (drop_nonpos_relative_horizons) {
+    forecasts <- forecasts %>%
+      dplyr::filter(relative_horizon > 0)
+  }
+  
+  return(forecasts)
+}
+
+ hub_repo_path <- "~/Documents/Research/covid19-forecast-hub/"
 #hub_repo_path <- "~/research/epi/covid/covid19-forecast-hub/"
- hub_repo_path <- "~/covid/covid19-forecast-hub/"
+# hub_repo_path <- "~/covid/covid19-forecast-hub/"
 
 inc_hosp_targets <- paste(0:30, "day ahead inc hosp")
 forecasts_hosp <- load_forecasts(
@@ -38,7 +136,7 @@ forecasts_hosp <- load_forecasts(
     as_of = NULL,
     hub = c("US")
     ) %>%
-  covidHubUtils::align_forecasts() %>%
+    align_forecasts() %>%
     dplyr::filter(
         relative_horizon == 14,
         location < 57)
@@ -300,4 +398,35 @@ p <- ggplot(data = act_vs_pred_df) +
 pdf("obs_v_pred_bucky_muni_highlight_fl.pdf", width = 9.5, height = 4)
 print(p)
 dev.off()
+
+
+
+
+
+
+align_forecasts <- function (forecasts, reference_dates = list(wk = NULL, day = NULL), 
+          reference_weekday = list(wk = "Saturday", day = "Monday"), 
+          reference_windows = list(wk = -4:2, day = -6:0), drop_nonpos_relative_horizons = TRUE) 
+{
+  if (!all(c("wk", "day") %in% (names(reference_dates)) & c("wk", 
+                                                          "day") %in% (names(reference_weekday)) & c("wk", "day") %in% 
+        (names(reference_windows)))) {
+    stop(paste0("reference_dates, reference_weekday, and reference_windows ", 
+                "must be named lists with entries for 'wk' and 'day'."))
+  }
+  aligned_forecasts <- purrr::map_dfr(unique(forecasts$temporal_resolution), 
+                                      function(temporal_res) {
+                                        align_forecasts_one_temporal_resolution(forecasts = forecasts %>% 
+                                                                                  dplyr::filter(temporal_resolution == temporal_res), 
+                                                                                reference_dates = reference_dates[[temporal_res]], 
+                                                                                reference_weekday = reference_weekday[[temporal_res]], 
+                                                                                reference_windows = reference_windows[[temporal_res]], 
+                                                                                drop_nonpos_relative_horizons = drop_nonpos_relative_horizons)
+                                      })
+  return(dplyr::right_join(forecasts, aligned_forecasts, by = names(forecasts)) %>% 
+           dplyr::relocate(reference_date, .after = forecast_date) %>% 
+           dplyr::relocate(relative_horizon, .after = horizon))
+}
+
+
 
