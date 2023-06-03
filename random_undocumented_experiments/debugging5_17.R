@@ -1,9 +1,11 @@
 library(targets)
 tar_load(forecast_data)
+tar_load(truth_data)
 
 ## create a group of alloscore targets
 values <- tibble(forecast_dates = as.character(seq.Date(as.Date("2021-11-22"), as.Date("2022-02-28"), by = "7 days")))
 one_forecast_date <- values$forecast_dates[14]
+mkeep <- c("BPagano-RtDriven")
 
 forecast_data_processed <- forecast_data |>
   ## forecast dates are different but reference dates are Mondays
