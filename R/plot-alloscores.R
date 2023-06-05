@@ -19,23 +19,27 @@ plot_K_v_alloscore <- function(alloscores) {
                "#AA4499",
                "#000000")
 
+  palette <- palette[1:length(models)]
+
   names(palette) <- c(models[models != "COVIDhub-baseline"], "COVIDhub-baseline")
 
   solid_models <- c("COVIDhub-baseline", "MUNI-ARIMA", "CU-select")
-  linetypes <- c(2, 4, 5, 6, 2, 4, 5, rep(1, 3))
+  linetypes <- c(2, 4, 5, 6, 2, 4, 5, rep(1, 3))[1:length(models)]
   names(linetypes) <- c(models[!(models %in% solid_models)], solid_models)
 
   p <- ggplot(
     data = alloscores,
-    mapping = aes(x = K, y = value, color = model, linetype = model)
+    mapping = aes(x = K, y = score, color = model, linetype = model)
   ) +
     geom_line() +
     scale_color_manual(values = palette) +
     scale_linetype_manual(values = linetypes) +
-    geom_vline(xintercept = unique(alloscores$ytot), linetype = 2) +
+    geom_vline(aes(xintercept = ytot), linetype = 2) +
     xlab("Total Allocation Constraint (K)") +
     ylab("Allocation Score\n(Excess unmet need)") +
-    theme_bw()
+    facet_wrap(vars(reference_date)) +
+    theme_bw() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
   pdf("figures/allo_scores_wide.pdf", width = 7, height = 3.5)
   print(p)
