@@ -7,6 +7,7 @@ output:
 urlcolor: blue
 bibliography: allocation_notes.bib 
 header-includes:
+   - \usepackage{hyperref}
    - \usepackage{amsmath}
    - \usepackage{algorithm}
    - \usepackage[noend]{algpseudocode}
@@ -15,7 +16,6 @@ header-includes:
    - \usepackage{cases}
    - \usepackage{caption}
    - \usepackage{unicode-math}
-   - \usepackage{hyperref}
    - \DeclareMathOperator*{\argmin}{argmin}
 ---
 
@@ -56,45 +56,53 @@ $q_{\alpha, F}^{+} := \sup \{x \mid F(x) \leq \alpha\}$
 
 We measure the forecaster's performance when the realized need is $y$ with the scoring function
 \begin{align}
-s(x,y)=s_{O,U}(x,y) &= O(g(x) - g(y))\sb{+} + U(g(x)-g(y))\sb{-}. \label{eqn:scalar_score} \\
-&= \kappa((1-\alpha)(g(x) - g(y))\sb{+} + \alpha(g(x)-g(y))\sb{-}) \label{eqn:scalar_score_alpha} \\
-&= \kappa(\mathbb{1}\{x>y\} - \alpha)(g(x)-g(y)) \label{eqn:scalar_score_ident}\\
-&:= s_{\kappa, \alpha}(x,y) := \kappa s_{\alpha}(x,y),
+s(x,y)=s_{O,U}(x,y) &= O(g(x) - g(y))\sb{+} + U(g(y)-g(x))\sb{+} \label{eqn:scalar_score}
 \end{align}
-where $\alpha = U/(U+O)$, $\kappa = U+O$,
-$u_+ := \max(u,0)$, $u_- := \max(-u,0) = (-u)_+$, and $\mathbb{1}\{A\}$ is the indicator function of the event $A$.
-This scoring function $s$ is negatively oriented, i.e., a smaller score indicates better performance corresponding to a smaller cost due to under- or over-prediction.
+where $u_+ := u \mathbb{1}\{u > 0\}$ and $\mathbb{1}\{A\}$ is the indicator function of the event $A$. This is a \emph{negatively oriented} scoring function.
+That is, a smaller score indicates better performance corresponding to a smaller cost due to under- or over-prediction of the realized $y$.
 
-By making the forecaster aware of $s$ prior to prediction, we elicit an $\alpha$-level quantile $q_{\alpha,F}$ of the forecast distribution $F$ for $Y$. To see this, notice that if a forecaster believes that $Y \sim F$, they will calculate their expected score to be
+By making the forecaster aware of $s$ prior to prediction, we elicit an $\alpha$-level quantile $q_{\alpha,F}$ of the forecast distribution $F$ for $Y$, 
+where $\alpha = U/(U+O)$. To see this, notice that if a forecaster believes that $Y \sim F$, they will calculate their expected score to be
 \begin{align} 
-\sbar_F(x) = E_F[s(x,Y)]  &= O E_F[(g(x) - g(Y))\sb{+}] + U E_F[(g(x) - g(Y))\sb{-}]. \label{eqn:scalar_obj}
+\sbar_F(x) = E_F[s(x,Y)]  &= O E_F[(g(x) - g(Y))\sb{+}] + U E_F[(g(Y) - g(x))\sb{+}]. \label{eqn:scalar_obj}
 \end{align}
 In order to minimize this expectation, they must forecast a solution of the first order equation
 \begin{align}
 \nonumber 0 =\frac{d}{dx}\sbar_F(x) 
-&= O E_F\left[\frac{d}{dx}(g(x) - g(Y))\sb{+}\right] + U E_F\left[\frac{d}{dx}(g(x) - g(Y))\sb{-}\right] \\
+&= O E_F\left[\frac{d}{dx}(g(x) - g(Y))\sb{+}\right] + U E_F\left[\frac{d}{dx}(g(Y) - g(x))\sb{+}\right] \\
 &= O E_F[g^{\prime}(x)\mathbb{1}\{Y < x\}] + U E_F[-g^{\prime}(x)\mathbb{1}\{Y \geq x\}] \\
 &= O g^{\prime}(x) \mathbb{P}_F(Y<x) - U g^{\prime}(x) \mathbb{P}_F(Y\geq x) \\
 &= g^{\prime}(x)\left( O F(x) - U (1-F(x))\right) \\
-&= \kappa g^{\prime}(x)\left(F(x) - \alpha\right), \label{scalar_Z_deriv}
+&= (O+U) g^{\prime}(x)\left(F(x) - \alpha\right), \label{scalar_Z_deriv}
 \end{align}
 that is, a quantile $q_{\alpha, F} \in Q_F\left(\alpha\right)$.
 (See \hyperref[scalar_Z_deriv_detail]{appendix} for an alternative derivation in terms of a density.)
 The critical point $q_{\alpha, F}$ is actually a minimum since \eqref{scalar_Z_deriv} is non-positive on $\{x<q_{\alpha, F}\}$ and non-negative on $\{x>q_{\alpha, F}\}$.
- When $g^{\prime}(q)>0$, this minimum is unique since
+ With the assumptions that $g^{\prime}(q)>0$ and that $Q_F\left(\alpha\right)$ is the singleton $\{q_{\alpha, F}\}$, this minimum is unique since
 \begin{align}
-   \frac{d^2}{dx^2}\sbar_F(x)\big|_{x=q_{\alpha, F}} &= 
-   \kappa\left(g^{\prime}(x)f(x) + g^{\prime \prime}(x)\left(F(x) - \alpha\right)\right)\big|_{x=q_{\alpha, F}} \label{scalar_Z_deriv2}\\
-   &=\kappa(g^{\prime}(q_{\alpha, F})f(q_{\alpha, F}) + g^{\prime \prime}(q_{\alpha, F})\cdot 0) >0.
+\frac{d^2}{dx^2}\sbar_F(x)\big|_{x=q_{\alpha, F}} 
+&= (O+U)\left(g^{\prime}(x)f(x) + g^{\prime \prime}(x)\left(F(x) - \alpha\right)\right)\big|_{x=q_{\alpha, F}} \label{scalar_Z_deriv2}\\
+&= (O+U)(g^{\prime}(q_{\alpha, F})f(q_{\alpha, F}) + g^{\prime \prime}(q_{\alpha, F})\cdot 0) >0.
 \end{align}
 
-If $g^{\prime}(q_{\alpha, F})=0$ or does not exist, or $Q_F(\alpha)$ is not a singleton set, we'll need to adopt additional criteria for whether $q_{\alpha, F}$ is optimal. One possibility is to take $q_{\alpha, F}=\min \left\{x \mid F_X(x) \geq \alpha\right\}$, and if $g^{\prime}(q_{\alpha, F})=0$ we choose the prediction $x$ to be the infimum of the region around $q_{\alpha, F}$ where $g$ is flat. One example of such a $g$ is the \emph{power curve} of a wind turbine which becomes constant above a certain wind speed. Here $x$ would be a forecast of future wind speed $Y$ at time $t$ and $g(x)$ would be the power a turbine operator commits to supplying the electric grid at $t$. Taking $g$ to be constant below a certain point could also serve to express the futility or lack of meaning of forecasts below that point, such as when a forecast user is only able to sell a commodity for which demand can become negative, turning into supply.
-
-Note that $\frac{d}{dx}\sbar_F(x) =\frac{d}{dx}E_F[s(x,Y)] = h(x)E_F[V(x,Y)]$, where $h(x) = \kappa g^{\prime}(x)$ and 
+By reparametrizing to $\alpha = U/(U+O)$ and $\kappa = U+O$, we can express $s$ in several alternative forms:
 \begin{align}
-V(x,y) &\coloneq (1-\alpha)\mathbb{1}\{y < x\} - \alpha \mathbb{1}\{y \geq x\} \mathrel{\phantom{=}}\\
-&= (1-\alpha)\mathbb{1}\{y < x\} - \alpha \left(1 - \mathbb{1}\{y < x\}\right) \\
-&= \mathbb{1}\{y < x\} - \alpha. 
+s_{O,U}(x,y) &= \kappa((1-\alpha)(g(x) - g(y))\sb{+} + \alpha(g(y)-g(x))\sb{+}) & \label{eqn:scalar_score_alpha} \\
+&= \kappa(\mathbb{1}\{y \leq x\} - \alpha)(g(x)-g(y)) & \label{eqn:scalar_score_ident}\\
+&= -\kappa\left[\alpha g(x) + \mathbb{1}\{y \leq x\}(g(y)-g(x)) + h_1(y)\right] & (\text{with} \quad h_1(y) = - \alpha g(y))  \label{eqn:scalar_score_Gnieting_Raftery}\\
+&= \kappa\left[(1-\alpha) g(x) + \mathbb{1}\{y > x\}(g(y)-g(x)) + h_2(y)\right] & (\text{with} \quad h_2(y) = (\alpha - 1) g(y)) \label{eqn:scalar_score_OR}\\
+&:= s_{\kappa, \alpha}(x,y) := \kappa s_{\alpha}(x,y).&
+\end{align}
+
+Since $h_1$ and $h_2$ are functions of only $y$, they do not enter the first order equation \eqref{scalar_Z_deriv} and can be regarded as nuisance functions carrying information about the application irrelevant to quantile elicitation. The forms \eqref{eqn:scalar_score_ident} and \eqref{eqn:scalar_score_Gnieting_Raftery} appear as equations (41) and (40) in [@gneitingStrictlyProperScoring2007a].\footnote{Or rather the negatives of these equations since Gneiting and Raftery use positively oriented scoring functions. Also note that their $x$ plays the role of our $y$.}
+ The form \eqref{eqn:scalar_score_OR} is often used in operations research and meteorology literature, and is discussed later in the section \nameref{subsec:metparams}.
+
+Note from \eqref{eqn:scalar_score_ident} that $\frac{d}{dx}\sbar_F(x) =\frac{d}{dx}E_F[s(x,Y)] = k(x)E_F[V(x,Y)]$, where $k(x) = \kappa g^{\prime}(x)$ and 
+\begin{align}
+V(x,y) 
+% &\coloneq (1-\alpha)\mathbb{1}\{y < x\} - \alpha \mathbb{1}\{y \geq x\} \mathrel{\phantom{=}}\\
+% &= (1-\alpha)\mathbb{1}\{y < x\} - \alpha \left(1 - \mathbb{1}\{y < x\}\right) \\
+&= \mathbb{1}\{y \leq x\} - \alpha. 
 \end{align}
 By virtue of $E_F[V(Q_F(\alpha),Y)]=0$, $V$ is said to be an \emph{identification function} for the $\alpha$ quantile. The fact that, generally speaking, any elicitable functional (such as a quantile) has an identification function is known as \emph{Osband's principle}.
 
@@ -106,13 +114,17 @@ If $y$ is generated by $Y \sim G$ then $S_{\alpha}(F,y)$ is an estimate of
 \begin{align}
 S_{\alpha}(F,G) &:= E_G[S_{\alpha}(F,Y)] = E_G[s_{\alpha}(Q_{F}(\alpha),Y)].
 \end{align}
-This defines a functional on $\mathcal{F_0}$, the class of measures on the Borel-Lebesgue sets of $\mathbb{R}$ by
+The estimand here is the value at $G$ of the functional $\mathcal{\overline{S}}$ on $\mathcal{F_0}$ given by
 \begin{align}
 \mathcal{\overline{S}}_{G,\alpha}(F) := \sbar_G(Q_{\alpha}(F))
 \end{align}
-where $Q_{\alpha}$ is the $\alpha$ quantile functional.
+where $Q_{\alpha}$ is the $\alpha$ quantile functional. This is the expected value under $s$ of the forecaster's $\alpha$ quantile under the \emph{actual} data generating process $G$.
 
-## Examples of forecaster expected scores
+\begin{remark}
+Relaxing either of the assumptions that $g^{\prime}(q_{\alpha, F})>0$ or that $Q_F(\alpha)$ is a singleton set would require adopting additional criteria for whether $q_{\alpha, F}$ is optimal. One possibility would be to take $q_{\alpha, F}=\min \left\{x \mid F_X(x) \geq \alpha\right\}$, and in case $g^{\prime}(q_{\alpha, F})=0$ or fails to exist, choose the prediction $x$ to be the infimum of the region around $q_{\alpha, F}$ where $g$ is flat. An example of such a $g$ is the \emph{power curve} of a wind turbine which becomes constant for wind speeds above the turbine's maximum operating speed. Here $x$ would be a forecast of future wind speed $Y$ at time $t$ and $g(x)$ would be the power a turbine operator commits to supplying the electric grid at $t$. Taking $g$ to be constant below a certain point could also serve to express the futility or lack of meaning of forecasts below that point, such as when a forecast user is only able to sell a commodity for which demand can become negative, turning into supply.
+\end{remark}
+
+\subsection{Examples of forecaster expected scores}
 
 Corresponding to the two expressions of an expectation $E_F[h(y)\mathbb{1}\{a < y<b\}]$ as either side of the Riemann-Stieltjes integration-by-parts 
 formula $\int_{a}^{b}h(y)dF(y) = h(y)F(y) \big|_{a}^{b} - \int_{a}^{b}F(y)dh(y)$, the expected score \eqref{eqn:scalar_obj}
@@ -315,7 +327,7 @@ and in \eqref{eqn:gbarx} to get
 \end{align}
 
 
-##  Alternative Notation Possibilities
+\subsection{Alternative Notation Possibilities}
 
 Let $Y \sim F,F_i$ be various forecaster beliefs and $Y \sim G$ be reality.
 \begin{align}
@@ -349,26 +361,26 @@ d_s(F,Y) &:= S(F,G) - e(Y).
 Thus, $\overline{S}(F) = d_s(F,Y) + e_s(Y)$.
 
 
-## Newsvendor parameters
+\subsection{Newsvendor parameters}
 
 In the inventory management literature, minimization of an expectation of the form of $\sbar_F(x)$ for a given $F$ arises in the \emph{newsvendor problem}.  This involves the ordering decision faced by a retailer of a perishable good (such as newpapers) when customer demand is uncertain. Because the focus here is on revenues and expenditures, terms other than just the over- and underprediction penalties in \eqref{eqn:scalar_score} often appear, giving a retailer's scoring function as
 \begin{align}
-s_n(x,y) & = a_x x +a_y y +a_{+}(x-y)_+ + a_{-}(x-y)_-.
+s_n(x,y) & = a_x x +a_y y +a_{+}(x-y)\sb{+} + a_{-}(y-x)\sb{+}.
 \end{align}
 We might have, for example, the score given by net value transfers
 \begin{align}
-s_n(x,y) = cx-py - u(x-y)_+ + (p+r)(x-y)_-
+s_n(x,y) = cx-py - u(x-y)\sb{+} + (p+r)(y-x)\sb{+}
 \end{align}
-where $x$ newspapers are ordered at price $c$, $y - (x-y)_-$ are sold at retail price $p$, $(x-y)_+$ are sold at salvage price $u$, 
-and $r(x-y)_-$ of customer "goodwill" is lost. 
+where $x$ newspapers are ordered at price $c$, $y - (y-x)\sb{+}$ are sold at retail price $p$, $(x-y)\sb{+}$ are sold at salvage price $u$, 
+and $r(y-x)\sb{+}$ of customer "goodwill" is lost. 
 This can be rewritten as
 \begin{align}
-s_n(x,y) &= (a_{+} + a_x)(x-y)_+ + (a_{-} - a_x)(x-y)_- +(a_x + a_y)y \\
-&= (c-u)(x-y)_+ + (p+r-c)(x-y)_- -(p-c)y
+s_n(x,y) &= (a_{+} + a_x)(x-y)\sb{+} + (a_{-} - a_x)(y-x)\sb{+} +(a_x + a_y)y \\
+&= (c-u)(x-y)\sb{+} + (p+r-c)(y-x)\sb{+} -(p-c)y
 \end{align}
 giving the retailer's objective function under a demand distribution $F$ as
 \begin{align}
-\sbar_{n,F}(x) = (a_{+} + a_x)E_F[(x-Y)_+] + (a_{-} - a_x)E_F[(x-Y)_-] +(a_x + a_y)E[Y].
+\sbar_{n,F}(x) = (a_{+} + a_x)E_F[(x-Y)\sb{+}] + (a_{-} - a_x)E_F[(Y-x)\sb{+}] +(a_x + a_y)E[Y].
 \end{align}
 This differs by a constant from our $\sbar_F(x)$ in \eqref{eqn:scalar_obj} after taking $g(x)=x$, $O=a_{+} + a_x=c-u$ 
 and $U=a_{-} - a_=p+r-c$, and so has the same minimizer   
@@ -382,17 +394,15 @@ Note, for reference, that in the literature $\sbar_{n,F}(x)$ is often encountere
 =\,&(p+r-u) \int_{0}^{x} (x - y)f(y)dy - (p+r-c)x+ rE[Y]
 \end{align}
 
+\subsection{Meteorologist parameters}\label{subsec:metparams}
 
-
-## Meteorologist parameters
-
-Similarly, a weather forecaster might be judged by the cost $Cx$ of recommended protection $x$ against a level $y$ of adverse weather (e.g., rainfall) added to any loss $L(x-y)_-$ resulting from underprediction, leading to the scoring function 
+Similarly, a weather forecaster might be judged by the cost $Cx$ of recommended protection $x$ against a level $y$ of adverse weather (e.g., rainfall) added to any loss $L(y-x)\sb{+}$ resulting from underprediction, leading to the scoring function 
 \begin{align}
-s_m(x,y) = Cx + L(x-y)_-,
+s_m(x,y) = Cx + L(y-x)\sb{+},
 \end{align}
 which rearranges to 
 \begin{align}
-s_m(x,y) = C(x-y)_+ + (L-C)(x-y)_- + Cy.
+s_m(x,y) = C(x-y)\sb{+} + (L-C)(y-x)\sb{+} + Cy.
 \end{align}
 The minimizer of $\sbar_{m,F}(x) = E_F[s_m(x,Y)]$ given the forecaster's belief $Y \sim F$ is now
 \begin{align}
@@ -410,7 +420,7 @@ the \emph{cost-loss ratio} of the problem.
 There is considerable opportunity here for confusion as to the role of $x$ if one is following (as we mostly are) the notation of [@ehm2016quantiles].
 
 
-# Multipoint Quantile Scoring Rules
+\section{Multipoint Quantile Scoring Rules}
 
 Suppose we ask a forecaster to provide a set of point forecasts $\{x_1,x_2\}$ to be rewarded according to the aggregate scoring function 
 \begin{align}
@@ -418,8 +428,8 @@ s(x_1,x_2,y) &= s_{O_1,U_1}(x_1,y) + s_{O_2,U_2}(x_2,y).
 \end{align}
 
 
+\section{Allocation Scoring Rules}
 
-# Allocation scoring rules
 We now develop \emph{allocation scoring functions} that elicit forecasts $x_i$ for outcomes $y_i, i = 1,\ldots,N$, each with it's own incremental cost $O_i$ and loss $U_i$ as for a quantile scoring rule, but with the additional constraint 
 \begin{align} 
  \sum_{i=1}^N w_i x_i = \mathbf{w}^T \mathbf{x} \leq K
@@ -629,7 +639,7 @@ Also, either
 Collect the AP parameters into $\symbfit{\beta}:= \left\{\mathbf{w}, K, \symbfit{\alpha}, \symbfit{\kappa}\right\}$. The resulting $Q_i^{\symbfit{\beta}}= Q_i(\symbfit{\beta})$ form the Bayes act for the the forecast $\mathbf{F}$ and the realized losses and costs defines the scoring rule evaluated on $\mathbf{F}$:
 \begin{align}
 S_{\symbfit{\beta}}(\mathbf{F},\mathbf{y}) = 
-s_{\symbfit{\beta}}(\mathbf{Q}^{\symbfit{\beta}}, \mathbf{y})&=\sum O_i(g_i(Q_i^{\symbfit{\beta}}) - g_i(y_i))_+ + U_i(g_i(Q_i^{\symbfit{\beta}})-g_i(y_i))_-
+s_{\symbfit{\beta}}(\mathbf{Q}^{\symbfit{\beta}}, \mathbf{y})&=\sum O_i(g_i(Q_i^{\symbfit{\beta}}) - g_i(y_i))\sb{+} + U_i(g_i(y_i)-g_i(Q_i^{\symbfit{\beta}}))\sb{+}
 \\
 &= \sum((U_i+O_i)\mathbb{1}\{Q_i^{\symbfit{\beta}}>y_i\} - U_i)(g_i(Q_i^{\symbfit{\beta}})- g_i(y_i)) \\
 &= \sum \kappa_i (\mathbb{1}\{Q_i^{\symbfit{\beta}}>y_i\}-\alpha_i)(g_i(Q_i^{\symbfit{\beta}})- g_i(y_i))
@@ -641,7 +651,7 @@ Remarks:
 
 - While quantile rules are undefined for zero overprediction costs, allocation rules (with $K<\infty$) are defined even when some $\alpha_i = 1$. This covers one of the problems originally motivating this project: find the Bayes act for allocation $\mathbf{x}$ of hospital supplies to locations $l_i, i=1,\ldots,N$ given distributions $F_i$ of need $Y_i$, a total available stock $K$ of supplies, and a loss function
 \begin{align}
-l(\mathbf{x}, \mathbf{y}) = U\sum_{i=1}^{N} (x_i - y_i)_-.
+l(\mathbf{x}, \mathbf{y}) = U\sum_{i=1}^{N} (y_i - x_i)\sb{+}.
 \end{align}
 
 - $s_{\symbfit{\beta}}$ is consistent by definition for the functional $\mathbf{Q}_{\symbfit{\beta}}$ and $S_{\symbfit{\beta}}$ is proper since
