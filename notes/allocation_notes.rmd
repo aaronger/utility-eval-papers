@@ -77,7 +77,7 @@ In order to minimize this expectation, they must forecast a solution of the firs
 \end{align}
 that is, a quantile $q_{\alpha, F} \in Q_F\left(\alpha\right)$.
 (See \hyperref[scalar_Z_deriv_detail]{appendix} for an alternative derivation in terms of a density.)
-The critical point $q_{\alpha, F}$ is actually a minimum since \eqref{scalar_Z_deriv} is non-positive on $\{x<q_{\alpha, F}\}$ and non-negative on $\{x>q_{\alpha, F}\}$.
+The critical point $q_{\alpha, F}$ is actually a minimum since \eqref{scalar_Z_deriv} is non-positive on $\{x< \inf\left(Q_F\left(\alpha\right)\right)\}$ and non-negative on $\{x>\sup\left(Q_F\left(\alpha\right)\right)\}$.
  With the assumptions that $g^{\prime}(q)>0$ and that $Q_F\left(\alpha\right)$ is the singleton $\{q_{\alpha, F}\}$, this minimum is unique since
 \begin{align}
 \frac{d^2}{dx^2}\sbar_F(x)\big|_{x=q_{\alpha, F}} 
