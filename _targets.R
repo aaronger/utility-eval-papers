@@ -53,6 +53,10 @@ list(
     values = values,
     tar_target(alloscore, run_alloscore(forecast_data, truth_data, forecast_dates))
   )
+  # tar_map(
+  #   values=values,
+  #   tar_target(alloscore_overk, run_alloscore_overk(forecast_data, truth_data, forecast_dates))
+  # )
   # tar_target(
   #   name = figure_K_v_alloscore_2021.12.13,
   #   command = plot_K_v_alloscore(alloscore_2021.12.13),
