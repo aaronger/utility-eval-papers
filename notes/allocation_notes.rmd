@@ -341,20 +341,25 @@ and in \eqref{eqn:gbarx} to get
 \subsection{Entropy and Divergence}
 
 Let $F,F_i$ be general distributions such as forecaster beliefs or reports about $Y$, and $G$ be the true distribution of $Y$. 
-For a general scoring rule $S$, the $S$-entropy of $F$ is defined as 
+For a general scoring rule $S$, we define the $S$-entropy of $F$ as 
 \begin{align}
-e_S(F) &:= S(F, F) = E_F[S(F, Y)].
+e_S(F) &:= S(F, F) = E_F[S(F, Y)]
+\end{align}
+and the $S$-entropy of the random variable $Y$ as
+\begin{align}
+e_S(Y) &:= e_S(G).
 \end{align}
 Applying this to $S_\alpha$, we can define the $g,\alpha$-entropy of $F$ as
 \begin{align}
 e_{\alpha}(F) &:= S_{\alpha}(F, F) = E_F[s_{\alpha}(q_{F,\alpha}, Y)] .
 \end{align}
-If a forecaster believes that $Y \sim F$ then they expect to receive a score of $e_{\alpha}(F)$ by reporting their $\alpha$ quantile.
+A forecaster believing that $Y \sim F$ will expect to receive a score of $e_{\alpha}(F)$ by reporting their $\alpha$ quantile, while an
+omniscient forecaster \emph{knowing} that $Y\sim G$ will expect a score of $e_S(Y)$ for reporting $q_{\alpha,Y}$.
 According to \eqref{eqn:scalar_obj_cdf_form} and \eqref{eqn:obj_pexp},
 \begin{align}
 e_{\alpha}(F)
 &= (1-\alpha) \int_{-\infty}^{q_{\alpha,F}} F(u) dg(u) + \alpha \int_{{q_{\alpha,F}}}^{\infty}(1-F(u)) dg(u) \\
-&= \alpha \overline{g}\sb{F}-\overline{g}_{F}(x).
+&= \alpha \overline{g}\sb{F}-\overline{g}_{F}(q_{\alpha,F}).
 \end{align}
 Similarly, we define the $g,\alpha$-divergence between two distributions as
 \begin{align}
@@ -372,12 +377,11 @@ And from \eqref{eqn:obj_pexp},
 d_{\alpha}(F_1,F_2) &= g(q_{\alpha,F_1})(F_2(q_{\alpha,F_1}) - \alpha) -\overline{g}_{F_2}(q_{\alpha,F_1}) + \alpha \overline{g}\sb{F_2}  - \alpha \overline{g}\sb{F_2} + \overline{g}_{F_2}(q_{\alpha,F_2}) \\
 &= g(q_{\alpha,F_1})(F_2(q_{\alpha,F_1}) - \alpha) + \int_{q_{\alpha,F_1}}^{q_{\alpha,F_2}}g(y)dF_2(y)
 \end{align}
-To emphasize the reality of $G$ we write $e_{\alpha}(G)$ as $e_{\alpha}(Y)$, which with \eqref{egn:divergence}
-gives 
+With \eqref{egn:divergence}, we get 
 \begin{align}
-S_{\alpha}(F,G) = d_{\alpha}(F,G) + e_{\alpha}(Y). \label{eqn:marg_score_decomp}
+S_{\alpha}(F,G) = d_{\alpha}(F,G) + e_{\alpha}(Y), \label{eqn:marg_score_decomp}
 \end{align}
-This expresses the true expected score of $F$ 
+expressing the true expected score of $F$ 
 (i.e., not that calculated by the forecaster) as the sum of the failure of $F$ to match $G$ and the inherent uncertainty of $Y$.
 
 We can also replace $G$ in \eqref{eqn:marg_score_decomp} by $G|F$, the true distribution of $Y$ \emph{given} that the forecaster 
@@ -418,29 +422,34 @@ S(F_1,F_2) &:= E_{F_2}[S(F_1,Y)] = s(q_{F_1,\alpha}, F_2) \\
 
 In the inventory management literature, minimization of an expectation of the form of $\sbar_F(x)$ for a given $F$ arises in the \emph{newsvendor problem}.  This involves the ordering decision faced by a retailer of a perishable good (such as newpapers) when customer demand is uncertain. Because the focus here is on revenues and expenditures, terms other than just the over- and underprediction penalties in \eqref{eqn:scalar_score} often appear, giving a retailer's scoring function as
 \begin{align}
-s_{\mathbf{n}}(x,y) & = c x - p \min(x,y) - u(x-y)\sb{+} + r(y-x)\sb{+} \label{eqn:news_score}
+s_{\mathbf{n}}(x,y) & = c x - p \min(x,y) - u(x-y)\sb{+} + r(y-x)\sb{+} \label{eqn:news_score} \\
+&= \begin{cases}
+cx - px + r(y-x), & x \leq y \\
+cx - py - u(x-y), & x > y
+\end{cases}
 \end{align}
 where $\mathbf{n} = \{c,p,u,r\}$.
 This score is netting the monetary transfers that occur when
 where $x$ newspapers are ordered at price $c$, $\min(y,x)$ are sold at retail price $p$, $(x-y)\sb{+}$ are sold at salvage price $u$, 
-and $r(y-x)\sb{+}$ of monetarily valued customer "goodwill" is lost. 
+and the "goodwill", monetarily valued at $r$, of $(y-x)\sb{+}$ customers is lost. 
 Using $x = y + (x-y)_+ - (y-x)_+$ and $\min(x,y) = y - (y-x)_+$ \eqref{eqn:news_score} can be rewritten as
 \begin{align}
 s_{\mathbf{n}}(x,y) &= (c-u)(x-y)\sb{+} + (p-c+r)(y-x)\sb{+} -(p-c)y
 \end{align}
 giving the retailer's objective function under a demand distribution $F$ as
 \begin{align}
-\sbar_{F, {\mathbf{n}}}(x) = (c-u)E_F[(x-Y)\sb{+}] + (p-c+r)E_F[(Y-x)\sb{+}] -(p-c)E[Y].
+\sbar_{F, {\mathbf{n}}}(x) = (c-u)E_F[(x-Y)\sb{+}] + (p-c+r)E_F[(Y-x)\sb{+}] -(p-c)E_F[Y].
 \end{align}
 This differs by a constant from our $\sbar_{F,O,U}(x)$ in \eqref{eqn:scalar_obj} with $g(x)=x$, $O=c-u$ 
 and $U=p-c+r$, and so has the same minimizer   
 \begin{align}
-Q = F^{-1}\left(\frac{U}{O+U}\right) = F^{-1}\left(\frac{p-c+r}{p-u + r}\right).
+q_{F,O,U} = F^{-1}\left(\frac{U}{O+U}\right) = F^{-1}\left(\frac{p-c+r}{p-u + r}\right).
 \end{align} 
 Note, for reference, that in the literature $\sbar_{F, {\mathbf{n}}}(x)$ is often encountered in the form
 \begin{align}
-&(O+U) \int_{0}^{x} (x - y)dF(y) - Ux+ (U-u+r)E[Y] \\{}
-=\,&(p+r-u) \int_{0}^{x} (x - y)dF(y) - (p-c+r)x+ rE[Y]
+&(O+U) E_F[(x-Y)\sb{+}] + U E_F[Y] E_F[(Y-x)\sb{+}-(x-Y)\sb{+}] -(p-c)E_F[Y] \\
+&(O+U) E_F[(x-Y)\sb{+}] + U (E_F[Y] - x) -(p-c)E_F[Y]\\
+=\,&(p+r-u) \int_{0}^{x} (x - y)dF(y) - (p-c+r)x+ rE_F[Y]
 \end{align}
 
 \subsection{Meteorologist parameters}\label{subsec:metparams}
