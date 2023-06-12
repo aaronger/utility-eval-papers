@@ -1,0 +1,12 @@
+---
+title: "alloscore, ISF 43"
+format:
+  revealjs: 
+    width: 1500
+editor: visual
+---
+
+Comparitive vs absolute assessment/evaluation
+
+
+illustrate algo with a lambda over xs plot against tau
