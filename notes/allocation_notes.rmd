@@ -351,21 +351,66 @@ e_S(Y) &:= e_S(G).
 \end{align}
 Applying this to $S_\alpha$, we can define the $g,\alpha$-entropy of $F$ as
 \begin{align}
-e_{\alpha}(F) &:= S_{\alpha}(F, F) = E_F[s_{\alpha}(q_{F,\alpha}, Y)] .
+e_{\alpha}(F) &:= S_{\alpha}(F, F) = E_F[s_{\alpha}(q_{\alpha,F}, Y)] .
 \end{align}
-A forecaster believing that $Y \sim F$ will expect to receive a score of $e_{\alpha}(F)$ by reporting their $\alpha$ quantile, while an
-omniscient forecaster \emph{knowing} that $Y\sim G$ will expect a score of $e_S(Y)$ for reporting $q_{\alpha,Y}$.
+A forecaster believing that $Y \sim F$ will expect to receivq_e a score of $e_{\alpha}(F)$ by reporting their $\alpha$ quantile, while an
+omniscient forecaster \emph{knowing} that $Y\sim G$ will expect a score of $e_S(Y)$ for reporting $q_{\alpha,Y}$. Note that if 
+$F_{y_0} = \mathbb{1}\{x \geq y_0\}$ is deterministic, then 
+\begin{align}
+e_{\alpha}(F_{y_0}) = E_{F_{y_0}}[s_{\alpha}(q_{\alpha, F_{y_0}}, Y)] = s_{\alpha}(y_0, y_0) = 0. \label{eqn:entropy_determ}
+\end{align}
+Similarly, if $F_{\mathbf{y}_n} = \mathrm{Unif}\{y_1, \ldots, y_n\}$ is the empirical distribution of a sample $\mathbf{y}_n = \{y_1, \ldots, y_n\}$, then
+\begin{align}
+e_{\alpha}(F_{\mathbf{y}_n}) = E_{F_{\mathbf{y}_n}}[s_{\alpha}(q_{\alpha, F_{\mathbf{y}_n}}, Y)] 
+& = \frac{1}{n}\sum_{i=1}^{n} s_{\alpha}(y_{\lceil \alpha n \rceil}, y_i) \\
+& = \frac{1}{n} \left\{(1-\alpha)\sum_{i=\lceil \alpha n \rceil}^{n}g(y_i) - g(y_{\lceil \alpha n \rceil}) + 
+\alpha \sum_{i=1}^{\lceil \alpha n \rceil} g(y_{\lceil \alpha n \rceil}) - g(y_i) \right\}
+\end{align}
+which we also call the $g,\alpha$-entropy $e_{\alpha}(\mathbf{y}_n)$ of the sample $\mathbf{y}_n$.
+
 According to \eqref{eqn:scalar_obj_cdf_form} and \eqref{eqn:obj_pexp},
 \begin{align}
 e_{\alpha}(F)
 &= (1-\alpha) \int_{-\infty}^{q_{\alpha,F}} F(u) dg(u) + \alpha \int_{{q_{\alpha,F}}}^{\infty}(1-F(u)) dg(u) \\
 &= \alpha \overline{g}\sb{F}-\overline{g}_{F}(q_{\alpha,F}).
 \end{align}
+
 Similarly, we define the $g,\alpha$-divergence between two distributions as
 \begin{align}
 d_{\alpha}(F_1,F_2) &:= S_{\alpha}(F_1,F_2) - S_{\alpha}(F_2,F_2) = S_{\alpha}(F_1,F_2) - e_{\alpha}(F_2). \label{egn:divergence}
 \end{align}
-Again from \eqref{eqn:scalar_obj_cdf_form} we get
+If $F_2 = F_{y_0}$ is deterministic, then from \eqref{eqn:entropy_determ} we have 
+\begin{align}
+d_{\alpha}(F_1, F_{y_0}) = S_{\alpha}(F_1, F_{y_0}) = E_{F_{y_0}}[S_{\alpha}(F_1, Y)] = S_{\alpha}(F_1, y_0) = s_{\alpha}(q_{\alpha, F_1}, y_0)
+\end{align}
+whereas if $F_1 = F_{y_0}$, we get
+\begin{align}
+d_{\alpha}(F_{y_0}, F_2) = E_{F_2}[s_{\alpha}(y_0,Y)] - e_{\alpha}(F_2).
+\end{align}
+When $F_2 = F_{\mathbf{y}_n}$ is an empirical distribution, then 
+\begin{align}
+d_{\alpha}(F_1, F_{\mathbf{y}_n}) 
+&= E_{F_{\mathbf{y}_n}}[S_{\alpha}(F_1, Y)] - e_{\alpha}(\mathbf{y}_n) \\
+&= \frac{1}{n}\sum_{i=1}^{n} s_{\alpha}(q_{\alpha,F_1}, y_i) - s_{\alpha}(y_{\lceil \alpha n \rceil}, y_i)
+\end{align}
+whereas inserting the $F_{\mathbf{y}_n}$ in the first position gives
+\begin{align}
+d_{\alpha}(F_{\mathbf{y}_n}, F_2) = E_{F_2}[s_{\alpha}(y_{\lceil \alpha n \rceil},Y)] - e_{\alpha}(F_2).
+\end{align}
+
+<!--
+&= (1-\alpha)(g(q_{\alpha, F_1}) - g(y_{\lceil \alpha n \rceil})) \\
+&+ \frac{1}{n} \left\{\sum_{i \in I_1} g(y_i) - g(q_{\alpha, F_1})
++\sum_{i \in I_2} g(q_{\alpha, F_1}) - g(y_i) 
++\sum_{i \in I_3} g(y_{\lceil \alpha n \rceil})) - g(q_{\alpha, F_1}) \right\}
+ \text{ using \eqref{eqn:scalar_score_OR}}
+where $I_1 = \{i | q_{\alpha, F_1} \leq y_i \leq y_{\lceil \alpha n \rceil}\}$, 
+$I_2 = \{i | y_{\lceil \alpha n \rceil} \leq y_i \leq q_{\alpha, F_1}\}$, and 
+$I_3 = \{i | y_{\lceil \alpha n \rceil}, q_{\alpha, F_1} \leq y_i\}$.
+-->
+
+As for entropy, we also can get more explicit forms for the divergence in terms of distributions $F_1, F_2$. 
+From \eqref{eqn:scalar_obj_cdf_form} we get
 \begin{align}
 d_{\alpha}(F_1,F_2)
 &= (1-\alpha) \int_{-\infty}^{q_{\alpha,F_1}} F_2(u) dg(u) + \alpha \int_{{q_{\alpha,F_1}}}^{\infty}(1-F_2(u)) dg(u) \\
@@ -375,8 +420,15 @@ d_{\alpha}(F_1,F_2)
 And from \eqref{eqn:obj_pexp},
 \begin{align}
 d_{\alpha}(F_1,F_2) &= g(q_{\alpha,F_1})(F_2(q_{\alpha,F_1}) - \alpha) -\overline{g}_{F_2}(q_{\alpha,F_1}) + \alpha \overline{g}\sb{F_2}  - \alpha \overline{g}\sb{F_2} + \overline{g}_{F_2}(q_{\alpha,F_2}) \\
-&= g(q_{\alpha,F_1})(F_2(q_{\alpha,F_1}) - \alpha) + \int_{q_{\alpha,F_1}}^{q_{\alpha,F_2}}g(y)dF_2(y)
+&= g(q_{\alpha,F_1})(F_2(q_{\alpha,F_1}) - \alpha) + \int_{q_{\alpha,F_1}}^{q_{\alpha,F_2}}g(y)dF_2(y).
 \end{align}
+This offers a more explicit form of the divergence of a distribution from s sample $\mathbf{y}_n$:
+\begin{align}
+d_{\alpha}(F_1,F_{\mathbf{y}_n}) 
+= g(q_{\alpha,F_1})\left(\frac{1}{n}\sum_{1=1}^n \mathbb{1}\{y_i \leq q_{\alpha,F_1}\} - \alpha\right) 
++ \frac{1}{n}\sum_{1=1}^{\lceil \alpha n \rceil} \mathbb{1}\{y_i > q_{\alpha,F_1}\}g(y_i).
+\end{align}
+
 With \eqref{egn:divergence}, we get 
 \begin{align}
 S_{\alpha}(F,G) = d_{\alpha}(F,G) + e_{\alpha}(Y), \label{eqn:marg_score_decomp}
@@ -412,9 +464,9 @@ The first two terms on the RHS are known as the \emph{unreliability} and the \em
 s_{\symbfit{\kappa},\symbfit{\alpha}}(\mathbf{x}, \mathbf{F}) &:= 
 \overline{s}_{\mathbf{F},\symbfit{\kappa},\symbfit{\alpha}}(\mathbf{x}) = 
 \sum_{i}^{\mathrm{dim}\mathbf{x}} s_{\kappa_i,\alpha_i}(x_i, F_i) \\
-S(F,y) &:= s(q_{F,\alpha}, y) \\
-S(F_1,F_2) &:= E_{F_2}[S(F_1,Y)] = s(q_{F_1,\alpha}, F_2) \\
-\overline{S}(F) &:= E_G[s(q_{F, \alpha}, Y)]
+S(F,y) &:= s(q_{\alpha, F}, y) \\
+S(F_1,F_2) &:= E_{F_2}[S(F_1,Y)] = s(q_{\alpha, F_1}, F_2) \\
+\overline{S}(F) &:= E_G[s(q_{ \alpha,F}, Y)]
 \end{align} 
 -->
 
@@ -443,7 +495,7 @@ giving the retailer's objective function under a demand distribution $F$ as
 This differs by a constant from our $\sbar_{F,O,U}(x)$ in \eqref{eqn:scalar_obj} with $g(x)=x$, $O=c-u$ 
 and $U=p-c+r$, and so has the same minimizer   
 \begin{align}
-q_{F,O,U} = F^{-1}\left(\frac{U}{O+U}\right) = F^{-1}\left(\frac{p-c+r}{p-u + r}\right).
+q_{O,U, F} = F^{-1}\left(\frac{U}{O+U}\right) = F^{-1}\left(\frac{p-c+r}{p-u + r}\right).
 \end{align} 
 Note, for reference, that in the literature $\sbar_{F, {\mathbf{n}}}(x)$ is often encountered in the form
 \begin{align}

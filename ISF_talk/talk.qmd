@@ -6,7 +6,52 @@ format:
 editor: visual
 ---
 
-Comparitive vs absolute assessment/evaluation
+## The backstory
 
+Over last decade, multicenter effort to collect forecasts via hubs for ID outbreaks (epi/pan/endemic)
+with central purpose to "inform public health responses" 
+
+With uncertainty quantification being well-established as needed DM input, 
+hubs have trended toward eliciting probabilistic forecasts
+
+Basic element of any such response is an *allocation decision* regarding
+ - medical supplies
+ - personnel 
+ - facility capacity
+ - R&D funding
+ - public tolerance for NPIs
+
+Allocations can be wrt space, time, demographic 
+
+Similar to other contexts where there are large-scale institutional efforts to use expert judgment to assess and manage social risk
+ - finance
+ - meteorology
+ - military conflict
+
+Even with complex game-theoretic approachs to collective decision making,
+*allocation* almost always a requirement to strategy development
+
+## Scoring rules and social utility
+
+Hubs have tried to use SRs to rank and combine forecasts in ways that offer best suppport for PH responders
+
+This can be cast in decision-theoretic framework of utility, loss functions, and Bayes acts.
+
+The DM needs to decide what action $a$ to take regarding an uncertain outcome $Y$ such as the number of severe cases in various locations.
+Suppose the DM also has
+a loss function $l(a,y)$, e.g., the unmet need when $a$ beds are allocated for $y$ severe cases,
+and a utility function U quantifying, e.g., the ratio of the value of preventing 1000 unhospitalized severe cases versus the value of preventing 10 unhospitalized severe cases.  That is U specifies numbers such as U(l(10,20)) / U(l(1000,2000)).
+Then the Bayes act relative to a forecast $Y \sim F$ is the action $a^F$ that will maximize the DM’s expected utility assuming that in reality $Y \sim F$.
+
+
+## Basic computational approach
+
+Adopt an iterative Lagrange multiplier method following long history in inventory management of solving
+*constrained multi-product newsvendor* problems
 
 illustrate algo with a lambda over xs plot against tau
+
+
+
+
+Comparitive vs absolute assessment/evaluation
