@@ -10,6 +10,7 @@ library(crew)
 tar_option_set(
   controller = crew_controller_local(workers = 8),
   packages = c("tidyverse", "covidHubUtils", "distfromq", "alloscore", "gh"), # packages that your targets need to run
+  imports = c("alloscore"),
   format = "rds" # default storage format
 )
 
@@ -19,16 +20,34 @@ tar_option_set(
 # remotes::install_github("reichlab/covidHubUtils")
 
 # Run the R scripts in the R/ folder:
-tar_source()
+tar_source(files = c("R/data-ingestion.R", "R/plot-alloscores.R", "R/run-alloscore.R"))
 
 ## create a group of alloscore targets
-values <- tibble(forecast_dates = as.character(seq.Date(as.Date("2021-11-22"), as.Date("2022-02-28"), by = "7 days")))
+forecast_dates = as.character(seq.Date(
+    as.Date("2021-11-22"), as.Date("2022-02-28"), by = "7 days"
+  ))
+
+forecast_dates_quick <- forecast_dates[c(12,13,14)]
+
+Ks <- seq(from = 2000, to = 7000, by = 500)
+
+# keep selected models
+mkeep <- c("BPagano-RtDriven",
+           "COVIDhub-4_week_ensemble",
+           "COVIDhub-baseline",
+           "CU-select",
+           "IHME-CurveFit",
+           "JHUAPL-Bucky",
+           "JHUAPL-Gecko",
+           "MUNI-ARIMA",
+           "USC-SI_kJalpha",
+           "UVA-Ensemble")
 
 # List of targets:
 list(
   tar_target(
     name = forecast_data,
-    command = get_forecast_data(values$forecast_dates)
+    command = get_forecast_data(forecast_dates)
   ),
   # tar_target(
   #   name = filtered_forecast_data,
@@ -42,13 +61,14 @@ list(
     name = score_data,
     command = get_forecast_scores(forecast_data, truth_data)
   ),
-  tar_map(
-    values = values,
-    tar_target(alloscore, run_alloscore(forecast_data, truth_data, forecast_dates))
+  tar_target(
+    name = alloscore_df,
+    command = run_alloscore(forecast_data, truth_data, K = Ks,
+                            mkeep = mkeep, reference_dates = forecast_dates_quick)
   ),
   tar_target(
-    name = figure_K_v_alloscore_2021.12.13,
-    command = plot_K_v_alloscore(alloscore_2021.12.13),
+    name = figure_K_v_alloscore,
+    command = plot_K_v_alloscore(alloscore_df),
     format = "file"
   )
 )
