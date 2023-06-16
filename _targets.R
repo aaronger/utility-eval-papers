@@ -23,19 +23,31 @@ tar_option_set(
 tar_source(files = c("R/data-ingestion.R", "R/plot-alloscores.R", "R/run-alloscore.R"))
 
 ## create a group of alloscore targets
-values <-
-  tibble(forecast_dates = as.character(seq.Date(
+forecast_dates = as.character(seq.Date(
     as.Date("2021-11-22"), as.Date("2022-02-28"), by = "7 days"
-  )))
-values <- values[c(12,13,14),]
+  ))
+
+forecast_dates_quick <- forecast_dates[c(12,13,14)]
 
 Ks <- seq(from = 2000, to = 7000, by = 500)
+
+# keep selected models
+mkeep <- c("BPagano-RtDriven",
+           "COVIDhub-4_week_ensemble",
+           "COVIDhub-baseline",
+           "CU-select",
+           "IHME-CurveFit",
+           "JHUAPL-Bucky",
+           "JHUAPL-Gecko",
+           "MUNI-ARIMA",
+           "USC-SI_kJalpha",
+           "UVA-Ensemble")
 
 # List of targets:
 list(
   tar_target(
     name = forecast_data,
-    command = get_forecast_data(values$forecast_dates)
+    command = get_forecast_data(forecast_dates)
   ),
   # tar_target(
   #   name = filtered_forecast_data,
@@ -51,7 +63,8 @@ list(
   ),
   tar_target(
     name = alloscore_df,
-    command = run_alloscore(forecast_data, truth_data, K = Ks)
+    command = run_alloscore(forecast_data, truth_data, K = Ks,
+                            mkeep = mkeep, reference_dates = forecast_dates_quick)
   ),
   tar_target(
     name = figure_K_v_alloscore,

@@ -6,30 +6,59 @@ format:
 editor: visual
 ---
 
-## The backstory
+## Timeline
 
-Over last decade, multicenter effort to collect forecasts via hubs for ID outbreaks (epi/pan/endemic)
-with central purpose to "inform public health responses" 
+
+::: notes
+West Nile mosq control decisions
+:::
+
+## The Backstory
+
+Starting \~ 2010? Outbreak forecasting hubs developed to "inform public health responses"
+
+Trend toward elicitation of probabilistic forecasts
+
+ - uncertainty quantification often essential to a public health **DM** (decision maker)
+
+But in the inimitable words of chatGPT:
+
+> It's important to note that while these efforts represent significant advances in the field, forecasting the spread and impact of infectious diseases is a very complex task with many challenges, and these models should be interpreted with caution.
+
+::: notes
+Over last two decades, multicenter effort to collect forecasts via hubs for ID outbreaks (epi/pan/endemic) with central purpose to "inform public health responses"
 
 With uncertainty quantification being well-established as needed DM input, 
-hubs have trended toward eliciting probabilistic forecasts
+:::
 
-Basic element of any such response is an *allocation decision* regarding
- - medical supplies
+## The fundamental need to decide allocations
+
+::: columns
+::: {.column width="40%"}
+Basic element of any such response is an *allocation decision* regarding 
+
+ - medical supplies 
  - personnel 
- - facility capacity
- - R&D funding
+ - facility capacity 
+ - R&D funding 
  - public tolerance for NPIs
+:::
 
-Allocations can be wrt space, time, demographic 
+::: {.column width="60%"}
+Similar to other contexts where there are large-scale institutional efforts to use expert judgment to assess and manage social risk 
 
-Similar to other contexts where there are large-scale institutional efforts to use expert judgment to assess and manage social risk
- - finance
- - meteorology
+ - finance 
+ - meteorology 
  - military conflict
+:::
+:::
 
-Even with complex game-theoretic approachs to collective decision making,
-*allocation* almost always a requirement to strategy development
+
+::: notes
+Allocations can be wrt space, time, demographic
+
+Even with complex game-theoretic approachs to collective decision making, *allocation* almost always a requirement to strategy development
+:::
 
 ## Scoring rules and social utility
 
@@ -37,21 +66,40 @@ Hubs have tried to use SRs to rank and combine forecasts in ways that offer best
 
 This can be cast in decision-theoretic framework of utility, loss functions, and Bayes acts.
 
-The DM needs to decide what action $a$ to take regarding an uncertain outcome $Y$ such as the number of severe cases in various locations.
-Suppose the DM also has
-a loss function $l(a,y)$, e.g., the unmet need when $a$ beds are allocated for $y$ severe cases,
-and a utility function U quantifying, e.g., the ratio of the value of preventing 1000 unhospitalized severe cases versus the value of preventing 10 unhospitalized severe cases.  That is U specifies numbers such as U(l(10,20)) / U(l(1000,2000)).
-Then the Bayes act relative to a forecast $Y \sim F$ is the action $a^F$ that will maximize the DM’s expected utility assuming that in reality $Y \sim F$.
+The DM needs to decide take an action $a$ wrt an outcome $Y$ 
 
+- such as the number of severe cases in various locations.
+
+Suppose the DM also has a *loss function* $l(a,y)$ - e.g., the lost social/political/economic/psychological/moral utility caused by unmet need when $a < y$ beds are allocated and $y$ severe cases occur - this must somehow acknowledge risk attitude heterogeneity among various DM's that a forecast hub might serve
+
+Then the *Bayes act* relative to a forecast $Y \sim F$ is the action $a^F$ that will minimize the DM's expected loss assuming that in reality $Y \sim F$.
+
+------------------------------------------------------------------------
+
+A Scoring Rule attempts to transfer or "share" this loss function with the forecaster through a numerical reward system where FP receives
+
+$$
+S(F,y)
+$$
+
+units of money, goodwill, prestige, etc. A central goal in designing $S$ is to create a scenario where the FP beleives she cam maximizes her own expected utility by giving the DM the forecast that the FP believes in actually true and/or best suited for leading the DM toward actions that will maximize their utility. An SR that acheieves this is called *proper* and Bayes acts form a linchpin of their operation since the establish an explicit vacabulary of loss in place of vague efforts to rank preformance of various statisticla funcitonals adoptic form statistic inference
+
+## Loss vs Utility
+
+Change in loss but not utility from change in - variant severity (assuming target is infections and decision is number of beds)
+
+Change in utility but not in loss from change in - supply and personnel cost structures - public opinion regarding importance of fatality prevention - knowledge of demographic disparities in consequences of outcomes
 
 ## Basic computational approach
 
-Adopt an iterative Lagrange multiplier method following long history in inventory management of solving
-*constrained multi-product newsvendor* problems
+Adopt an iterative Lagrange multiplier method following long history in inventory management of solving *constrained multi-product newsvendor* problems
 
 illustrate algo with a lambda over xs plot against tau
 
+## Scoring against an oracle
 
+To get more interpretable allocation scores we adjust by the score of an oracle that allocates *fairly* based on what demands actually occur
 
+Note: The oracle is not the DGP, it is a time-traveller
 
 Comparitive vs absolute assessment/evaluation

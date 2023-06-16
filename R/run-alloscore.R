@@ -1,22 +1,12 @@
-run_alloscore <- function(forecast_data, truth_data, Ks){
+run_alloscore <- function(forecast_data, truth_data, Ks, mkeep, reference_dates){
   require(tidyverse)
   require(alloscore)
   require(distfromq)
 
-  # keep selected models
-  mkeep <- c("BPagano-RtDriven",
-             "COVIDhub-4_week_ensemble",
-             "COVIDhub-baseline",
-             "CU-select",
-             "IHME-CurveFit",
-             "JHUAPL-Bucky",
-             "JHUAPL-Gecko",
-             "MUNI-ARIMA",
-             "USC-SI_kJalpha",
-             "UVA-Ensemble")
-
   ## process forecast data, adding distfromq output
   forecast_data_processed <- forecast_data |>
+    ## forecast dates are different but reference dates are Mondays
+    dplyr::filter(reference_date %in% reference_dates) |>
     dplyr::select(-type) |>
     nest(ps = quantile, qs = value) |>
     relocate(ps, qs) |>
