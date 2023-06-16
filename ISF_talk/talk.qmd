@@ -70,9 +70,18 @@ The DM needs to decide take an action $a$ wrt an outcome $Y$
 
 - such as the number of severe cases in various locations.
 
-Suppose the DM also has a *loss function* $l(a,y)$ - e.g., the lost social/political/economic/psychological/moral utility caused by unmet need when $a < y$ beds are allocated and $y$ severe cases occur - this must somehow acknowledge risk attitude heterogeneity among various DM's that a forecast hub might serve
+Suppose the DM also has a **loss function** $l(a,y)$ 
+
+ - unmet need when $a < y$ beds are allocated and $y$ severe cases occur 
 
 Then the *Bayes act* relative to a forecast $Y \sim F$ is the action $a^F$ that will minimize the DM's expected loss assuming that in reality $Y \sim F$.
+
+::: notes
+social/political/economic/psychological/moral utility 
+
+this must somehow acknowledge risk attitude heterogeneity among various DM's that a forecast hub might serve
+:::
+
 
 ------------------------------------------------------------------------
 
