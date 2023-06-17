@@ -3,6 +3,8 @@ library(targets)
 tar_load(alloscore_df)
 adf <- alloscore_df
 
+# make a plot of the xs iterations for one model across multiple dates
+
 iters_bp <- adf %>% filter(model == "BPagano-RtDriven", K == 2000) %>%
   select(model, reference_date, xs) %>% unnest(xs) %>%
   mutate(init_alloc = ntile(`1`, 5), .after = abbreviation)
