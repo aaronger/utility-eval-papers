@@ -54,8 +54,9 @@ K_lims <- quantile(ytot, probs = c(.1, .9)) %>% round(-1)
 (Ks <- seq(K_lims[1], K_lims[2], length.out = 5))
 allos <- mods %>% group_nest(model) %>%
   mutate(allocated = map(data, ~allocate(.x, K= Ks)))
-allos <- allos %>% mutate(slim = map(allocated, make_slim))
+allos <- allos %>% mutate(slim = map(allocated, slim))
 
+# compute intensive:
 allos <- allos %>% mutate(slim_scored = map(slim, ~alloscore(., ys$ys)))
 
 plot_allos <- allos %>% select(-c(data, allocated)) %>%
@@ -76,7 +77,8 @@ mods_crps <- mods %>%
   select(model, mean_crps) %>% unnest(mean_crps)
 
 mods_crps %>% pivot_wider(values_from = mean_crps, names_from = model)
-mods_crps %>% ggplot(aes(x = mean_crps, color = model)) + geom_histogram()
+mods_crps %>% ggplot(aes(x = mean_crps, fill = model)) +
+  geom_histogram(position = "dodge")
 
 plot_dat <- allos %>%
   mutate(scores = map(slim_scored, ~select(.,-xdf) %>% unnest(scores))) %>%
@@ -102,11 +104,15 @@ p + geom_density(data = plot_dat %>% filter(K %in% c("mean CRPS", Ks_to_show), m
 
 p_ridges <- plot_dat %>% filter(K %in% c("mean CRPS", Ks_to_show)) %>% mutate(K = fct_rev(K)) %>%
   ggplot(aes(x = score, y = model, fill = model)) + geom_density_ridges(color = NA) +
-  facet_grid(rows = vars(K)) +
+  facet_grid(
+    rows = vars(K),
+    labeller = as_labeller(function (K) {
+      ifelse(K == "mean CRPS", K, paste0("K = ", K))
+    })) +
     labs(y = "Density of scores") +
     guides(fill = guide_legend(reverse = TRUE)) +
-   scale_alpha_discrete(guide = FALSE)
-    theme(axis.ticks.y = element_blank(),
+  scale_alpha_discrete(guide = "none") +
+  theme(axis.ticks.y = element_blank(),
           axis.text.y = element_blank(),
           strip.text.y = element_text(angle = 0))
 

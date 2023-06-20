@@ -446,8 +446,8 @@
           display:block!important;
       }</style></aside>
 </section>
-<section class="slide level2">
-
+<section id="sharing-business" class="slide level2">
+<h2>Sharing Business</h2>
 <p>A Scoring Rule attempts to transfer or “share” this loss function with the forecaster through a numerical reward system where FP receives</p>
 <p><span class="math display">\[
 S(F,y)
@@ -464,11 +464,50 @@ S(F,y)
 <p>Adopt an iterative Lagrange multiplier method following long history in inventory management of solving <em>constrained multi-product newsvendor</em> problems</p>
 <p>illustrate algo with a lambda over xs plot against tau</p>
 </section>
+<section id="data-workflow" class="slide level2">
+<h2>Data workflow</h2>
+<pre><code># A tibble: 12 × 9
+    time model forecast         ys            K xdf              score_raw score_oracle score
+   &lt;int&gt; &lt;chr&gt; &lt;list&gt;           &lt;list&gt;    &lt;dbl&gt; &lt;list&gt;               &lt;dbl&gt;        &lt;dbl&gt; &lt;dbl&gt;
+ 1     1 m1    &lt;tibble [4 × 7]&gt; &lt;dbl [4]&gt;   400 &lt;tibble [4 × 8]&gt;      62.5          0    62.5
+ 2     1 m1    &lt;tibble [4 × 7]&gt; &lt;dbl [4]&gt;   450 &lt;tibble [4 × 8]&gt;      50.0          0    50.0
+ 3     2 m1    &lt;tibble [4 × 7]&gt; &lt;dbl [4]&gt;   400 &lt;tibble [4 × 8]&gt;     150.          27.3 122. 
+ 4     2 m1    &lt;tibble [4 × 7]&gt; &lt;dbl [4]&gt;   450 &lt;tibble [4 × 8]&gt;     137.           0   137. 
+ 5     3 m1    &lt;tibble [4 × 7]&gt; &lt;dbl [4]&gt;   400 &lt;tibble [4 × 8]&gt;      62.2          0    62.2
+ 6     3 m1    &lt;tibble [4 × 7]&gt; &lt;dbl [4]&gt;   450 &lt;tibble [4 × 8]&gt;      49.7          0    49.7
+ 7     1 m2    &lt;tibble [4 × 7]&gt; &lt;dbl [4]&gt;   400 &lt;tibble [4 × 8]&gt;      54.8          0    54.8
+ 8     1 m2    &lt;tibble [4 × 7]&gt; &lt;dbl [4]&gt;   450 &lt;tibble [4 × 8]&gt;      40.2          0    40.2
+ 9     2 m2    &lt;tibble [4 × 7]&gt; &lt;dbl [4]&gt;   400 &lt;tibble [4 × 8]&gt;     157.          27.3 130. 
+10     2 m2    &lt;tibble [4 × 7]&gt; &lt;dbl [4]&gt;   450 &lt;tibble [4 × 8]&gt;     149.           0   149. 
+11     3 m2    &lt;tibble [4 × 7]&gt; &lt;dbl [4]&gt;   400 &lt;tibble [4 × 8]&gt;      74.9          0    74.9
+12     3 m2    &lt;tibble [4 × 7]&gt; &lt;dbl [4]&gt;   450 &lt;tibble [4 × 8]&gt;      70.9          0    70.9</code></pre>
+<pre><code>&gt; a_series_slim$xdf[[9]]
+# A tibble: 4 × 8
+  target_names     x score_fun     y oracle components_raw components_oracle components
+  &lt;chr&gt;        &lt;dbl&gt; &lt;list&gt;    &lt;dbl&gt;  &lt;dbl&gt;          &lt;dbl&gt;             &lt;dbl&gt;      &lt;dbl&gt;
+1 A             80.4 &lt;fn&gt;       55.0   51.5             0               3.52      -3.52
+2 B             92.2 &lt;fn&gt;      250.   234.            157.             16.0      141.  
+3 C            106.  &lt;fn&gt;       89.2   83.5             0               5.70      -5.70
+4 D            122.  &lt;fn&gt;       33.5   31.3             0               2.14      -2.14</code></pre>
+</section>
 <section id="scoring-against-an-oracle" class="slide level2">
 <h2>Scoring against an oracle</h2>
 <p>To get more interpretable allocation scores we adjust by the score of an oracle that allocates <em>fairly</em> based on what demands actually occur</p>
 <p>Note: The oracle is not the DGP, it is a time-traveller</p>
 <p>Comparitive vs absolute assessment/evaluation</p>
+</section>
+<section id="general-disclaimer" class="slide level2">
+<h2>General Disclaimer</h2>
+<p>This is <strong>post-hoc</strong> analysis</p>
+<p>Hub forecasters were unaware of</p>
+<ul>
+<li><p>an allocation score (on joint forecast)</p></li>
+<li><p>any allocation based loss</p></li>
+<li><p>our quantile interpolation/extrapolation methods (<code>distfromq</code>)</p>
+<ul>
+<li>might be especially important for tails</li>
+</ul></li>
+</ul>
 <div class="footer footer-default">
 
 </div>
