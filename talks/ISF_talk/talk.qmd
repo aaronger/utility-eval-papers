@@ -8,9 +8,9 @@ revealjs-plugins:
 editor: visual
 ---
 
-## {.nostretch}
+## Evolution of ID forecasting hubs {.nostretch}
 
-![hubs](hub_timeline.png){}
+![](hub_timeline.png){}
 
 ::: {.attribution}
 Figure credits: Alex Vespignani and Nicole Samay

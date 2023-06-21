@@ -22,16 +22,6 @@ tar_option_set(
 # Run the R scripts in the R/ folder:
 tar_source(files = c("R/data-ingestion.R", "R/plot-alloscores.R", "R/run-alloscore.R"))
 
-## create a group of alloscore targets
-forecast_dates = as.character(seq.Date(
-    as.Date("2021-11-22"), as.Date("2022-02-28"), by = "7 days"
-  ))
-
-forecast_dates_quick <- forecast_dates[c(12,13,14)]
-
-Ks <- seq(from = 2000, to = 7000, by = 500)
-
-# keep selected models
 mkeep <- c("BPagano-RtDriven",
            "COVIDhub-4_week_ensemble",
            "COVIDhub-baseline",
@@ -42,6 +32,14 @@ mkeep <- c("BPagano-RtDriven",
            "MUNI-ARIMA",
            "USC-SI_kJalpha",
            "UVA-Ensemble")
+
+forecast_dates = as.character(seq.Date(as.Date("2021-10-18"), as.Date("2022-02-28"), by = "7 days"))
+
+## create a group of alloscore targets
+values <- tidyr::expand_grid(models = mkeep, forecast_dates = forecast_dates)
+
+forecast_dates_quick <- forecast_dates[c(12,13)]
+values_test <- tidyr::expand_grid(forecast_dates = forecast_dates_quick, models = mkeep[1])
 
 # List of targets:
 list(
@@ -61,14 +59,22 @@ list(
     name = score_data,
     command = get_forecast_scores(forecast_data, truth_data)
   ),
-  tar_target(
-    name = alloscore_df,
-    command = run_alloscore(forecast_data, truth_data, K = Ks,
-                            mkeep = mkeep, reference_dates = forecast_dates_quick)
-  ),
-  tar_target(
-    name = figure_K_v_alloscore,
-    command = plot_K_v_alloscore(alloscore_df),
-    format = "file"
-  )
+  # tar_target(
+  #   name = alloscore_df,
+  #   command = run_alloscore(forecast_data, truth_data, K = Ks,
+  #                           mkeep = mkeep, reference_dates = forecast_dates_quick)
+  # ),
+  tar_map(values = values,
+          tar_target(
+            alloscore,
+            run_alloscore(forecast_data,
+                          truth_data,
+                          forecast_dates,
+                          models)
+          ))
+  # tar_target(
+  #   name = figure_K_v_alloscore,
+  #   command = plot_K_v_alloscore(alloscore_df),
+  #   format = "file"
+  # )
 )
