@@ -1,0 +1,18 @@
+.important {
+  color: maroon;
+}
+
+.illustration {
+  border: 1px solid rgb(230, 230, 230); 
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 3px;
+}
+
+.grid-item {
+  padding: 1px;
+}

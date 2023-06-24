@@ -6,9 +6,10 @@ format:
 revealjs-plugins:
   - attribution
 editor: visual
+css: styles.css
 ---
 
-## Evolution of ID forecasting hubs {.nostretch}
+## Evolution of ID Forecasting Hubs {.nostretch}
 
 ![](hub_timeline.png){}
 
@@ -20,13 +21,13 @@ Figure credits: Alex Vespignani and Nicole Samay
 West Nile mosq control decisions
 :::
 
-## The Backstory
+## The Role of IDF Hubs
 
-Starting \~ 2010? Outbreak forecasting hubs developed to "inform public health responses"
+Outbreak forecasting hubs developed to **"inform public health responses"**
 
-Trend toward elicitation of probabilistic forecasts
+- with trend toward elicitation of probabilistic forecasts
 
--   uncertainty quantification often essential to a public health **DM** (decision maker)
+- uncertainty quantification essential to a public health **DM** (decision maker)
 
 But in the inimitable words of chatGPT:
 
@@ -40,9 +41,23 @@ With uncertainty quantification being well-established as needed DM input,
 
 ## The fundamental need to decide allocations
 
+Basic element of any such response is an **allocation decision** regarding
+
 ::: columns
+
+::: {.column width="10%"}
+
+<div style="height: 200px; width: 50px;">
+  <svg height="100%" width="100%" viewBox="0 0 10 20">
+    <line x1="5" y1="0" x2="5" y2="15" style="stroke:black;stroke-width:2" />
+    <polygon points="0,20 10,20 5,15" style="fill:black;" />
+  </svg>
+</div>
+
+
+:::
+
 ::: {.column width="40%"}
-Basic element of any such response is an *allocation decision* regarding
 
 -   medical supplies
 -   personnel
@@ -51,7 +66,7 @@ Basic element of any such response is an *allocation decision* regarding
 -   public tolerance for NPIs
 :::
 
-::: {.column width="60%"}
+::: {.column width="50%"}
 Similar to other contexts where there are large-scale institutional efforts to use expert judgment to assess and manage social risk
 
 -   finance
@@ -63,52 +78,145 @@ Similar to other contexts where there are large-scale institutional efforts to u
 ::: notes
 Allocations can be wrt space, time, demographic
 
-Even with complex game-theoretic approachs to collective decision making, *allocation* almost always a requirement to strategy development
+Even with complex game-theoretic approachs to collective decision making, allocation almost always a requirement to strategy development
 :::
 
 ## Scoring rules and social utility
 
-Hubs have tried to use SRs to rank and combine forecasts in ways that offer best suppport for PH responders
+*Very* briefly, a **scoring rule** $S$ assigns a number $S(F,y)$ to the forecast $F$ of $Y$ when $Y=y$ is realized.
 
-This can be cast in decision-theoretic framework of utility, loss functions, and Bayes acts.
+$S$ if **proper** if $\displaystyle{E_{F}[S(F,Y)] \leq E_{G}S(F,Y)]}$ for all $F, G$
 
-The DM needs to decide take an action $a$ wrt an outcome $Y$
+- ensures that forecasters must give honest forecasts to maximize expected score
 
--   such as the number of severe cases in various locations.
+Hubs have tried to use SRs to rank and combine forecasts in ways that offer best suppport for PH response to ID outbreaks
 
-Suppose the DM also has a **loss function** $l(a,y)$
+Primary scoring rule used currently is the **Weighted Interval Score** which is a discrete approximation to the 
+**Continuous Ranked Probability Score**
 
--   unmet need when $a < y$ beds are allocated and $y$ severe cases occur
+- adopted for convenient scoring of quantile forecasts.
 
-Then the *Bayes act* relative to a forecast $Y \sim F$ is the action $a^F$ that will minimize the DM's expected loss assuming that in reality $Y \sim F$.
+## Bayes Acts
+
+Scoring rules can be cast in decision-theoretic framework of **Bayes acts**.
+
+::: {.important}
+
+The **Bayes act** relative to a forecast $Y \sim F$ is the action $x^F$ 
+by which a DM will minimize **expected loss** $E_Y[l]$ assuming that in reality $Y \sim F$.
+
+:::
+
+
+ - loss $l$ is a function of the outcome $y$ **and** the action $x$ DM takes in anticipation of $y$
+
+Given $l$, we have an *automatically proper* scoring rule $S(F,y) := l(x^F, y)$.
+
+::: {.callout-note appearance="simple" icon=false}
+
+### Our running example:
+ 
+ - $x$ and $y$ are vectors in $\mathbb{N}_0^{52}$
+ - $y =$ number of severe cases in US states and territories
+ - $l(x,y) =$ unmet need when $x < y$ beds are allocated and $y$ severe cases occur
+
+:::
+
+## Formally
+
+$$
+\begin{align}
+l(x,y) &= \sum_{i=1}^{52} \max(y_i - x_i, 0) \\
+x^F &\in \left\{ \text{possible } x' \,\middle| \, E_{F}[l(x',Y)] \leq E_{F}[l(x,Y)] \text{ for any possible } x \right\}
+\end{align}
+$$
+
+Novelty of our approach for ID forecasting is how we define $x$ being 
+**possible**
+
+ - as satisfying some resource constraint $\displaystyle{\sum x_i \leq K}$
+
+::: {.callout-note appearance="simple" icon=false}
+
+### Note:
+
+Our loss function and (single) constraint are very simple prototypes meant 
+for proof of concept. 
+
+:::
 
 ::: notes
 social/political/economic/psychological/moral utility
 
 this must somehow acknowledge risk attitude heterogeneity among various DM's that a forecast hub might serve
+
+gpl parameters, weights, multiple constraints
 :::
 
 ## Sharing Business
 
-A Scoring Rule attempts to transfer or "share" this loss function with the forecaster through a numerical reward system where FP receives
+A Scoring Rule attempts to "share" DM loss with the forecaster through $S(F,y)$
 
+- idea goes back to Savage
+
+- may be in units of money, goodwill, prestige
+
+::: {.callout-note appearance="Important" icon=false}
+
+## A central goal in design of scoring rules for social good
+
+Create scenario where the forecaster believes maximizing her own expected utility aligns 
+with leading the DM toward actions that maximize social utility.
+
+:::
+
+Using an explicit vacabulary of social loss in ID forecasting hub activities has instrinsic advantage
+over use of "off-the-shelf" statistical functionals from statistic inference
+
+::: notes
+$S$ a penalty for us 
+
+inference has own decision theory and ideas of utility, loss, Bayes acts
+that are related but distinct from the fundamentally econommic/policy focussed
+ones we use here
+:::
+
+## A Lagrangian formulation for the Bayes act
+
+Given $F = \{F_i\}_{i=1}^{N}$, obtaining $x^F$ is a constrained stochastic optimization problem 
+
+$$ 
+\begin{align}
+L(x, \lambda ; K, F) &= \sum_{i=1}^N E_{F_i}\left[l(x_i, Y_i)]\right)+\lambda\left(\sum_{i=1}^N x_i-K\right) \\  
+\nabla_{x} L = 0 &\implies 
+E_F \left[\frac{d}{dx_i}(Y_i - x_i)_{+}\right] + \lambda 
+= F_i(x_i)-1 + \lambda = 0 \\
+&\implies x_i = F_i^{-1}(1-\lambda)
+\end{align}
 $$
-S(F,y)
-$$
 
-units of money, goodwill, prestige, etc. A central goal in designing $S$ is to create a scenario where the FP beleives she cam maximizes her own expected utility by giving the DM the forecast that the FP believes in actually true and/or best suited for leading the DM toward actions that will maximize their utility. An SR that acheieves this is called *proper* and Bayes acts form a linchpin of their operation since the establish an explicit vacabulary of loss in place of vague efforts to rank preformance of various statisticla funcitonals adoptic form statistic inference
 
-## Loss vs Utility
-
-Change in loss but not utility from change in - variant severity (assuming target is infections and decision is number of beds)
-
-Change in utility but not in loss from change in - supply and personnel cost structures - public opinion regarding importance of fatality prevention - knowledge of demographic disparities in consequences of outcomes
+Solve $\sum_{l=1}^{N} F_{i}^{-1}(1-\lambda) = K$ to get $x_{i}^F = F_i^{-1}(1-\lambda^{\star})$
 
 ## Basic computational approach
 
-Adopt an iterative Lagrange multiplier method following long history in inventory management of solving *constrained multi-product newsvendor* problems
+Even for simple parametric $F_i$, this rarely has an analytic solution.
+
+Given quantile forecasts $q_{i,j}, j = 1,\ldots,23$, we interpolate full $F_i$ to form $L(x, \lambda ; K, F)$
+
+Adopt an iterative Lagrange multiplier method following long history in inventory management of solving **constrained multi-product newsvendor** problems
 
 illustrate algo with a lambda over xs plot against tau
+
+
+## Application
+
+December 2021: Omicron wave clearly started US but forecast teams unsure of severity given uncertainty about $R_0$, cross-protection by vaccination, previous infection, etc.
+
+___
+
+![](plots/state_hosps_ens_only.jpeg)
+
 
 ## Data workflow
 
@@ -160,6 +268,13 @@ Hub forecasters were unaware of
 - our quantile interpolation/extrapolation methods (`distfromq`)
 
   - might be especially important for tails
+
+
+<!-- ## Loss vs Utility
+
+Change in loss but not utility from change in - variant severity (assuming target is infections and decision is number of beds)
+
+Change in utility but not in loss from change in - supply and personnel cost structures - public opinion regarding importance of fatality prevention - knowledge of demographic disparities in consequences of outcomes -->
 
 
 

@@ -4,31 +4,15 @@ library(tidyr)
 library(ggplot2)
 library(geofacet)
 
+source("talks/ISF_talk/plotting_code/plot_functions.R")
+save_dir <- file.path("talks/ISF_talk/plots/")
+
 #hub_repo_path <- "~/research/epi/covid/covid19-forecast-hub/"
 hub_repo_path <- "~/covid/covid19-forecast-hub/"
 
-inc_hosp_targets <- paste(0:30, "day ahead inc hosp")
-forecasts_hosp <- load_forecasts(
-  #  models = c("COVIDhub-ensemble", "CMU-TimeSeries"),
-  #   dates = "2022-11-08",
-  dates = "2021-12-27",
-  date_window_size = 6,
-  #locations = "US",
-  types = c("quantile"),
-  targets = inc_hosp_targets,
-  source = "local_hub_repo",
-  hub_repo_path = hub_repo_path,
-  verbose = FALSE,
-  as_of = NULL,
-  hub = c("US")
-) %>%
-  covidHubUtils::align_forecasts() %>%
-  dplyr::filter(relative_horizon == 14)
-
-truth <- load_truth(
-  truth_source = "HealthData",
-  target_variable = "inc hosp"
-)
+forecasts_hosp <- targets::tar_read(forecast_data) %>%
+  filter(reference_date == "2021-12-27")
+truth <- targets::tar_read(truth_data)
 
 mkeep <- c("BPagano-RtDriven",
            "COVIDhub-4_week_ensemble",
@@ -41,15 +25,6 @@ mkeep <- c("BPagano-RtDriven",
            "USC-SI_kJalpha",
            "UVA-Ensemble")
 
-us_ens_fc <- forecasts_hosp %>%
-  dplyr::filter(location == "US", model == "COVIDhub-4_week_ensemble")
-state_ens_fc <- forecasts_hosp %>%
-  dplyr::filter(location < 57, model == "COVIDhub-4_week_ensemble")
-
-forecasts_hosp %>%
-  dplyr::filter(location < 57, model == "COVIDhub-4_week_ensemble")
-
-
 plot_hosp(models = c("CU-select"), f_width1 = 3, locations = "MA")
 plot_hosp(models = c("CU-select","COVIDhub-4_week_ensemble", "MUNI-ARIMA"),
           space = 1, f_colors = pal1)
@@ -58,7 +33,31 @@ nat_hosps <- plot_hosp(f_width1 = 4) +
   ggtitle("US National Level Hospitalizations - Ensemble Forecast, 14 day horizon")
 nat_hosps
 
-p <- plot_hosp(
+p_ens_only <- p <- plot_hosp(
+  start_date = "2021-11-15",
+  stop_date = "2022-01-31",
+  locations = 1:57,
+  models = c("COVIDhub-4_week_ensemble"),
+  f_colors = c("darkgrey"),
+  f_alpha = .4,
+  f_width1 = 10,
+  space = 1,
+  key_width = .005,
+  geofacet = TRUE)
+
+p_ens_only <- p_ens_only + theme_bw() + guides(fill="none") + labs(x=NULL) +
+  theme(legend.position = c(.93, 0.28)) +
+  ggtitle("State Level Hospitalizations, Ensemble Forecast, 14 day horizon") +
+  theme(plot.title = element_text(vjust = - 10, hjust = .25, size = 16),
+        axis.text.x = element_text(size = 8))
+
+ar = 3/2
+h = 9
+w = ar*h
+ggsave(plot = p_ens_only, filename = "state_hosps_ens_only.jpeg",
+       width = w, height = h, path = save_dir, device = "jpeg", dpi = 600)
+
+  p <- plot_hosp(
   start_date = "2021-12-01",
   stop_date = "2022-01-31",
   locations = 1:57,
@@ -68,11 +67,17 @@ p <- plot_hosp(
   f_width1 = 4,
   space = 1)
 
-p + theme_bw()
+p2 <- p <- plot_hosp(
+  start_date = "2021-12-01",
+  stop_date = "2022-01-31",
+  locations = c("CA", "IL", "FL", "TX"),
+  models = c("JHUAPL-Bucky","COVIDhub-4_week_ensemble", "MUNI-ARIMA"),
+  f_colors = c("mediumblue", "goldenrod", "#CD2626"),
+  f_alpha = .4,
+  f_width1 = 2,
+  space = .5)
 
-pdf("nat_hosps.pdf", width = 7, height = 3.5)
-print(p_nat)
-dev.off()
+p2 + theme_bw()
 
 p_state <- plot_hosp(
   start_date = "2021-12-01",
@@ -85,16 +90,6 @@ p_state <- plot_hosp(
   key_width = .05,
   space = 1) + theme_bw()
 
-ggsave(plot = p_state, filename = "state_hosps.pdf", width = 16, height = 10)
+ggsave(plot = p_state, filename = "state_hosps.pdf",
+       width = 16, height = 10, path = save_dir)
 
-
-ggplot() +
-  geom_line(
-    data = truth %>%
-      dplyr::filter(location < 57, target_end_date >= "2021-11-01", target_end_date <= "2022-01-17"),
-    mapping = aes(x = target_end_date, y = value)
-  ) +
-  facet_geo(~ abbreviation, grid = geofacet::us_state_grid2)# +
-#   scale_x_continuous(labels = function(x) paste0("'", substr(x, 3, 4))) +
-#  ylab("Daily Hospitalizations") +
-#  theme_bw()

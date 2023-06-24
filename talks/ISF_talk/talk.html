@@ -30,6 +30,7 @@
     }
   </style>
   <link rel="stylesheet" href="talk_files/libs/revealjs/dist/theme/quarto.css">
+  <link rel="stylesheet" href="styles.css">
   <link href="talk_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="talk_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="talk_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -332,7 +333,7 @@
 
 </section>
 <section id="evolution-of-id-forecasting-hubs" class="slide level2 nostretch">
-<h2>Evolution of ID forecasting hubs</h2>
+<h2>Evolution of ID Forecasting Hubs</h2>
 <p><img data-src="hub_timeline.png"></p>
 <div class="attribution">
 <p>Figure credits: Alex Vespignani and Nicole Samay</p>
@@ -351,12 +352,12 @@
           display:block!important;
       }</style></aside>
 </section>
-<section id="the-backstory" class="slide level2">
-<h2>The Backstory</h2>
-<p>Starting ~ 2010? Outbreak forecasting hubs developed to “inform public health responses”</p>
-<p>Trend toward elicitation of probabilistic forecasts</p>
+<section id="the-role-of-idf-hubs" class="slide level2">
+<h2>The Role of IDF Hubs</h2>
+<p>Outbreak forecasting hubs developed to <strong>“inform public health responses”</strong></p>
 <ul>
-<li>uncertainty quantification often essential to a public health <strong>DM</strong> (decision maker)</li>
+<li><p>with trend toward elicitation of probabilistic forecasts</p></li>
+<li><p>uncertainty quantification essential to a public health <strong>DM</strong> (decision maker)</p></li>
 </ul>
 <p>But in the inimitable words of chatGPT:</p>
 <blockquote>
@@ -379,9 +380,13 @@
 </section>
 <section id="the-fundamental-need-to-decide-allocations" class="slide level2">
 <h2>The fundamental need to decide allocations</h2>
+<p>Basic element of any such response is an <strong>allocation decision</strong> regarding</p>
 <div class="columns">
-<div class="column" style="width:40%;">
-<p>Basic element of any such response is an <em>allocation decision</em> regarding</p>
+<div class="column" style="width:10%;">
+<div style="height: 200px; width: 50px;">
+<p><svg height="100%" width="100%" viewbox="0 0 10 20"> <line x1="5" y1="0" x2="5" y2="15" style="stroke:black;stroke-width:2"></line> <polygon points="0,20 10,20 5,15" style="fill:black;"></polygon> </svg></p>
+</div>
+</div><div class="column" style="width:40%;">
 <ul>
 <li>medical supplies</li>
 <li>personnel</li>
@@ -389,7 +394,7 @@
 <li>R&amp;D funding</li>
 <li>public tolerance for NPIs</li>
 </ul>
-</div><div class="column" style="width:60%;">
+</div><div class="column" style="width:50%;">
 <p>Similar to other contexts where there are large-scale institutional efforts to use expert judgment to assess and manage social risk</p>
 <ul>
 <li>finance</li>
@@ -400,7 +405,7 @@
 </div>
 <aside class="notes">
 <p>Allocations can be wrt space, time, demographic</p>
-<p>Even with complex game-theoretic approachs to collective decision making, <em>allocation</em> almost always a requirement to strategy development</p>
+<p>Even with complex game-theoretic approachs to collective decision making, allocation almost always a requirement to strategy development</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -415,20 +420,68 @@
 </section>
 <section id="scoring-rules-and-social-utility" class="slide level2">
 <h2>Scoring rules and social utility</h2>
-<p>Hubs have tried to use SRs to rank and combine forecasts in ways that offer best suppport for PH responders</p>
-<p>This can be cast in decision-theoretic framework of utility, loss functions, and Bayes acts.</p>
-<p>The DM needs to decide take an action <span class="math inline">\(a\)</span> wrt an outcome <span class="math inline">\(Y\)</span></p>
+<p><em>Very</em> briefly, a <strong>scoring rule</strong> <span class="math inline">\(S\)</span> assigns a number <span class="math inline">\(S(F,y)\)</span> to the forecast <span class="math inline">\(F\)</span> of <span class="math inline">\(Y\)</span> when <span class="math inline">\(Y=y\)</span> is realized.</p>
+<p><span class="math inline">\(S\)</span> if <strong>proper</strong> if <span class="math inline">\(\displaystyle{E_{F}[S(F,Y)] \leq E_{G}S(F,Y)]}\)</span> for all <span class="math inline">\(F, G\)</span></p>
 <ul>
-<li>such as the number of severe cases in various locations.</li>
+<li>ensures that forecasters must give honest forecasts to maximize expected score</li>
 </ul>
-<p>Suppose the DM also has a <strong>loss function</strong> <span class="math inline">\(l(a,y)\)</span></p>
+<p>Hubs have tried to use SRs to rank and combine forecasts in ways that offer best suppport for PH response to ID outbreaks</p>
+<p>Primary scoring rule used currently is the <strong>Weighted Interval Score</strong> which is a discrete approximation to the <strong>Continuous Ranked Probability Score</strong></p>
 <ul>
-<li>unmet need when <span class="math inline">\(a &lt; y\)</span> beds are allocated and <span class="math inline">\(y\)</span> severe cases occur</li>
+<li>adopted for convenient scoring of quantile forecasts.</li>
 </ul>
-<p>Then the <em>Bayes act</em> relative to a forecast <span class="math inline">\(Y \sim F\)</span> is the action <span class="math inline">\(a^F\)</span> that will minimize the DM’s expected loss assuming that in reality <span class="math inline">\(Y \sim F\)</span>.</p>
+</section>
+<section id="bayes-acts" class="slide level2">
+<h2>Bayes Acts</h2>
+<p>Scoring rules can be cast in decision-theoretic framework of <strong>Bayes acts</strong>.</p>
+<div class="important">
+<p>The <strong>Bayes act</strong> relative to a forecast <span class="math inline">\(Y \sim F\)</span> is the action <span class="math inline">\(x^F\)</span> by which a DM will minimize <strong>expected loss</strong> <span class="math inline">\(E_Y[l]\)</span> assuming that in reality <span class="math inline">\(Y \sim F\)</span>.</p>
+</div>
+<ul>
+<li>loss <span class="math inline">\(l\)</span> is a function of the outcome <span class="math inline">\(y\)</span> <strong>and</strong> the action <span class="math inline">\(x\)</span> DM takes in anticipation of <span class="math inline">\(y\)</span></li>
+</ul>
+<p>Given <span class="math inline">\(l\)</span>, we have an <em>automatically proper</em> scoring rule <span class="math inline">\(S(F,y) := l(x^F, y)\)</span>.</p>
+<div class="callout callout-note no-icon callout-titled callout-style-simple">
+<div class="callout-body">
+<div class="callout-title">
+<p><strong>Our running example:</strong></p>
+</div>
+<div class="callout-content">
+<ul>
+<li><span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> are vectors in <span class="math inline">\(\mathbb{N}_0^{52}\)</span></li>
+<li><span class="math inline">\(y =\)</span> number of severe cases in US states and territories</li>
+<li><span class="math inline">\(l(x,y) =\)</span> unmet need when <span class="math inline">\(x &lt; y\)</span> beds are allocated and <span class="math inline">\(y\)</span> severe cases occur</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<section id="formally" class="slide level2">
+<h2>Formally</h2>
+<p><span class="math display">\[
+\begin{align}
+l(x,y) &amp;= \sum_{i=1}^{52} \max(y_i - x_i, 0) \\
+x^F &amp;\in \left\{ \text{possible } x' \,\middle| \, E_{F}[l(x',Y)] \leq E_{F}[l(x,Y)] \text{ for any possible } x \right\}
+\end{align}
+\]</span></p>
+<p>Novelty of our approach for ID forecasting is how we define <span class="math inline">\(x\)</span> being <strong>possible</strong></p>
+<ul>
+<li>as satisfying some resource constraint <span class="math inline">\(\displaystyle{\sum x_i \leq K}\)</span></li>
+</ul>
+<div class="callout callout-note no-icon callout-titled callout-style-simple">
+<div class="callout-body">
+<div class="callout-title">
+<p><strong>Note:</strong></p>
+</div>
+<div class="callout-content">
+<p>Our loss function and (single) constraint are very simple prototypes meant for proof of concept.</p>
+</div>
+</div>
+</div>
 <aside class="notes">
 <p>social/political/economic/psychological/moral utility</p>
 <p>this must somehow acknowledge risk attitude heterogeneity among various DM’s that a forecast hub might serve</p>
+<p>gpl parameters, weights, multiple constraints</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -443,22 +496,66 @@
 </section>
 <section id="sharing-business" class="slide level2">
 <h2>Sharing Business</h2>
-<p>A Scoring Rule attempts to transfer or “share” this loss function with the forecaster through a numerical reward system where FP receives</p>
-<p><span class="math display">\[
-S(F,y)
-\]</span></p>
-<p>units of money, goodwill, prestige, etc. A central goal in designing <span class="math inline">\(S\)</span> is to create a scenario where the FP beleives she cam maximizes her own expected utility by giving the DM the forecast that the FP believes in actually true and/or best suited for leading the DM toward actions that will maximize their utility. An SR that acheieves this is called <em>proper</em> and Bayes acts form a linchpin of their operation since the establish an explicit vacabulary of loss in place of vague efforts to rank preformance of various statisticla funcitonals adoptic form statistic inference</p>
+<p>A Scoring Rule attempts to “share” DM loss with the forecaster through <span class="math inline">\(S(F,y)\)</span></p>
+<ul>
+<li><p>idea goes back to Savage</p></li>
+<li><p>may be in units of money, goodwill, prestige</p></li>
+</ul>
+<div class="callout callout-note no-icon callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<p><strong>A central goal in design of scoring rules for social good</strong></p>
+</div>
+<div class="callout-content">
+<p>Create scenario where the forecaster believes maximizing her own expected utility aligns with leading the DM toward actions that maximize social utility.</p>
+</div>
+</div>
+</div>
+<p>Using an explicit vacabulary of social loss in ID forecasting hub activities has instrinsic advantage over use of “off-the-shelf” statistical functionals from statistic inference</p>
+<aside class="notes">
+<p><span class="math inline">\(S\)</span> a penalty for us</p>
+<p>inference has own decision theory and ideas of utility, loss, Bayes acts that are related but distinct from the fundamentally econommic/policy focussed ones we use here</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
-<section id="loss-vs-utility" class="slide level2">
-<h2>Loss vs Utility</h2>
-<p>Change in loss but not utility from change in - variant severity (assuming target is infections and decision is number of beds)</p>
-<p>Change in utility but not in loss from change in - supply and personnel cost structures - public opinion regarding importance of fatality prevention - knowledge of demographic disparities in consequences of outcomes</p>
+<section id="a-lagrangian-formulation-for-the-bayes-act" class="slide level2">
+<h2>A Lagrangian formulation for the Bayes act</h2>
+<p>Given <span class="math inline">\(F = \{F_i\}_{i=1}^{N}\)</span>, obtaining <span class="math inline">\(x^F\)</span> is a constrained stochastic optimization problem</p>
+<p><span class="math display">\[
+\begin{align}
+L(x, \lambda ; K, F) &amp;= \sum_{i=1}^N E_{F_i}\left[l(x_i, Y_i)]\right)+\lambda\left(\sum_{i=1}^N x_i-K\right) \\  
+\nabla_{x} L = 0 &amp;\implies
+E_F \left[\frac{d}{dx_i}(Y_i - x_i)_{+}\right] + \lambda
+= F_i(x_i)-1 + \lambda = 0 \\
+&amp;\implies x_i = F_i^{-1}(1-\lambda)
+\end{align}
+\]</span></p>
+<p>Solve <span class="math inline">\(\sum_{l=1}^{N} F_{i}^{-1}(1-\lambda) = K\)</span> to get <span class="math inline">\(x_{i}^F = F_i^{-1}(1-\lambda^{\star})\)</span></p>
 </section>
 <section id="basic-computational-approach" class="slide level2">
 <h2>Basic computational approach</h2>
-<p>Adopt an iterative Lagrange multiplier method following long history in inventory management of solving <em>constrained multi-product newsvendor</em> problems</p>
+<p>Even for simple parametric <span class="math inline">\(F_i\)</span>, this rarely has an analytic solution.</p>
+<p>Given quantile forecasts <span class="math inline">\(q_{i,j}, j = 1,\ldots,23\)</span>, we interpolate full <span class="math inline">\(F_i\)</span> to form <span class="math inline">\(L(x, \lambda ; K, F)\)</span></p>
+<p>Adopt an iterative Lagrange multiplier method following long history in inventory management of solving <strong>constrained multi-product newsvendor</strong> problems</p>
 <p>illustrate algo with a lambda over xs plot against tau</p>
 </section>
+<section id="application" class="slide level2">
+<h2>Application</h2>
+<p>December 2021: Omicron wave clearly started US but forecast teams unsure of severity given uncertainty about <span class="math inline">\(R_0\)</span>, cross-protection by vaccination, previous infection, etc.</p>
+</section>
+<section class="slide level2">
+
+
+<img data-src="plots/state_hosps_ens_only.jpeg" class="r-stretch"></section>
 <section id="data-workflow" class="slide level2">
 <h2>Data workflow</h2>
 <pre><code># A tibble: 12 × 9
@@ -503,6 +600,11 @@ S(F,y)
 <li>might be especially important for tails</li>
 </ul></li>
 </ul>
+<!-- ## Loss vs Utility
+
+Change in loss but not utility from change in - variant severity (assuming target is infections and decision is number of beds)
+
+Change in utility but not in loss from change in - supply and personnel cost structures - public opinion regarding importance of fatality prevention - knowledge of demographic disparities in consequences of outcomes -->
 <div class="footer footer-default">
 
 </div>

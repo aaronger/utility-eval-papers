@@ -29,6 +29,7 @@ plot_hosp <- function(
     space = .5,
     models = "COVIDhub-4_week_ensemble",
     locations = "US",
+    geofacet = FALSE,
     key_width = .15
 ) {
   locations <- locations %>% purrr::map(
@@ -56,7 +57,7 @@ plot_hosp <- function(
 
   target_dates <- data.frame(
     Date = as.Date(c(f_date, te_date)),
-    Date_name = c("Forecast Date", "Target Date"))
+    Date_name = c("Forecast Date, 2021-12-27", "Target Date, 2022-01-10"))
 
   fc_dat <- forecasts_hosp %>%
     dplyr::filter(location %in% locations, model %in% models) %>%
@@ -84,7 +85,7 @@ plot_hosp <- function(
       mapping = aes(
         x = xmin,
         xend = xmax,
-        y = value, yend = value, color = "Observed Value"), size = 1) +
+        y = value, yend = value, color = "Observed Value"), size = .5) +
     # Dummy layer for legend
     geom_blank(data = data.frame(validation = "Observed Value"), aes(color = validation)) +
     scale_color_manual(
@@ -133,11 +134,13 @@ plot_hosp <- function(
       alpha = guide_legend(order = 1),
       fill = guide_legend(override.aes = list(alpha = 1), order = 2),
       color = guide_legend(order = 3))
-  if (length(locations) > 1) {
-    p <- p + facet_geo(~ code, grid = geofacet::us_state_grid1) +
+  if (geofacet) {
+    p <- p + facet_geo(~ code, grid = geofacet::us_state_grid2) +
     scale_x_date(breaks = as.Date(c("2021-12-01", "2022-01-01")),
                  date_labels = "%b %y") +
     theme(axis.title = element_blank())
+  } else if (length(locations) > 1) {
+    p <- p + facet_wrap(~ code)
   }
   p <- p + theme(
       legend.key.width = unit(f_width1*key_width, "cm"),
