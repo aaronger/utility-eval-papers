@@ -3,3 +3,4 @@ scratch/*
 user/*
 meta/*
 !meta/meta
+meta/objects/alloscore*
