@@ -53,3 +53,5 @@ vignettes/*.pdf
 
 # DS_Store files from mac
 *.DS_Store
+
+_targets/meta/objects/alloscore*
