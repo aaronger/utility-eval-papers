@@ -11,6 +11,22 @@ save_dir <- file.path("talks/ISF_talk/plots/")
 hub_repo_path <- "~/covid/covid19-forecast-hub/"
 
 forecasts_hosp <- targets::tar_read(forecast_data) %>%
+  bind_rows(
+    load_forecasts(
+      dates = "2021-12-27",
+      date_window_size = 6,
+      locations = "US",
+      types = c("quantile"),
+      targets = paste(0:30, "day ahead inc hosp"),
+      source = "local_hub_repo",
+      hub_repo_path = hub_repo_path,
+      verbose = FALSE,
+      as_of = NULL,
+      hub = c("US")) |>
+      align_forecasts() |>
+      dplyr::filter(
+        relative_horizon == 14)
+  ) %>%
   filter(reference_date == "2021-12-27")
 truth <- targets::tar_read(truth_data)
 
@@ -25,13 +41,37 @@ mkeep <- c("BPagano-RtDriven",
            "USC-SI_kJalpha",
            "UVA-Ensemble")
 
-plot_hosp(models = c("CU-select"), f_width1 = 3, locations = "MA")
-plot_hosp(models = c("CU-select","COVIDhub-4_week_ensemble", "MUNI-ARIMA"),
+three_colors <- c("#4A708B", "goldenrod", "#CD2626")
+
+p_VA_CU_IHME <- plot_hosp(models = c("CU-select","COVIDhub-4_week_ensemble", "MUNI-ARIMA"),
+                     f_width1 = 3, f_alpha = .4, locations = "VA")
+
+sc = 1
+ggsave(plot = p_VA_CU_IHME, filename = "p_VA_CU_IHME.png",
+       width = 11*sc, height = 6*sc, path = save_dir)
+
+
+p_VA_CU_IHME
+### plot with allocations
+plot_hosp(models = c("CU-select", "UVA-Ensemble"), f_width1 = 4, f_alpha = .4, locations = "MA",
+          allocations = TRUE, f_colors = c("blue", "red"))
+
+plot_hosp(models = c("CU-select","COVIDhub-4_week_ensemble", "MUNI-ARIMA"),locations = c("CA", "MA"),
           space = 1, f_colors = pal1)
 
-nat_hosps <- plot_hosp(f_width1 = 4) +
-  ggtitle("US National Level Hospitalizations - Ensemble Forecast, 14 day horizon")
-nat_hosps
+
+# First plot for application section
+
+{
+nat_hosps <- plot_hosp(start_date = "2021-07-01", key_width = .08,
+                       f_width1 = 6, locations = "US", f_colors = "black", f_alpha = .3) +
+  guides(fill = "none") + labs(x = NULL) +
+  ggtitle("US National Level Hospitalizations \nEnsemble Forecast, 14 day horizon") +
+    theme(plot.title = element_text(vjust = - 10, hjust = .25))
+sc <- .7
+ggsave(plot = nat_hosps, filename = "nat_hosps.png",
+       width = 11*sc, height = 6*sc, path = save_dir)
+}
 
 p_ens_only <- p <- plot_hosp(
   start_date = "2021-11-15",
@@ -47,7 +87,7 @@ p_ens_only <- p <- plot_hosp(
 
 p_ens_only <- p_ens_only + theme_bw() + guides(fill="none") + labs(x=NULL) +
   theme(legend.position = c(.93, 0.28)) +
-  ggtitle("State Level Hospitalizations, Ensemble Forecast, 14 day horizon") +
+  ggtitle("State Level Hospitalizations, \nEnsemble Forecast, 14 day horizon") +
   theme(plot.title = element_text(vjust = - 10, hjust = .25, size = 16),
         axis.text.x = element_text(size = 8))
 
@@ -87,9 +127,25 @@ p_state <- plot_hosp(
   f_colors = c("#4A708B", "goldenrod", "#CD2626"),
   f_alpha = .4,
   f_width1 = 5,
+  geofacet = TRUE,
   key_width = .05,
   space = 1) + theme_bw()
 
 ggsave(plot = p_state, filename = "state_hosps.pdf",
        width = 16, height = 10, path = save_dir)
+
+
+
+### plot for muni-vs-bucky
+
+mvbucky_dist_alloc <- plot_hosp(models = c("JHUAPL-Bucky", "MUNI-ARIMA"),
+          start_date = "2021-12-20",
+          locations = c("FL", "CA", "TX", "GA", "NJ", "NC", "PA", "VA", "IL"),
+          f_width1 = 4, f_alpha = .4,
+          allocations = TRUE, f_colors = c("#4A708B", "#CD2626")) + labs(x = NULL)
+
+ggsave(plot = mvbucky_dist_alloc, filename = "mvbucky_dist_alloc.png",
+       width = 10, height = 6, path = save_dir)
+
+
 

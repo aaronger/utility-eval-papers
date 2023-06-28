@@ -1,149 +1,183 @@
 ---
-title: "alloscore, ISF 43"
+title: |
+  | Infectious Disease Forecast Evaluation Based On Realized Social Utility:
+  | Allocation Scores
+  | ISF 43
+author: Aaron Gerding, Nick Reich, Ben Rogers, Evan Ray
+institute: "School of Public Health and Health Sciences, UMass, Amherst"
 format:
   revealjs: 
-    width: 1500
+    width: 1050
+    height: 700
 revealjs-plugins:
   - attribution
 editor: visual
 css: styles.css
 ---
 
+## Introduction
+
+::: columns
+
+::: {.column width="50%"}
+
+About me: 
+
+- PhD in pure math
+- transitioned to public health data science 
+- started as RA with Nick and Evan at [reichlab.io](reichlab.io) at UMass in 2021
+- maintain COVID-19 Forecast Hub ensemble
+- current research goals center on ensemble methodology
+  - focus on scoring rules, decision theory, forecast-policy alignment
+
+::: 
+
+::: {.column width="50%"}
+
+![](Reichlab.png)
+
+![](C19FH.png)
+
+:::
+
+:::
+
+
 ## Evolution of ID Forecasting Hubs {.nostretch}
 
-![](hub_timeline.png){}
+![](hub_timeline.png){width=80%}
 
 ::: {.attribution}
 Figure credits: Alex Vespignani and Nicole Samay
 :::
 
+New directions: "Hubverse" infrastructure project [https://hubdocs.readthedocs.io/](), genomic targets
+
 ::: notes
 West Nile mosq control decisions
 :::
 
-## The Role of IDF Hubs
+## Basic products of ID Forecasting Hubs
+
+![](plots/p_VA_CU_IHME.png)
+
+## The Role of ID forecasting Hubs
 
 Outbreak forecasting hubs developed to **"inform public health responses"**
 
-- with trend toward elicitation of probabilistic forecasts
+- trend from point and probability (of bins) toward quantile reporting
 
 - uncertainty quantification essential to a public health **DM** (decision maker)
 
-But in the inimitable words of chatGPT:
-
-> It's important to note that while these efforts represent significant advances in the field, forecasting the spread and impact of infectious diseases is a very complex task with many challenges, and these models should be interpreted with caution.
-
-::: notes
-Over last two decades, multicenter effort to collect forecasts via hubs for ID outbreaks (epi/pan/endemic) with central purpose to "inform public health responses"
-
-With uncertainty quantification being well-established as needed DM input,
-:::
-
-## The fundamental need to decide allocations
-
-Basic element of any such response is an **allocation decision** regarding
-
-::: columns
-
-::: {.column width="10%"}
-
-<div style="height: 200px; width: 50px;">
-  <svg height="100%" width="100%" viewBox="0 0 10 20">
-    <line x1="5" y1="0" x2="5" y2="15" style="stroke:black;stroke-width:2" />
-    <polygon points="0,20 10,20 5,15" style="fill:black;" />
-  </svg>
-</div>
+- substantial buy-in from policy makers
 
 
-:::
+> It's important to note that while these efforts represent significant advances in the field, forecasting the spread and impact of infectious diseases is a very complex task with many challenges, and these models should be **interpreted with caution**.
 
-::: {.column width="40%"}
+Basic example of **interpretation** is an **allocation decision** regarding
 
 -   medical supplies
--   personnel
 -   facility capacity
+-   personnel
 -   R&D funding
 -   public tolerance for NPIs
-:::
-
-::: {.column width="50%"}
-Similar to other contexts where there are large-scale institutional efforts to use expert judgment to assess and manage social risk
-
--   finance
--   meteorology
--   military conflict
-:::
-:::
 
 ::: notes
+quantiles flexible interpretable - closer to describing full distribution which DM probably always wants
+
+multicenter effort to collect forecasts via hubs for ID outbreaks (epi/pan/endemic)
+
+With uncertainty quantification being well-established as needed DM input,
+
 Allocations can be wrt space, time, demographic
 
-Even with complex game-theoretic approachs to collective decision making, allocation almost always a requirement to strategy development
+Next: formalize this.
 :::
 
 ## Scoring rules and social utility
 
 *Very* briefly, a **scoring rule** $S$ assigns a number $S(F,y)$ to the forecast $F$ of $Y$ when $Y=y$ is realized.
 
-$S$ if **proper** if $\displaystyle{E_{F}[S(F,Y)] \leq E_{G}S(F,Y)]}$ for all $F, G$
+$S$ if **proper** if $\displaystyle{E_{F}[S(F,Y)] \leq E_{F}S(G,Y)]}$ for all $F, G$
 
 - ensures that forecasters must give honest forecasts to maximize expected score
 
-Hubs have tried to use SRs to rank and combine forecasts in ways that offer best suppport for PH response to ID outbreaks
+Hubs have tried to use proper SRs to rank and combine forecasts in ways that offer best suppport for PH response to ID outbreaks
 
 Primary scoring rule used currently is the **Weighted Interval Score** which is a discrete approximation to the 
-**Continuous Ranked Probability Score**
+**Continuous Ranked Probability Score** (a probabilistic generalization of MAE)
 
 - adopted for convenient scoring of quantile forecasts.
+
+<br>
+
+#### A central goal in design of scoring rules for social good
+
+::: box
+
+Create scenario where the forecaster believes maximizing her own expected utility aligns 
+with leading the DM toward actions that maximize social utility.
+
+:::
+
 
 ## Bayes Acts
 
 Scoring rules can be cast in decision-theoretic framework of **Bayes acts**.
 
-::: {.important}
+<br>
+
+::: box 
 
 The **Bayes act** relative to a forecast $Y \sim F$ is the action $x^F$ 
-by which a DM will minimize **expected loss** $E_Y[l]$ assuming that in reality $Y \sim F$.
+by which a DM will minimize **expected loss** $E_Y[l]$ 
+assuming that in reality $Y \sim F$.
 
 :::
 
-
  - loss $l$ is a function of the outcome $y$ **and** the action $x$ DM takes in anticipation of $y$
 
-Given $l$, we have an *automatically proper* scoring rule $S(F,y) := l(x^F, y)$.
+::: box
 
-::: {.callout-note appearance="simple" icon=false}
+Key point: Given $l$, we have an *automatically proper* scoring rule 
+$S(F,y) := l(x^F, y)$
 
-### Our running example:
+:::
+
+<br>
+
+#### Our basic example:
  
  - $x$ and $y$ are vectors in $\mathbb{N}_0^{52}$
  - $y =$ number of severe cases in US states and territories
  - $l(x,y) =$ unmet need when $x < y$ beds are allocated and $y$ severe cases occur
 
-:::
 
 ## Formally
 
 $$
 \begin{align}
-l(x,y) &= \sum_{i=1}^{52} \max(y_i - x_i, 0) \\
+l(x,y) &= \sum_{i=1}^{52} \max(y_i - x_i, 0) = \sum (y_i - x_i)_{+}\\
 x^F &\in \left\{ \text{possible } x' \,\middle| \, E_{F}[l(x',Y)] \leq E_{F}[l(x,Y)] \text{ for any possible } x \right\}
 \end{align}
 $$
 
-Novelty of our approach for ID forecasting is how we define $x$ being 
-**possible**
+<br>
 
- - as satisfying some resource constraint $\displaystyle{\sum x_i \leq K}$
+#### Novelty of our approach for ID forecast evaluation:
 
-::: {.callout-note appearance="simple" icon=false}
+::: box
 
-### Note:
+Define set of **possible** $x$ as those actions which satisfy $\displaystyle{\sum x_i \leq K}$
+
+:::
+
+<br>
+
+#### Note:
 
 Our loss function and (single) constraint are very simple prototypes meant 
 for proof of concept. 
-
-:::
 
 ::: notes
 social/political/economic/psychological/moral utility
@@ -153,69 +187,134 @@ this must somehow acknowledge risk attitude heterogeneity among various DM's tha
 gpl parameters, weights, multiple constraints
 :::
 
-## Sharing Business
-
-A Scoring Rule attempts to "share" DM loss with the forecaster through $S(F,y)$
-
-- idea goes back to Savage
-
-- may be in units of money, goodwill, prestige
-
-::: {.callout-note appearance="Important" icon=false}
-
-## A central goal in design of scoring rules for social good
-
-Create scenario where the forecaster believes maximizing her own expected utility aligns 
-with leading the DM toward actions that maximize social utility.
-
-:::
-
-Using an explicit vacabulary of social loss in ID forecasting hub activities has instrinsic advantage
-over use of "off-the-shelf" statistical functionals from statistic inference
-
-::: notes
-$S$ a penalty for us 
-
-inference has own decision theory and ideas of utility, loss, Bayes acts
-that are related but distinct from the fundamentally econommic/policy focussed
-ones we use here
-:::
 
 ## A Lagrangian formulation for the Bayes act
 
 Given $F = \{F_i\}_{i=1}^{N}$, obtaining $x^F$ is a constrained stochastic optimization problem 
 
-$$ 
+
 \begin{align}
 L(x, \lambda ; K, F) &= \sum_{i=1}^N E_{F_i}\left[l(x_i, Y_i)]\right)+\lambda\left(\sum_{i=1}^N x_i-K\right) \\  
-\nabla_{x} L = 0 &\implies 
-E_F \left[\frac{d}{dx_i}(Y_i - x_i)_{+}\right] + \lambda 
-= F_i(x_i)-1 + \lambda = 0 \\
-&\implies x_i = F_i^{-1}(1-\lambda)
+
+\nabla_{x} L(x^F, \lambda) = 0 &\implies 
+E_F \left[\frac{d}{dx_i}(Y_i - x_i^F)_{+}\right] + \lambda \\
+&= F_i(x_i^F)-1 + \lambda = 0 
+\implies x_i^F = F_i^{-1}(1-\lambda) \\
+
+\nabla_{\lambda} L(x^F, \lambda^{\star}) = 0 
+&\implies \sum_{i=1}^{N} F_{i}^{-1}(1-\lambda^{\star}) - K  = 0
+\implies 
+\boxed{x_{i}^F = F_i^{-1}(1-\lambda^{\star})}
 \end{align}
-$$
 
+Our allocation scoring rule is then given by the recipe:
 
-Solve $\sum_{l=1}^{N} F_{i}^{-1}(1-\lambda) = K$ to get $x_{i}^F = F_i^{-1}(1-\lambda^{\star})$
+1. Use forecast $F$ to form Lagrangian $L$, for expected loss under a resource constraint
+
+2. Solve for optimizer $x^F$ using $L$
+
+3. Plug $x^F$ and outcome $y$ into loss function to get $S(F,y) = l(x^F,y)$
 
 ## Basic computational approach
 
-Even for simple parametric $F_i$, this rarely has an analytic solution.
+But getting $x^F$ not so simple.
 
-Given quantile forecasts $q_{i,j}, j = 1,\ldots,23$, we interpolate full $F_i$ to form $L(x, \lambda ; K, F)$
+Even for simple parametric $F_i$, there is rarely an analytic solution for $\lambda^{\star}$.
 
-Adopt an iterative Lagrange multiplier method following long history in inventory management of solving **constrained multi-product newsvendor** problems
+- and we need to reconstruct $F_i$'s from quantile forecasts $q_{i,j}, j = 1,\ldots,23$ to form $L(x, \lambda ; K, F)$
 
-illustrate algo with a lambda over xs plot against tau
+![](plots/dist_pqs_plot_OH.png)
 
+
+## Iterative methods 
+
+So we resort to a binary search for $\lambda^{\star}$ following long history in inventory management of solving **constrained multi-product newsvendor** 
+problems^[See e.g., Zhang, Bin, Xiaoyan Xu, and Zhongsheng Hua. 2009. “A Binary Solution Method for the Multi-Product
+Newsboy Problem with Budget Constraint.”]
+
+
+![](plots/iter_combo.png)
 
 ## Application
 
 December 2021: Omicron wave clearly started US but forecast teams unsure of severity given uncertainty about $R_0$, cross-protection by vaccination, previous infection, etc.
 
-___
+![](plots/nat_hosps.png)
 
-![](plots/state_hosps_ens_only.jpeg)
+
+## Results 
+
+::: columns
+
+::: {.column width="30%"}
+
+After adjusting for an oracle the score of an oracle that allocates *fairly* based on what demands actually occur, scores resemble "value" plots from meteorology
+
+- also the Murphy curves of Gneiting et. al.
+
+- extreme shortages or surplusses diminish the oracle's advantage
+
+- ranking at peak seems to be consistent with that in large $K$
+region.
+
+:::
+
+::: {.column width="70%"}
+
+![](plots/peak_alloscore.png)
+
+:::
+
+:::
+
+::: aside
+Ehm, Werner, Tilmann Gneiting, Alexander Jordan, and Fabian Krüger. 2016. “Of Quantiles and Expectiles: Consistent Scoring Functions, Choquet Representations and Forecast Rankings.”
+:::
+
+::: notes
+Note: The oracle is not the DGP, it is a time-traveller
+:::
+
+## Alloscore and WIS rank models differently
+
+![](plots/p_wis_v_alloscore.png)
+
+## Explanations?
+
+![](plots/mvbucky_dist_alloc.png)
+
+## Limitations
+
+This is **post-hoc** analysis
+
+Hub forecasters were unaware of
+
+- an allocation score (on joint forecast)
+- any allocation based loss
+- our quantile interpolation/extrapolation methods (`distfromq`)
+
+  - might be especially important for tails
+
+We hope/think that allocation scoring is sensitive to implicit dependence structures in forecasts, but all work so far only refers directly to marginals
+- nothing yet with copulas, etc.
+
+<br>
+
+### Thank you!
+
+A very rough R package I wrote to implement scoring procedures:
+
+[https://github.com/aaronger/alloscore](https://github.com/aaronger/alloscore)
+
+A less rough package Evan wrote to implement cdf reconstruction
+
+[https://github.com/reichlab/distfromq](https://github.com/reichlab/distfromq)
+
+<!-- ## Loss vs Utility
+
+Change in loss but not utility from change in - variant severity (assuming target is infections and decision is number of beds)
+
+Change in utility but not in loss from change in - supply and personnel cost structures - public opinion regarding importance of fatality prevention - knowledge of demographic disparities in consequences of outcomes -->
 
 
 ## Data workflow
@@ -249,38 +348,36 @@ ___
 4 D            122.  <fn>       33.5   31.3             0               2.14      -2.14
 ```
 
-## Scoring against an oracle
+## National picture
 
-To get more interpretable allocation scores we adjust by the score of an oracle that allocates *fairly* based on what demands actually occur
-
-Note: The oracle is not the DGP, it is a time-traveller
-
-Comparitive vs absolute assessment/evaluation
-
-## General Disclaimer
-
-This is **post-hoc** analysis
-
-Hub forecasters were unaware of
-
-- an allocation score (on joint forecast)
-- any allocation based loss
-- our quantile interpolation/extrapolation methods (`distfromq`)
-
-  - might be especially important for tails
+![](plots/state_hosps_ens_only.jpeg){width=100%}
 
 
-<!-- ## Loss vs Utility
+## Sharing Business
 
-Change in loss but not utility from change in - variant severity (assuming target is infections and decision is number of beds)
+A Scoring Rule attempts to "share" DM loss with the forecaster through $S(F,y)$
 
-Change in utility but not in loss from change in - supply and personnel cost structures - public opinion regarding importance of fatality prevention - knowledge of demographic disparities in consequences of outcomes -->
+- idea goes back to Savage
+
+- may be in units of money, goodwill, prestige
+
+<br>
 
 
+<br> 
 
+An explicit vacabulary of social loss in ID forecast evaluation has instrinsic advantage
+over "off-the-shelf" metrics from statistic inference
 
+::: notes
+$S$ a penalty for us 
 
+I do not have a clean definition of "social loss/good/risk/regret" but wanted to use term becasue it is in the session title
 
+inference has own decision theory and ideas of utility, loss, Bayes acts
+that are related but distinct from the fundamentally econommic/policy focussed
+ones we use here
+:::
 
 
 

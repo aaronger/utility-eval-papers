@@ -24,13 +24,17 @@ plot_hosp <- function(
     f_date = "2021-12-27",
     te_date = "2022-01-10",
     f_colors = pal1,
+    st_colors = NULL,
     f_alpha = .5,
     f_width1 = 2,
     space = .5,
     models = "COVIDhub-4_week_ensemble",
     locations = "US",
     geofacet = FALSE,
-    key_width = .15
+    key_width = .15,
+    allocations = FALSE,
+    forecast_hosp = forecasts_hosp,
+    free_y = FALSE
 ) {
   locations <- locations %>% purrr::map(
     function(loc) {
@@ -67,6 +71,15 @@ plot_hosp <- function(
       xmin = target_end_date - half_width + (match(model, models) - 1)*(f_width1 + space),
       xmax = xmin + f_width1)
 
+  if (!is.null(st_colors)) {
+    fc_dat <- fc_dat %>% mutate(
+      code = as.factor(code),
+      code = fct_relevel(code, names(st_colors)))
+    truth <- truth %>% mutate(
+      code = as.factor(code),
+      code = fct_relevel(code, names(st_colors)))
+  }
+
   p <- ggplot(data = truth) +
     # truth data
     geom_line(mapping = aes(x = target_end_date, y = value, color = validation)) +
@@ -101,9 +114,21 @@ plot_hosp <- function(
       mapping = aes(
         x = xmin,
         xend = xmax,
-        y = value, yend = value), size = 1.5) +
+        y = value, yend = value), size = 1.5)
     # predictive interval rects
-    geom_rect(
+    if (!is.null(st_colors)) {
+      p <- p + geom_rect(
+      data = get_intervals(fc_dat),
+      mapping = aes(
+        xmin = xmin,
+        xmax = xmax,
+        ymin = lower,
+        ymax = upper,
+        fill = code),
+      alpha = f_alpha) +
+        scale_fill_manual(values = st_colors, name = "State")
+   } else {
+    p <- p + geom_rect(
       data = get_intervals(fc_dat),
       mapping = aes(
         xmin = xmin,
@@ -111,8 +136,9 @@ plot_hosp <- function(
         ymin = lower,
         ymax = upper,
         fill = model),
-      alpha = f_alpha) +
-    scale_fill_manual(values = f_colors, name = "Model") +
+      alpha = f_alpha) + scale_fill_manual(values = f_colors, name = "Model")
+    }
+  p <- p +
     geom_rect(
       data = get_intervals(fc_dat) %>% dplyr::filter(model == models[1]),
       mapping = aes(
@@ -134,17 +160,70 @@ plot_hosp <- function(
       alpha = guide_legend(order = 1),
       fill = guide_legend(override.aes = list(alpha = 1), order = 2),
       color = guide_legend(order = 3))
+  if (allocations) {
+    adf <- slim_dfs[models] %>% bind_rows()
+    y_tot <- get_ytot(adf) %>% filter(reference_date == f_date) %>%
+      pull(ytot)
+    K_y_tot <- adf$K[which.min(abs(adf$K - y_tot))]
+    adf <- adf %>% filter(
+      reference_date == f_date,
+      K == K_y_tot
+    ) %>% unnest(xdf) %>%
+      mutate(
+        reference_date = as.Date(reference_date)) %>%
+      rename(code = abbreviation) %>%
+      select(reference_date:y)
+    adf_x <- fc_dat %>%
+      left_join(adf, by = c("reference_date", "model", "code")) %>%
+      mutate(
+        xmin = xmin + f_width1*2/5,
+        xmax = xmax - f_width1*2/5
+      )
+    p <- p + geom_rect(
+      data = adf_x,
+      mapping = aes(
+        xmin = xmin,
+        xmax = xmax,
+        ymin = 0,
+        ymax = x), fill = "gold", color = "black", size = .2) +
+      geom_rect(
+        data = adf_x,
+        mapping = aes(
+          xmin = xmin,
+          xmax = xmax,
+          ymin = x,
+          ymax = pmax(x,y)), fill = "darkred")
+      scale_y_continuous(expand = c(0,0))
+  }
   if (geofacet) {
     p <- p + facet_geo(~ code, grid = geofacet::us_state_grid2) +
     scale_x_date(breaks = as.Date(c("2021-12-01", "2022-01-01")),
                  date_labels = "%b %y") +
     theme(axis.title = element_blank())
   } else if (length(locations) > 1) {
-    p <- p + facet_wrap(~ code)
+    if (free_y) {
+      p <- p + facet_wrap(~ code, scales = "free_y")
+    } else {
+      p <- p + facet_wrap(~ code)
+    }
   }
   p <- p + theme(
       legend.key.width = unit(f_width1*key_width, "cm"),
       panel.spacing = unit(0.1, "lines"),
       axis.text.x = element_text(hjust = -0.1))
   p
+}
+
+get_ytot <- function(df) {
+  if ("xdf" %in% names(df)) {
+    df %>% group_by(reference_date) %>% slice(1) %>%
+      transmute(map_vec(xdf, ~ summarise(., ytot = sum(y))))
+  } else {
+    df %>% group_by(reference_date) %>%
+      summarise(ytot = sum(y))
+  }
+}
+add_ytot <- function(df) {
+  ytot <- get_ytot(df)
+  df %>% left_join(ytot, by = "reference_date")
 }

@@ -7,26 +7,14 @@ source("_targets.R")
 
 file_names <- paste0("talks/ISF_talk/slim_dfs/slim_", mkeep)
 # create an empty list to store the loaded objects
-# slim_dfs <- list()
-# for(i in seq_along(file_names)){
-#   slim_dfs[[mkeep[i]]] <- readRDS(file_names[i])
-# }
-
-slim_dfs$`COVIDhub-4_week_ensemble`$model <- "COVIDhub-ensemble"
-
-get_ytot <- function(df) {
-  if ("xdf" %in% names(df)) {
-    df %>% group_by(reference_date) %>% slice(1) %>%
-    transmute(map_vec(xdf, ~ summarise(., ytot = sum(y))))
-  } else {
-    df %>% group_by(reference_date) %>%
-    summarise(ytot = sum(y))
+if (!exists("slim_dfs")) {
+  slim_dfs <- list()
+  for (i in seq_along(file_names)) {
+    slim_dfs[[mkeep[i]]] <- readRDS(file_names[i])
   }
 }
-add_ytot <- function(df) {
-  ytot <- get_ytot(df)
-  df %>% left_join(ytot, by = "reference_date")
-}
+
+slim_dfs$`COVIDhub-4_week_ensemble`$model <- "COVIDhub-ensemble"
 
 plot_components <- function(...) {
   alloscore::plot_components_slim(
@@ -61,5 +49,20 @@ color_vector <- rep(my_colors, length.out = 51)
 
 p +  scale_fill_manual(values = color_vector)
 
+# bar plot for muni-v-bucky
 
+mvbucky <- slim_dfs[c("JHUAPL-Bucky", "MUNI-ARIMA")] %>% bind_rows() %>%
+  filter(reference_date == "2021-12-27", K == 22000) %>% unnest(xdf) %>%
+  filter(abbreviation %in% c("FL", "CA", "TX", "GA", "SC", "NC", "PA", "VA", "WA"))
+
+p_mvb_bar <- plot_components(
+  mvbucky,
+  order_at_K = 22000,
+  order_at_model = "JHUAPL-Bucky",
+  bar_positioning = "dodge")
+p_mvb_bar + scale_y_continuous(expand = expansion(mult = c(0, 0.1))) + theme_bw() +
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank()) +
+  labs(x = "", y = "Allocation Score Components") +
+  scale_fill_manual(values = setNames(three_colors[c(1,3)], c("JHUAPL-Bucky", "MUNI-ARIMA")))
 
