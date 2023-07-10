@@ -353,7 +353,7 @@ Applying this to $S_\alpha$, we can define the $g,\alpha$-entropy of $F$ as
 \begin{align}
 e_{\alpha}(F) &:= S_{\alpha}(F, F) = E_F[s_{\alpha}(q_{\alpha,F}, Y)] .
 \end{align}
-A forecaster believing that $Y \sim F$ will expect to receivq_e a score of $e_{\alpha}(F)$ by reporting their $\alpha$ quantile, while an
+A forecaster believing that $Y \sim F$ will expect to receiv`e a score of $e_{\alpha}(F)$ by reporting their $\alpha$ quantile, while an
 omniscient forecaster \emph{knowing} that $Y\sim G$ will expect a score of $e_S(Y)$ for reporting $q_{\alpha,Y}$. Note that if 
 $F_{y_0} = \mathbb{1}\{x \geq y_0\}$ is deterministic, then 
 \begin{align}
@@ -582,13 +582,15 @@ When the constraint is active, the forecaster will generally not be able to atta
 The advantage of this dual formulation under separability is that when considering a candidate $\lambda$ for $\lambda^{\star}$,
  we can calculate each summand 
 $L_{D,i}(\lambda):=\underset{0 \leq x}{\min} \left\{\lambda w_i x + \sbar_{F,i}(x)\right\}$ independently. 
-To this end, let $Z_{\lambda,i}$ be the set of $x \in \mathbb{R}$ where the weighted subgradient of $-\sbar_{F_i}(x)$ contains 
-$\lambda$ (c.f. \eqref{scalar_Z_deriv}):
+To this end, let $Z_{\lambda,i}$ be the set of critical points in the $i$th coordinate corresponding to the value $\lambda$, that is,
+the set
 \begin{align}
-Z_{\lambda,i} := \left\{x \mid 
-\lambda \in -w_i^{-1}\partial\sbar_{F_i}(x) = w_i^{-1}\kappa_i g_i'(x)(\alpha_i - [F_i(x-), F_i(x)])\right\}. \label{dual_comp_deriv}
+Z_{\lambda,i} := \left\{x \in \mathbb{R} \cup \infty \mid 
+\lambda \in -w_i^{-1}\partial\sbar_{F_i}(x) = w_i^{-1}\kappa_i g_i'(x)(\alpha_i - [F_i(x-), F_i(x)])\right\} \label{dual_comp_deriv}
 \end{align}
-Then for $\lambda>0$ we have
+of $x$ where the weighted subgradient of $-\sbar_{F_i}(x)$ contains 
+$\lambda$ (c.f. \eqref{scalar_Z_deriv}). (Allowing $x=\infty$ accommodates the case when $\lambda=0$ and $\alpha_i = 1$.)
+Since $\lambda w_i x + \sbar_{F,i}(x) \geq 0$ for $\lambda \geq 0$, we have
 \begin{align}
 L_{D,i}(\lambda) = \min \left\{\lambda w_i x + \sbar_{F_i}(x) \mid x \in \{0\} \cup \{Z_{\lambda,i} \cap (0,\infty)\}  \right\}
 \end{align}
@@ -597,7 +599,8 @@ Note that
 \item $Z_{\lambda,i}$ will contain any (necessarily closed) interval where $\sbar_{F_i}$ is linear with slope $-\lambda w_i$,
 \item unless $\lambda=0=O_i$, we have $\sup Z_{\lambda,i} < \infty$ since in this case $\lambda w_i x + \sbar_{F,i}(x)$ is 
 eventually monotonically increasing in $x$,
-\item $Z_{\lambda,i}\cap [0,\infty) = \varnothing$ for $\lambda > \max_{x\geq 0}\{w_i^{-1}\kappa_i g_i'(x)(\alpha_i - F_i(x))\}$.
+\item $Z_{\lambda,i}\cap [0,\infty) = \varnothing$ for $\lambda > \max_{x\geq 0}\{w_i^{-1}\kappa_i g_i'(x)(\alpha_i - F_i(x))\}$, 
+and in this case we have $L_{D,i}(\lambda) = \sbar_{F_i}(0)$.
 \end{itemize}
 
 In the case that we will usually restrict to where $g_i'$ is non-vanishing and non-increasing, $Z_{\lambda,i}$ will consist at most of a single interval 
@@ -840,25 +843,26 @@ If a specific solution is desired, additional criteria could be invoked.  A fair
 the remaining resources $K - \sum_{\frac{U_{i^\star}}{w_{i^\star}} < \frac{U_{i}}{w_{i}}}w_i y_i$ to be divided equally among the $n_K$ recipients.
 
 
-## Special Case I: $F_i$ from same location-scale family and $w_i = 1$, $O_i = O, U_i = 1$.
+## Special Case I: $F_i$ from same location-scale family and $w_i = 1$, $\alpha_i = \alpha$.
 
 Also assume the constraint is active, i.e., 
 \begin{align}
 K < \sum F_i^{-1}(\alpha)= \sum \mu_i + \sigma_i\Phi^{-1}(\alpha)
 \end{align}
-where $\Phi$ is the standard CDF for the family and $\alpha = (1+O)^{-1}$. Then setting
+where $\Phi$ is the base cdf for the family. Then solving for $\lambda^{\star}$ in
 \begin{align}
-\sum F_i^{-1}(\alpha - \lambda) = \sum \mu_i + \sigma_i\Phi^{-1}(\alpha - \lambda) = K
+\sum F_i^{-1}(\alpha - \lambda^{\star}) = \sum \mu_i + \sigma_i\Phi^{-1}(\alpha - \lambda^{\star}) = K
 \end{align}
 we get
 \begin{align}
-\alpha - \lambda = 
-\Phi\left(\frac{K - \sum \mu_j}{\sum \sigma_j} \right):= F(K)
+\alpha - \lambda^{\star} = 
+\Phi\left(\frac{K - \sum \mu_j}{\sum \sigma_j} \right):= F(K).
 \end{align}
+When $\alpha = 1$, we might interpet $F(K)$ as the forecast probability under an independence assumption that $K$ will be sufficient to meet demand.
 
-and the Bayes act when the constraint is set to $K$ is 
+We can now use the assumption that the $F_i$ have a common base distribution to express the Bayes act as
 \begin{align} 
- \nonumber Q_i(K) = F_i^{-1}(F(K)) &= \mu_i +\sigma_i\Phi^{-1}(F(K)) \\ 
+ \nonumber x_i^{F,K} = F_i^{-1}(F(K)) &= \mu_i +\sigma_i\Phi^{-1}(F(K)) \\ 
  \nonumber &= \mu_i + \sigma_i\left(\frac{K - \sum \mu_j}{\sum \sigma_j} \right) \\
  &= \mu_i + \tilde{\sigma}_i(K - \sum \mu_j)
 \end{align}
@@ -867,7 +871,9 @@ where $\tilde{\sigma_i}$ is the proportion of $F$'s scale (e.g. SD) "due" to $F_
 
 Remarks:
 
-- $Q_i(K)$ here does not depend on $O$ unlike when the constraint is inactive or the $O_i$ differ.
+- The $x_i^{F,K}$ here do not depend on $\alpha$ unlike when the constraint is inactive or the $\alpha_i$ differ. Intuitively, when the distibutions $F_i$
+all have the same intrinsic shape, a change in $\alpha$ changes the level of marginal expected benefit identically in each coordinate, so that an equality
+of these expected benefits is maintained.
 
 - An "excess or shortage in mean" $K - \sum \mu_j$ is divided among the components in proportion to their scale factors as adjustmments up or down from their locations $\mu_i$.  This suggests an interpretation of under-dispersion of a forecast in one component as leading to that component not receiving as much additional recources as it should when there is an excess or other components not recieving as much of scarce resources as they should when there is a shortage.
 

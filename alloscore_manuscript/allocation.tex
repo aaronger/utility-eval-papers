@@ -114,6 +114,21 @@ In Section \ref{sec:methods}, we review the general framework for developing sco
 In Section \ref{sec:application} we then illustrate the scoring rule through an application to short-term forecasts of COVID-19 hospital admissions in the US. 
 Section \ref{sec:discussion} summarizes our contributions and discusses opportunities for further extensions in future work.
 
+\subsection{Allocation Scoring}
+
+In a nutshell, the allocation score of a multivariate forecast $F$ is the realized unmet demand when $F$ is used to allocate so as to minimize expected unmet 
+need --- that is, when we distribute a limited amount $K$ of our resource so that total expected unmet need according to $F$,
+\begin{align}
+\sum_i E_{F_i}[\text{unmet need in location $i$}]
+\end{align}
+is minimized, where the $F_i$ are the marginal distributions of $F$.
+This stochastic allocation problem has an intuitively appealing solution: allocate so that the probabilities of need exceeding allocation 
+in various locations are as close to each other as possible (see methods).  In general, this will lead to the allocations provided by $F$ being either zero or the quantiles of $F_i$ for some \emph{single} probability level $\tau$.
+
+For example, suppose we have a forecast $F$ for need in two locations with $F_1 = \mathrm{Unif}(0,4)$ and $F_1 = \mathrm{Unif}(4,8)$. If we have $K = 10$ units
+of our resource available, the optimal allocation according to $F$ would be 3 units in location 1 and 7 units in location 2. Then both locations would be allocated at the quantiles for probability level $\tau = .75$.  If, however, we only have $K = 3$ units available, all 3 would go to location 2 since it is not
+possible to match probabilities of need exceeding allocation given our resource constraint.
+
 \section{Methods}
 \label{sec:methods}
 
