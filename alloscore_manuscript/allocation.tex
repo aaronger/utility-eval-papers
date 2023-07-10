@@ -116,18 +116,33 @@ Section \ref{sec:discussion} summarizes our contributions and discusses opportun
 
 \subsection{Allocation Scoring}
 
-In a nutshell, the allocation score of a multivariate forecast $F$ is the realized unmet demand when $F$ is used to allocate so as to minimize expected unmet 
+In a nutshell, the allocation score of a multivariate forecast $F$ is the unnecessary realized unmet demand when $F$ is used to allocate so as to minimize expected unmet 
 need --- that is, when we distribute a limited amount $K$ of our resource so that total expected unmet need according to $F$,
 \begin{align}
 \sum_i E_{F_i}[\text{unmet need in location $i$}]
 \end{align}
-is minimized, where the $F_i$ are the marginal distributions of $F$.
+is minimized, where the $F_i$ are the marginal distributions of $F$. By ``unnecesary'' we mean the unmet need that could have been avoided by an oracle that knows exactly how much need will occur in each location and divides the amount $K$ so that nothing is wasted in one location while it could be put to use in another.
 This stochastic allocation problem has an intuitively appealing solution: allocate so that the probabilities of need exceeding allocation 
-in various locations are as close to each other as possible (see methods).  In general, this will lead to the allocations provided by $F$ being either zero or the quantiles of $F_i$ for some \emph{single} probability level $\tau$.
+in various locations are as close to each other as possible (see methods).  This will lead to the allocations provided by $F$ being quantiles of $F_i$ for some \emph{single} probability level $\tau$.
 
-For example, suppose we have a forecast $F$ for need in two locations with $F_1 = \mathrm{Unif}(0,4)$ and $F_1 = \mathrm{Unif}(4,8)$. If we have $K = 10$ units
-of our resource available, the optimal allocation according to $F$ would be 3 units in location 1 and 7 units in location 2. Then both locations would be allocated at the quantiles for probability level $\tau = .75$.  If, however, we only have $K = 3$ units available, all 3 would go to location 2 since it is not
-possible to match probabilities of need exceeding allocation given our resource constraint.
+For example, suppose we have a forecast $F$ for need in two locations with $F_1 = \mathrm{Unif}(0,8)$ and $F_2 = \mathrm{Unif}(4,8)$. If we have $K = 10$ units
+of our resource available, the optimal allocation according to $F$ would be 4 units in location 1 and 6 units in location 2. This allocates to both locations at their forecast medians.  If, on the other hand, we only have $K = 3$ units available, we will necessarily have to allocate in location 2 at a quantile for $\tau = 0$, and therefore all 3 would go to location 2 since allocating any resources to location 1 would lead to unbalanced probabilities of need exceeding allocation. 
+\footnote{Matching probabilities will not always be possible if we allow point masses in the $F_i$.  For example, if $F_2$ were the point forecast of 8 interpreted as a degenerate probabilistic forecast with mass 1 at 8, the optimal allocation for $K = 10$ would be 2 in location 1 and 8 in location 2. Notice though that both allocations are still technically medians.}
+
+Next suppose that we observe needs of 8 and 3 in locations 1 and 2, respectively. With $K = 10$ units of the resource, the oracle would be able to prevent all
+but 1 of the total 11 units of needs from going unmet. The forecast $F$'s allocation results, at the same time, in $8 - 6 = 2$ units of unmet need in location 1 despite leaving no need unmet in location 2. The allocation score for the forecast when $K = 10$ would therfore be
+1 (= 2 realized $-$  1 unavoidable) in units of unnecessary unmet need.  When $K = 3$, however, the forecast does not ``over-allocate'' in either location which leads to the same unmet need of $11 - 3 = 8$ as does the oracle's allocations.  The allocation score for $F$ when $K = 3$ is therefore 0.
+
+Note the way in which $F$ incurred a positive (i.e., non-optimal) allocation score of 1 for $F$ when $K = 10$. It was not directly directly due to individual misalignments 
+of the marginal forecasts $F_i$ with the observed needs, but rather because the allocations and observed needs were not proportional as vectors.
+This illustrates a fundamental property of the allocation score.  For a given probability level $\tau$, if the quantiles $Q_i(\tau)$ of the marginal forecasts
+are proportional to the observed needs $y_i$, then the allocation score is zero for the resource constraint level $K = \sum Q_i(\tau)$. This stands in marked constrast to other common scoring methods for multi-variate forecasts that aggegate univariate scores such as CRPS or WIS for the marginal forecasts where a 
+misalignment in one coordinate is penalized regardless of alignments in other coordinates. \apg{Should this be illustrated here, or elsewhere?}
+
+It is therefore often straighforward to constuct forecasts $F$ and $\widetilde{F}$ for a given outcome distribution that switch rankings under the allocation and traditional scores by ensuring that the marginal forecasts of $F$ center sharply around allocations that are proportionally similar to the central tendencies of the outcome distribution but are strongly biased.
+
+While multivariate scoring rules have not seen wide application in infectious disease forecast evalution, it seems that the allocation score would have a similar relationship with them, since while bias penalties in multi-variate scores can be offset by better forecasting of dependence structure, the proportional biases that allocation scoring are insensitive to are not \emph{per se} tolerated by multivariate scoring rules such as the energy score, variogram score, or Dawid-Sebastiani score. 
+
 
 \section{Methods}
 \label{sec:methods}
