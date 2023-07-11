@@ -103,18 +103,12 @@ For example, forecasts for districts in Sierra Leone of bed demand to care for p
 And, in 2020, a model developed by an academic research group turned predictions of COVID-19 hospitalizations into estimates of ventilator usage and and shortages. This framework was used by the Hartford HealthCare system in Connecticut ``to align ventilator supply with projected demand at a time where the [COVID-19] pandemic was on the rise''\cite{bertsimas2021predictionsCOVID}. 
 These examples illustrate the potential for forecasts to inform decisions about how to allocate limited supplies such as temporary hospital beds, ventilators, personal protective equipment, or other supplies that are known to be effective at reducing transmission or severity of disease.
 
-As described above, there exists both a rich literature on outbreak forecast evaluation and an emerging body of work on turning forecasts into resource allocation decisions. 
-However, there has been far less attention paid (no papers that we could identify) to exploring whether standard forecast accuracy metrics are sufficient for evaluating forecasts that are used to make allocation decisions.
-In this work, we address the gap between the ways in which infectious disease forecasts have been used to support public health policy and the ways in which they have traditionally been evaluated. 
-Specifically, we define a new forecast scoring rule --the {\em allocation score}-- that explicitly evaluates forecasts based on how accurate their implied allocations would turn out to be.
-This stands in contrast to standard evaluation metrics that evaluate the accuracy of a forecast relative to the surveillance data being forecasted.
-
-The remainder of this article is organized as follows. 
-In Section \ref{sec:methods}, we review the general framework for developing scoring rules for probabilistic forecasts using the tools of decision theory, develop a novel scoring rule that is motivated by the problem of allocating limited medical supplies, and explore the relationship between the proposed allocation score and existing scoring rules such as CRPS. 
-In Section \ref{sec:application} we then illustrate the scoring rule through an application to short-term forecasts of COVID-19 hospital admissions in the US. 
-Section \ref{sec:discussion} summarizes our contributions and discusses opportunities for further extensions in future work.
-
 \subsection{Allocation Scoring}
+
+As described above, there exists both a rich literature on outbreak forecast evaluation and an emerging body of work on turning forecasts into resource allocation decisions. 
+However, we have not found literature exploring whether standard forecast accuracy metrics are sufficient for evaluating how well forecasts support allocation decisions.
+We hope to begin in this work to fill this gap between the ways in which infectious disease forecasts have been used to support public health policy and the ways in which they have traditionally been evaluated. 
+To this end, we define a new forecast scoring rule --- the {\em allocation score} --- that explicitly evaluates forecasts based on how beneficial their implied allocations would turn out to be rather than some standard statisitical measure of their accuracy relative to the surveillance data being forecasted.
 
 In a nutshell, the allocation score of a multivariate forecast $F$ is the unnecessary realized unmet demand when $F$ is used to allocate so as to minimize expected unmet 
 need --- that is, when we distribute a limited amount $K$ of our resource so that total expected unmet need according to $F$,
@@ -142,6 +136,13 @@ misalignment in one coordinate is penalized regardless of alignments in other co
 It is therefore often straighforward to constuct forecasts $F$ and $\widetilde{F}$ for a given outcome distribution that switch rankings under the allocation and traditional scores by ensuring that the marginal forecasts of $F$ center sharply around allocations that are proportionally similar to the central tendencies of the outcome distribution but are strongly biased.
 
 While multivariate scoring rules have not seen wide application in infectious disease forecast evalution, it seems that the allocation score would have a similar relationship with them, since while bias penalties in multi-variate scores can be offset by better forecasting of dependence structure, the proportional biases that allocation scoring are insensitive to are not \emph{per se} tolerated by multivariate scoring rules such as the energy score, variogram score, or Dawid-Sebastiani score. 
+
+\subsection{Organization}
+
+The remainder of this article is organized as follows. 
+In Section \ref{sec:methods}, we review the general framework for developing scoring rules for probabilistic forecasts using the tools of decision theory, develop a novel scoring rule that is motivated by the problem of allocating limited medical supplies, and explore the relationship between the proposed allocation score and existing scoring rules such as CRPS. 
+In Section \ref{sec:application} we then illustrate the scoring rule through an application to short-term forecasts of COVID-19 hospital admissions in the US. 
+Section \ref{sec:discussion} summarizes our contributions and discusses opportunities for further extensions in future work.
 
 
 \section{Methods}
