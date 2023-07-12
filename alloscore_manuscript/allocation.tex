@@ -296,10 +296,32 @@ We use this link to explore the relationship between IAS and CRPS from two direc
 
 Figure *** panel (d) \elr{TODO, figures from crps\_connection\_exp} illustrates this link by going in the other direction: given a forecast $F$, we exhibit the distribution on $K$ that would lead to equally weighted CRPS. Now we use the fact that $K$ can be written as a function of $\alpha$ to obtain the distribution on $K$ that corresponds to a $\text{Uniform}(0,1)$ distribution on $\alpha$. In this example, the implied distribution is $K \sim \text{Exp}(\sigma_1 + \sigma_2)$. We observe that this is a right-skewed distribution that places much of its mass on constraint values near 0, which may not correspond well to actual knowledge about the resource constraints. Again, the distribution on resource constraints that corresponds to unweighted CRPS depends on the forecast distributions.
 
+\subsection{Solving the Allocation Problem}
+
+As the solution to a constrained optimization problem, the optimal allocation $\bf{x}^F$ according to a forecast $F$ can be described formally as the first component of a sationary point $(\bf{x}^F, \lambda^{\star})$ for the Lagrangian 
+\begin{align}
+\mathcal{L}(\mathbf{x},\lambda; K, L) = \sum_{i=1}^{N} \mathbb{E}_{F_i}[s_A(x_i, Y_i; L)] + \lambda\left(\sum_{i=1}^{N} x_i - K\right).
+\end{align}
+That is, optimality requires that both
+\begin{align}
+0 = \nabla_{x} \mathcal{L}(\mathbf{x}^F, \lambda) &= \sum_{i=1}^{N} E_F \left[\frac{d}{dx_i}(Y_i - x_i^F)_{+}\right] + \lambda \\
+& = \sum_{i=1}^{N} E_F \left[-\mathbf{1}(Y_i \geq x_i^F)\right] + \lambda  = \sum_{i=1}^{N} F_i(x_i^F)-1 + \lambda  \label{eqn:x_stationary}\\
+\text{ and} \\
+0 = \nabla_{\lambda} \mathcal{L}(\mathbf{x}^F, \lambda^{\star}) &= \sum_{i=1}^{N} x_i^F - K\\
+& = \sum_{i=1}^{N} F_{i}^{-1}(1-\lambda^{\star}) - K \quad \text{ (by \eqref{eqn:x_stationary})}. \label{eqn:lambda_stationary}
+\end{align}
+These equations give formulae $x_i^F = F_i^{-1}(1-\lambda^{\star})$, but in many situations of interest for us the $F_i^{-1}$ are not single-valued, and even 
+when they are the solution $\lambda^{\star}$ of \eqref{eqn:lambda_stationary} can be obtained analytically only in special cases (but see \ref{sec:methods.ls.example}). We therefore approximate allocations using a binary search for $\lambda^{\star}$ beginning with the interval $\lambda \in [0,1]$ and 
+checking at each step the sign of the inequality that results from substituting the midpoint $\lambda_{\tau}$ into \eqref{eqn:lambda_stationary} for endpoints of the sets $F_i^{-1}(1-\lambda_{\tau})$.  If $\sum_{i} F_{i}^{-1}(1-\lambda^{\star}) > K$, the quantiles for $1-\lambda_{\tau}$ exceed our resource constraint so we set $\lambda_{\tau}$ as the lower endpoint of the $\tau + 1$ search interval.  Similarly, if $\sum_{i} F_{i}^{-1}(1-\lambda^{\star}) < K$, the quantiles for 
+$1-\lambda_{\tau}$ do not make ful use of our resource and we set $\lambda_{\tau}$ as the lower endpoint of the $\tau + 1$ search interval.  This process halves the search interval width at each step and we continue until this width falls below a given tolerance level $\varepsilon_{\tau}$. 
+
+
+
+
 \section{Application}
 \label{sec:application}
 
-We illustrate with an application to hospital admissions in the U.S., considering the problem of allocation of a limited supply of medical resources to the states.
+We illustrate with an application to hospital admissions in the U.S., considering the problem of allocation of a limited supply of medical resources to {}the states.
 
 Case study heading into the Omicron wave. Some more detailed discussion of implications of bad forecasts for specific decision-making purposes -- take a "deep dive" into one or two example states like FL.
 
