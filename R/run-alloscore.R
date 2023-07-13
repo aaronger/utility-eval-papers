@@ -33,7 +33,8 @@ run_alloscore <- function(forecast_data, truth_data, one_reference_date, one_mod
   alloscore(
     K = Ks,
     y = .[["value"]],
-    target_names = "abbreviation"
+    target_names = "abbreviation",
+    slim = TRUE
   )
   ascores <- ascores %>% dplyr::mutate(
     reference_date = one_reference_date,
