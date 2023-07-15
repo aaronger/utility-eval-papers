@@ -1,4 +1,9 @@
-run_alloscore <- function(forecast_data, truth_data, one_reference_date, one_model){
+run_alloscore <- function(
+    forecast_data,
+    truth_data,
+    one_reference_date,
+    one_model,
+    one_K = NULL){
   require(tidyverse)
   require(alloscore)
   require(distfromq)
@@ -25,8 +30,12 @@ run_alloscore <- function(forecast_data, truth_data, one_reference_date, one_mod
       by = c("location", "target_end_date"))
 
   if (nrow(forecast_data_processed) > 0) {
-  ytot <- sum(forecast_data_processed$value)
-  Ks <- seq(200, min(60000, 4*ytot), by = 200)
+    if (!is.null(one_K)) {
+      Ks <- one_K
+    } else {
+      ytot <- sum(forecast_data_processed$value)
+      Ks <- seq(200, min(60000, 4 * ytot), by = 200)
+    }
 
   ## run alloscore
   ascores <- forecast_data_processed %>%
