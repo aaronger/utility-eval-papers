@@ -5,6 +5,8 @@ library(targets)
 library(tarchetypes)
 library(tibble)
 library(crew)
+library(covidHubUtils)
+data("hub_locations")
 
 # Set target options:
 tar_option_set(
@@ -18,31 +20,32 @@ tar_option_set(
 # remotes::install_github("aaronger/alloscore")
 # remotes::install_github("reichlab/distfromq")
 # remotes::install_github("reichlab/covidHubUtils")
+
 # Run the R scripts in the R/ folder:
-tar_source(files = c("R/data-ingestion.R", "R/plot-alloscores.R", "R/run-alloscore.R"))
+tar_source(files = c("R/data-ingestion.R",
+                     "R/plot-alloscores.R",
+                     "R/run-alloscore.R",
+                     "R/determine-model-eligibility.R"))
 
-mkeep <- c("BPagano-RtDriven",
-           "COVIDhub-4_week_ensemble",
-           "COVIDhub-baseline",
-           "CU-select",
-           "IHME-CurveFit",
-           "JHUAPL-Bucky",
-           "JHUAPL-Gecko",
-           "MUNI-ARIMA",
-           "USC-SI_kJalpha",
-           "UVA-Ensemble")
-
-forecast_dates = as.character(seq.Date(as.Date("2021-10-18"), as.Date("2022-02-28"), by = "7 days"))
+values <- tibble(forecast_dates = as.character(seq.Date(as.Date("2021-11-22"), as.Date("2022-02-28"), by = "7 days")))
 
 ## create a group of alloscore targets
-values <- tidyr::expand_grid(models = mkeep, forecast_dates = forecast_dates)
+##values <- tidyr::expand_grid(models = mkeep, forecast_dates = forecast_dates)
 
+## set of required locations: all states + DC
+reqd_locs <- hub_locations |>
+  dplyr::filter(geo_type == "state", !(geo_value %in% c("us", "as", "gu", "mp", "pr", "um", "vi"))) |>
+  dplyr::pull(fips)
 
 # List of targets:
 list(
   tar_target(
+    name = eligible_models,
+    command = determine_eligible_models(values$forecast_dates, locations = reqd_locs)
+  ),
+  tar_target(
     name = forecast_data,
-    command = get_forecast_data(forecast_dates)
+    command = get_forecast_data(values$forecast_dates, models = eligible_models, locations = reqd_locs)
   ),
   tar_target(
     name = truth_data,
@@ -52,18 +55,13 @@ list(
     name = score_data,
     command = get_forecast_scores(forecast_data, truth_data)
   ),
-  tar_map(values = values,
-          tar_target(
-            alloscore,
-            run_alloscore(forecast_data,
-                          truth_data,
-                          forecast_dates,
-                          models)
-          )
+  tar_map(
+    values = values,
+    tar_target(alloscore, run_alloscore_one_date(forecast_data, truth_data, forecast_dates))
   ),
   tar_target(
-    name = alloscore_data,
-    command = assemble_alloscores
+    name = all_alloscore_data,
+    command = assemble_alloscores()
   )
   # tar_target(
   #   name = figure_K_v_alloscore,
