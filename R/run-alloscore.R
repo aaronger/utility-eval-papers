@@ -1,3 +1,23 @@
+## engine to run the alloscores for one reference date and all models sequentially
+run_alloscore_one_date <- function(
+    forecast_data,
+    truth_data,
+    one_reference_date,
+    one_K = NULL) {
+  require(tidyverse)
+  require(alloscore)
+  require(distfromq)
+
+  ## vector of all models present in data
+  models <- unique(forecast_data$model)
+
+  ## for each model, compute allocation, return as df
+  map(models,
+      \(x) run_alloscore(forecast_data, truth_data, one_reference_date, one_model = x, one_K)) %>%
+    list_rbind()
+}
+
+## engine to run the alloscores for one reference date and one model
 run_alloscore <- function(
     forecast_data,
     truth_data,
@@ -61,4 +81,22 @@ run_alloscore <- function(
 }
 
 
+## take estimated alloscores and put them in one clean dataset
+## returned object has a row for each model, reference_date, K, state
+assemble_alloscores <- function() {
+  library(targets)
+  require(dplyr)
+
+  ## load all alloscore targets and get their names
+  ## NB: if any target starts with "alloscore" that isn't one of the fits, this will cause an error
+  tar_load(starts_with("alloscore"))
+  ascore_tars <- ls(pattern="alloscore*")
+
+  ## bind all alloscore dataframes together and filter out ones with no forecasts
+  alloscores_with_data <- do.call(bind_rows, mget(ascore_tars)) |>
+    dplyr::filter(is.na(.data$message))
+
+  ## extract alloscore matrices
+  return(alloscore::slim(alloscores_with_data, id_cols = c("model", "reference_date")))
+}
 

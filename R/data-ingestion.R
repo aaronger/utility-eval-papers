@@ -1,18 +1,18 @@
-get_forecast_data <- function(forecast_dates){
+get_forecast_data <- function(forecast_dates, models, locations){
   require(covidHubUtils)
   load_forecasts(
     dates = forecast_dates,
     date_window_size = 6,
+    models = models,
+    locations = locations,
     types = c("quantile"),
-    targets = paste(0:30, "day ahead inc hosp"),
+    targets = paste(14:20, "day ahead inc hosp"),
     source = "zoltar",
     verbose = FALSE,
     as_of = NULL,
     hub = c("US")) |>
     align_forecasts() |>
-    dplyr::filter(
-      relative_horizon == 14,
-      location < 57)
+    dplyr::filter(relative_horizon == 14)
 }
 
 get_truth_data <- function(){
