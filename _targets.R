@@ -60,6 +60,10 @@ list(
                           forecast_dates,
                           models)
           )
+  ),
+  tar_target(
+    name = alloscore_data,
+    command = assemble_alloscores
   )
   # tar_target(
   #   name = figure_K_v_alloscore,

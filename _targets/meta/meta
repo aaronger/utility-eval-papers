@@ -82,6 +82,7 @@ alloscore_CU.select_2022.02.07|stem|bf60a9ca9ba43aa4|daa4ad90e4f4178e|a73b1dc40f
 alloscore_CU.select_2022.02.14|stem|9186472d51d8a100|4e8a9233602387e5|a73b1dc40f906c14|-1772270214||t19555.7327603707s|d391d8b28bbcb6bc|66032|rds|local|vector|||7.11||
 alloscore_CU.select_2022.02.21|stem|c4a60ebf3758c846|fbc1675254a899dc|a73b1dc40f906c14|-2075020993||t19555.733565978s|8f6361077868abf7|45914|rds|local|vector|||5.375||
 alloscore_CU.select_2022.02.28|stem|56c92c03205cb453|c49583e866e17ba2|a73b1dc40f906c14|1774025695||t19555.7338679896s|a648d1230481bc23|36317|rds|local|vector|||4.811||
+alloscore_data|stem|12abec679d5dda1b|b2cfdc4248439b2f|dc3ac181f631512d|1517186032||t19556.1142252241s|42453b716dfde1f4|311|rds|local|vector|||1.992||
 alloscore_IHME.CurveFit_2021.10.18|stem|2a2f87fab42a3d19|08a0a5e8aaff980d|a73b1dc40f906c14|330782376||t19555.7238438199s|0f2b034f87a09fef|88162|rds|local|vector|||11.542||
 alloscore_IHME.CurveFit_2021.10.25|stem|648516efbefd89af|a84c016fe3f12d53|a73b1dc40f906c14|2127424134||t19555.724544894s|59f29e1e8099ecd1|91948|rds|local|vector|||14.066||
 alloscore_IHME.CurveFit_2021.11.01|stem|fc64b4e139843863|a543f5a476234925|a73b1dc40f906c14|1747510769||t19555.7323600312s|c784844629387e6b|197|rds|local|vector|||0.028||
@@ -205,6 +206,7 @@ alloscore_UVA.Ensemble_2022.02.28|stem|84fbfbd092a8b9ee|08525e24e0327d8c|a73b1dc
 alloscore.allocated|function|c8a8a3caf58015ee|||||||||||||||
 alloscore.default|function|82840804effd3098|||||||||||||||
 alloscore.slim|function|c62351bf4b0a64f5|||||||||||||||
+assemble_alloscores|function|c554bab9562b0a67|||||||||||||||
 dexp_gpl_df|function|775ab2c74f474765|||||||||||||||
 dexp_gpl_loss|function|acf92c44de2776e7|||||||||||||||
 dexp_over_loss|function|7e392277b86071d6|||||||||||||||

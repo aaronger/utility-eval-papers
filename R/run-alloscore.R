@@ -1,3 +1,4 @@
+## engine to run the alloscores
 run_alloscore <- function(
     forecast_data,
     truth_data,
@@ -61,4 +62,21 @@ run_alloscore <- function(
 }
 
 
+## take estimated alloscores and put them in one clean dataset
+## returned object has a row for each model, reference_date, K, state
+assemble_alloscores <- function() {
+  require(dplyr)
+
+  ## load all alloscore targets and get their names
+  tar_load(starts_with("alloscore"))
+  ascore_tars <- ls(pattern="alloscore*")
+
+  ## bind all alloscore dataframes together and filter out ones with no forecasts
+  alloscores_with_data <- do.call(bind_rows, mget(ascore_tars)) |>
+    mutate(target = ascore_tars) |>
+    dplyr::filter(is.na(message))
+
+  ## extract alloscore matrices
+  alloscore::slim(alloscores_with_data, id_cols = c("model", "reference_date"))
+}
 
