@@ -107,6 +107,15 @@ For concreteness, we consider a motivating application in which forecasts of pub
 We define a new forecast scoring rule --- the {\em allocation score} --- that explicitly evaluates forecasts based on how beneficial their implied allocations would turn out to be.
 Unlike the traditional measures of forecast skill such as WIS, CRPS, and log score, the proposed allocation score is rooted in this decision making context and measures the suitability of a forecast as an input to that specific decision making task.
 
+Briefly, the allocation score of a forecast is the unnecessary unmet demand that results from using that forecast to set resource allocations by minimizing expected unmet need. In a little more detail, the total expected unmet need according to the forecast is
+\begin{align}
+\sum_i E_{F_i}[\text{unmet need in location $i$}],
+\end{align}
+where the $F_i$ are the marginal forecast distributions of demand in each location; for example, these might be forecasts of the level of need for medical resources in each state or hospital system.
+If there is a limited amount $K$ of a resource that is available to distribute, a decision-maker could choose an allocation of that resource across locations that minimizes this expected unmet need.
+%By ``unnecessary'' we mean the unmet need that could have been avoided by an oracle that knows exactly how much need will occur in each location and divides the amount $K$ so that nothing is wasted in one location while it could be put to use in another.
+According to the allocation score, one forecast is better than another if it would lead decision-makers to an allocation that results in less unmet need. We elaborate on these ideas in Section~\ref{sec:methods}.
+
 We present an illustrative analysis using the allocation score to evaluate forecasts of hospital admissions in the US leading up to the Omicron wave in winter 2022.
 This analysis is ``synthetic'' in that it does not correspond to an actual analysis that supported decision-making in real-time.
 However, the framework described in this paper corresponds to real-world decisions that must be made by public health administrators around the globe, and could be adapted in the future for such real-time situations.
