@@ -96,6 +96,19 @@ ggplot(data = joint_dist) +
 ```
 
 
+Suppose we adjust the scale parameters in both locations by the multiplicative factor $c$, so that our updated forecast distributions are $Y_1 \sim Exp(1/(c\sigma_1))$ and $Y_2 \sim Exp(1 / (c\sigma_2))$. As a function of $c$, the optimal allocations are at the quantile level
+
+$$\tau(c) = h^{-1}(K) = 1 - \exp[-K/(c\sigma_1 + c\sigma_2)]$$
+
+The optimal allocations are then
+\begin{align*}
+F_i^{-1}(\tau(c)) &= -c\sigma_i \log(1 - \tau(c)) \\
+&= -c \sigma_i -K/(c\sigma_1 + c\sigma_2) \\
+&= \frac{\sigma_i}{\sigma_1 + \sigma_2} K
+\end{align*}
+
+Note that these allocations do not depend on the parameter $c$, only the relative scales in the two locations. Since the allocations are the same for any pairs of forecast distributions with the same relative scales, the allocation score is also the same. While this result is specific to exponentially-distributed forecasts, it illustrates an important feature of the allocation score: in general, the allocation score does not measure whether forecast distributions in individual locations are correct in an absolute sense; instead, it measures whether the relative magnitudes in different locations are forecasted correctly. It is these relative magnitudes that determine whether or not forecast-informed allocations send resources to the correct locations.
+
 \section{Obtaining the CRPS weighting associated with a distribution on $K$}
 
 Suppose that the decision maker has some uncertainty about the level of the constraint $K$, expressed by the distribution $F_K$.  For concreteness, here we take this distribution to be $Gamma(500, 0.01)$ using a shape and scale parameterization. Here's a picture of this distribution, which is concentrated near $K = 5$:
