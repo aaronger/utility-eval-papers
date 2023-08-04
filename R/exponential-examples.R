@@ -3,8 +3,11 @@ library(ggplot2)
 library(grid)
 library(ggpubr)
 
-sigma_1 <- 2
-sigma_2 <- 3
+#margin_type <- "pdf"
+margin_type <- "cdf"
+
+sigma_1 <- 1
+sigma_2 <- 4
 
 K <- c(5, 10)
 
@@ -106,56 +109,132 @@ sbar_legend <- ggpubr::get_legend(p_sbar,
                                 #   position = "right")
 p_sbar <- p_sbar + theme(legend.position = "none")
 
-p_pred1 <- ggplot(
-        data = data.frame(
-            y = y_grid,
-            density = dexp(y_grid, rate = 1 / sigma_1))
-    ) +
-    geom_line(mapping = aes(x = y, y = density)) +
-    scale_x_continuous(breaks = seq(from = 0, to = 10, by = 2)) +
-    coord_cartesian(xlim = c(grid_l, grid_u),
-                    ylim = c(0, 0.5),
-                    expand = FALSE) +
-    xlab("Resource Demand in Location 1") +
-    # ylab("Predictive Density") +
-    ylab("") +
-    theme_bw() +
-    theme(axis.title.y = element_blank())
+if (margin_type == "pdf") {
+    p_pred1 <- ggplot(
+            data = data.frame(
+                y = y_grid,
+                density = dexp(y_grid, rate = 1 / sigma_1))
+        ) +
+        geom_line(mapping = aes(x = y, y = density)) +
+        scale_x_continuous(breaks = seq(from = 0, to = 10, by = 2)) +
+        coord_cartesian(xlim = c(grid_l, grid_u),
+                        ylim = c(0, 0.5),
+                        expand = FALSE) +
+        xlab("Resource Demand in Location 1") +
+        # ylab("Predictive Density") +
+        ylab("") +
+        theme_bw() +
+        theme(axis.title.y = element_blank())
 
-p_pred2 <- ggplot(
-        data = data.frame(
-            y = y_grid,
-            density = dexp(y_grid, rate = 1 / sigma_2))
-    ) +
-    geom_line(mapping = aes(x = y, y = density)) +
-    xlab("Resource Demand in Location 2") +
-    ylab("Predictive Density") +
-    scale_y_reverse(limits = c(0.5, 0)) +
-    # scale_y_continuous(limits = c(0, 1)) +
-    scale_x_continuous(position = "top",
-                       breaks = seq(from = 0, to = 10, by = 2)) +
-    # scale_y_reverse(position = "right") +
-    # scale_x_continuous(position = "top") +
-    coord_flip(xlim = c(grid_l, grid_u),
-               expand = FALSE) +
-    # coord_cartesian(xlim = c(grid_l, grid_u),
-    #                 expand = FALSE) +
-    theme_bw() +
-    theme(axis.title.y.right = element_text(angle = 90))
+    p_pred2 <- ggplot(
+            data = data.frame(
+                y = y_grid,
+                density = dexp(y_grid, rate = 1 / sigma_2))
+        ) +
+        geom_line(mapping = aes(x = y, y = density)) +
+        xlab("Resource Demand in Location 2") +
+        ylab("Predictive Density") +
+        scale_y_reverse(limits = c(0.5, 0)) +
+        # scale_y_continuous(limits = c(0, 1)) +
+        scale_x_continuous(position = "top",
+                        breaks = seq(from = 0, to = 10, by = 2)) +
+        # scale_y_reverse(position = "right") +
+        # scale_x_continuous(position = "top") +
+        coord_flip(xlim = c(grid_l, grid_u),
+                expand = FALSE) +
+        # coord_cartesian(xlim = c(grid_l, grid_u),
+        #                 expand = FALSE) +
+        theme_bw() +
+        theme(axis.title.y.right = element_text(angle = 90))
+} else if (margin_type == "cdf") {
+    p_pred1 <- ggplot(
+            data = data.frame(
+                y = y_grid,
+                density = pexp(y_grid, rate = 1 / sigma_1))
+        ) +
+        geom_line(mapping = aes(x = y, y = density)) +
+        geom_path(
+            data = rbind(
+                data.frame(
+                    K_label = "at K = 5",
+                    x = c(x_1star[1], x_1star[1], 0),
+                    tau = c(0, tau[1], tau[1])
+                ),
+                data.frame(
+                    K_label = "at K = 10",
+                    x = c(x_1star[2], x_1star[2], 0),
+                    tau = c(0, tau[2], tau[2])
+                )
+            ),
+            mapping = aes(x = x, y = tau, linetype = K_label),
+            color = "orange"
+        ) +
+        scale_x_continuous(breaks = seq(from = 0, to = 10, by = 2)) +
+        coord_cartesian(xlim = c(grid_l, grid_u),
+                        ylim = c(0, 1),
+                        expand = FALSE) +
+        xlab("Resource Demand in Location 1") +
+        # ylab("Predictive Density") +
+        ylab("") +
+        theme_bw() +
+        theme(axis.title.y = element_blank(),
+              legend.position = "none")
 
-
-    # +
-    # theme(axis.title.x.top = element_text(),
-    #       axis.title.x.bottom = element_blank())
+    p_pred2 <- ggplot(
+            data = data.frame(
+                y = y_grid,
+                density = pexp(y_grid, rate = 1 / sigma_2))
+        ) +
+        geom_line(mapping = aes(x = y, y = density)) +
+        geom_path(
+            data = rbind(
+                data.frame(
+                    K_label = "at K = 5",
+                    x = c(x_2star[1], x_2star[1], 0),
+                    tau = c(0, tau[1], tau[1])
+                ),
+                data.frame(
+                    K_label = "at K = 10",
+                    x = c(x_2star[2], x_2star[2], 0),
+                    tau = c(0, tau[2], tau[2])
+                )
+            ),
+            mapping = aes(x = x, y = tau, linetype = K_label),
+            color = "orange"
+        ) +
+        xlab("Resource Demand in Location 2") +
+        ylab("Predictive Distribution") +
+        scale_y_reverse(limits = c(1, 0)) +
+        # scale_y_continuous(limits = c(0, 1)) +
+        scale_x_continuous(position = "top",
+                        breaks = seq(from = 0, to = 10, by = 2)) +
+        # scale_y_reverse(position = "right") +
+        # scale_x_continuous(position = "top") +
+        coord_flip(xlim = c(grid_l, grid_u),
+                expand = FALSE) +
+        # coord_cartesian(xlim = c(grid_l, grid_u),
+        #                 expand = FALSE) +
+        theme_bw() +
+        theme(axis.title.y.right = element_text(angle = 90),
+              legend.position = "none")
+}
 
 
 pdf('../figures/exponential_pred_expected_loss.pdf',
     width = 8,
     height = 6.2)
-plot_layout <- grid.layout(
-    nrow = 2, ncol = 6,
-    widths = unit(c(0.42, 0.5, 1, 0.2, 1, 0.56), c("null", "lines", "lines", "lines", "null", "null")),
-    heights = unit(c(1, 0.53), rep("null", 2)))
+if (margin_type == "pdf") {
+    plot_layout <- grid.layout(
+        nrow = 2, ncol = 6,
+        widths = unit(c(0.42, 0.5, 1, 0.2, 1, 0.56), c("null", "lines", "lines", "lines", "null", "null")),
+        heights = unit(c(1, 0.53), rep("null", 2)))
+} else if (margin_type == "cdf") {
+    plot_layout <- grid.layout(
+        nrow = 2, ncol = 6,
+        widths = unit(c(0.42, 0.5, 1, 0.45, 1, 0.56), c("null", "lines", "lines", "lines", "null", "null")),
+        heights = unit(c(1, 0.53), rep("null", 2)))
+}
+
 
 grid.newpage()
 pushViewport(viewport(layout = plot_layout))
@@ -178,7 +257,7 @@ print(p_sbar, vp = viewport(layout.pos.row = 1, layout.pos.col = 5))
 print(p_pred2, vp = viewport(layout.pos.row = 1, layout.pos.col = 6))
 
 grid.text(
-  "Predictive Density",
+  ifelse(margin_type == "pdf", "Predictive Density", "         Predictive Distribution"),
   rot = 90,
   gp = gpar(fontsize = 11),
   vp = viewport(layout.pos.row = 2, layout.pos.col = 3))
