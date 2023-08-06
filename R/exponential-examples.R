@@ -1,7 +1,8 @@
 # Figures for examples with forecasts that are exponential distributions
-library(ggplot2)
-library(grid)
-library(ggpubr)
+make_exponential_example_figure <- function() {
+require(ggplot2)
+require(grid)
+require(ggpubr)
 
 #margin_type <- "pdf"
 margin_type <- "cdf"
@@ -27,7 +28,7 @@ y_grid_jt <- tidyr::expand_grid(
 
 s_bar <- function(x_1, x_2) {
     sigma_1 * exp(-x_1 / sigma_1)*(x_1>=0) + sigma_2 * exp(-x_2 / sigma_2)*(x_2>=0) +
-    (sigma_1 - x_1)*(x_1<0) + (sigma_2 - x_2)*(x_2<0) 
+    (sigma_1 - x_1)*(x_1<0) + (sigma_2 - x_2)*(x_2<0)
 }
 
 s_bar_df <- y_grid_jt %>%
@@ -63,9 +64,9 @@ p_sbar <- ggplot(data = s_bar_df) +
     geom_raster(aes(x = y_1, y = y_2, fill = s_bar)) +
     # geom_contour(mapping = aes(x = y_1, y = y_2, z = s_bar),
     #              breaks = c(0.25, 0.5, 1, 2, 4),
-    #              color = "grey", size = 0.2) + 
+    #              color = "grey", size = 0.2) +
     geom_contour(mapping = aes(x = y_1, y = y_2, z = s_bar),
-                #  breaks = c(s_bar(x_1star, x_2star), seq(0, 10, by = .5))) + 
+                #  breaks = c(s_bar(x_1star, x_2star), seq(0, 10, by = .5))) +
                  breaks = s_bar(x_1star, x_2star)) +
     geom_abline(
         data = data.frame(K = K, K_label = paste0("K = ", K), slope = -1),
@@ -264,3 +265,4 @@ grid.text(
 print(p_pred1, vp = viewport(layout.pos.row = 2, layout.pos.col = 4:5))
 
 dev.off()
+}
