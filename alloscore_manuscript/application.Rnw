@@ -1,0 +1,253 @@
+\documentclass{article}
+
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+\usepackage{amsmath, amsfonts, amssymb}
+\usepackage{graphicx}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\usepackage{amsthm}
+\usepackage{bm}
+\usepackage{cases}
+\usepackage{caption}
+\usepackage{hyperref}
+
+
+\usepackage{setspace}
+\onehalfspacing
+
+\usepackage{parskip}
+
+\usepackage{soul}
+\usepackage{xcolor}
+\def\elr#1{{\color{cyan}\textbf{ELR:[#1]}}}
+\def\apg#1{{\color{red}\textbf{APG:[#1]}}}
+\def\bwr#1{{\color{violet}\textbf{BWR:[#1]}}}
+\def\ngr#1{{\color{blue}\textbf{NGR:[#1]}}}
+
+\title{Using the allocation scoring rule to evaluate short-term COVID-19 hospitalization forecasts during the 2021-2022 Omicron wave}
+\author{Aaron Gerding, Nicholas G. Reich, Benjamin Rogers, Evan L. Ray}
+
+
+\begin{document}
+
+\maketitle
+
+
+<<setup, tidy=FALSE, echo=FALSE, message=FALSE>>=
+knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE)
+@
+
+<<environment-setup>>=
+library(targets)
+library(tidyverse)
+library(ggbump)
+
+theme_set(theme_bw())
+@
+
+
+\section{Methods}
+
+\ngr{TODO: add a figure showing some forecasts and ground truth data.}
+
+\subsection{Hospitalization data}
+Starting in the summer of 2020, the US Health and Human Services began reporting counts of daily new admissions to hospitals for individuals with COVID-19.(cite HHS Protect)
+These data served as the source of ``ground truth'' data for the US COVID-19 Forecast Hub which, starting in December 2020, collected short-term forecasts of new hospital admissions at the daily scale.
+These daily counts were available for the US as a whole, and all states and several additional jurisdictions such as Puerto Rico and Washington DC.
+The data were updated daily and were available for download by the public through the HHS HealthData.gov website.
+For this analysis, we downloaded the hospitalizations data through the covidHubUtils R package, which connects users to the most recent version of the data.(cite package) \ngr{can we use tar\_manifest() to reproducibly display the date the data were stored?}
+
+\subsection{Forecast data}
+The US COVID-19 Forecast Hub, a consortium funded by the US CDC and led by a research group at UMass-Amherst, collected short-term forecasts of hospitalizations starting in December 2020.(cite Data descriptor paper)
+Any team that with appropriately formatted forecasts could submit them to the Forecast Hub data repository on GitHub.(cite repo site)
+Forecasts were time-stamped by GitHub upon submission and passed validation checks that ensured correct formatting and that the forecasts were being submitted only for dates in the future, not for data that had already been observed.
+
+Forecast submission followed a weekly cycle and culminated in the creation of an ensemble forecast.
+Forecasts could be submitted on any day during the week.
+However once a week on Mondays, the Forecast Hub would collect the most recent forecasts submitted by all teams that met certain inclusion criteria and create an ensemble forecast using quantile averaging.(cite Evan's paper)
+An ensemble that treated all models equally was created (COVIDhub-ensemble) as was a model that created weights of submitted models based on performance in the past 12 weeks (COVIDhub-trained\_ensemble).
+One other model that combined multiple forecasts from different teams but used a different ensembling algorithm, a linear pooling method with tail extrapolation, was also included in our analyses (JHUAPL-SLPHospEns).
+Several other models have ``ensemble'' in their name, but this refers to combinations of different variations of models that the specific team created, not to a multi-model ensemble combining different submitted forecasts to the Forecast Hub.
+
+All forecasts, including the ensemble, were submitted as probabilistic predictions about the number of new hospital admissions on a particular day in the future, in a specific jurisdiction of the US (national level, state, or territory).
+Probability distributions were specified, per the requirements established by the Forecast Hub, as a set of 23 quantiles for each individual prediction.
+The submitted quantiles included a median (treated as a ``point'' prediction) and defined 11 central prediction intervals, from a 99\% to a 10\% prediction interval.
+
+The analysis in this work focuses on forecasts made before and during the first wave of the Omicron SARS-CoV-2 variant in the US.
+As such, we downloaded forecasts for the 15 weeks starting with Monday 2021-11-22 through Monday 2022-02-28.
+
+We established a set of inclusion criteria to determine which forecasts and models to include in our analysis.
+Models were eligible to be included in the analysis if they were considered a ``primary'' model from a team. (If a team submitted multiple versions of similar models, they were required to designate one as ``primary''.)
+For a model to have a complete, eligible submission in a given week, it had to have a 14 day-ahead forecast for all 50 states plus Washington DC.
+Models had to have a complete forecast for at least 4 of the 15 weeks in the analysis to be considered eligible for inclusion.
+
+\subsection{Evaluation metrics}
+
+This manuscript focuses on two proper forecast scores, the allocation score and the weighted interval score (WIS).(cite Gerding and Bracher)
+Propriety of forecast scoring rules is desirable as it ensures that forecasters are not incentivized to modify their forecast distribution to achieve a better score.(cite Gneiting and Raftery or Raftery and Gneiting)
+
+\subsubsection{Allocation Score}
+
+\ngr{TODO: general introduction to the alloscore}
+
+For the analysis, we fixed a resource constraint $K$ to be 15,000, based roughly on a reported number of ventilators available for reallocation in the US.(cite paper)
+For each week, we computed a the allocation score for each 14 day-ahead forecast based on $K=15,000$.
+\ngr{it appears that for the last two weeks selected (forecast dates: 2022-02-14 and 2022-02-28) the upper limit of K was 11400 and 9200 respectively, so we do not have alloscores computed for K=15000. Maybe they would have all been zero, since the limits were likely set based on the number of cases being low. What is the rule used to determine the max K computed? Don't think we need to change it, but would be nice to state in the manuscript what it is.}
+
+We also computed a standardized rank for the allocation score for each model $m$ and week $w$.
+First, we computed the number of models that forecasted that week ($n_w$) and the rank of model $m$ among the $n_w$ models ($r_{m,w}^{AS}$).
+The model with the best allocation score received a rank of 1 and the worst received a rank of $n_w$.
+In the case of a tie between one or more models, all models received the better rank.
+We then rescaled these rankings to compute the allocation score standardized rank ($sr_{m,w}^AS$) between 0 and 1, where 0 corresponds to the worst rank and 1 to the best.
+
+
+\begin{equation}
+sr_{m,w}^{AS} = 1 - \frac{r^{AS}_{m,w}-1}{n_w-1}
+\end{equation}
+
+\subsubsection{Weighted Interval Score (WIS)}
+
+\ngr{TODO: general introduction to WIS and define MWIS as mean WIS.}
+
+We computed standardized ranks for MWIS ($sr_{m,w}^{MWIS}$) using the same procedure as for allocation scores described above.
+
+\subsection{Data and code availability}
+
+\section{Results}
+
+<<score-computation>>=
+tar_load("all_alloscore_data")
+
+alloscore_data_summaries <- all_alloscore_data |>
+  filter(K == 15000)|>
+  group_by(model, reference_date) |>
+  summarize(alloscore = sum(components), yobs = sum(y)) |>
+  group_by(reference_date) |>
+  mutate(nmodels = n(),
+         allo_rank = rank(alloscore, ties.method = "min"),
+         allo_rank_std = 1- (allo_rank-1)/(nmodels-1)) |>
+  ungroup() |>
+  complete(model, reference_date) |>
+  mutate(target_end_date = as.Date(reference_date) + 14)
+
+tar_load("score_data")
+
+alloscore_models <- unique(alloscore_data_summaries$model)
+score_data_summaries <- score_data |>
+  mutate(reference_date = target_end_date - 14) |>
+  filter(model %in% alloscore_models) |>
+  group_by(model, reference_date) |>
+  summarize(mwis = mean(wis)) |>
+  ungroup() |>
+  group_by(reference_date) |>
+  mutate(nmodels = n(),
+         mwis_rank = rank(mwis, ties.method = "min"),
+         mwis_rank_std = 1- (mwis_rank-1)/(nmodels-1)) |>
+  ungroup() |>
+  complete(model, reference_date) |>
+  mutate(target_end_date = as.Date(reference_date) + 14)
+@
+
+
+\subsection{Metrics as a function of time}
+<<grob-hosps-over-time>>=
+tar_load("truth_data")
+dat_to_plot <- truth_data |>
+  filter(location == "US",
+         target_end_date %in% score_data_summaries$target_end_date)
+p1 <- ggplot(dat_to_plot,
+             aes(x=target_end_date, y=value)) +
+  geom_line() +
+  geom_point() +
+  geom_hline(yintercept=15000, linetype=2) +
+  ylab("hospital admissions") +
+  xlab(NULL) +
+  ylim(c(0, NA))
+@
+
+
+<<metrics-over-time, fig.height=9, fig.width=7, fig.cap="Hospital admissions and evaluation metrics over time. Panel A shows the number of hospital admissions in the US as a whole due to COVID-19 on a sequence of 15 Mondays from December 2021 through March 2022. These are the days for which forecasts were made and evaluated. A horizontal dashed line at 15,000 shows the assumed resource constraint $K$. Panel B shows allocation scores for each model's 14-day ahead forecast, across all US states. The x-axis corresponds to the date for which the prediction was made. Allocation scores typically are high when the observed value is near to the constraint, which occurs during the last Monday in December (on the way up) and the last Monday in January (on the way down). Panel C shows the MWIS metric across weeks, averaged across all states. Similarly to panel B, the x-axis corresponds to the date for which the prediction was made. MWIS values tend to scale with the observed and predicted values, and the peak MWIS values happen around and just after the pean of the Omicron wave.">>=
+p2 <- ggplot(alloscore_data_summaries,
+             aes(x=target_end_date, y=alloscore, color=model, shape=model)) +
+  scale_x_date(limits=range(score_data_summaries$target_end_date)) +
+  scale_shape_manual(values=c(15:18, 4, 6, 15:18, 4, 6, 15:18, 4)) +
+  ylab("Allocation score") +
+  geom_point() + geom_line()+
+  theme(legend.pos="none") +
+  xlab(NULL)
+
+p4 <- ggplot(score_data_summaries,
+             aes(x=target_end_date, y=mwis, color=model,shape=model)) +
+  geom_point() + geom_line() +
+  scale_shape_manual(values=c(15:18, 4, 6, 15:18, 4, 6, 15:18, 4)) +
+  ylab("MWIS")+
+  theme(legend.pos="bottom")+
+  xlab(NULL)
+
+cowplot::plot_grid(p1, p2, p4,
+                   nrow=3,
+                   align="v",
+                   rel_heights = c(1, 1, 1.5),
+                   labels = "AUTO")
+@
+
+Allocation scores varied substantially by date and by model (Figure XX).
+For predictions made for the first three Mondays in December 2021 and the last three Mondays in February 2022 all models had allocation scores under 500 (and the mean across all models was less than 100), indicating that the unnecessary unmet need was fairly low relative to the total number of hospital admissions on those days.
+The allocation scores are on the whole highest when the observed number of new hospital admissions is closest to the resource threshold of 15,000, as this is the time when any mistakes in allocation are costly in terms of wasting resources in one location that could have been used in another.
+Predictions made during the peak week and just after showed the highest variation in allocation scores, with some models having values under 1000 and others having values over 3500.
+<<>>=
+## some analysis to support above statements
+alloscore_data_summaries |>
+  group_by(target_end_date) |>
+  summarize(meanAS = mean(alloscore, na.rm=TRUE),
+            medianAS = median(alloscore, na.rm=TRUE),
+            minAS = min(alloscore, na.rm=TRUE),
+            maxAS = max(alloscore, na.rm=TRUE),
+            range = maxAS-minAS)
+@
+
+
+Mean weighted interval scores (MWIS) also varied by date and model, and more clearly were dependent on the scale of the observed data.
+MWIS values were low (all models under 100) for all Mondays in December 2021 and the final four Mondays evaluated.
+Across all models both the average and median MWIS value for every Monday in January was above 100, with the largest errors occurring one and two weeks after the peak was observed.
+
+<<>>=
+## some analysis to support above statements
+score_data_summaries |>
+  group_by(target_end_date) |>
+  summarize(meanWIS = mean(mwis, na.rm=TRUE),
+            medianWIS = median(mwis, na.rm=TRUE),
+            minWIS = min(mwis, na.rm=TRUE),
+            maxWIS = max(mwis, na.rm=TRUE),
+            range = maxWIS-minWIS)
+@
+
+\subsection{correlation between WIS and allocation score}
+
+<<metrics-correlation, fig.width=7, fig.height=6, fig.cap="Association of standardized ranks for MWIS and allocation score by model and week. Each facet of the plot corresponds to one model. Within each facet, each point corresponds to a week. The x- and y-values correspond to the MWIS standardized rank and the allocation score standardized rank for that week. Points corresponding to earlier dates have darker shading. The size of the point corresponds to the observed value on the date for which the prediction was made. Models show different degrees of association between the two metrics.">>=
+all_data <- left_join(alloscore_data_summaries, score_data_summaries,
+                      by=c("model", "target_end_date"))
+
+ggplot(all_data,
+       aes(x=mwis_rank_std, y=allo_rank_std, color=target_end_date, size=yobs)) +
+  geom_point(alpha=.8) +
+  scale_x_continuous("MWIS standardized rank", limits=c(0,1)) +
+  scale_y_continuous("Allocation score standardized rank", limits=c(0,1)) +
+  facet_wrap(.~model) +
+  geom_abline(slope=1, intercept=0, linetype=2, color="gray")
+
+@
+
+ - bubble figure with ranks sized by total observations
+
+ - different models show different levels of correlation between the metrics
+
+\subsection{Integrated allocation score across values of K}
+
+
+\section{Discussion}
+
+ - WIS is scale dependent, alloscore not as much
+
+\end{document}
