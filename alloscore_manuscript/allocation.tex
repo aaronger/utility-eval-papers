@@ -98,16 +98,18 @@ Pandemic COVID-19 forecasts of observed cases, hospitalizations and/or deaths in
 Similarly, CRPS was also used to assess probabilistic forecasts of dengue incidence at the district level in Vietnam \citep{colon-gonzalez_probabilistic_2021}.
 While some of these scores can be interpreted through the lens of decision theory, and all of the application-specific papers cited above had authors from public health agencies, none of them make explicit connections between forecast evaluation and how a forecast was used in practice.
 
-In this work, we hope to begin to fill this gap between the ways in which infectious disease forecasts have been used to support public health policy and the ways in which they have traditionally been evaluated.
-For concreteness, we consider a motivating application in which forecasts of public health surveillance signals are used to help determine the allocation of a limited quantity of medical supplies across multiple regions.
-We define a new forecast scoring rule --- the {\em allocation score} --- that explicitly evaluates forecasts based on how beneficial their implied allocations would turn out to be.
-Unlike the traditional measures of forecast skill such as WIS, CRPS, and log score, the proposed allocation score is rooted in this decision making context and measures the suitability of a forecast as an input to that specific decision making task.
+In this work, we begin to fill this gap between the ways that infectious disease forecasts have traditionally been evaluated and the ways that they have been used to support public health policy.
+We consider a setting in which forecasts are used to help determine the allocation of a limited quantity of medical supplies across multiple regions.
+We define a new forecast scoring rule --- the {\em allocation score} --- that evaluates forecasts based on how beneficial resource allocations derived from them would turn out to be.
+%Unlike the traditional measures of forecast skill such as WIS, CRPS, and log score, the proposed allocation score measures the suitability of a forecast as an input to this specific decision making task.
 
-Briefly, the allocation score of a forecast is the unnecessary unmet demand that results from using that forecast to set resource allocations by minimizing expected unmet need.
+Briefly, the allocation score of a forecast is the avoidable unmet demand that results from using that forecast to set resource allocations by minimizing expected unmet need.
 For example, suppose that a decision-maker is provided with forecasts of the level of need for medical resources in each of several states or hospital systems.
-If there is a limited amount $K$ of the medical resource that is available to distribute, a decision-maker could choose an allocation of that resource across locations that minimizes the expected unmet need according to that forecast.
-%By ``unnecessary'' we mean the unmet need that could have been avoided by an oracle that knows exactly how much need will occur in each location and divides the amount $K$ so that nothing is wasted in one location while it could be put to use in another.
+If there is a limited amount of the medical resource that is available to distribute, a decision-maker could choose an allocation of that resource across locations that minimizes the expected unmet need according to that forecast.
 As measured by the allocation score, one forecast is better than another if it would lead decision-makers to an allocation that results in less unmet need.
+%By ``unnecessary'' we mean the unmet need that could have been avoided by an oracle that knows exactly how much need will occur in each location and divides the amount $K$ so that nothing is wasted in one location while it could be put to use in another.
+If the amount of resources that is available to distribute is less than the actual need, some amount of unmet demand is unavoidable.
+The allocation score for a forecast does not include the unmet demand that was unavoidable given the resource constraint, and so it measures only the amount of unmet demand that could have been prevented by using a different allocation of available resources than that suggested by the forecast.
 We elaborate on these ideas in Section~\ref{sec:methods}.
 
 We present an illustrative analysis using the allocation score to evaluate forecasts of hospital admissions in the US leading up to the Omicron wave in winter 2022.
@@ -136,52 +138,54 @@ We give a high-level review of a general procedure for developing proper scoring
 
 \subsection{Overview of Allocation Scoring}
 
-\elr{I have abandoned the attempt to get a succinct one-sentence definition of the allocation score at the beginning here, because it felt like we were trying to pack too many ideas into one sentence. But I'm open to revisiting. Maybe the definition of alloscore can be moved earlier?}
-
 Suppose that a decision-maker is tasked with determining how much of a resource such as a medical supply should be allocated to each of $n$ locations, subject to the constraint that only $K$ units of the resource are available in total.
-If the decision-maker is provided with a multivariate forecast $F$ that predicts resource demand in each of the $n$ locations, one possibility is that they may choose the resource allocation that minimizes the expected total unmet demand according to the forecast.
+If the decision-maker is provided with a multivariate forecast $F$ that predicts resource demand in each location, one option is to choose the resource allocation that minimizes the expected total unmet demand according to the forecast.
 We will give a more precise mathematical statement in section \ref{sec:methods.allocation}, but at a high level, the total expected unmet demand according to the forecast is
 \begin{align}
 \sum_{i=1}^n E_{F_i}[\text{unmet need in location $i$}],
 \end{align}
 where $F_i$ is the marginal forecast distribution of demand in location $i$.
-This stochastic allocation problem has an intuitively appealing solution: allocate so that the probabilities of need exceeding allocation in various locations are as close to each other as possible (see methods).
+This allocation problem has an intuitively appealing solution: allocate so that the probabilities of need exceeding allocation in various locations are as close to each other as possible.
 This will lead to the allocations provided by $F$ being quantiles of the marginal distributions $F_i$ for some \emph{single} probability level $\tau$ that is shared in common for all locations.
 
-After time passes, the quality of a selected allocation can be measured by comparing the actual observed demand in each location to the amount of resources that were sent there. Specifically, we compute the total unmet demand that resulted from the selected allocation:
+After time passes and the actual level of resource need has been observed, the quality of a selected allocation can be measured by comparing the actual demand in each location to the amount of resources that were sent there. Specifically, we compute the total unmet demand that resulted from the selected allocation:
 \begin{align}
-    \sum_{i=1}^n \text{unmet demand in location $i$ based on the selected allocation},
+    \sum_{i=1}^n \text{unmet demand in location $i$ based on the selected allocation}.
 \end{align}
 One allocation is better than another if it results in lower total unmet demand.
 
-The \textbf{allocation score} of the forecast $F$ is the unnecessary unmet demand that results from using the allocation that minimizes the expected unmet need according to that forecast.
-By ``unnecessary'' we mean the unmet need that could have been avoided by an oracle that knows exactly how much need will occur in each location and divides the amount $K$ so that nothing is wasted in one location while it could be put to use in another.
+The \textbf{allocation score} of the forecast $F$ is the avoidable unmet demand that results from using the allocation that minimizes the expected unmet need according to that forecast.
+By ``avoidable unmet demand'', we mean that the allocation score does not include the amount of unmet demand that was inevitable simply because the amount of available resources $K$ was less than the demand for resources.
+Thus, the allocation score measures the unmet need that could have been avoided by an oracle that knows exactly how much need will occur in each location and divides the amount $K$ so that nothing is wasted in one location while it could be put to use in another. An allocation score of 0 is optimal, and indicates that no other allocation of resources could have met demand better than the allocation suggested by $F$. A larger allocation score indicates that it would have been possible to improve upon the allocation suggested by $F$.
 
-\paragraph{Example 1} Suppose we have a forecast $F$ for demand in two locations with $F_1 = \mathrm{Exp}(1 / \sigma_1)$ and $F_2 = \mathrm{Exp}(1 / \sigma_2)$, with $\sigma_1 = 2$ and $\sigma_2 = 3$. If we have $K = 5$ units of our resource available, the optimal allocation according to $F$ would be 2 units in location 1 and 3 units in location 2. If, on the other hand, we have $K = 10$ units available, we will allocate 4 units of resources in location 1 and 6 units in location 2. Figure~\ref{fig:exp_alloc_example} illustrates the situation, and derivations of the optimal allocations are given in section *** of the supplemental materials.
+\paragraph{Example 1} Suppose we have a forecast $F$ for demand in two locations with $F_1 = \mathrm{Exp}(1 / \sigma_1)$ and $F_2 = \mathrm{Exp}(1 / \sigma_2)$, where $\sigma_1 = 1$ and $\sigma_2 = 4$. When the marginal forecasts are exponential distributions, it can be shown that the optimal allocation divides the available resources among the locations proportionally to the scale parameters $\sigma_i$ (see section *** of the supplemental materials). If we have $K = 5$ units of our resource available, the optimal allocation according to $F$ would be 1 unit of resources in location 1 and 4 units of resources in location 2. If, on the other hand, we have $K = 10$ units available, we will allocate 2 units of resources to location 1 and 8 units to location 2. Figure~\ref{fig:exp_alloc_example} illustrates the situation.
 
 \begin{figure}
     \includegraphics[width=\textwidth]{../figures/exponential_pred_expected_loss.pdf}
-    \caption{An illustration of the resource allocation problem in Example 1. There are $n = 2$ locations, with predictive distributions $F_1 = \mathrm{Exp}(1/2)$ and $F_2 = \mathrm{Exp}(1/3)$, illustrated in the panels at bottom and right. In the center panel, the background shading corresponds to the expected loss according to these forecasts. Diagonal black lines indicate resource constraints at $K=5$ and $K=10$ units. For these forecasts, the optimal allocations are $(2,3)$ for $K=5$ and $(4,6)$ at $K=10$. These allocations are at the point on the constraint line where the expected loss is smallest, which also corresponds to the point where a level set of the expected loss surface (blue curve) is tangent to the constraint.}
+    \caption{An illustration of the resource allocation problem in Example 1. There are $n = 2$ locations, with predictive distributions $F_1 = \mathrm{Exp}(1)$ and $F_2 = \mathrm{Exp}(1/4)$. The cdfs of these distributions are illustrated in the panels at bottom and right. In the center panel, the background shading corresponds to the expected loss according to these forecasts. Diagonal black lines indicate resource constraints at $K=5$ and $K=10$ units; any point along those lines corresponds to an allocation that meets the resource constraint. For these forecasts, the optimal allocations are $(1, 4)$ for $K=5$ and $(2, 8)$ at $K=10$. These allocations are at the point on the constraint line where the expected loss is smallest, which also corresponds to the point where a level set of the expected loss surface (blue curve) is tangent to the constraint.}
     \label{fig:exp_alloc_example}
 \end{figure}
 
-Next suppose that we observe needs of 2 and 9 in locations 1 and 2, respectively. With $K = 10$ units of the resource, the oracle would be able to prevent all
-but 1 of the total 11 units of needs from going unmet, for example by allocating 2 units of resources to location 1 and the remaining 8 units of resources to location 2.
-However, the forecast $F$'s allocation results in $9 - 6 = 3$ units of unmet need in location 2 despite leaving no need unmet in location 1.
-The allocation score for the forecast when $K = 10$ would therefore be 2 (= 3 realized $-$ 1 unavoidable) in units of unnecessary unmet need.
-When $K = 5$, however, the forecast does not ``over-allocate'' in either location which leads to the same unmet need of $11 - 5 = 8$ as does the oracle's allocations.
-The allocation score for $F$ when $K = 5$ is therefore 0.
+Next suppose that we observe needs of 1 and 10 in locations 1 and 2, respectively.
+Based on these observed needs, we can measure the quality of the allocation suggested by the forecast by calculating the amount of unmet need that resulted from that allocation over and above what was unavoidable given the resource constraint.
+With $K = 5$ units of the resource, the allocation based on the forecast exactly meets the observed demand in location 1, but it leaves 6 units of need unmet in location 2.
+However, working within the resource constraint, no other allocation could have done better: for example, allocating 0 units of resources to location 1 and 5 to location 2 still results in a total unmet need of 6 across both locations. Therefore, the forecast's allocation score is 0 with $K = 5$.
+On the other hand, when $K = 10$, the forecast $F$'s allocation results in $10 - 8 = 2$ units of unmet need in location 2 despite leaving no need unmet in location 1.
+In this case, the oracle would be able to prevent all but 1 of the total 11 units of need from going unmet, for example by allocating 1 unit of resources to location 1 and the remaining 9 units of resources to location 2.
+The allocation score for the forecast when $K = 10$ would therefore be 1 (= 2 realized $-$ 1 unavoidable) in units of avoidable unmet need.
 
-Note the way in which $F$ incurred a positive (i.e., non-optimal) allocation score of 2 when $K = 10$. It was not directly directly due to individual misalignments 
-of the marginal forecasts $F_i$ with the observed needs, but rather because the allocations and observed needs were not proportional as vectors.
-Restating: as far as allocation decisions are concerned, with a fixed constraint $K=10$ the fundamental problem with the forecast $F$ is not that it predicts a mean total resource demand of $5$ units; it is that the realized demand was 4.5 times as large in location 2 as in location 1, but the forecast only indicated that the resource allocation for location 2 should be 1.5 times the allocation to location 1.
+These scores illustrate a general result: allocation scores for a forecast will tend to be larger when the resource constraint is close to the observed demand, because this is when it matters most which locations are allocated more or less resources. If the resource constraint is very small, any allocation of those limited resources will result in a large amount of unmet need. If the resource constraint is very large, it becomes less important which locations receive relatively more or less resources because all locations will receive enough resources to meet their demand.
+
+\paragraph{Example 2} Now consider a different forecast that also has exponential distributions for resource demand in each location, but that has the scale parameters $\sigma_1 = 2$ and $\sigma_2 = 8$, twice as large as the scale parameters of the forecast in Example 1. Because the optimal allocation is proportional to the scale parameters, this forecast would lead to the same optimal allocations as the forecast in Example 1, and would therefore be assigned the same allocation score.
+
+Note the way in which these forecasts incurred a positive (i.e., non-optimal) allocation score of 1 when $K = 10$. It was not directly directly due to individual misalignments of the marginal forecasts $F_i$ with the observed needs, but rather because the allocations and observed needs were not proportional as vectors.
+Restating: as far as allocation decisions are concerned, with a fixed constraint $K=10$ the fundamental problem with the forecast $F$ in Example 1 is not that it predicts a mean total resource demand of $5$ units; it is that the realized demand was 10 times as large in location 2 as in location 1, but the forecast only indicated that the resource allocation for location 2 should be 4 times the allocation for location 1.
 
 This illustrates a fundamental property of the allocation score: at its core, it measures whether the forecast accurately captures the relative magnitudes of resource demand across different locations, which is precisely the information that is needed to allocate resources to those locations subject to a fixed resource constraint.
 On the other hand, the allocation score is not directly sensitive to whether the forecasts in each location correctly capture the magnitude of resource demand in each individual location.
 %For a given probability level $\tau$, if the quantiles $Q_i(\tau)$ of the marginal forecasts are proportional to the observed needs $y_i$, then the allocation score is zero for the resource constraint level $K = \sum Q_i(\tau)$.
-This stands in marked constrast to other common scoring methods for multi-variate forecasts that aggegate univariate scores such as CRPS or WIS for the marginal forecasts where a 
-misalignment in one coordinate is penalized regardless of alignments in other coordinates. \apg{Should this be illustrated here, or elsewhere?} \elr{Not sure what I think. Comparisons with WIS/etc seem critical, but some of the text I've added here feels like text for the discussion rather than up here in the ``methods"...}
-Note that we do not claim the allocation score is generically preferable to these other scores \textemdash rather, it provides a view of forecast performance that is specifically tuned to the context of decision-making about resource allocations.
+This stands in marked contrast to other common scoring methods for multivariate forecasts that aggegate univariate scores such as CRPS or WIS for the marginal forecasts where a 
+misalignment in one coordinate is penalized regardless of alignments in other coordinates. Note that we do not claim that the allocation score is generically preferable to these other scores \textemdash rather, it provides a view of forecast performance that is specifically tuned to the context of decision-making about resource allocations.
 
 %It is therefore often straighforward to constuct forecasts $F$ and $\widetilde{F}$ for a given outcome distribution that switch rankings under the allocation and traditional scores by ensuring that the marginal forecasts of $F$ center sharply around allocations that are proportionally similar to the central tendencies of the outcome distribution but are strongly biased.
 
