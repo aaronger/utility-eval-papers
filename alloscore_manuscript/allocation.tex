@@ -204,60 +204,115 @@ We can formalize the preceding discussion with the following three-step procedur
 \item Given a probabilistic forecast $F$, determine the \emph{Bayes act} $x^F$ that minimizes the expected loss under the distribution $F$.
 \item The \emph{scoring rule} for $F$ calculates the score as the loss incurred when the Bayes act was used: $S(F, y) = s(x^F, y)$.
 \end{enumerate}
-We use the letter $s$ for the loss function to align with the literature on evaluation of forecasts of continuous outcomes, in which context we can often identify the action $x$ with a functional (i.e., a numeric summary such as a mean or a quantile) of the forecast distribution $F$. In this context, $s$ may be used as a \emph{scoring function}. \elr{Consider moving preceding sentences to a footnote or just deleting them?}
+%We use the letter $s$ for the loss function to align with the literature on evaluation of forecasts of continuous outcomes, in which context we can often identify the action $x$ with a functional (i.e., a numeric summary such as a mean or a quantile) of the forecast distribution $F$. In this context, $s$ may be used as a \emph{scoring function}. \elr{Consider moving preceding sentences to a footnote or just deleting them?}
 This is a general procedure that may be applied in settings where it is possible to specify a quantitative loss function. Subject to certain technical conditions, scoring rules obtained from this procedure are proper (cite cite).
 
 % , and we illustrate the ideas with two running examples: (1) some problem that results in quantile elicitation, (2) some allocation problem.
 
 %A forecaster is asked to recommend, that is, \emph{predict}, the appropriate supply $x$ of some good or investment in some precautionary measure intended to satisfy a random future demand or need $Y$. As a running example, we will consider the provision of a limited supply of a limited health care resource such as oxygen or ventilators. Suppose there is an incremental loss $O \geq 0$ incurred when over-prediction leads to unused supply and an incremental loss $U > 0$ incurred when under-prediction leads to unmet demand or need.
 
-\subsection{A review of quantile score, CRPS, and the weighted interval score}
+\subsection{A decision theoretic derivation of quantile score and allocation score}
 \label{sec:methods.quantileloss}
 
-We review how the quantile score arises from a particular decision-making problem in section \ref{sec:methods.quantileloss.quantile}, and how CRPS can be obtained by integrating across values of the parameters of that decision-making problem, as well as the connection to WIS, in section \ref{sec:methods.quantileloss.crps}. These results have been thoroughly discussed in the literature [cite cite cite].
+In this section, we demonstrate that the quantile score and the allocation score can both be derived from the procedure outlined in section \ref{sec:methods.decisiontheory} based on two different, but closely related, decision-making problems. The results for quantile score are well-known in the literature (cite cite cite).
 
-\subsubsection{Decision-theoretic origins of the quantile score}
-\label{sec:methods.quantileloss.quantile}
+\paragraph{Problem definitions and loss functions.}
+In both decision-making problems, the decision-maker must determine the level $x_i$ of a resource, such as a medical supply, that will be available to people who may need it at some future time in locations indexed by $i$. We use the variable $y_i$ to denote the eventual realized need for the resource in that location, e.g. the number of patients in need of a hospital bed or the amount of medication that is needed. Each unit of unmet need incurs a loss $L$, so that if the selected resource level $x_i$ is less than the realized need $y_i$, a loss of $L(y_i - x_i)$ results. At the time that a decision must be made, the demand $y_i$ is not yet known. We therefore define the random variable $Y_i$ that represents the as-yet-unknown level of demand in location $i$. The forecast $F_i$ specifies a predictive distribution for $Y_i$. Here we identify $F_i$ with its cumulative distribution function (CDF), and $F_i^{-1}$ denotes the quantile function. We use the notation $x = (x_1, \ldots, x_n)$, $y = (y_1, \ldots, y_n)$, $Y = (Y_1, \ldots, Y_n)$, and $F = (F_1, \ldots, F_n)$ to collect resource levels, resource demand, and forecasts across all locations.
 
-Suppose that a decision-maker is tasked with determining the quantity $x$ of a protective measure to procure; for example, $x$ might represent the number of hospital beds or amount of medicine to purchase. Additionally, suppose that each unit of this good has cost $C$ so that the total cost of procurement is $Cx$. The variable $y$ denotes the eventual realized need for this resource, e.g. the number of patients in need of a hospital bed or the amount of medication that is needed. We assume that each unit of unmet need incurs a loss denoted by $L$, so that if the selected procurement level $x$ is less than the realized need $y$, a loss of $L(x-y)$ results. At the time that a decision-maker determines the amount $x$ to procure, the demand $y$ is not yet known. We therefore define the random variable $Y$ that represents the as-yet-unknown level of demand. The forecast $F$ specifies a predictive distribution for $Y$. Here we identify $F$ with its cumulative distribution function (CDF), and $F^{-1}$ denotes the quantile function. With this formalization of the decision-making task, we can proceed to develop a proper scoring rule using the procedure outlined in section \ref{sec:methods.decisiontheory}.
+We note that the problem formulation here assumes that the resource in question does not impact the amount of demand $y_i$ that will materialize, but rather it is a resource that satisfies that demand. In the context of infectious disease, this means that we do not consider resources such as vaccine doses or masks, which are intended to reduce the number of people who will become sick. Our set up addresses resources like hospital beds, oxygen supply, or ventilators, which are intended to meet the medical needs of patients who are sick.
 
-\paragraph{Step 1: specify a loss function.} Combining the cost of procuring goods at level $x$ with losses due to unmet need, we arrive at the overall loss function
+%In both decision-making problems, the decision-maker is required to select a course of action that is designed to meet the future demand for a resource, which is unknown at the time that a decision must be made. The primary difference between these problems is the type of actions available to the decision-maker and the challenge (cost or resource constraint). TODO: clarify goal, minimize total costs.
+
+The differences between the two decision-making problems primarily lie in what actions are available to the decision-maker and what trade-offs they must consider between different alternatives.
+In decision problem 1, which will lead to the quantile score, the challenge faced by the decision-maker is that each unit of the resource has cost $C$, so that the total cost of procurement for location $i$ is $C x_i$. Summing across locations and combining the costs of procurement with the losses associated with procuring fewer resources than are needed, we arrive at the following loss function (subscripted by $Q$ for \emph{q}uantile):
+\begin{equation}
+s_Q(x, y; C, L) = \sum_{i=1}^n C x_i + L(y_i - x_i)_+. \label{eqn:quantile_loss_fn}
+\end{equation}
+The decision-maker's goal is to minimize this loss, but there is no hard limit on the available resources or the amount of funds that can be spent to purchase resources.
+It follows that although we have written a single loss function that sums across all locations, this loss function is separable and in practice decisions about the quantity of resources to procure can be made separately for each location.
+
+In decision problem 2, which will lead to the allocation score, a fixed quantity $K$ of the resource is available, and the problem is how best to allocate those resources to different locations. Thus, unlike in problem 1, here we must consider all locations simultaneously and any valid decision is required to satisfy the constraint $\sum_i x_i \leq K$. On the other hand, since the total amount of available resources is fixed, it is not relevant to consider the cost of procuring resources. When the resource constraint is satisfied, the overall loss function (subscripted by $A$ for \emph{a}llocation) is:
+\begin{equation}
+s_A(\mathbf{x}, \mathbf{y}; L) = \sum_{i=1}^n L (y_i - x_i)_+. \label{eqn:alloc_loss_fn}
+\end{equation}
+
+\paragraph{Bayes acts.}
+Now that we have formalized the decision-making tasks with loss functions that measure the quality of a selected action $x$ in relation to realized demand levels $y$, we can identify the Bayes acts corresponding to these loss functions. It can be shown that under each of these loss functions, the Bayes act is a quantile of the forecast distribution in each location (see supplemental section *** for the derivations):
 \begin{align}
-s_Q(x,y; C, L) = Cx + L(x-y)_-.
-\end{align}
-Here, $(x - y)_- := \max(-(x - y),0)$ is $0$ if the amount procured, $x$, is greater than or equal to the realized demand $y$; otherwise, it is $y - x$, the amount of unmet need.
+    x^{F}_i = F_i^{-1}(\alpha).
+\end{align}    
+The probability level $\alpha$ for this quantile is the same across all locations, but it is different for the Bayes acts derived from the quantile loss and the allocation loss.
 
-\paragraph{Step 2: Given a probabilistic forecast $F$, identify the Bayes act.} It can be shown that under the loss function $s_Q$, the Bayes act is a quantile of the forecast distribution at the probability level $\alpha = 1 - C/L$:
+Under the quantile loss, the Bayes act sets resource levels to be quantiles of the forecast distributions at the probability level $\alpha_Q = 1 - C/L$.
+\elr{Not confident in the following sentences' correctness, or in their value in this manuscript. We could just try to gloss over all of this or summarize with a less precise statement about the cost-loss ratio? $C/L > 1$ is also a possibility that it's awkward to address...}
+With this choice, the probability that demand exceeds the selected resource supply is equal to $C/L$. It does not make sense to purchase more resources than this because the cost $C$ of an additional unit of resources would be greater than $L$ times the forecasted probability of an additional unit of resource demand. In the edge case where the cost $C$ of purchasing resources is greater than the loss $L$ associated with under-purchasing resources, so that $\alpha_Q < 0$, the decision-maker will not purchase any resources.
+
+Under the allocation loss, the Bayes act chooses quantiles at a probability level that depends on the resource constraint $K$, the loss $L$, and the forecast distributions, and is selected so that the allocations do not exceed the resource constraint:
 \begin{align}
-x^F = F^{-1}(\alpha).
+\alpha_A &= 1 - \lambda^{\star}/L \text{, where $\lambda^\star$ is selected so that} \\
+\sum_{i=1}^{N}F_i^{-1}(1 - \lambda^{\star}/L) &= K.
 \end{align}
-See the supplement for a verification of this result.
+This partial solution to the allocation problem seems to have first appeared in \cite{hadleywhitin1963}.
+One interpretation of this result is that the Bayes act divides the available resources among the locations in such a way that the forecasted probability that resource demand will exceed the available resources is the same in all locations.
+
+%One interpretation of this result is that the Bayes act sets the allocation in each location $i$ to a quantile of the forecast distribution $F_i$ for that location. The quantile is at a probability level $\alpha = 1 - \lambda^{\star}/L$ that is the same for all locations, and is chosen such that the constraint is satisfied. An alternative interpretation comes from noting that for each location $i$, $\frac{\partial}{\partial x_i} \sbar_A^F(\mathbf{x}) \vert_{\mathbf{x}=\mathbf{x}^F} = \lambda^{\star}$ (see the supplement for a proof).
+%$\frac{\partial}{\partial x_i} \sbar_F(\mathbf{x}) = L[F_i(x_i) - 1]$ (see the supplement for a derivation), and evaluating at the Bayes allocation we arrive at
+%\begin{align}
+%\frac{\partial}{\partial x_i} \sbar_F(\mathbf{x}) \vert_{\mathbf{x}=\mathbf{x}^F} &= L[F_i(x^F_i) - 1] = L[F_i(F_i^{-1}(1 - \lambda^{\star}/L)) - 1] = \lambda^{\star}.
+%\end{align}
+%In words, at the allocation given by the Bayes act, the rate of change of the expected score as a function of the amount allocated to location $i$ is given by $\lambda^{\star}$.
+%This derivative is the same for all locations, so the optimal allocation divides the available resources across all locations in such a way that according to $F$, the expected benefit of 1 additional unit of resources is the same in all locations.
+
+\apg{
+first attempt by APG to rephrase last paragraph: The central mathematical ideas in this construction are that
+\begin{itemize}
+\item optimization under a \emph{single} constraint requires the rates of change of (a probabilistic forecast's) expected benefit with respect to our decision variables, $x_i$, to be the same for all locations
+\item these rates of change can be identified with probabilities
+\item and therefore the Bayes act results from using a \emph{shared} probability level, $1 - \lambda^{\star}/L$, to determine allocations as the corresponding quantiles of the location-specific forecast distributions $F_i$ which satisfy the constraint.
+\end{itemize}
+(See the supplement for detailed discussion and derivations of these points.)
+}
+
+
 %In particular, faced with the classical binary decision problem of whether to recommend an additional unit of protection given a current level of protection $x$, the forecaster's optimal decision rule under $s_m$ is to recommend adding protection if $x < F^{-1}\left(1-\frac{C}{L}\right)$, that is, if
 %\begin{align}
 %1-F(x) = \mathbb{P}_F\{y>x\} > \frac{C}{L},
 %\end{align}
 %the \emph{cost-loss ratio} of the problem.
 
-\paragraph{Step 3: Define the scoring rule.} Following the procedures outlined above, we could score the forecast distribution $F$ with the scoring rule
+\paragraph{Scoring rules.} We can now define scoring rules for a forecast $F$ by evaluating the loss function at the Bayes act corresponding to that loss function. This leads to the following scoring rule for quantile forecasts:
 \begin{align*}
-S_Q(F, y; C, L) &= s_Q(x^F, y; C, L) = Cx^F + L(x^F-y)_- \nonumber \\
-&= C F^{-1}(\alpha) + L \left(F^{-1}(\alpha) - y\right)_- \label{eqn:S_Q_CL}
+S_Q(F, y; C, L) &= \sum_{i=1}^n s_Q(x^F, y; C, L) = \sum_{i=1}^n Cx_i^F + L(y_i - x_i^F)_+ \nonumber \\
+&= C F_i^{-1}(\alpha_Q) + L \left(y_i - F_i^{-1}(\alpha_Q)\right)_+ \label{eqn:S_Q_CL}
 \end{align*}
+This score measures the total cost of resource purchases and losses incurred due to unmet need that results from using the Bayes resource procurements associated with the forecast $F$ when the actual level of need in each location is observed to be $y_i$.
 
-We have set up the problem here in terms of the cost and loss parameters $C$ and $L$, which has the benefit of an intuitive connection to the decision-making context. However, to clarify the connection to the usual notation for the quantile loss, we can divide the loss function $s_Q$ by $L$ to obtain an expression in terms of only $\alpha$:
-\begin{align*}
-s_Q(x,y; \alpha) &= s_Q(x,y; C, L)/L \\
-&= (C/L)x + (x-y)_- \\
-&= (1 - \alpha)x + (x-y)_-.
-\end{align*}
-Because these loss functions are equal up to a constant of proportionality, the Bayes act is the same for both. The associated quantile scoring rule expressed in terms of $\alpha$ is
+On the other hand, the allocation scoring rule is:
+\begin{equation}
+S_A(F, y; L, K) = s_A(\mathbf{x}^F, y; L) = \sum_{i=1}^n L (y_i - F_i^{-1}(1 - \lambda^{\star}/L))_+
+\end{equation}
+This score measures the total unmet need across all locations that results from using the Bayes allocation associated with the forecast $F$ when the observed need is $y_i$.
+
+We have defined the quantile scoring rule $S_Q$ in terms of the cost and loss parameters to connect to the decision-making context. 
+To connect to the usual notation for the quantile score, we can divide through by $L$ to obtain an expression in terms of only $\alpha$:
+% \begin{align*}
+% s_Q(x,y; \alpha) &= s_Q(x,y; C, L)/L \\
+% &= (C/L)x + (x-y)_- \\
+% &= (1 - \alpha)x + (x-y)_-.
+% \end{align*}
+% Because these loss functions are equal up to a constant of proportionality, the Bayes act is the same for both. The associated quantile scoring rule expressed in terms of $\alpha$ is
 \begin{equation}
 S_Q(F, y; \alpha) = (1 - \alpha)F^{-1}(\alpha) + \left(F^{-1}(\alpha) - y\right)_-. \label{eqn:S_Q_alpha}
 \end{equation}
-In either formulation, the key observation is that the Bayes act is the quantile of the forecast distribution $F$ at the probability level given by one minus the cost/loss ratio $C/L$.
+These two formulations are equivalent.
+%In either formulation, the key observation is that the Bayes act is the quantile of the forecast distribution $F$ at the probability level given by one minus the cost/loss ratio $C/L$.
 
-\subsubsection{CRPS as an integrated quantile score}
+\elr{It's a little tempting to just divide by the loss parameter $L$ from the start and simplify throughout?}
+
+\subsubsection{Integrated scores}
 \label{sec:methods.quantileloss.crps}
+
+\elr{Not updated yet, but in this subsection the plan would be to talk about CRPS as integrated quantile score, integrated allocation score, and connections between them.}
 
 The scoring rule $S_Q$ of Equation \eqref{eqn:S_Q_alpha} evaluates the forecast distribution $F$ only through its $\alpha$ quantile. While this is faithful to the context of the decision-making problem, it may not be satisfying as a measure of the quality of the full forecast distribution. For this purpose, one option is to integrate the quantile scoring rule across different values of the probability level $\alpha$, weighting the probability levels according to a specified distribution $p$. This yields a weighted CRPS:
 \begin{align*}
@@ -294,41 +349,8 @@ s_A(\mathbf{x}, \mathbf{y}; L) = \sum_{i=1}^n L (x_i - y_i)_-. \label{eqn:loss_f
 \end{equation}
 As in the previous section, $(x_i - y_i)_-$ is $0$ if the amount $x_i$ allocated to unit $i$ is greater than or equal to the realized demand $y_i$ in that location; otherwise, it is $y_i - x_i$, the amount of unmet need in that location.
 
-\paragraph{Step 2: Given a probabilistic forecast $F$, identify the Bayes act.} The Bayes act is the allocation that minimizes the expected loss:
-\begin{align}
-    \mathbf{x}^F &= \underset{\mathbf{x}\in \mathbb{R}^N, 0 \leq \mathbf{x}}{\mathrm{arg min}}\,\, \sbar_A^F(\mathbf{x}; L) \text{ subject to }
-    \sum_{i=1}^N x_i \leq K \text{, where} \label{AP} \\
-    \sbar_A^F(\mathbf{x}; L) &= \mathbb{E}_{F} [s_A(\mathbf{x}, \mathbf{Y}; L)] = \sum_{i=1}^{N} \mathbb{E}_{F_i}[s_A(x_i, Y_i; L)] \label{eqn:sbar}
-\end{align}
-It can be shown that with the loss function given in Equation \eqref{eqn:loss_fn}, the Bayes act has $x^F_i = F_i^{-1}(1 - \lambda^{\star}/L)$, where $\lambda^{\star}$ depends on the problem parameters $K$ and $L$ as well as the forecast distributions and is chosen so as to satisfy the equation
-\begin{align}
-\sum_{i=1}^{N}F_i^{-1}(1 - \lambda^{\star}/L) = K.
-\end{align}
-This partial solution to the allocation problem seems to have first appeared in \cite{hadleywhitin1963}; see the supplemental materials for a derivation. Figure *** panel (a) \elr{TODO: first figure from notes crps\_connection\_exp.Rmd} illustrates the expected loss function $\sbar_A^F$ and the allocation given by the Bayes act in a simple example with $n = 2$ locations, $L = 1$, $K = 5$, and forecasts $Y_1 \sim \text{Exp}(1 / \sigma_1)$ and $Y_2 \sim \text{Exp}(1 / \sigma_2)$, using a scale parameterization of the exponential distribution with $\sigma_1 = 1$ and $\sigma_2 = 5$.
-
-One interpretation of this result is that the Bayes act sets the allocation in each location $i$ to a quantile of the forecast distribution $F_i$ for that location. The quantile is at a probability level $\alpha = 1 - \lambda^{\star}/L$ that is the same for all locations, and is chosen such that the constraint is satisfied. An alternative interpretation comes from noting that for each location $i$, $\frac{\partial}{\partial x_i} \sbar_A^F(\mathbf{x}) \vert_{\mathbf{x}=\mathbf{x}^F} = \lambda^{\star}$ (see the supplement for a proof).
-%$\frac{\partial}{\partial x_i} \sbar_F(\mathbf{x}) = L[F_i(x_i) - 1]$ (see the supplement for a derivation), and evaluating at the Bayes allocation we arrive at
-%\begin{align}
-%\frac{\partial}{\partial x_i} \sbar_F(\mathbf{x}) \vert_{\mathbf{x}=\mathbf{x}^F} &= L[F_i(x^F_i) - 1] = L[F_i(F_i^{-1}(1 - \lambda^{\star}/L)) - 1] = \lambda^{\star}.
-%\end{align}
-In words, at the allocation given by the Bayes act, the rate of change of the expected score as a function of the amount allocated to location $i$ is given by $\lambda^{\star}$.
-This derivative is the same for all locations, so the optimal allocation divides the available resources across all locations in such a way that according to $F$, the expected benefit of 1 additional unit of resources is the same in all locations.
-
-\apg{
-first attempt by APG to rephrase last paragraph: The central mathematical ideas in this construction are that
-\begin{itemize}
-\item optimization under a \emph{single} constraint requires the rates of change of (a probabilistic forecast's) expected benefit with respect to our decision variables, $x_i$, to be the same for all locations
-\item these rates of change can be identified with probabilities
-\item and therefore the Bayes act results from using a \emph{shared} probability level, $1 - \lambda^{\star}/L$, to determine allocations as the corresponding quantiles of the location-specific forecast distributions $F_i$ which satisfy the constraint.
-\end{itemize}
-(See the supplement for detailed discussion and derivations of these points.)
-}
-
-\paragraph{Step 3: Define the scoring rule.} We can now define a proper scoring rule for the probabilistic forecast $F$ as
-\begin{equation}
-S_A(F, y; L, K) = s_A(\mathbf{x}^F, y; L) = \sum_{i=1}^n L (F_i^{-1}(1 - \lambda^{\star}/L) - y_i)_-
-\end{equation}
-This score measures the total unmet need across all locations that results from using the Bayes allocation associated with the forecast $F$ when the actual level of need in each location is observed to be $y_i$.
+\paragraph{Step 2: Given a probabilistic forecast $F$, identify the Bayes act.} 
+\paragraph{Step 3: Define the scoring rule.} 
 
 As with the quantile score $S_Q$, the allocation score $S_A$ measures the skill of the forecast distributions $F$ based on a single probability level $\alpha$. By analogy to the method for obtaining CRPS by integrating the quantile score, we develop an \emph{integrated allocation score} (IAS) \elr{open to better names} that integrates the allocation score across values of the problem parameters, weighting by a distribution $p$:
 $$S_{IAS}(F, y) = \int S_A(F,y; L, K) p(L, K) \, dL dK$$
