@@ -180,19 +180,60 @@ for $k \in [0, \sum F_l^{-1}(1-C/L)]$, and then constant at $\mathbf{F}^{-1}(1-C
 Deal with alloscore by noticing that simultaneous quantile loss has same minimizer as alloscore with sum of quantiles as constraint level.
 
 \begin{align}
-s_{t\mathrm{WIS}}(x^{F,t\mathrm{WIS}},y) &= \frac{1}{m}\sum_{l=1}^N \sum_{i=1}^{m}s_{Q}(x_{l,i}^{F_l,\mathrm{Q}, C_i}, y_l)_+ \\ 
-&= \frac{1}{m} \sum_{i=1}^{m}s_{\mathrm{AS}}(x^{F,\mathrm{AS},  K(C_i, F, L)},y) 
+s_{t\mathrm{WIS}}(x^{F,t\mathrm{WIS}},y) &= \frac{1}{m}\sum_{l=1}^N \sum_{i=1}^{m}(x_{l,i}^{F_l,\mathrm{Q}, C_i}- y_l)_+  + C_i x_{l,i}^{F_l,\mathrm{Q}, C_i}\\ 
+&= \frac{1}{m} \sum_{i=1}^{m}s_{\mathrm{AS}}(x^{F,\mathrm{AS},  K(C_i, F, L)},y) + C_i K(C_i, F, L)
 \end{align}
 
 \begin{align}
 s_{\mathrm{IAS}}(x^{F, \mathrm{IAS}}(k), y) &= \int_0^{\infty} s_{\mathrm{AS}}(x^{F, \mathrm{AS}(k)}, y) dk \\
-&= \int_0^{\infty} \sum_{l=1}^N s_{\mathrm{Q}}(x^{F_l, \mathrm{Q}(c(k, F))}, y) dk \\
-&= \sum_{l=1}^N \int_0^{\infty} s_{\mathrm{Q}}(x^{F_l, \mathrm{Q}(c(k, F))}, y) dk
+&= \int_0^{\infty} \sum_{l=1}^N s_{\mathrm{Q}}(x^{F_l, \mathrm{Q}(c(k, F))}, y) - c(k, F)kdk \\
+&= \sum_{l=1}^N \int_0^{\infty} s_{\mathrm{Q}}(x^{F_l, \mathrm{Q}(c(k, F))}, y) dk -  \int_0^{\infty} c(k, F)kdk
 \end{align}
+
+
+$s_{tQ}(x^{F,C,K}) \mid C = c, K = k$ in $\mathrm{AP}(k)$ coordinates:
+\begin{align}
+s_{tQ}(x^{F,c,k})(y) &= 
+\begin{cases}
+\sum_{l=1}^{N}L(y_l - x_l^{F,k})_{+} + ck, & k < \sum F_l^{-1}(1-c/L) \\
+\sum_{l=1}^{N}L(y_l - x_l^{F,Q,c})_{+} + c(k - z_k(c)), & \text{otherwise, with } 
+\end{cases} \\
+z_k(c) &= (k -  \sum F_l^{-1}(1-c/L))_{+}
+\end{align}
+
+Let $k_1 = \sum F_l^{-1}(1-c_1/L)$ so that $x^{F,Q,c_1} = x^{F, k_1}$ and $z_{k_1}(\{c \leq c_1\}) = 0$, and take $0<c_a < c_1 < c_b < L$ and $0 < k_a < k_1 < k_b < K_2$.
+
+Then with $K = k_1$ fixed, the path of functions $s_{k_1}(c) = s_{tQ}(x^{F,c,k_1})$ parametrized by $c \in [0,L]$ takes values
+\begin{align}
+s_{k_1}(0)  &= L\sum ( y_l-x_l^{F,k_1})_{+}  \\
+s_{k_1}(c_a)  &= L\sum ( y_l-x_l^{F,k_1})_{+} + c_a k_1\\
+s_{k_1}(c_1) &= L\sum (y_l - x_l^{F,k_1})_{+} + c_1 k_1  \\
+s_{k_1}(c_b) &= L\sum (y_l - x_l^{F,Q, c_b})_{+} + c_b(k_1 - z_{k_1}(c_b)) \\
+&= L\sum (y_l - x_l^{F,Q, c_b})_{+} + c_b \sum F_l^{-1}(1-c_b/L)\\
+s_{k_1}(L)  &= L\sum {y_l}_{+}.
+\end{align}
+
+If instead $C = c_1$ is fixed, then $s_{c_1}(k) = s_{tQ}(x^{F,c_1,k})$ parameterized by 
+$k \in [0,K_2]$ take values
+\begin{align}
+s_{c_1}(0) & = L \sum {y_l}_{+} \\
+s_{c_1}(k_a) & = L \sum (y_l - x_l^{F,k_a})_{+} + c_1 k_a\\
+& = L \sum (y_l - x_l^{F,Q,c(k_a)})_{+} + c_1 \sum F_l^{-1}(1-c(k_a)/L)\\
+s_{c_1}(k_1) & = L \sum (y_l - x_l^{F,k_1})_{+} + c_1 k_1 \\
+s_{c_1}(k_b) & = L \sum (y_l - x_l^{F,k_1})_{+} + c_1 (k_b - z_{k_b}(c_1)) \\
+ & = L \sum (y_l - x_l^{F,k_1})_{+} + c_1 \sum F_l^{-1}(1-c(k_1)/L)\\
+s_{c_1}(K_2) & = L \sum (y_l - x_l^{F,k_1})_{+} + c_1 (K_2 - z_{K_2}(c_1))
+\end{align}
+
+Writing $k(c) = \sum F_l^{-1}(1-c/L)$,
+\begin{align}
+s_{k_1}(c) - s_{c_1}(k(c)) &= (c-c_1)\sum F_l^{-1}(1-\max(c,c_1)/L) \\
+s_{c_1}(k) - s_{k_1}(c(k)) &=  
+\end{align}
+
 
 But 
 \begin{align}
-k = k(c,F) &= \sum_{l=1}^{N} F_l^{-1}(1-c/L) \\
 \del{k}{c}& = \sum_{l=1}^{N} \frac{-1}{L f_l(q_{F_l,\tau(c)})} := -\mathrm{MAI}(c,F)\label{eqn:dkdc}
 \end{align}
 (where we assume that the $F_l$ have non-negative support). The name MAI refers to this derivative being the marginal total allocation increase for the total quantile loss Bayes act $x^{F,Q(C)}$ that results from a reduction of the cost $C$ of the resource by 1. Or in terms of the probability level $\tau(c)=1-c/L$,
