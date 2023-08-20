@@ -180,14 +180,14 @@ for $k \in [0, \sum F_l^{-1}(1-C/L)]$, and then constant at $\mathbf{F}^{-1}(1-C
 Deal with alloscore by noticing that simultaneous quantile loss has same minimizer as alloscore with sum of quantiles as constraint level.
 
 \begin{align}
-s_{t\mathrm{WIS}}(x^{F,t\mathrm{WIS}},y) &= \frac{1}{m}\sum_{l=1}^N \sum_{i=1}^{m}s_{Q}(x_{l,i}^{F_l,\mathrm{Q}, C_i}, y_l)_+ \\ 
-&= \frac{1}{m} \sum_{i=1}^{m}s_{\mathrm{AS}}(x^{F,\mathrm{AS},  K(C_i, F, L)},y) 
+s_{t\mathrm{WIS}}(x^{F,t\mathrm{WIS}},y) &= \frac{1}{m}\sum_{l=1}^N \sum_{i=1}^{m}(x_{l,i}^{F_l,\mathrm{Q}, C_i}- y_l)_+  + C_i x_{l,i}^{F_l,\mathrm{Q}, C_i}\\ 
+&= \frac{1}{m} \sum_{i=1}^{m}s_{\mathrm{AS}}(x^{F,\mathrm{AS},  K(C_i, F, L)},y) + C_i K(C_i, F, L)
 \end{align}
 
 \begin{align}
 s_{\mathrm{IAS}}(x^{F, \mathrm{IAS}}(k), y) &= \int_0^{\infty} s_{\mathrm{AS}}(x^{F, \mathrm{AS}(k)}, y) dk \\
-&= \int_0^{\infty} \sum_{l=1}^N s_{\mathrm{Q}}(x^{F_l, \mathrm{Q}(c(k, F))}, y) dk \\
-&= \sum_{l=1}^N \int_0^{\infty} s_{\mathrm{Q}}(x^{F_l, \mathrm{Q}(c(k, F))}, y) dk
+&= \int_0^{\infty} \sum_{l=1}^N s_{\mathrm{Q}}(x^{F_l, \mathrm{Q}(c(k, F))}, y) - c(k, F)kdk \\
+&= \sum_{l=1}^N \int_0^{\infty} s_{\mathrm{Q}}(x^{F_l, \mathrm{Q}(c(k, F))}, y) dk -  \int_0^{\infty} c(k, F)kdk
 \end{align}
 
 But 
