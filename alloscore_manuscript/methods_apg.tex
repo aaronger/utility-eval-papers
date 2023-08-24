@@ -147,7 +147,7 @@ and \eqref{eqn:CRPS_cform} becomes
 \begin{align}
 S_{Q, f_C}(F,y) &= \int_{0}^{1}((1-\tau)q_{F,\tau} + (y-q_{F,\tau})_{+})f_{\tau}(\tau)d\tau \\
 &= \int_{0}^{1}(\mathbf{1}\{y \leq q_{F,\tau}\}-\tau)(q_{F,\tau} - y)f_{\tau}(\tau)d\tau + \int_{0}^{1}(1-\tau)y f_{\tau}(\tau)d\tau \\
-&= wCRPS(F,y) + (1-E[\tau])y
+&= w\mathrm{CRPS}(F,y) + (1-E[\tau])y
 \end{align}
 where $w$CRPS is the weighted CRPS of \cite{gneiting2011weightedScoringRules} with quantile weight function $\nu(\tau) = \frac{1}{2}f_{\tau}(\tau)$. 
 (The $(1-E[\tau])y$ that results from our loss function $s_Q$ adding a $Cy$ term to the standard quantile loss function does not effect the dependence of the scoring rule of $F$.)
@@ -156,11 +156,15 @@ Writing $s_{Q,\tau}(x,y) = s_{Q,C}(x,y)/L = (1-\tau)x + (y-x)_{+}$, we have
 \begin{align}
 s_{Q,\tau}(q_{F,\tau},y) + s_{Q,1-\tau}(q_{F,1-\tau},y) &= q_{F,\tau} + \tau(q_{F,1-\tau} - q_{F,\tau}) + (y - q_{F,\tau})_{+} + (y - q_{F,1-\tau})_{+} \\
 &= y + \tau\left(q_{F,1-\tau} - q_{F,\tau} + \frac{1}{\tau}(q_{F,\tau} - y)_{+} + \frac{1}{\tau}(y - q_{F,1-\tau})_{+}\right) \\
-&= y + \tau IS_{2\tau}(F,y)
+&= y + \tau \mathrm{IS}_{2\tau}(F,y)
 \end{align}
-where $IS_{\alpha}(F,y)$ is the \emph{interval score} suggested by expression (43) in \cite{gneiting2007strictly} and formalized by \cite{bracher2021evaluating}.
-
-So when $\mathcal{C} = \mathcal{C}_1\cup (L-\mathcal{C}_1)$ and $p_\mathcal{C}$ is uniform, we get 
+The scoring rule $\mathrm{IS}_{\alpha}(F,y)$ is the \emph{interval score} suggested by expression (43) in \cite{gneiting2007strictly} 
+and formalized by \cite{bracher2021evaluating} as a means for defining the weighted interval score 
+\begin{align}
+\mathrm{WIS}_{\alpha_{\{0: J\}}}(F, y)=\frac{1}{J+1 / 2}\left(w_0 |y-q_{F,.5}|+\sum_{j=1}^J w_j \operatorname{IS}_{\alpha_j}(F, y)\right).
+\end{align}
+So by taking $\mathcal{C} = \{(1 \pm \alpha_j)L/2 \mid j > 0\}\cup \{L/2\}$ and $p_\mathcal{C}$ symmetric across $L/2$, we get 
+$S_{Q,\mathcal{C}, p_C}(F,y) = \mathrm{WIS}_{\alpha_{\{0: J\}}}(F, y)$ with $w_j = p_{j}\alpha_j/2$ and $w_0 = p_{L/2}$.
 
 
 Again, the hierarchy we have introduced here describing WIS and CRPS as parallels to the quantile score for higher dimensional action sets is in itself a mere formality employing the linearity of differentiation with respect to the expectation operator $E_{C}$ for $C$ considered as a random variable. But as we move now to decision problems with multiple outcomes, it will turn out to provide a key shift in perspective that allows the scoring rules we define in terms of allocation under scarcity to be seen as a natural and non-trivial extension of the hierarchy. 
