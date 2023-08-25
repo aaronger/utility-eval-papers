@@ -164,7 +164,7 @@ and formalized by \cite{bracher2021evaluating} as a means for defining the weigh
 \mathrm{WIS}_{\alpha_{\{0: J\}}}(F, y)=\frac{1}{J+1 / 2}\left(w_0 |y-q_{F,.5}|+\sum_{j=1}^J w_j \operatorname{IS}_{\alpha_j}(F, y)\right).
 \end{align}
 So by taking $\mathcal{C} = \{(1 \pm \alpha_j)L/2 \mid j > 0\}\cup \{L/2\}$ and $p_\mathcal{C}$ symmetric across $L/2$, we get 
-$S_{Q,\mathcal{C}, p_C}(F,y) = \mathrm{WIS}_{\alpha_{\{0: J\}}}(F, y)$ with $w_j = p_{j}\alpha_j/2$ and $w_0 = p_{L/2}$.
+$S_{Q,\mathcal{C}, p_C}(F,y) = \mathrm{WIS}_{\alpha_{\{0: J\}}}(F, y) + E_{p_{\mathcal{C}}}[y]$ with $w_j = p_{j}\alpha_j/2$ and $w_0 = p_{L/2}$.
 
 
 Again, the hierarchy we have introduced here describing WIS and CRPS as parallels to the quantile score for higher dimensional action sets is in itself a mere formality employing the linearity of differentiation with respect to the expectation operator $E_{C}$ for $C$ considered as a random variable. But as we move now to decision problems with multiple outcomes, it will turn out to provide a key shift in perspective that allows the scoring rules we define in terms of allocation under scarcity to be seen as a natural and non-trivial extension of the hierarchy. 
@@ -191,8 +191,8 @@ A key point for our presentation will be that the same $C$, set $\{C_i\}$, proba
 The loss functions (and corresponding decision problems) defined so far have all been thouroughly covered, from one perspective or another, in various strands of forecast evaluation literature.  We now introduce one that, while certainly familiar in operations research and related fields, has not, to our knowledge, been explicitly discussed in a forecast evaluation context. 
 
 Consider again the resource procurement decision $x(c) \in \mathcal{X}_{cont}$ (or $\mathcal{X}_{disc}$ if $c = C_i, i \in 1,\ldots,m$) a public health worker must make in 
-attempting to mitigate a pandemic across multiple locations $l \in 1,\ldots,N$.  But now we ask the worker to extend their decision to cover the contingency that the total amount of the resource $\sum x_l(C)$ that they specify for the realized cost $C$ turns out to not be available.  This could be due to demand-side factors such as a budget cut, or supply-side factors such as manufacturing or shipping failures. In either case, we assume that these factors are undetermined at time $t_0$ when decisions must be made and model them with a positive random variable $K$ giving the total amount of resource that will be available
-at time $t_1$.  This adds, for each $k \in \mathbb{R}_{+}$, a component to our overall decision problem that asks the question: If the total amount $K$ available of the resourse is insufficient allow the procurements $x_l(C)$ you specify for the realized cost $C$, what alternate procurement levels $x_l^{k,C}$ would you choose? The action set for this new component is 
+attempting to mitigate a pandemic across multiple locations $l \in 1,\ldots,N$.  But now we ask the worker to extend their decision to cover the contingency that there turns out to only be a total amount $k$ of the resource available for allocation, less than the amount $\sum x_l(C)$ that they would choose to distribute if balancing only the realized cost $C$ against potential unmet demand.  This could be due to demand-side factors such as a budget cut, or supply-side factors such as manufacturing or shipping failures. In either case, we assume that these factors are undetermined at time $t_0$ when decisions must be made and model them with a positive random variable $K$ giving the total amount of resource that will be available
+at time $t_1$.  This adds, for each $k \in \mathbb{R}_{+}$, a component to our overall decision problem that asks the question: If the total amount $K$ available of the resource is insufficient allow the procurements $x_l(C)$ you specify for the realized cost $C$, what alternate procurement levels $x_l^{k,C}$ would you choose? The action set for this new component is 
 \begin{align}
 \mathcal{X}_k = \{x \in \mathbb{R}_{+}^N \mid \sum_{l=1}^{N} x_l = k\}.
 \end{align}
@@ -206,7 +206,7 @@ We see then that the cost $C$ will not effect the Bayes act for this component o
 \begin{align}
 s_{A}(x,y):= L\sum_{l=1}^{N} (y_l - x_l)_{+},
 \end{align}
-we use for all $\mathcal{X}_k$.
+we use in deriving Bayes acts for all $\mathcal{X}_k$.
 
 
 \subsubsection*{Old allocation intro}
