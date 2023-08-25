@@ -326,9 +326,9 @@ More about SR's:
 
 \section{Solving the Allocation Problem}
 
-As the solution to a constrained optimization problem, the optimal allocation $x^F$ according to a forecast $F$ can be described formally as the first component of a stationary point $(x^F, z_K^F, \lambda^{\star})$ in the region $\{x, z \geq 0, \lambda \in \mathbb{R}\}$ for the Lagrangian 
+As the solution to a constrained optimization problem, the optimal allocation $x^F$ according to a forecast $F$ can be described formally as the first component of a stationary point $(x^{F,k}, \lambda^{\star})$ in the region $\{x \geq 0, \lambda \in \mathbb{R}\}$ for the Lagrangian 
 \begin{align}
-\mathcal{L}(x, z_K, \lambda; K, C, L) = L\sum_{l=1}^{N} E_{F_l}[(Y_l - x_l)_{+}] + C(K-z_K) + \lambda\left(z_K + \sum_{l=1}^{N} x_l - K\right).
+\mathcal{L}(x, \lambda; F, k, L) = L\sum_{l=1}^{N} E_{F_l}[(Y_l - x_l)_{+}] + \lambda\left(\sum_{l=1}^{N} x_l - k\right).
 \end{align}
 That is, optimality at $x^F$ requires that
 \begin{align}
