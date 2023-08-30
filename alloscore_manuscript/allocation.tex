@@ -215,78 +215,7 @@ This is a general procedure that may be applied in settings where it is possible
 
 % , and we illustrate the ideas with two running examples: (1) some problem that results in quantile elicitation, (2) some allocation problem.
 
-%A forecaster is asked to recommend, that is, \emph{predict}, the appropriate supply $x$ of some good or investment in some precautionary measure intended to satisfy a random future demand or need $Y$. As a running example, we will consider the provision of a limited supply of a limited health care resource such as oxygen or ventilators. Suppose there is an incremental loss $O \geq 0$ incurred when over-prediction leads to unused supply and an incremental loss $U > 0$ incurred when under-prediction leads to unmet demand or need.
 
-% \subsection{A review of quantile score, CRPS, and the weighted interval score}
-% \label{sec:methods.quantileloss}
-
-% We review how the quantile score arises from a particular decision making problem in section \ref{sec:methods.quantileloss.quantile}, and how CRPS can be obtained by integrating across values of the parameters of that decision making problem, as well as the connection to WIS, in section \ref{sec:methods.quantileloss.crps}. These results have been thoroughly discussed in the literature [cite cite cite].
-
-% \subsubsection{decision theoretic origins of the quantile score}
-% \label{sec:methods.quantileloss.quantile}
-
-% Suppose that a decision maker is tasked with determining the quantity $x$ of a protective measure to procure; for example, $x$ might represent the number of hospital beds or amount of medicine to purchase. Additionally, suppose that each unit of this good has cost $C$ so that the total cost of procurement is $Cx$. The variable $y$ denotes the eventual realized need for this resource, e.g. the number of patients in need of a hospital bed or the amount of medication that is needed. We assume that each unit of unmet need incurs a loss denoted by $L$, so that if the selected procurement level $x$ is less than the realized need $y$, a loss of $L(x-y)$ results. At the time that a decision maker determines the amount $x$ to procure, the demand $y$ is not yet known. We therefore define the random variable $Y$ that represents the as-yet-unknown level of demand. The forecast $F$ specifies a predictive distribution for $Y$. Here we identify $F$ with its cumulative distribution function (CDF), and $F^{-1}$ denotes the quantile function. With this formalization of the decision making task, we can proceed to develop a proper scoring rule using the procedure outlined in section \ref{sec:methods.decisiontheory}.
-
-% \paragraph{Step 1: specify a loss function.} Combining the cost of procuring goods at level $x$ with losses due to unmet need, we arrive at the overall loss function
-% \begin{align}
-% s_Q(x,y; C, L) = Cx + L(x-y)_-.
-% \end{align}
-% Here, $(x - y)_- := \max(-(x - y),0)$ is $0$ if the amount procured, $x$, is greater than or equal to the realized demand $y$; otherwise, it is $y - x$, the amount of unmet need.
-
-% \paragraph{Step 2: Given a probabilistic forecast $F$, identify the Bayes act.} It can be shown that under the loss function $s_Q$, the Bayes act is a quantile of the forecast distribution at the probability level $\alpha = 1 - C/L$:
-% \begin{align}
-% x^F = F^{-1}(\alpha).
-% \end{align}
-% See the supplement for a verification of this result.
-% %In particular, faced with the classical binary decision problem of whether to recommend an additional unit of protection given a current level of protection $x$, the forecaster's optimal decision rule under $s_m$ is to recommend adding protection if $x < F^{-1}\left(1-\frac{C}{L}\right)$, that is, if
-% %\begin{align}
-% %1-F(x) = \mathbb{P}_F\{y>x\} > \frac{C}{L},
-% %\end{align}
-% %the \emph{cost-loss ratio} of the problem.
-
-% \paragraph{Step 3: Define the scoring rule.} Following the procedures outlined above, we could score the forecast distribution $F$ with the scoring rule
-% \begin{align*}
-% S_Q(F, y; C, L) &= s_Q(x^F, y; C, L) = Cx^F + L(x^F-y)_- \nonumber \\
-% &= C F^{-1}(\alpha) + L \left(F^{-1}(\alpha) - y\right)_- \label{eqn:S_Q_CL}
-% \end{align*}
-
-% We have set up the problem here in terms of the cost and loss parameters $C$ and $L$, which has the benefit of an intuitive connection to the decision making context. However, to clarify the connection to the usual notation for the quantile loss, we can divide the loss function $s_Q$ by $L$ to obtain an expression in terms of only $\alpha$:
-% \begin{align*}
-% s_Q(x,y; \alpha) &= s_Q(x,y; C, L)/L \\
-% &= (C/L)x + (x-y)_- \\
-% &= (1 - \alpha)x + (x-y)_-.
-% \end{align*}
-% Because these loss functions are equal up to a constant of proportionality, the Bayes act is the same for both. The associated quantile scoring rule expressed in terms of $\alpha$ is
-% \begin{equation}
-% S_Q(F, y; \alpha) = (1 - \alpha)F^{-1}(\alpha) + \left(F^{-1}(\alpha) - y\right)_-. \label{eqn:S_Q_alpha}
-% \end{equation}
-% In either formulation, the key observation is that the Bayes act is the quantile of the forecast distribution $F$ at the probability level given by one minus the cost/loss ratio $C/L$.
-
-% \subsubsection{CRPS as an integrated quantile score}
-% \label{sec:methods.quantileloss.crps}
-
-% The scoring rule $S_Q$ of Equation \eqref{eqn:S_Q_alpha} evaluates the forecast distribution $F$ only through its $\alpha$ quantile. While this is faithful to the context of the decision making problem, it may not be satisfying as a measure of the quality of the full forecast distribution. For this purpose, one option is to integrate the quantile scoring rule across different values of the probability level $\alpha$, weighting the probability levels according to a specified distribution $p$. This yields a weighted CRPS:
-% \begin{align*}
-% S_{CRPS}(F, y; p) &= \int S_Q(F, y; \alpha) p(\alpha) \, d\alpha.
-% \end{align*}
-% This weighted form of CRPS has appeared in the literature before, e.g. see \cite{gneiting2011weightedScoringRules}. The usual CRPS results from taking $p$ corresponding to a $\text{Uniform}(0,1)$ distribution, equally weighting all probability levels.
-
-% We emphasize that because $\alpha = 1 - C/L$, the distribution $p(\alpha)$ can be interpreted as expressing incomplete knowledge about the cost/loss ratio in the decision making problem. The equal weighting used by the ordinary CRPS may be appropriate in the absence of any knowledge about the context in which forecasts will be used to support decision making, but may be inappropriate if more information is known about the cost/loss ratio for a specific decision making task.
-
-% The weighted interval score (WIS) is often used when the full forecast distribution $F$ is not available, as in the U.S. COVID-19 Forecast Hub and similar efforts where forecasts are represented by a collection of prediction intervals. WIS is a discrete approximation to CRPS, and can be obtained by using a distribution $p$ that has point masses at the probability levels corresponding to the endpoints of a finite set of prediction intervals.
-
-%\elr{Leaving the comment below in the tex, but noting that it was in response to an older version of the write up. I've since attempted to address it by moving to a discussion in terms of a version of the scoring function where we've divided by L to work in terms of the cost/loss ratio.}
-%\apg{Quick note that I don't think this will work without some more identifications. The integral needs to be over probability levels and thresholds and without the some discussion like the one commented out (currently) at line 123 or (better in my mind) one like I'm trying to do with binary choices at the unit-level, I don't think we have a threshold.}
-%The usual CRPS results from taking $p$ to be the density of a distribution such that the induced distribution on the probability level $\alpha = 1 - C/L$ is $\text{Uniform}(0,1)$.
-
-% \subsection{The allocation score}
-% \label{sec:methods.allocation}
-
-%\elr{If we like the organization of the previous subsection into two subsubsections about the quantile score and the CRPS, we should replicate that here.}
-
-% We now give a more formal derivation of the allocation score starting from the set up of a decision making problem about how to allocate limited resources to meet demand across multiple locations. In section \ref{sec:methods.allocation.special}, we consider a setting where the resource constraint is known, which will result in a score that is specialized to a particular quantile of the forecasts. Then in sction \ref{sec.methods.allocation.integrated}, we allow for the possibility of decision making under uncertainty about the precise value of the resource constraint, which will lead to averaging the specialized allocation score across multiple quantile levels.
-
-%As a concrete example, we take the resource to be a good such as ventilators or oxygen supply. An administrator is tasked with determining where to send these resources so as to meet demand among hospital patients in different facilities or states. In contrast to the decision making problem in the previous section, the administrator is not able to control the total amount of supply; rather, their task is to determine how to allocate the fixed supply to different locations. Following the structure of the discussion for the quantile score and CRPS, we first discuss the set up for a single value of the resource constraint $K$, which plays a role that is analogous to the cost/loss ratio for the quantile score, and then we discuss the possibility of integrating (or averaging) across values of $K$.
 
 \subsubsection{The allocation score for a fixed resource constraint}
 \label{sec:methods.detailed.specific_allocation}
@@ -324,16 +253,6 @@ An alternative interpretation comes from noting that for each location $i$, $\fr
 In words, at the allocation given by the Bayes act, the rate of change of the expected score as a function of the amount allocated to location $i$ is given by $\lambda^{\star}$.
 This derivative is the same for all locations, so the optimal allocation divides the available resources across all locations in such a way that according to $F$, the expected benefit of 1 additional unit of resources is the same in all locations.
 
-% ELR: I made some more edits to the previous paragraph, but still may not have captured everything that Aaron think is important here.
-% \apg{
-% first attempt by APG to rephrase last paragraph: The central mathematical ideas in this construction are that
-% \begin{itemize}
-% \item optimization under a \emph{single} constraint requires the rates of change of (a probabilistic forecast's) expected benefit with respect to our decision variables, $x_i$, to be the same for all locations
-% \item these rates of change can be identified with probabilities
-% \item and therefore the Bayes act results from using a \emph{shared} probability level, $1 - \lambda^{\star}/L$, to determine allocations as the corresponding quantiles of the location-specific forecast distributions $F_i$ which satisfy the constraint.
-% \end{itemize}
-% (See the supplement for detailed discussion and derivations of these points.)
-% }
 
 \paragraph{Step 3: Define the scoring rule.} We can now define a proper scoring rule for the probabilistic forecast $F$ as
 \begin{equation}
@@ -347,11 +266,6 @@ This score measures the total unmet need across all locations that results from 
 The allocation score $S_A$ that we developed in the previous section measures the skill of the forecast distributions $F$ based on a single probability level $\alpha = 1 - \lambda^{\star}/L$. This is appropriate if the resource constraint $K$ is a known constant. However, if $K$ is not precisely known at the time of decision making or there is interest in measuring the value of forecasts across a range of decision making scenarios with different resource constraints, we can use an \emph{integrated allocation score} (IAS) that integrates the allocation score across values of $K$, weighting by a distribution $p$:
 $$S_{IAS}(F, y; L) = \int S_A(F,y; L, K) p(K) \, dK$$
 
-%We illustrate the relationship between the IAS and the CRPS in our example with two locations and forecasts given by $\text{Exp}(1/\sigma_i)$ distributions with $\sigma_1 = 1$ and $\sigma_2 = 5$. Note that the quantile functions corresponding to these forecasts are given by $F_i^{-1}(\alpha) = -\sigma_i \log(1 - \alpha)$. For simplicity, we keep $L = 1$ fixed (i.e., $p$ places probability 1 on $L = 1$), and only address varying $K$. As discussed above, each value of the constraint $K$ determines a quantile probability level $\alpha$ corresponding to the Bayes act such that $K = F_1^{-1}(\alpha) + F_2^{-1}(\alpha) = -\log(1 - \alpha) (\sigma_1 + \sigma_2)$; solving for $\alpha$, we obtain $\alpha = 1 - \exp[-K/(\sigma_1 + \sigma_2)]$. This link between the constraint level $K$ and the probability level $\alpha$ is the key to the link between the IAS and the CRPS.
-
-%We use this link to explore the relationship between IAS and CRPS from two directions. First, suppose the decision maker has some uncertainty about the value of $K$, which they express through $p$. Because $\alpha$ can be regarded as a function of $K$, this distribution on the resource constraint induces a distribution on quantile levels. Figure *** panel (b) \elr{TODO, figures from crps\_connection\_exp} illustrates with a $\text{Gamma}(500, 0.01)$ distribution for $K$, and the implied distribution on quantile levels is shown in panel (c). The IAS determined by $p$ corresponds to a weighted CRPS with this induced weighting on quantile levels. However, note that this weighting is specific to this pair of Exponential forecasts; a different pair of forecasts would translate to a different weighting on quantile levels.
-
-%Figure *** panel (d) \elr{TODO, figures from crps\_connection\_exp} illustrates this link by going in the other direction: given a forecast $F$, we exhibit the distribution on $K$ that would lead to equally weighted CRPS. Now we use the fact that $K$ can be written as a function of $\alpha$ to obtain the distribution on $K$ that corresponds to a $\text{Uniform}(0,1)$ distribution on $\alpha$. In this example, the implied distribution is $K \sim \text{Exp}(\sigma_1 + \sigma_2)$. We observe that this is a right-skewed distribution that places much of its mass on constraint values near 0, which may not correspond well to actual knowledge about the resource constraints. Again, the distribution on resource constraints that corresponds to unweighted CRPS depends on the forecast distributions.
 
 \subsection{Generalizations and Connections to Other Scores}
 \label{sec:methods.related}
@@ -363,38 +277,6 @@ This result bears a strong resemblance to the results for the allocation problem
 Similarly, it is possible to see both the integrated allocation score and common scores such as the  continuous ranked probability score (CRPS) and weighted interval score (WIS) as special cases of a more general score that integrates across resource cost and constraint parameters together. It is well known in the literature that WIS is equivalent to a weighted average of quantile scores across multiple quantile levels (cite Bracher et al.) and CRPS integrates quantile scores across multiple quantile levels (cite cite). By integrating the combined resource acquisition and allocation score that we described in the previous paragraph across the parameters for both resource costs and constraints, we obtain a score that combines features of both IAS and CRPS and contains those scores as special cases. Again, we defer a more detailed discussion of these results to (cite arxiv version of paper 2).
 
 %Finally, we note that a number of generalizations to the loss specification that we introduced for the allocation problem  have been formulated in the literature, including an allowance for costs for over-allocation to a particular unit (e.g. if there are storage costs for unused resources), differing losses different units (e.g. if a unit of unmet need imposes more severe costs in one location than another), and the introduction of a convex function that controls the rate at which costs accrue depending on the scale of need. We consider these and other generalizations in other work.
-
-% \subsection{Solving the Allocation Problem}
-
-% As the solution to a constrained optimization problem, the optimal allocation $\bf{x}^F$ according to a forecast $F$ can be described formally as the first component of a stationary point $(\bf{x}^F, \lambda^{\star})$ in the region $\{\mathbf{x} \geq 0, \lambda \geq 0\}$ for the Lagrangian 
-% \begin{align}
-% \mathcal{L}(\mathbf{x},\lambda; K, L) = \sum_{i=1}^{N} \mathbb{E}_{F_i}[s_A(x_i, Y_i; L)] + \lambda\left(\sum_{i=1}^{N} x_i - K\right).
-% \end{align}
-% That is, optimality requires that both
-% \begin{align}
-% 0 = \nabla_{x} \mathcal{L}(\mathbf{x}^F, \lambda) &= \sum_{i=1}^{N} E_F \left[\frac{d}{dx_i}(Y_i - x_i^F)_{+}\right] + \lambda \\
-% & = \sum_{i=1}^{N} E_F \left[-\mathbf{1}\{Y_i \geq x_i^F\}\right] + \lambda  = \sum_{i=1}^{N} F_i(x_i^F)-1 + \lambda  \label{eqn:x_stationary}\\
-% \text{ and} \\
-% 0 = \nabla_{\lambda} \mathcal{L}(\mathbf{x}^F, \lambda^{\star}) &= \sum_{i=1}^{N} x_i^F - K\\
-% & = \sum_{i=1}^{N} F_{i}^{-1}(1-\lambda^{\star}) - K \quad \text{ (by \eqref{eqn:x_stationary})}. \label{eqn:lambda_stationary}
-% \end{align}
-% These equations give formulae $x_i^F = F_i^{-1}(1-\lambda^{\star})$, but in many situations of interest for us the $F_i^{-1}$ are not single-valued, and even 
-% when they are, a solution $\lambda^{\star}$ of \eqref{eqn:lambda_stationary} can only be obtained analytically in special cases (but see \ref{sec:methods.ls.example}). We therefore typically calculate allocation scores using approximately optimal allocations found via a binary search for $\lambda^{\star}$.  This search begins with the interval $\lambda \in [0,1]$ and 
-% checks at each step the sign of the inequality that results from substituting the interval midpoint $\lambda_{\tau}$ into \eqref{eqn:lambda_stationary} for endpoints of the sets $F_i^{-1}(1-\lambda_{\tau})$.  If $\sum_{i} F_{i}^{-1}(1-\lambda^{\star}) > K$, the quantiles for $1-\lambda_{\tau}$ exceed our resource constraint so we set $\lambda_{\tau}$ as the lower endpoint of the $\tau + 1$ search interval.  Similarly, if $\sum_{i} F_{i}^{-1}(1-\lambda^{\star}) < K$, the quantiles for 
-% $1-\lambda_{\tau}$ do not make full use of our resource and we set $\lambda_{\tau}$ as the upper endpoint of the $\tau + 1$ search interval.  This process halves the search interval width at each step and we continue until this width falls below a given tolerance level $\varepsilon_{\tau}$ yielding an 
-% approximation $\lambda^{\star, \varepsilon}$. When quantiles $F_i^{-1}(1-\lambda^{\star, \varepsilon})$ are singly defined and the forecast densities $f_i$
-% not too close to zero at these quantiles, the discrepancy $\Delta(\lambda^{\star, \varepsilon})  = \sum_{i=1}^{N} F_{i}^{-1}(1-\lambda^{\star, \varepsilon}) - K$ is of order $\varepsilon_{\lambda}$ and we can take $F_{i}^{-1}(1-\lambda^{\star, \varepsilon})$ as approximations to $x_i^F$.
-
-% Often though, $1-\lambda^{\star, \varepsilon}$ will be the probability level of a ``plateau'' for one or more $F_i$ and the $\lambda$ search algorithm will fail to drive $\Delta(\lambda^{\star, \varepsilon})$ close enough to zero for the $F_{i}^{-1}(1-\lambda^{\star, \varepsilon})$ to be acceptable approximations of the optimal allocations. In this event we follow-up with a ``post-processing'' step that identifies lower and upper boundaries $x_{i,L}$ and $x_{i,U}$ of any
-% such low-density plateau containing points in $F_{i}^{-1}(1-\lambda^{\star, \varepsilon})$. If $F_{i}^{-1}(1-\lambda^{\star, \varepsilon})$ is single-valued 
-% with the density $f_i(F_{i}^{-1}(1-\lambda^{\star, \varepsilon}))$ not close to zero, we simply take $x_{i,L} = F_{i}^{-1}(1-\lambda^{\star, \varepsilon}) = x_{i,U}$. Defining $\mathbf{x}_L = (x_{i,L})$ and $\mathbf{x}_U = (x_{i,U})$ we then interpolate an approximately optimal allocation 
-% $\mathbf{x} = (1-t^{\star})\mathbf{x}_L + t^{\star}\mathbf{x}_U$ where $t^{\star}$ solves 
-% $\sum_{i=1}^{N }(1-t^{\star})x_{i,L} + t^{\star}x_{i,U} = K$.
-
-% We note though that by using this linear interpolation (rather than some other point in the plateau satisfying the constraint) as the allocation associated with $F$ in the scoring process we are making a choice that is not
-% guided by any expected utility maximization principle. As such, this choice may imply strong and potentially questionable assumptions about fairness and
-% equity principles for the decision maker when forecasts tend to be ``clumped,'' leaving many regions with very low forecasted probability.
-
 
 \section{Application}
 \label{sec:application}
