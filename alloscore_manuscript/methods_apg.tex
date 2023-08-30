@@ -74,7 +74,7 @@ With a view towards a decision problem defined by these examples of sets $\mathc
 
 \begin{enumerate}
 \item Specify a \emph{loss function} $s(x,y)$ that quantifies the utility or disutility of the result $r$ of taking action $x$ under outcome $y$.
-\item Map the given probabilistic forecast $F$ for $Y$ to an action $x^F$ which ``solves" the decision problem by minimizing the expected loss $E_{F}[s(x,Y)]$ over all $x \in \mathcal{X}$ under the distribution $F$.  Following \cite{dawid2007geometry}, we call $x^F$ the \emph{Bayes act} for $F$. Note that $x^F$ depends not only on $F$ and $s$, but also on the definition of $\mathcal{X}$. For example, having more available resources usually allows for actions incurring less loss.   
+\item Map the given probabilistic forecast $F$ for $Y$ to an action $x^F$ which ``solves" the decision problem by minimizing the expected loss $E_F\left[s(x,Y)\right]$ over all $x \in \mathcal{X}$ under the distribution $F$.  Following \cite{dawid2007geometry}, we call $x^F$ the \emph{Bayes act} for $F$. Note that $x^F$ depends not only on $F$ and $s$, but also on the definition of $\mathcal{X}$. For example, having more available resources usually allows for actions incurring less loss.   
 \item Assign $F$ the score $s(x^F,y)$, that is, the numerical quantification via $s$ of the result under outcome $y$ of accepting $x^F$ as a solution to the decision problem.
 \end{enumerate}{}
 
@@ -98,9 +98,9 @@ The underlying decision problem here consists of action and outcome sets $\mathc
 
 The Bayes act for $C \in (0,L)$ is the solution of the first order equation 
 \begin{align}
-0 = \dby{}{x} E_F[s_{Q,C}(x,y)] &= E_{F}[\dby{}{x}s_{Q,C}(x,y)] \\
-&= C + LE_{F}[\dby{}{x}(y-x)_+] \\
-&= C - LE_{F}[\mathbf{1}\{y > x\}] \\
+0 = \dby{}{x} E_F\left[s_{Q,C}(x,y)\right] &= E_F\left[\dby{}{x}s_{Q,C}(x,y)\right] \\
+&= C + LE_F\left[\dby{}{x}(y-x)_+\right] \\
+&= C - LE_F\left[\mathbf{1}\{y > x\}\right] \\
 &= C + L(F(x) - 1), \label{eqn:q_deriv}
 \end{align}
 that is, the quantile $x^F = F_l^{-1}(1 - C/L) = q_{F,\tau}$ for the probability level $\tau = 1-C/L$. (That the critical point $q_{F,\tau}$ is actually a minimum follows from \eqref{eqn:q_deriv} being non-positive to its left and non-negtive to its right, and assuming as we do for now that $F$ is smooth and strictly increasing at $q_{F,\tau}$, it is a unique minimum.) The quantile solves the decision problem with respect to the forecast $F$ by being the action which best balances expected cost against expected loss among all actions available to the decision maker.
@@ -164,7 +164,10 @@ and formalized by \cite{bracher2021evaluating} as a means for defining the weigh
 \mathrm{WIS}_{\alpha_{\{0: J\}}}(F, y)=\frac{1}{J+1 / 2}\left(w_0 |y-q_{F,.5}|+\sum_{j=1}^J w_j \operatorname{IS}_{\alpha_j}(F, y)\right).
 \end{align}
 So by taking $\mathcal{C} = \{(1 \pm \alpha_j)L/2 \mid j > 0\}\cup \{L/2\}$ and $p_\mathcal{C}$ symmetric across $L/2$, we get 
-$S_{Q,\mathcal{C}, p_C}(F,y) = \mathrm{WIS}_{\alpha_{\{0: J\}}}(F, y) + E_{p_{\mathcal{C}}}[y]$ with $w_j = p_{j}\alpha_j/2$ and $w_0 = p_{L/2}$.
+\begin{align}	
+S_{Q,\mathcal{C}, p_C}(F,y) = \mathrm{WIS}_{\alpha_{\{0: J\}}}(F, y) + y \sum_{j=0}^{J} w_j
+\end{align}	
+with $w_j = p_{j}\alpha_j/2$ and $w_0 = p_{L/2}$.
 
 
 Again, the hierarchy we have introduced here describing WIS and CRPS as parallels to the quantile score for higher dimensional action sets is in itself a mere formality employing the linearity of differentiation with respect to the expectation operator $E_{C}$ for $C$ considered as a random variable. But as we move now to decision problems with multiple outcomes, it will turn out to provide a key shift in perspective that allows the scoring rules we define in terms of allocation under scarcity to be seen as a natural and non-trivial extension of the hierarchy. 
@@ -180,9 +183,9 @@ We next expand our decision problem to include multiple actions that will all, i
 \end{align}
 And for these ``vector-action'' problems we can define \emph{total} versions of our loss functions
 \begin{align}
-s_{tQ}(x,y) &= \sum_{l=1}^N Cx_l + L(y_l-x_l)_+ \\
-s_{tQ, \mathcal{C}, p_C}(x,y) &= \frac{1}{m}\sum_{l=1}^N \sum_{i=1}^{m}p_i(C_i x_{l,i} + L(x_{l,i} - y_l)_+)\\
-s_{tQ, f_C}(x,y) &= \sum_{l=1}^N \int_{0}^{L} (cx_l(c) + L(x_l(c) - y_l)_+) f_C(c)dc.
+s_{TQ}(x,y) &= \sum_{l=1}^N Cx_l + L(y_l-x_l)_+ \label{eqn:TQ_loss} \\
+s_{TQ, \mathcal{C}, p_C}(x,y) &= \frac{1}{m}\sum_{l=1}^N \sum_{i=1}^{m}p_i(C_i x_{l,i} + L(x_{l,i} - y_l)_+)\\
+s_{TQ, f_C}(x,y) &= \sum_{l=1}^N \int_{0}^{L} (cx_l(c) + L(x_l(c) - y_l)_+) f_C(c)dc.
 \end{align}
 A key point for our presentation will be that the same $C$, set $\{C_i\}$, probabilities $\{p_i\}$, and density $f_C$ are used for all locations simultaneously.  We believe that our methods could be adapted to variations across locations (which could be important in practice), but we leave this generalization for later work. 
 
@@ -192,9 +195,9 @@ The loss functions (and corresponding decision problems) defined so far have all
 
 Consider again the resource procurement decision $x(c) \in \mathcal{X}_{cont}$ (or $\mathcal{X}_{disc}$ if $c = C_i, i \in 1,\ldots,m$) a public health worker must make in 
 attempting to mitigate a pandemic across multiple locations $l \in 1,\ldots,N$.  But now we ask the worker to extend their decision to cover the contingency that there turns out to only be a total amount $k$ of the resource available for allocation, less than the amount $\sum x_l(C)$ that they would choose to distribute if balancing only the realized cost $C$ against potential unmet demand.  This could be due to demand-side factors such as a budget cut, or supply-side factors such as manufacturing or shipping failures. In either case, we assume that these factors are undetermined at time $t_0$ when decisions must be made and model them with a positive random variable $K$ giving the total amount of resource that will be available
-at time $t_1$.  This adds, for each $k \in \mathbb{R}_{+}$, a component to our overall decision problem that asks the question: If the total amount $K$ available of the resource is insufficient allow the procurements $x_l(C)$ you specify for the realized cost $C$, what alternate procurement levels $x_l^{k,C}$ would you choose? The action set for this new component is 
+at time $t_1$.  This adds, for each $k \in \mathbb{R}_{+}$, a component to our overall decision problem that asks the question: If the total amount $K$ available of the resource is insufficient allow the procurements $x_l(C)$ you specify for the realized cost $C$, what alternate procurement levels $x_l^{k,C}$ would you choose? Writing $T_x = \sum_{l=1}^{N} x_l$, the action set for this new component is 
 \begin{align}
-\mathcal{X}_k = \{x \in \mathbb{R}_{+}^N \mid \sum_{l=1}^{N} x_l = k\}.
+\mathcal{X}_k = \{x \in \mathbb{R}_{+}^N \mid T_x = k\}.
 \end{align}
 Note that because this decision is only relevant when $\sum x_l(C)>k$ we do not include actions which use less than $k$ total of the resource. (Why?)
  
@@ -209,150 +212,183 @@ s_{A}(x,y):= L\sum_{l=1}^{N} (y_l - x_l)_{+},
 we use in deriving Bayes acts for all $\mathcal{X}_k$.
 
 
-\subsubsection*{Old allocation intro}
-We now add a constraint $K$ on the total amount of the resource available for allocation across all locations. This presents the worker with a new decision problem we call the \emph{allocation problem} (AP or $\mathrm{AP}(K)$) with a smaller action set $\mathcal{X}_K = \{x \in \mathbb{R}_{+}^N | \sum x_l \leq K\} \subset \mathcal{X}_{cert}\}$ from which to choose (and analogously restricted version of the sets $\mathcal{X}_{disc}$ and $\mathcal{X}_{cont}$ for the decision problems with uncertain cost). Loss functions with the basic $Cx + L(y-x)_{+}$ structure we have used up until now continue to generate meaningful scoring rules with respect to the AP following our procedure.  But with a view toward developing a scoring rule that accommodates uncertainty about both $C$ and $K$ in a non-redundant (and more interpretable and computationally feasible) way, we augment the action set of the AP to include, in addition to the procurement levels $x_l$ for all locations, a ``reserve'' quantity $z_K$ defined as the available amount of resource that the worker decides not to allocate anywhere.
-In optimization theory quantities defined in this manner are known as \emph{slack} variables, and are introduced in order to re-express contraint inequalities as equalities.  In our case, we get
-\begin{align}
-\mathcal{X}_{K} = \{(x,z) \in \mathbb{R}_{+}^{N+1} \mid \sum_{l=1}^{N}x_l + z = K \}.
-\end{align}
-In these action set variables, the loss function we used for the unconstrained $N$ location decision problem with action set $\mathcal{X}_{cert}$ now has the expression
-\begin{align}
-s_{tQ}\left((x,z), y\right) = C(K-z) + \sum_{l=1}^{N} L(y_l - x_l)_{+}.
-\end{align}
-This isolates -- at least formally -- the explicit contribution of the procurement part, $x$, of the decision to the second term which we call the \emph{allocation loss function}:
-\begin{align}
-s_{A,K}(x,y):= L\sum_{l=1}^{N} (y_l - x_l)_{+}.
-\end{align}
-It will turn out, as explained in the following sections, that for a given forecast $F$, a scoring rule derived with respect to the AP from $s_{tQ}$ under uncertainty about $C$ -- that is, from $s_{tWIS}$ or $s_{tCRPS}$ -- will have the same values for all outcomes $y$ as a scoring rule that is a weighted average or integration of scoring rules derived from allocation losses $s_{A,K}$ with respect the AP's for a range of $K$'s.
+% \subsubsection*{Old allocation intro}
+% We now add a constraint $K$ on the total amount of the resource available for allocation across all locations. This presents the worker with a new decision problem we call the \emph{allocation problem} (AP or $\mathrm{AP}(K)$) with a smaller action set $\mathcal{X}_K = \{x \in \mathbb{R}_{+}^N | \sum x_l \leq K\} \subset \mathcal{X}_{cert}\}$ from which to choose (and analogously restricted version of the sets $\mathcal{X}_{disc}$ and $\mathcal{X}_{cont}$ for the decision problems with uncertain cost). Loss functions with the basic $Cx + L(y-x)_{+}$ structure we have used up until now continue to generate meaningful scoring rules with respect to the AP following our procedure.  But with a view toward developing a scoring rule that accommodates uncertainty about both $C$ and $K$ in a non-redundant (and more interpretable and computationally feasible) way, we augment the action set of the AP to include, in addition to the procurement levels $x_l$ for all locations, a ``reserve'' quantity $z_K$ defined as the available amount of resource that the worker decides not to allocate anywhere.
+% In optimization theory quantities defined in this manner are known as \emph{slack} variables, and are introduced in order to re-express contraint inequalities as equalities.  In our case, we get
+% \begin{align}
+% \mathcal{X}_{K} = \{(x,z) \in \mathbb{R}_{+}^{N+1} \mid \sum_{l=1}^{N}x_l + z = K \}.
+% \end{align}
+% In these action set variables, the loss function we used for the unconstrained $N$ location decision problem with action set $\mathcal{X}_{cert}$ now has the expression
+% \begin{align}
+% s_{tQ}\left((x,z), y\right) = C(K-z) + \sum_{l=1}^{N} L(y_l - x_l)_{+}.
+% \end{align}
+% This isolates -- at least formally -- the explicit contribution of the procurement part, $x$, of the decision to the second term which we call the \emph{allocation loss function}:
+% \begin{align}
+% s_{A,K}(x,y):= L\sum_{l=1}^{N} (y_l - x_l)_{+}.
+% \end{align}
+% It will turn out, as explained in the following sections, that for a given forecast $F$, a scoring rule derived with respect to the AP from $s_{tQ}$ under uncertainty about $C$ -- that is, from $s_{tWIS}$ or $s_{tCRPS}$ -- will have the same values for all outcomes $y$ as a scoring rule that is a weighted average or integration of scoring rules derived from allocation losses $s_{A,K}$ with respect the AP's for a range of $K$'s.
 
 
 
 
-Fundamental point: 
-\begin{itemize}
-\item When $z_K > 0$, $K$ has no influence on the $\mathrm{AP}(K)$ Bayes act, i.e., $\partial_K x^{F,C,K} = 0$.  
-\item When $z_K=0$ and $x^F$ are not $1-C/L$ quantiles, $\partial_C x^{F,C,K} = 0$.
-\end{itemize}
+% Fundamental point: 
+% \begin{itemize}
+% \item When $z_K > 0$, $K$ has no influence on the $\mathrm{AP}(K)$ Bayes act, i.e., $\partial_K x^{F,C,K} = 0$.  
+% \item When $z_K=0$ and $x^F$ are not $1-C/L$ quantiles, $\partial_C x^{F,C,K} = 0$.
+% \end{itemize}
 
-Picture: For $K$ fixed, $x^{F,K}(c)$ will be a constant point $x^{F,K}$ on $\{\sum x_l = K\}$ for $c \in [0, c_1]$, 
-and then wander back to 0 for $c \in (c_1,L]$. When $C$ is fixed, $x^{F}(k)$ will be a point on $\{\sum x_l = k\}$ (which does not depend on $C$)
-for $k \in [0, \sum F_l^{-1}(1-C/L)]$, and then constant at $\mathbf{F}^{-1}(1-C/L)$ for $k \in (\sum F_l^{-1}(1-C/L), \infty)$.
+% Picture: For $K$ fixed, $x^{F,K}(c)$ will be a constant point $x^{F,K}$ on $\{\sum x_l = K\}$ for $c \in [0, c_1]$, 
+% and then wander back to 0 for $c \in (c_1,L]$. When $C$ is fixed, $x^{F}(k)$ will be a point on $\{\sum x_l = k\}$ (which does not depend on $C$)
+% for $k \in [0, \sum F_l^{-1}(1-C/L)]$, and then constant at $\mathbf{F}^{-1}(1-C/L)$ for $k \in (\sum F_l^{-1}(1-C/L), \infty)$.
 
-\section{Step 3: Use the Bayes act to score the forecast $F$ against outcomes.}
+% \section{Step 3: Use the Bayes act to score the forecast $F$ against outcomes.}
 
-Deal with alloscore by noticing that simultaneous quantile loss has same minimizer as alloscore with sum of quantiles as constraint level.
+% Deal with alloscore by noticing that simultaneous quantile loss has same minimizer as alloscore with sum of quantiles as constraint level.
 
-\begin{align}
-s_{t\mathrm{WIS}}(x^{F,t\mathrm{WIS}},y) &= \frac{1}{m}\sum_{l=1}^N \sum_{i=1}^{m}(x_{l,i}^{F_l,\mathrm{Q}, C_i}- y_l)_+  + C_i x_{l,i}^{F_l,\mathrm{Q}, C_i}\\ 
-&= \frac{1}{m} \sum_{i=1}^{m}s_{\mathrm{AS}}(x^{F,\mathrm{AS},  K(C_i, F, L)},y) + C_i K(C_i, F, L)
-\end{align}
+% \begin{align}
+% s_{t\mathrm{WIS}}(x^{F,t\mathrm{WIS}},y) &= \frac{1}{m}\sum_{l=1}^N \sum_{i=1}^{m}(x_{l,i}^{F_l,\mathrm{Q}, C_i}- y_l)_+  + C_i x_{l,i}^{F_l,\mathrm{Q}, C_i}\\ 
+% &= \frac{1}{m} \sum_{i=1}^{m}s_{\mathrm{AS}}(x^{F,\mathrm{AS},  K(C_i, F, L)},y) + C_i K(C_i, F, L)
+% \end{align}
 
-\begin{align}
-s_{\mathrm{IAS}}(x^{F, \mathrm{IAS}}(k), y) &= \int_0^{\infty} s_{\mathrm{AS}}(x^{F, \mathrm{AS}(k)}, y) dk \\
-&= \int_0^{\infty} \sum_{l=1}^N s_{\mathrm{Q}}(x^{F_l, \mathrm{Q}(c(k, F))}, y) - c(k, F)kdk \\
-&= \sum_{l=1}^N \int_0^{\infty} s_{\mathrm{Q}}(x^{F_l, \mathrm{Q}(c(k, F))}, y) dk -  \int_0^{\infty} c(k, F)kdk
-\end{align}
-
-
-$s_{tQ}(x^{F,C,K}) \mid C = c, K = k$ in $\mathrm{AP}(k)$ coordinates:
-\begin{align}
-s_{tQ}(x^{F,c,k})(y) &= 
-\begin{cases}
-\sum_{l=1}^{N}L(y_l - x_l^{F,k})_{+} + ck, & k < \sum F_l^{-1}(1-c/L) \\
-\sum_{l=1}^{N}L(y_l - x_l^{F,Q,c})_{+} + c(k - z_k(c)), & \text{otherwise, with } 
-\end{cases} \\
-z_k(c) &= (k -  \sum F_l^{-1}(1-c/L))_{+}
-\end{align}
-
-Let $k_1 = \sum F_l^{-1}(1-c_1/L)$ so that $x^{F,Q,c_1} = x^{F, k_1}$ and $z_{k_1}(\{c \leq c_1\}) = 0$, and take $0<c_a < c_1 < c_b < L$ and $0 < k_a < k_1 < k_b < K_2$.
-
-Then with $K = k_1$ fixed, the path of functions $s_{k_1}(c) = s_{tQ}(x^{F,c,k_1})$ parametrized by $c \in [0,L]$ takes values
-\begin{align}
-s_{k_1}(0)  &= L\sum ( y_l-x_l^{F,k_1})_{+}  \\
-s_{k_1}(c_a)  &= L\sum ( y_l-x_l^{F,k_1})_{+} + c_a k_1\\
-s_{k_1}(c_1) &= L\sum (y_l - x_l^{F,k_1})_{+} + c_1 k_1  \\
-s_{k_1}(c_b) &= L\sum (y_l - x_l^{F,Q, c_b})_{+} + c_b(k_1 - z_{k_1}(c_b)) \\
-&= L\sum (y_l - x_l^{F,Q, c_b})_{+} + c_b \sum F_l^{-1}(1-c_b/L)\\
-s_{k_1}(L)  &= L\sum {y_l}_{+}.
-\end{align}
-
-If instead $C = c_1$ is fixed, then $s_{c_1}(k) = s_{tQ}(x^{F,c_1,k})$ parameterized by 
-$k \in [0,K_2]$ take values
-\begin{align}
-s_{c_1}(0) & = L \sum {y_l}_{+} \\
-s_{c_1}(k_a) & = L \sum (y_l - x_l^{F,k_a})_{+} + c_1 k_a\\
-& = L \sum (y_l - x_l^{F,Q,c(k_a)})_{+} + c_1 \sum F_l^{-1}(1-c(k_a)/L)\\
-s_{c_1}(k_1) & = L \sum (y_l - x_l^{F,k_1})_{+} + c_1 k_1 \\
-s_{c_1}(k_b) & = L \sum (y_l - x_l^{F,k_1})_{+} + c_1 (k_b - z_{k_b}(c_1)) \\
- & = L \sum (y_l - x_l^{F,k_1})_{+} + c_1 \sum F_l^{-1}(1-c(k_1)/L)\\
-s_{c_1}(K_2) & = L \sum (y_l - x_l^{F,k_1})_{+} + c_1 (K_2 - z_{K_2}(c_1))
-\end{align}
-
-Writing $k(c) = \sum F_l^{-1}(1-c/L)$,
-\begin{align}
-s_{k_1}(c) - s_{c_1}(k(c)) &= (c-c_1)\sum F_l^{-1}(1-\max(c,c_1)/L) \\
-s_{c_1}(k) - s_{k_1}(c(k)) &=  
-\end{align}
+% \begin{align}
+% s_{\mathrm{IAS}}(x^{F, \mathrm{IAS}}(k), y) &= \int_0^{\infty} s_{\mathrm{AS}}(x^{F, \mathrm{AS}(k)}, y) dk \\
+% &= \int_0^{\infty} \sum_{l=1}^N s_{\mathrm{Q}}(x^{F_l, \mathrm{Q}(c(k, F))}, y) - c(k, F)kdk \\
+% &= \sum_{l=1}^N \int_0^{\infty} s_{\mathrm{Q}}(x^{F_l, \mathrm{Q}(c(k, F))}, y) dk -  \int_0^{\infty} c(k, F)kdk
+% \end{align}
 
 
-But 
-\begin{align}
-\del{k}{c}& = \sum_{l=1}^{N} \frac{-1}{L f_l(q_{F_l,\tau(c)})} := -\mathrm{MAI}(c,F)\label{eqn:dkdc}
-\end{align}
-(where we assume that the $F_l$ have non-negative support). The name MAI refers to this derivative being the marginal total allocation increase for the total quantile loss Bayes act $x^{F,Q(C)}$ that results from a reduction of the cost $C$ of the resource by 1. Or in terms of the probability level $\tau(c)=1-c/L$,
-\begin{align}
-\del{k}{\tau} = \del{k}{c}\dby{c}{\tau} = -\mathrm{MAI}(c,F) \cdot (-L\tau) = L\mathrm{MAI}(c,F) \label{eqn:dkdtau}
-\end{align}
+% $s_{tQ}(x^{F,C,K}) \mid C = c, K = k$ in $\mathrm{AP}(k)$ coordinates:
+% \begin{align}
+% s_{tQ}(x^{F,c,k})(y) &= 
+% \begin{cases}
+% \sum_{l=1}^{N}L(y_l - x_l^{F,k})_{+} + ck, & k < \sum F_l^{-1}(1-c/L) \\
+% \sum_{l=1}^{N}L(y_l - x_l^{F,Q,c})_{+} + c(k - z_k(c)), & \text{otherwise, with } 
+% \end{cases} \\
+% z_k(c) &= (k -  \sum F_l^{-1}(1-c/L))_{+}
+% \end{align}
 
-Now a constraint $K = 0$ corresponds to cost-loss parity $C=L$, i.e. $\tau = 0$, for which the Bayes act is the zero vector.  And $K \to \infty$ corresponds to the cost of over-allocation vanishing, i.e. $\tau \to 1$. So making a change of variables with \eqref{eqn:dkdc} or \eqref{eqn:dkdtau} we get
-\begin{align}
-s_{\mathrm{IAS}}(x^{F, \mathrm{IAS}}(k), y) 
-&= \sum_{l=1}^N \int_0^{L} s_{\mathrm{Q}}(x^{F_l, \mathrm{Q}(c)}, y) \mathrm{MAI}(c,F) dc \\
-&= \sum_{l=1}^N \int_0^{1} s_{\mathrm{Q}}(x^{F_l, \tau}, y) L\mathrm{MAI}(L(1-\tau),F) d\tau \\
-&= tw\mathrm{CRPS}(F,y)
-\end{align}
-where MAI provides the (identical) weighting in each coordinate. Crucially though, this weighting \emph{depends} on $F$ so that IAS's of two forecasts $F$ and $\tilde{F}$ \emph{cannot} be interpreted as result of applying the same $w$CRPS to the two forecasts.
+% Let $k_1 = \sum F_l^{-1}(1-c_1/L)$ so that $x^{F,Q,c_1} = x^{F, k_1}$ and $z_{k_1}(\{c \leq c_1\}) = 0$, and take $0<c_a < c_1 < c_b < L$ and $0 < k_a < k_1 < k_b < K_2$.
 
-More about SR's:
-\begin{itemize}
-\item QS: meteorologist loss v newsvendor
-\item WIS/CRPS: multiple scenario loss (Gruschka-Cockayne et al, Fissler and Ziegel, Jose and Winkler)
-	- Least squares analogy
-\item bring in Brier?
-\item take stab at explaing log score following Dawid with Bayes act being inverse of $x^F(c)$ i.e., $F$ itself.
-\end{itemize}
+% Then with $K = k_1$ fixed, the path of functions $s_{k_1}(c) = s_{tQ}(x^{F,c,k_1})$ parametrized by $c \in [0,L]$ takes values
+% \begin{align}
+% s_{k_1}(0)  &= L\sum ( y_l-x_l^{F,k_1})_{+}  \\
+% s_{k_1}(c_a)  &= L\sum ( y_l-x_l^{F,k_1})_{+} + c_a k_1\\
+% s_{k_1}(c_1) &= L\sum (y_l - x_l^{F,k_1})_{+} + c_1 k_1  \\
+% s_{k_1}(c_b) &= L\sum (y_l - x_l^{F,Q, c_b})_{+} + c_b(k_1 - z_{k_1}(c_b)) \\
+% &= L\sum (y_l - x_l^{F,Q, c_b})_{+} + c_b \sum F_l^{-1}(1-c_b/L)\\
+% s_{k_1}(L)  &= L\sum {y_l}_{+}.
+% \end{align}
 
+% If instead $C = c_1$ is fixed, then $s_{c_1}(k) = s_{tQ}(x^{F,c_1,k})$ parameterized by 
+% $k \in [0,K_2]$ take values
+% \begin{align}
+% s_{c_1}(0) & = L \sum {y_l}_{+} \\
+% s_{c_1}(k_a) & = L \sum (y_l - x_l^{F,k_a})_{+} + c_1 k_a\\
+% & = L \sum (y_l - x_l^{F,Q,c(k_a)})_{+} + c_1 \sum F_l^{-1}(1-c(k_a)/L)\\
+% s_{c_1}(k_1) & = L \sum (y_l - x_l^{F,k_1})_{+} + c_1 k_1 \\
+% s_{c_1}(k_b) & = L \sum (y_l - x_l^{F,k_1})_{+} + c_1 (k_b - z_{k_b}(c_1)) \\
+%  & = L \sum (y_l - x_l^{F,k_1})_{+} + c_1 \sum F_l^{-1}(1-c(k_1)/L)\\
+% s_{c_1}(K_2) & = L \sum (y_l - x_l^{F,k_1})_{+} + c_1 (K_2 - z_{K_2}(c_1))
+% \end{align}
+
+% Writing $k(c) = \sum F_l^{-1}(1-c/L)$,
+% \begin{align}
+% s_{k_1}(c) - s_{c_1}(k(c)) &= (c-c_1)\sum F_l^{-1}(1-\max(c,c_1)/L) \\
+% s_{c_1}(k) - s_{k_1}(c(k)) &=  
+% \end{align}
+
+
+% But 
+% \begin{align}
+% \del{k}{c}& = \sum_{l=1}^{N} \frac{-1}{L f_l(q_{F_l,\tau(c)})} := -\mathrm{MAI}(c,F)\label{eqn:dkdc}
+% \end{align}
+% (where we assume that the $F_l$ have non-negative support). The name MAI refers to this derivative being the marginal total allocation increase for the total quantile loss Bayes act $x^{F,Q(C)}$ that results from a reduction of the cost $C$ of the resource by 1. Or in terms of the probability level $\tau(c)=1-c/L$,
+% \begin{align}
+% \del{k}{\tau} = \del{k}{c}\dby{c}{\tau} = -\mathrm{MAI}(c,F) \cdot (-L\tau) = L\mathrm{MAI}(c,F) \label{eqn:dkdtau}
+% \end{align}
+
+% Now a constraint $K = 0$ corresponds to cost-loss parity $C=L$, i.e. $\tau = 0$, for which the Bayes act is the zero vector.  And $K \to \infty$ corresponds to the cost of over-allocation vanishing, i.e. $\tau \to 1$. So making a change of variables with \eqref{eqn:dkdc} or \eqref{eqn:dkdtau} we get
+% \begin{align}
+% s_{\mathrm{IAS}}(x^{F, \mathrm{IAS}}(k), y) 
+% &= \sum_{l=1}^N \int_0^{L} s_{\mathrm{Q}}(x^{F_l, \mathrm{Q}(c)}, y) \mathrm{MAI}(c,F) dc \\
+% &= \sum_{l=1}^N \int_0^{1} s_{\mathrm{Q}}(x^{F_l, \tau}, y) L\mathrm{MAI}(L(1-\tau),F) d\tau \\
+% &= tw\mathrm{CRPS}(F,y)
+% \end{align}
+% where MAI provides the (identical) weighting in each coordinate. Crucially though, this weighting \emph{depends} on $F$ so that IAS's of two forecasts $F$ and $\tilde{F}$ \emph{cannot} be interpreted as result of applying the same $w$CRPS to the two forecasts.
+
+% More about SR's:
+% \begin{itemize}
+% \item QS: meteorologist loss v newsvendor
+% \item WIS/CRPS: multiple scenario loss (Gruschka-Cockayne et al, Fissler and Ziegel, Jose and Winkler)
+% 	- Least squares analogy
+% \item bring in Brier?
+% \item take stab at explaing log score following Dawid with Bayes act being inverse of $x^F(c)$ i.e., $F$ itself.
+% \end{itemize}
 
 
 \section{Solving the Allocation Problem}
 
-As the solution to a constrained optimization problem, the optimal allocation $x^F$ according to a forecast $F$ can be described formally as the first component of a stationary point $(x^{F,k}, \lambda^{\star})$ in the region $\{x \geq 0, \lambda \in \mathbb{R}\}$ for the Lagrangian 
+The optimal allocation $x^{F,k}$ according to a forecast $F$ is a solution to the constrained optimization, or \emph{allocation} problem
 \begin{align}
-\mathcal{L}(x, \lambda; F, k, L) = L\sum_{l=1}^{N} E_{F_l}[(Y_l - x_l)_{+}] + \lambda\left(\sum_{l=1}^{N} x_l - k\right).
+    (\mathrm{AP}) \quad \underset{x \in \mathbb{R}_{+}^N}{\mathrm{minimize}}\,\, E_{F}\left[s_A(Y,x)\right] \text{ subject to } 
+    T_x = k. \label{AP}
 \end{align}
-That is, optimality at $x^F$ requires that
+The AP has a convex objective function and affine constraint, so from general convex optimization theory 
+(see e.g. \cite{ruszczynski2011nonlinear}, Chapter 4), it is equivalent to the
+problem of finding a saddle point $(x^{F,k}, \lambda^{\star})$ of the associated Lagrangian 
 \begin{align}
-0 = \frac{\partial}{\partial x_l} \mathcal{L}(x^F, z_K, \lambda) &= L E_F \left[\frac{d}{dx_l}(Y_l - x_l^F)_{+}\right] + \lambda \\
-& = L E_F \left[-\mathbf{1}\{Y_l \geq x_l^F\}\right] + \lambda \\
-& = L(F_l(x_l^F)-1) + \lambda \label{eqn:x_stationary}
+\mathcal{L}(x, \lambda) = \mathcal{L}(x, \lambda; F, k, L) 
+&= E_F\left[s_A(Y,x)\right] + \lambda(T_x - k) \\
+&= L\sum_{l=1}^{N} E_{F_l}[(Y_l - x_l)_{+}] + \lambda\left(\sum_{l=1}^{N} x_l - k\right).  
 \end{align}
-for any $x_l^F > 0$;
+in the region $\{x \geq 0, \lambda \in \mathbb{R}\}$.\footnote{The Lagrangian in this context has the interpretation as the best (lowest) objective function value we can achieve if we forced to choose $x$ but can buy or get credit for changing the constraint level $k$ 
+at the ``price'' $\lambda$.}
+The Lagrangian reformulation in particular recasts the constraint $T_x=k$ of the original problem as a first-order condition on $\mathcal{L}$ with respect to the new \emph{Lagrange multiplier} variable $\lambda$:
 \begin{align}
-0 = \frac{\partial}{\partial z_K} \mathcal{L}(x^F, z_K, \lambda) &= \lambda - C
+0 = \del{}{\lambda} \mathcal{L}(x^{F,k}, \lambda^{\star}) &= \sum_{l=1}^{N} x_l^{F,k} - k. \label{eqn:lambda_stationary}
 \end{align}
-if $z_K>0$; and
+But for $(x^{F,k}, \lambda^{\star})$ to be a saddle point we also need
 \begin{align}
-0 = \del{}{\lambda} \mathcal{L}(x^F, z_K^F, \lambda^{\star}) &= \sum_{l=1}^{N} x_l^F + z_K^F - K\\
-& = \sum_{\{l | x_l^F > 0\}} F_{l}^{-1}(1-\lambda^{\star}) + z_K^F - K \quad \text{ (by \eqref{eqn:x_stationary})}. \label{eqn:lambda_stationary}
+0 = \frac{\partial}{\partial x_l} \mathcal{L}(x^{F.k}, \lambda) &= L(F_l(x_l^{F,k})-1) + \lambda^{\star} 
+\quad (\text{cf. \eqref{eqn:q_deriv}}) \label{eqn:x_stationary}
 \end{align}
-These equations give formulae $x_i^F = F_i^{-1}(1-\lambda^{\star})$, but in many situations of interest for us the $F_i^{-1}$ are not single-valued, and even 
-when they are, a solution $\lambda^{\star}$ of \eqref{eqn:lambda_stationary} can only be obtained analytically in special cases (but see ...). We therefore typically calculate allocation scores using approximately optimal allocations found via a binary search for $\lambda^{\star}$.  This search begins with the interval $\lambda \in [0,1]$ and 
-checks at each step the sign of the inequality that results from substituting the interval midpoint $\lambda_{\tau}$ into \eqref{eqn:lambda_stationary} for endpoints of the sets $F_i^{-1}(1-\lambda_{\tau})$.  If $\sum_{i} F_{i}^{-1}(1-\lambda^{\star}) > K$, the quantiles for $1-\lambda_{\tau}$ exceed our resource constraint so we set $\lambda_{\tau}$ as the lower endpoint of the $\tau + 1$ search interval.  Similarly, if $\sum_{i} F_{i}^{-1}(1-\lambda^{\star}) < K$, the quantiles for 
-$1-\lambda_{\tau}$ do not make full use of our resource and we set $\lambda_{\tau}$ as the upper endpoint of the $\tau + 1$ search interval.  This process halves the search interval width at each step and we continue until this width falls below a given tolerance level $\varepsilon_{\tau}$ yielding an 
-approximation $\lambda^{\star, \varepsilon}$. When quantiles $F_i^{-1}(1-\lambda^{\star, \varepsilon})$ are singly defined and the forecast densities $f_i$
-not too close to zero at these quantiles, the discrepancy $\Delta(\lambda^{\star, \varepsilon})  = \sum_{i=1}^{N} F_{i}^{-1}(1-\lambda^{\star, \varepsilon}) - K$ is of order $\varepsilon_{\lambda}$ and we can take $F_{i}^{-1}(1-\lambda^{\star, \varepsilon})$ as approximations to $x_i^F$.
+for any $x_l^{F,k} > 0$, which gives a formula 
+\begin{align}
+x_l^{F,k} = F_l^{-1}(1-\lambda^{\star}/L) \label{eqn:xfk_formula}
+\end{align}
+for any non-zero element $x_l^{F,k}$ of the solution. Thus \eqref{eqn:lambda_stationary} becomes
+\begin{align}
+0 = \sum_{\{l | x_l^{F,k} > 0\}} F_{l}^{-1}(1-\lambda^{\star}/L) - k. \label{eqn:lambda_stationary2}
+\end{align}
 
-Often though, $1-\lambda^{\star, \varepsilon}$ will be the probability level of a ``plateau'' for one or more $F_i$ and the $\lambda$ search algorithm will fail to drive $\Delta(\lambda^{\star, \varepsilon})$ close enough to zero for the $F_{i}^{-1}(1-\lambda^{\star, \varepsilon})$ to be acceptable approximations of the optimal allocations. In this event we follow-up with a ``post-processing'' step that identifies lower and upper boundaries $x_{i,L}$ and $x_{i,U}$ of any
+Since convexity and compactness guarantee existence of a solution, the problem is now reduced to solving \eqref{eqn:lambda_stationary} for the set 
+$\{l \mid x_l^{F,k} > 0\}$ and value $\lambda^{\star}$. Note, however, that this is a more complicated task than solving just 
+for $\lambda^{\star}$ under the assumption that \eqref{eqn:xfk_formula} holds for all coordinates of $x^{F,k}$.\footnote{Such an assumption would exclude fairly simple examples in which $F$ has support bounded away from $0$ in one coordinate but not in another.} The task is simplified though by bringing in the full saddle point condition for $\lambda^{\star}$ which implies not only \eqref{eqn:lambda_stationary} but also that
+$\lambda^{\star}$ is in fact the unique maximizer of the \emph{dual function} 
+$\mathcal{L}_D(\lambda) := \inf_{x \in \mathbb{R}_{+}^N} \mathcal{L}(x, \lambda)$.
+This approach is especially suitable in our situation because our original objective function $E_F\left[s_A(Y,x)\right]$ is decomposable in the coodinates $x_l$, allowing the dual function to be computed separately with respect to each coordinate:
+\begin{align}
+\mathcal{L}_D(\lambda) &= \inf_{x \in \mathbb{R}_{+}^N} L\sum_{l=1}^{N} E_{F_l}[(Y_l - x_l)_{+}] + \lambda\left(\sum_{l=1}^{N} x_l - k\right) \\
+&= - \lambda k + \sum_{l=1}^{N} \inf_{x_l \in \mathbb{R}_{+}}\left\{ L E_{F_l}[(Y_l - x_l)_{+}] + \lambda x_l\right\}  \label{eqn:dual_decomp} \\
+&= - \lambda k + \sum_{l=1}^{N}  LE_{F_l}[(Y_l - x_l(\lambda))_{+}] + \lambda x_l(\lambda).
+\end{align}
+Here, $x_l(\lambda)$ is any member of the set 
+\begin{align}
+\chi_l(\lambda) = \underset{x_l \in \mathbb{R}_{+}}{\mathrm{arginf}} \left\{ L E_{F_l}[(Y_l - x_l)_{+}] + \lambda x_l\right\}
+\end{align}
+which for $F_l$ in a standard parametric family will often have simple the form $\chi_l(\lambda) = \{F_l^{-1}(1-\lambda/L)\}$ but could an interval containing $0$ or $\infty$.
+From general theory, $\mathcal{L}_D(\lambda)$ is concave, and while it may not be differentiable when the $x_l$'s attaining the infima in \eqref{eqn:dual_decomp} are zero, it does have as a subdifferential the well-defined interval
+\begin{align}
+\partial \mathcal{L}_D(\lambda) 
+&= \sum_{l=1}^N \chi_l(\lambda) - k.
+\end{align}
+This of course looks very similar to the right hand side of \eqref{eqn:lambda_stationary2}, but the dual perspective has the key advantage of not requiring any guesses of the set $\{l \mid x_l^{F,k} > 0\}$ when initiating a search algorithm for $\lambda^{\star}$.  Instead, given a candidate $\lambda_0$ for $\lambda^{\star}$, we proceed by calculating the sets $\chi_l(\lambda_0), l = 1,\ldots,N$, and using them to find the (usually zero-width) interval $\partial \mathcal{L}_D(\lambda_0)$. If $\partial \mathcal{L}_D(\lambda_0) \subset (-\infty,0)$, we can eliminate $\{\lambda \geq \lambda_0\}$ from our search and similarly if $\partial \mathcal{L}_D(\lambda_0) \subset (0, \infty)$, we can eliminate $\{\lambda \leq \lambda_0\}$. 
+
+Intutively, we are testing to see whether the total amount $T(\lambda_0)$ of resources that would be procured at a cost $C_0=\lambda_0$ in the unconstrained decision problem with loss function \eqref{eqn:TQ_loss} leaves a deficit or surplus relative to $k$. $T$ is a sum over a set of quantiles and both the set and the quantiles are non-decreasing with cost. (This is essentially why $\mathcal{L}_D$ is concave.) Thus by evaluating $T$ at a mid-point we cut the search interval width in half at each step, arriving quickly at a close approximation $\lambda^{\star, \varepsilon}$ of the cost corresponding to $k$. The strategy of analysing constrained optimization problems by describing the ``prices'' at which unconstrained decisions match constrained ones is ubiquitous in optimization theory and its applications, especially economics.
+
+If the $F_l$ increase steadily enough toward 1 after leaving a neigborhood of 0, we can expect $\partial \mathcal{L}_D(\lambda)$ to be bounded away from 0 for all $\lambda \neq \lambda^{\star}$, allowing a binary search to converge without ambiguity.  But when some $F_l$ exhibit internal ``plateaus'' where their densities stay at or near 0, we can and often do in our applications encounter $\overline{\lambda}$ for which $\partial \mathcal{L}_D(\overline{\lambda})$---or at least our numerical approximation of it---contains 0 as an interior point. That is, $\overline{\lambda}$ is a price at which an uncontrained decision maker informed only by $F$ can increase from total provision $T_1<k$ to another $T_2>k$ while maintaining an optimal expected utility by making (at least approximately) one-to-one trade-offs between increased resource cost and risk reduction in the one or more locations where $F_l$ has a plateau of height near $1-\overline{\lambda}/L$. 
+
+In this event we follow-up with a ``post-processing'' step that identifies lower and upper boundaries $x_{i,L}$ and $x_{i,U}$ of any
 such low-density plateau containing points in $F_{i}^{-1}(1-\lambda^{\star, \varepsilon})$. If $F_{i}^{-1}(1-\lambda^{\star, \varepsilon})$ is single-valued 
 with the density $f_i(F_{i}^{-1}(1-\lambda^{\star, \varepsilon}))$ not close to zero, we simply take $x_{i,L} = F_{i}^{-1}(1-\lambda^{\star, \varepsilon}) = x_{i,U}$. Defining $\mathbf{x}_L = (x_{i,L})$ and $\mathbf{x}_U = (x_{i,U})$ we then interpolate an approximately optimal allocation 
 $\mathbf{x} = (1-t^{\star})\mathbf{x}_L + t^{\star}\mathbf{x}_U$ where $t^{\star}$ solves 
