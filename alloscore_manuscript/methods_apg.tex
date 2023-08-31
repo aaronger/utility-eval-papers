@@ -45,25 +45,26 @@
 
 \begin{abstract}
 
-A somewhat open-ended attempt to motivate and construct quantile scores, WIS, CRPS, and allocation scores within a unified decision theoretic framwork.
+We develop a unified decision theoretic framwork for quantile scores, WIS, CRPS, and allocation scores.
 
 \end{abstract}
 
 \section{Introduction}
 
-In this section/report/paper/rambling manifesto, we present a methodological perspective on the use scoring rules for forecast evaluation that we see as well-adapted to our motivating research goal to understand and describe the social utility of infectious disease forecasts. Our approach follows the common practice in decision theory of giving central roles to the foundational concepts of state, action, and result as the basic components of a decision problem. From these primitives, we first derive the familiar measures of quantile score (QS), continuous ranked probability score (CRPS) and their aggregates across forecast targets.  We then introduce new scoring rules, the \emph{specific} and \emph{integrated allocation scores} designed to reflect aspects of the decision problem corresponding to the CRPS that emerge when multiple instances are confronted simultaneously.  Specifically, we will consider not only whether using more or less of a resource leads to a better result in a specific problem, but also whether a limited resource is better allocated to one problem rather than another.
-This added concern brings into play the duality in mathematical optimization theory between constraints on ``decision variables" and the ``Lagrange multiplier variables" which quantify the sensitivity of solutions to constraints, that is, the degree to which loosening constraints improves results under the optimal action..
+In this report, we present a methodological perspective on the use scoring rules for forecast evaluation that we see as well-adapted to our motivating research goal to understand and describe the social utility of infectious disease forecasts. Our approach follows the common practice in decision theory of giving central roles to the foundational concepts of state, action, and result as the basic components of a decision problem. From these primitives, we first derive the familiar measures of quantile score (QS), continuous ranked probability score (CRPS) and their aggregates across forecast targets.  We then introduce new scoring rules, the \emph{specific} and \emph{integrated allocation scores} designed to reflect aspects of the decision problem beyond those defining the QR and CRPS that emerge when multiple instances of a decision problem are confronted simultaneously.  Specifically, we will consider not only whether using more or less of a costly resource leads to a better result in a specific problem, but also whether a limited resource is better allocated to one problem rather than another.
+This added concern brings into play the duality in mathematical optimization theory between constraints on decision variables on the one hand and dual or ``Lagrange multiplier'' variables on the other.  Dual variables quantify the sensitivity of the optimal value of an objective function to constraints, that is, the degree to which loosening constraints improves results under the optimal action.
 Our computational methods (see ..) in fact make use of this connection.
 Something about Bayes risks...
 
 \section{Scoring forecasts via decision problems}
 
-Broadly speaking, we score a probabilistic forecast $F$ by identifying it with a solution to a \emph{decision problem} and rating the utility of that solution.  The term ``decision problem'' refers to a pre-specified set of allowed actions, possible future states, and the possible results of allowed actions under those states.  Accordingly, $F$ will receive a ``better" or ``worse" score in a particular instance when the result is better or worse of a rational decision maker using $F$ (and essentially only $F$) to select an action in the face of uncertainty about a future state.  It should be noted immediately that a better or worse score in a single instance may tell us almost nothing about the intrinsic value of the forecasting method that produced $F$.  But as scores accumulate, we can use their distributions across forecasting instances to make inferences as to whether one forecasting method is better or worse than another in a decision theoretic sense. 
+Broadly speaking, we view scoring a probabilistic forecast $F$ with a scoring rule as the process of identifying $F$ with a solution to a \emph{decision problem} and then rating the utility of that solution.  The term ``decision problem'' refers to a pre-specified set of allowed actions, possible future states, and the possible results of allowed actions under those states.  Accordingly, $F$ will receive a ``better" or ``worse" score in a particular instance when the result is better or worse of a rational decision maker using $F$ (and essentially only $F$) to select an action in the face of uncertainty about a future state.  As such scores accumulate, we can use their empirical distributions across forecasting instances as inputs to higher level decision problems: whether a status quo policy should be adjusted according to the forecasts produced by a particular model or method; whether one forecasting method is a better choice to guide policy rather than another; how different forecasting methods can best be coordinated or combined to guide policy.  By connecting such policies with the specific decision problems we use to define 
+scoring rules, we may be able to improve these higher level decisions we make about how forecasts are used.
 
 \subsection{The ingredients of a decision problem with examples}
-The basic example of a future state we are considering is the number of individuals that become sick enough from an infectious disease to be in need of some potentially limited resource such as hospital beds, ventilators, medication, or medical staff.  We write $y$ to refer to a particular state such as the quantity of need in a single location or the quantities across multiple locations or times and $Y$ for a future uncertain state which is a random variable with a set of realizable values $\mathcal{Y}$. The forecast $F$ to be scored is a claim of how $Y$ is (or will be) distributed. We also will refer to states as outcomes, which helps to emphasize their future realization.  But we want to clearly distinguish an outcome from a result, which as we discuss below, which is determined by an action under a certain outcome.
+The basic example of a future state we are considering is the number of individuals that become sick enough from an infectious disease to be in need of some potentially limited resource such as hospital beds, ventilators, medication, or medical staff.  We write $y$ to refer to a particular state such as the quantity of need in a single location or the quantities across multiple locations or times and $Y$ for a future uncertain state which is a random variable with a set of realizable values $\mathcal{Y}$. The forecast $F$ to be scored is a claim of how $Y$ is (or will be) distributed. We also will refer to states as outcomes, which helps to emphasize their future realization.  But we want to clearly distinguish an outcome from a result, which as we discuss below, is determined by an action being taken under a certain outcome.
 
-The basic example of an action we consider is the specific amount or set of amounts of such a resource that a public health worker decides to make available in either a single location or across multiple locations or times.  We write an action as $x$ and assume that it takes values in a set of possible actions $\mathcal{X}$ that is possibly defined by some constraint such as the total amount of resource available to the public health worker for allocation.  Note that $x$ must be selected prior to the realization of $y$.  A decision maker might use a set rule to select $x$ based on inputs, such as $F$, but the observed value of $y$ cannot be such an input.\footnote{In a dynamical decision theoretic approach, the action $x$ could be a time series depending at each step on previous values of $y$.  This could be a very fruitful framework for infectious disease forecast evaluation but we do not pursue it is this work.}
+The basic example of an action we consider is the specific amount or set of amounts of such a resource that a public health worker decides to make available in either a single location or across multiple locations or times.  We write an action as $x$ and assume that it takes values in a set of possible actions $\mathcal{X}$ that is possibly defined by some constraint such as the total amount of resource available to the public health worker for allocation.  Note that $x$ must be selected prior to the realization of $y$.  A decision maker might use a set rule to select $x$ based on inputs, such as $F$, but the observed value of $y$ cannot be such an input.\footnote{In a dynamical decision theoretic approach, the action $x$ could be a time series depending at each step on previous values of $y$.  This could be a very fruitful framework for infectious disease forecast evaluation but we do not pursue it is this work.} We will also require that $y$ be observed before $x$ can effect $y$.  Thus, if we were considering actions of providing vaccines or masks to protect a (likely estimated) number $y_e$ of people exposed to an observed number $y$ of infectious individuals, we would require $y$ be observed before the vaccines or masks had any chance to reduce disease incidence. 
 
 And when actions are assigned to states, there are results, which we abstractly identify with an element $r$ of a set $\mathcal{R}$. We have two basic examples in mind of what such a $r$ might be.   First, we consider some amount of the regret mentioned above that resources made available in a place or time are not actually needed at that place or time. We emphasize that the nature of this regret is potentially quite amorphous.  In business contexts (e.g., the ``newsvendor problem" from inventory management) this regret is often easily quantifiable as monetary waste, but in a public health context, it could... (A desire to better understand over-allocation regret and its relevance to infectious disease forecast evaluation was actually a primary impetus for the present work.) 
 Our second and more concrete example of a result is the loss incurred when a sick individual is not able to access a resource because it was not made available to them where and when they needed it.   We emphasize here that while we formally identify such loss as a result of a particular action being taken under a particular state, it may or may not be an avoidable loss.  That is, it could just as well result from a factor outside a decision maker's control such as a severe resource constraint as from a choice to withhold a resource, motivated, for example, by a desire to reduce waste.
@@ -82,7 +83,7 @@ Thus, given definitions of $\mathcal{X}$, $\mathcal{Y}$, $\mathcal{C}$, and a lo
 
 Another key feature of this procedure is that the scoring rule $S$ it yields is proper by definition.  This is because a forecaster that believes that $Y$ has distribution $F$ and understands the decision problem and loss function $s$ must also believe that $x^F$ is the optimal action to take.  This, in turn, implies the belief that there is no forecast that will give a better expected score than $F$.  Therefore, there is no incentive to reveal a forecast at odds with a forecaster's beliefs about $Y$.  
 
-\begin{remark} For there to be an incentive \emph{not} to reveal a forecast other than $F$ we would need a \emph{strictly} proper scoring rule, which would require more conditions on the decision problem and/or $s$. In the literature, a functional $T(F)$ (such as the mean or median of $F$) is called \emph{elicitable} if there is a strictly proper scoring rule $S(F,y) = s(x^F,y)$ for which $T(F)=x^F$.  But the focus in work on elicitability often seems to be the functional $T$ as a starting point rather than the decision problem, which is our primary concern here.
+\begin{remark} For there to be an incentive \emph{not} to reveal a forecast other than $F$ we would need a \emph{strictly} proper scoring rule, which would require more conditions on the decision problem and/or $s$. In the literature, a functional $M(F)$ (such as the mean or median of $F$) is called \emph{elicitable} if there is a strictly proper scoring rule $S(F,y) = s(x^F,y)$ for which $M(F)=x^F$.  But the focus in work on elicitability often seems to be the functional $T$ as a starting point rather than the decision problem, which is our primary concern here.
 \end{remark}
 
 The following sections explain in detail how the QS, WIS, CRPS (for various parameters and weightings) as well as extensions to higher dimnsional setting can be seen as outputs of our procedure. 
@@ -103,7 +104,7 @@ The Bayes act for $C \in (0,L)$ is the solution of the first order equation
 &= C - LE_F\left[\mathbf{1}\{y > x\}\right] \\
 &= C + L(F(x) - 1), \label{eqn:q_deriv}
 \end{align}
-that is, the quantile $x^F = F_l^{-1}(1 - C/L) = q_{F,\tau}$ for the probability level $\tau = 1-C/L$. (That the critical point $q_{F,\tau}$ is actually a minimum follows from \eqref{eqn:q_deriv} being non-positive to its left and non-negtive to its right, and assuming as we do for now that $F$ is smooth and strictly increasing at $q_{F,\tau}$, it is a unique minimum.) The quantile solves the decision problem with respect to the forecast $F$ by being the action which best balances expected cost against expected loss among all actions available to the decision maker.
+that is, the quantile $x^F = F_i^{-1}(1 - C/L) = q_{F,\tau}$ for the probability level $\tau = 1-C/L$. (That the critical point $q_{F,\tau}$ is actually a minimum follows from \eqref{eqn:q_deriv} being non-positive to its left and non-negtive to its right, and assuming as we do for now that $F$ is smooth and strictly increasing at $q_{F,\tau}$, it is a unique minimum.) The quantile solves the decision problem with respect to the forecast $F$ by being the action which best balances expected cost against expected loss among all actions available to the decision maker.
 
 Finally, we evaluate the scoring rule $S_Q$ on $F$ when outcome $y$ realizes by measuring the loss that occurs when the action $q_{F,\tau}$ is taken:
 \begin{align}
@@ -113,14 +114,14 @@ S_Q(F,y) = s_Q(q_{F,\tau}, y) = Cq_{F,\tau} + L(y- q_{F,\tau})_{+}.
 
 \section{WIS and CRPS as quantile scores under cost uncertainty}
 
-The decision problem leading to the QS may however be complicated by uncertainty at time $t_0$ about the cost $C$ of the resource. We take such uncertainty as requiring the worker to commit in advance to procurement levels $x_i$ for a range of potential costs $C_i < L$ where $i \in 1, \ldots, m$.  Even though only one of the $x_i$ will end up needing to be procured, there does not seem to be any intrinsically decision theoretic principle by which our loss function should ignore counter-factual but exactly specified results of the decision under unrealized costs. If we wanted to commit to a \emph{locality} principle for prediction where losses and scores only depend on predictive densities in a neighborhood of the relevant observation, this attempt would falter, and we would need to frame our methods around the log score and it's higher order relatives. But we do not see that as an appropriate principle in public health resourse allocation where  
+The decision problem leading to the QS may however be complicated by uncertainty at time $t_0$ about the cost $C$ of the resource. We take such uncertainty as requiring the worker to commit in advance to procurement levels $x_j$ for a range of potential costs $C_j < L$ where $j \in 1, \ldots, m$.  Even though only one of the $x_i$ will end up needing to be procured, there does not seem to be any intrinsically decision theoretic principle by which our loss function should ignore counter-factual but exactly specified results of the decision under unrealized costs. If we wanted to commit to a \emph{locality} principle for prediction where losses and scores only depend on predictive densities in a neighborhood of the relevant observation, this attempt would falter, and we would need to frame our methods around the log score and it's higher order relatives. But we do not see that as an appropriate principle in public health resource allocation where  
 probabilistic forecasts can be valuable by pushing decision makers in the "right direction" even when they assign low probability to observed outcomes. We instead adopt a ``sensitivity-to-distance'' principle from which piece-wise linear loss functions and the QS can be shown to naturally emerge. It is this principle that makes the loss under alternative costs seem relevant. \apg{These are obviously incomplete thoughts but I feel like there is something here that I've been grasping for for a lng time.}
 
-We take into account the results of actions under a set $\mathcal{C} = \{C_i\}$ of possible costs by expanding the loss function to be a weighted mean of quantile losses under certainty about the cost:
+We take into account the results of actions under a set $\mathcal{C} = \{C_j\}$ of possible costs by expanding the loss function to be a weighted mean of quantile losses under certainty about the cost:
 \begin{align}
-s_{Q,\mathcal{C}, p_C}(x,y) = \frac{1}{m}\sum_{i=1}^{m}p_i(C_ix_i + L(x_i - y)_+). \label{eqn:sum_CL_loss}
+s_{Q,\mathcal{C}, p_C}(x,y) = \frac{1}{m}\sum_{j=1}^{m}p_j(C_j x_j + L(x_i - y)_+). \label{eqn:sum_CL_loss}
 \end{align}
-Here, $p_C = \{p_i\}, i = 1,\ldots,m$ is a prior distribution on $\mathcal{C}$ and $x = (x_1,\ldots,x_m)$ is the decision vector corresponding to all possible costs.  $p_C$ would be provided by the decision maker (or perhaps a separate expert), and we emphasize that we are considering it here as part of the loss function $s_{Q,\mathcal{C}, p_C}$ that would be formulated in an effort to adapt forecast evaluation to the specifics of a public health decision problem. In practice, $p_C$ has usually been taken to be uniform, which we will show for a particular $\mathcal{C}$ (given $L$) leads to the WIS familiar in ID forecasting hubs. This might be interpreted as deferring to an uninformative prior. 
+Here, $p_C = \{p_j\}, j = 1,\ldots,m$ is a prior distribution on $\mathcal{C}$ and $x = (x_1,\ldots,x_m)$ is the decision vector corresponding to all possible costs.  $p_C$ would be provided by the decision maker (or perhaps a separate expert), and we emphasize that we are considering it here as part of the loss function $s_{Q,\mathcal{C}, p_C}$ that would be formulated in an effort to adapt forecast evaluation to the specifics of a public health decision problem. In practice, $p_C$ has usually been taken to be uniform, which we will show for a particular $\mathcal{C}$ (given $L$) leads to the WIS familiar in ID forecasting hubs. This might be interpreted as deferring to an uninformative prior. 
 
 We can also consider $C$ a continuous random variable with a prior density $f_C$ and accommodate this by letting $m \to \infty$ in \eqref{eqn:sum_CL_loss} 
 which (with some mathematical care) converts the weighted mean into an integral
@@ -137,7 +138,7 @@ $(x^F(1),\ldots,x^F(m))=(q_{F,\tau_1},\ldots,q_{F,\tau_m})$ or a function $x(c) 
 Similarly, given an outcome $y$, evaluation of the scoring rules $s_{Q,\mathcal{C}, p_C}$ and $s_{Q,f_C}$ on the forecast $F$ amounts to vectorizing the
 formula for $S_Q(F,y)$. That is,
 \begin{align}
-S_{Q,\mathcal{C}, p_C}(F,y) &= \frac{1}{m}\sum_{i=1}^{m}p_i(C_i q_{F,\tau_i} + L(q_{F,\tau_i} - y)_+) \\
+S_{Q,\mathcal{C}, p_C}(F,y) &= \frac{1}{m}\sum_{j=1}^{m}p_j(C_j q_{F,\tau_j} + L(q_{F,\tau_j} - y)_+) \\
 S_{Q, f_C}(F,y) &= \frac{1}{L}\int_{0}^{L}(cq_{F,\tau(c)} + L(q_{F,\tau(c)} - y)_+) f_C(c)dc. \label{eqn:CRPS_cform}
 \end{align}
 
@@ -161,13 +162,14 @@ s_{Q,\tau}(q_{F,\tau},y) + s_{Q,1-\tau}(q_{F,1-\tau},y) &= q_{F,\tau} + \tau(q_{
 The scoring rule $\mathrm{IS}_{\alpha}(F,y)$ is the \emph{interval score} suggested by expression (43) in \cite{gneiting2007strictly} 
 and formalized by \cite{bracher2021evaluating} as a means for defining the weighted interval score 
 \begin{align}
-\mathrm{WIS}_{\alpha_{\{0: J\}}}(F, y)=\frac{1}{J+1 / 2}\left(w_0 |y-q_{F,.5}|+\sum_{j=1}^J w_j \operatorname{IS}_{\alpha_j}(F, y)\right).
+\mathrm{WIS}_{\alpha_{\{1: J\}}}(F, y)=\frac{1}{J+1 / 2}\left(w_0 |y-q_{F,.5}|+\sum_{j=1}^J w_j \operatorname{IS}_{\alpha_j}(F, y)\right).
 \end{align}
 So by taking $\mathcal{C} = \{(1 \pm \alpha_j)L/2 \mid j > 0\}\cup \{L/2\}$ and $p_\mathcal{C}$ symmetric across $L/2$, we get 
 \begin{align}	
 S_{Q,\mathcal{C}, p_C}(F,y) = \mathrm{WIS}_{\alpha_{\{0: J\}}}(F, y) + y \sum_{j=0}^{J} w_j
 \end{align}	
-with $w_j = p_{j}\alpha_j/2$ and $w_0 = p_{L/2}$.
+with $w_j = p_{j}\alpha_j/2$ and $w_0 = p_{L/2}$. Setting $p_j=1/m$ and $\alpha_j=0.9, \ldots, 0.2,0.1,0.05,0.02, j = 1,\ldots,11$ gives the WIS currently used in 
+the COVID-19 Forecast Hub.
 
 
 Again, the hierarchy we have introduced here describing WIS and CRPS as parallels to the quantile score for higher dimensional action sets is in itself a mere formality employing the linearity of differentiation with respect to the expectation operator $E_{C}$ for $C$ considered as a random variable. But as we move now to decision problems with multiple outcomes, it will turn out to provide a key shift in perspective that allows the scoring rules we define in terms of allocation under scarcity to be seen as a natural and non-trivial extension of the hierarchy. 
@@ -175,56 +177,56 @@ Again, the hierarchy we have introduced here describing WIS and CRPS as parallel
 
 \section{Aggregating QS, WIS, and CRPS across dimensions}
 
-We next expand our decision problem to include multiple actions that will all, in fact (not counterfactually), have to be taken.  This includes the motivating scenario for our work, the simultaneous procurement of resources across several locations (U.S. states and territories) during a pandemic. And again, summing the losses  \eqref{eqn:quantile_loss} over the locations (for a particular $C$ and $L$) creates a loss function that is reactive to the overall procurement decision. Let the locations be indexed by $l \in 1,\ldots,N$.  The action sets for the decision problem corresponding to a single certain cost $C$, a discrete cost distribution over $\{C_i\}, i = 1,\ldots,m$, and a continuous cost distribution $f_C$ with support on $[0,L]$ are now
+We next expand our decision problem to include multiple actions that will all, in fact (not counterfactually), have to be taken.  This includes the motivating scenario for our work, the simultaneous procurement of resources across several locations (U.S. states and territories) during a pandemic. And again, summing the losses  \eqref{eqn:quantile_loss} over the locations (for a particular $C$ and $L$) creates a loss function that is reactive to the overall procurement decision. Let the locations be indexed by $i \in 1,\ldots,N$.  The action sets for the decision problem corresponding to a single certain cost $C$, a discrete cost distribution over $\{C_j\}, j = 1,\ldots,m$, and a continuous cost distribution $f_C$ with support on $[0,L]$ are now
 \begin{align}
 \mathcal{X}_{cert} &= \mathbb{R}_{+}^N \\
-\mathcal{X}_{disc} &= (\mathbb{R}_{+}^m)^N = \{x(i):\{1,\ldots,m\} \to \mathbb{R}_{+}^N\}\\
+\mathcal{X}_{disc} &= (\mathbb{R}_{+}^m)^N = \{x(j):\{1,\ldots,m\} \to \mathbb{R}_{+}^N\}\\
 \mathcal{X}_{cont} &= \{x(c):[0,\infty) \to \mathbb{R}_{+}^N\}.
 \end{align}
 And for these ``vector-action'' problems we can define \emph{total} versions of our loss functions
 \begin{align}
-s_{TQ}(x,y) &= \sum_{l=1}^N Cx_l + L(y_l-x_l)_+ \label{eqn:TQ_loss} \\
-s_{TQ, \mathcal{C}, p_C}(x,y) &= \frac{1}{m}\sum_{l=1}^N \sum_{i=1}^{m}p_i(C_i x_{l,i} + L(x_{l,i} - y_l)_+)\\
-s_{TQ, f_C}(x,y) &= \sum_{l=1}^N \int_{0}^{L} (cx_l(c) + L(x_l(c) - y_l)_+) f_C(c)dc.
+s_{TQ}(x,y) &= \sum_{i=1}^N Cx_i + L(y_i-x_i)_+ \label{eqn:TQ_loss} \\
+s_{TQ, \mathcal{C}, p_C}(x,y) &= \frac{1}{m}\sum_{i=1}^N \sum_{j=1}^{m}p_j(C_i x_{i,j} + L(x_{i,j} - y_i)_+)\\
+s_{TQ, f_C}(x,y) &= \sum_{i=1}^N \int_{0}^{L} (cx_i(c) + L(x_i(c) - y_i)_+) f_C(c)dc.
 \end{align}
-A key point for our presentation will be that the same $C$, set $\{C_i\}$, probabilities $\{p_i\}$, and density $f_C$ are used for all locations simultaneously.  We believe that our methods could be adapted to variations across locations (which could be important in practice), but we leave this generalization for later work. 
+A key point for our presentation will be that the same $C$, set $\{C_j\}$, probabilities $\{p_j\}$, and density $f_C$ are used for all locations simultaneously.  We believe that our methods could be adapted to variations across locations (which could be important in practice), but we leave this generalization for later work. 
 
 \section{The allocation score}
 
 The loss functions (and corresponding decision problems) defined so far have all been thouroughly covered, from one perspective or another, in various strands of forecast evaluation literature.  We now introduce one that, while certainly familiar in operations research and related fields, has not, to our knowledge, been explicitly discussed in a forecast evaluation context. 
 
-Consider again the resource procurement decision $x(c) \in \mathcal{X}_{cont}$ (or $\mathcal{X}_{disc}$ if $c = C_i, i \in 1,\ldots,m$) a public health worker must make in 
-attempting to mitigate a pandemic across multiple locations $l \in 1,\ldots,N$.  But now we ask the worker to extend their decision to cover the contingency that there turns out to only be a total amount $k$ of the resource available for allocation, less than the amount $\sum x_l(C)$ that they would choose to distribute if balancing only the realized cost $C$ against potential unmet demand.  This could be due to demand-side factors such as a budget cut, or supply-side factors such as manufacturing or shipping failures. In either case, we assume that these factors are undetermined at time $t_0$ when decisions must be made and model them with a positive random variable $K$ giving the total amount of resource that will be available
-at time $t_1$.  This adds, for each $k \in \mathbb{R}_{+}$, a component to our overall decision problem that asks the question: If the total amount $K$ available of the resource is insufficient allow the procurements $x_l(C)$ you specify for the realized cost $C$, what alternate procurement levels $x_l^{k,C}$ would you choose? Writing $T_x = \sum_{l=1}^{N} x_l$, the action set for this new component is 
+Consider again the resource procurement decision $x(c) \in \mathcal{X}_{cont}$ (or $\mathcal{X}_{disc}$ if $c = C_j, j \in 1,\ldots,m$) a public health worker must make in 
+attempting to mitigate a pandemic across multiple locations $i \in 1,\ldots,N$.  But now we ask the worker to extend their decision to cover the contingency that there turns out to only be a total amount $k$ of the resource available for allocation, less than the amount $\sum x_i(C)$ that they would choose to distribute if balancing only the realized cost $C$ against potential unmet demand.  This could be due to demand-side factors such as a budget cut, or supply-side factors such as manufacturing or shipping failures. In either case, we assume that these factors are undetermined at time $t_0$ when decisions must be made and model them with a positive random variable $K$ giving the total amount of resource that will be available
+at time $t_1$.  This adds, for each $k \in \mathbb{R}_{+}$, a component to our overall decision problem that asks the question: If the total amount $K$ available of the resource is insufficient allow the procurements $x_i(C)$ you specify for the realized cost $C$, what alternate procurement levels $x_i^{k,C}$ would you choose? Writing $T_x = \sum_{i=1}^{N} x_i$, the action set for this new component is 
 \begin{align}
 \mathcal{X}_k = \{x \in \mathbb{R}_{+}^N \mid T_x = k\}.
 \end{align}
-Note that because this decision is only relevant when $\sum x_l(C)>k$ we do not include actions which use less than $k$ total of the resource. (Why?)
+Note that because this decision is only relevant when $\sum x_i(C)>k$ we do not include actions which use less than $k$ total of the resource. (Why?)
  
 In these action set variables, the loss function we used for the unconstrained $N$ location decision problem with action set $\mathcal{X}_{cert}$ now has the expression
 \begin{align}
-s_{tQ}\left(x, y\right) = Ck + \sum_{l=1}^{N} L(y_l - x_l)_{+}.
+s_{tQ}\left(x, y\right) = Ck + \sum_{i=1}^{N} L(y_i - x_i)_{+}.
 \end{align}
 We see then that the cost $C$ will not effect the Bayes act for this component of the decision problem motivating the definition of a new single loss function (component), the \emph{allocation loss function}
 \begin{align}
-s_{A}(x,y):= L\sum_{l=1}^{N} (y_l - x_l)_{+},
+s_{A}(x,y):= L\sum_{i=1}^{N} (y_i - x_i)_{+},
 \end{align}
 we use in deriving Bayes acts for all $\mathcal{X}_k$.
 
 
 % \subsubsection*{Old allocation intro}
-% We now add a constraint $K$ on the total amount of the resource available for allocation across all locations. This presents the worker with a new decision problem we call the \emph{allocation problem} (AP or $\mathrm{AP}(K)$) with a smaller action set $\mathcal{X}_K = \{x \in \mathbb{R}_{+}^N | \sum x_l \leq K\} \subset \mathcal{X}_{cert}\}$ from which to choose (and analogously restricted version of the sets $\mathcal{X}_{disc}$ and $\mathcal{X}_{cont}$ for the decision problems with uncertain cost). Loss functions with the basic $Cx + L(y-x)_{+}$ structure we have used up until now continue to generate meaningful scoring rules with respect to the AP following our procedure.  But with a view toward developing a scoring rule that accommodates uncertainty about both $C$ and $K$ in a non-redundant (and more interpretable and computationally feasible) way, we augment the action set of the AP to include, in addition to the procurement levels $x_l$ for all locations, a ``reserve'' quantity $z_K$ defined as the available amount of resource that the worker decides not to allocate anywhere.
+% We now add a constraint $K$ on the total amount of the resource available for allocation across all locations. This presents the worker with a new decision problem we call the \emph{allocation problem} (AP or $\mathrm{AP}(K)$) with a smaller action set $\mathcal{X}_K = \{x \in \mathbb{R}_{+}^N | \sum x_i \leq K\} \subset \mathcal{X}_{cert}\}$ from which to choose (and analogously restricted version of the sets $\mathcal{X}_{disc}$ and $\mathcal{X}_{cont}$ for the decision problems with uncertain cost). Loss functions with the basic $Cx + L(y-x)_{+}$ structure we have used up until now continue to generate meaningful scoring rules with respect to the AP following our procedure.  But with a view toward developing a scoring rule that accommodates uncertainty about both $C$ and $K$ in a non-redundant (and more interpretable and computationally feasible) way, we augment the action set of the AP to include, in addition to the procurement levels $x_i$ for all locations, a ``reserve'' quantity $z_K$ defined as the available amount of resource that the worker decides not to allocate anywhere.
 % In optimization theory quantities defined in this manner are known as \emph{slack} variables, and are introduced in order to re-express contraint inequalities as equalities.  In our case, we get
 % \begin{align}
-% \mathcal{X}_{K} = \{(x,z) \in \mathbb{R}_{+}^{N+1} \mid \sum_{l=1}^{N}x_l + z = K \}.
+% \mathcal{X}_{K} = \{(x,z) \in \mathbb{R}_{+}^{N+1} \mid \sum_{i=1}^{N}x_i + z = K \}.
 % \end{align}
 % In these action set variables, the loss function we used for the unconstrained $N$ location decision problem with action set $\mathcal{X}_{cert}$ now has the expression
 % \begin{align}
-% s_{tQ}\left((x,z), y\right) = C(K-z) + \sum_{l=1}^{N} L(y_l - x_l)_{+}.
+% s_{tQ}\left((x,z), y\right) = C(K-z) + \sum_{i=1}^{N} L(y_i - x_i)_{+}.
 % \end{align}
 % This isolates -- at least formally -- the explicit contribution of the procurement part, $x$, of the decision to the second term which we call the \emph{allocation loss function}:
 % \begin{align}
-% s_{A,K}(x,y):= L\sum_{l=1}^{N} (y_l - x_l)_{+}.
+% s_{A,K}(x,y):= L\sum_{i=1}^{N} (y_i - x_i)_{+}.
 % \end{align}
 % It will turn out, as explained in the following sections, that for a given forecast $F$, a scoring rule derived with respect to the AP from $s_{tQ}$ under uncertainty about $C$ -- that is, from $s_{tWIS}$ or $s_{tCRPS}$ -- will have the same values for all outcomes $y$ as a scoring rule that is a weighted average or integration of scoring rules derived from allocation losses $s_{A,K}$ with respect the AP's for a range of $K$'s.
 
@@ -237,23 +239,23 @@ we use in deriving Bayes acts for all $\mathcal{X}_k$.
 % \item When $z_K=0$ and $x^F$ are not $1-C/L$ quantiles, $\partial_C x^{F,C,K} = 0$.
 % \end{itemize}
 
-% Picture: For $K$ fixed, $x^{F,K}(c)$ will be a constant point $x^{F,K}$ on $\{\sum x_l = K\}$ for $c \in [0, c_1]$, 
-% and then wander back to 0 for $c \in (c_1,L]$. When $C$ is fixed, $x^{F}(k)$ will be a point on $\{\sum x_l = k\}$ (which does not depend on $C$)
-% for $k \in [0, \sum F_l^{-1}(1-C/L)]$, and then constant at $\mathbf{F}^{-1}(1-C/L)$ for $k \in (\sum F_l^{-1}(1-C/L), \infty)$.
+% Picture: For $K$ fixed, $x^{F,K}(c)$ will be a constant point $x^{F,K}$ on $\{\sum x_i = K\}$ for $c \in [0, c_1]$, 
+% and then wander back to 0 for $c \in (c_1,L]$. When $C$ is fixed, $x^{F}(k)$ will be a point on $\{\sum x_i = k\}$ (which does not depend on $C$)
+% for $k \in [0, \sum F_i^{-1}(1-C/L)]$, and then constant at $\mathbf{F}^{-1}(1-C/L)$ for $k \in (\sum F_i^{-1}(1-C/L), \infty)$.
 
 % \section{Step 3: Use the Bayes act to score the forecast $F$ against outcomes.}
 
 % Deal with alloscore by noticing that simultaneous quantile loss has same minimizer as alloscore with sum of quantiles as constraint level.
 
 % \begin{align}
-% s_{t\mathrm{WIS}}(x^{F,t\mathrm{WIS}},y) &= \frac{1}{m}\sum_{l=1}^N \sum_{i=1}^{m}(x_{l,i}^{F_l,\mathrm{Q}, C_i}- y_l)_+  + C_i x_{l,i}^{F_l,\mathrm{Q}, C_i}\\ 
+% s_{t\mathrm{WIS}}(x^{F,t\mathrm{WIS}},y) &= \frac{1}{m}\sum_{i=1}^N \sum_{i=1}^{m}(x_{l,i}^{F_i,\mathrm{Q}, C_i}- y_i)_+  + C_i x_{l,i}^{F_i,\mathrm{Q}, C_i}\\ 
 % &= \frac{1}{m} \sum_{i=1}^{m}s_{\mathrm{AS}}(x^{F,\mathrm{AS},  K(C_i, F, L)},y) + C_i K(C_i, F, L)
 % \end{align}
 
 % \begin{align}
 % s_{\mathrm{IAS}}(x^{F, \mathrm{IAS}}(k), y) &= \int_0^{\infty} s_{\mathrm{AS}}(x^{F, \mathrm{AS}(k)}, y) dk \\
-% &= \int_0^{\infty} \sum_{l=1}^N s_{\mathrm{Q}}(x^{F_l, \mathrm{Q}(c(k, F))}, y) - c(k, F)kdk \\
-% &= \sum_{l=1}^N \int_0^{\infty} s_{\mathrm{Q}}(x^{F_l, \mathrm{Q}(c(k, F))}, y) dk -  \int_0^{\infty} c(k, F)kdk
+% &= \int_0^{\infty} \sum_{i=1}^N s_{\mathrm{Q}}(x^{F_i, \mathrm{Q}(c(k, F))}, y) - c(k, F)kdk \\
+% &= \sum_{i=1}^N \int_0^{\infty} s_{\mathrm{Q}}(x^{F_i, \mathrm{Q}(c(k, F))}, y) dk -  \int_0^{\infty} c(k, F)kdk
 % \end{align}
 
 
@@ -261,48 +263,48 @@ we use in deriving Bayes acts for all $\mathcal{X}_k$.
 % \begin{align}
 % s_{tQ}(x^{F,c,k})(y) &= 
 % \begin{cases}
-% \sum_{l=1}^{N}L(y_l - x_l^{F,k})_{+} + ck, & k < \sum F_l^{-1}(1-c/L) \\
-% \sum_{l=1}^{N}L(y_l - x_l^{F,Q,c})_{+} + c(k - z_k(c)), & \text{otherwise, with } 
+% \sum_{i=1}^{N}L(y_i - x_i^{F,k})_{+} + ck, & k < \sum F_i^{-1}(1-c/L) \\
+% \sum_{i=1}^{N}L(y_i - x_i^{F,Q,c})_{+} + c(k - z_k(c)), & \text{otherwise, with } 
 % \end{cases} \\
-% z_k(c) &= (k -  \sum F_l^{-1}(1-c/L))_{+}
+% z_k(c) &= (k -  \sum F_i^{-1}(1-c/L))_{+}
 % \end{align}
 
-% Let $k_1 = \sum F_l^{-1}(1-c_1/L)$ so that $x^{F,Q,c_1} = x^{F, k_1}$ and $z_{k_1}(\{c \leq c_1\}) = 0$, and take $0<c_a < c_1 < c_b < L$ and $0 < k_a < k_1 < k_b < K_2$.
+% Let $k_1 = \sum F_i^{-1}(1-c_1/L)$ so that $x^{F,Q,c_1} = x^{F, k_1}$ and $z_{k_1}(\{c \leq c_1\}) = 0$, and take $0<c_a < c_1 < c_b < L$ and $0 < k_a < k_1 < k_b < K_2$.
 
 % Then with $K = k_1$ fixed, the path of functions $s_{k_1}(c) = s_{tQ}(x^{F,c,k_1})$ parametrized by $c \in [0,L]$ takes values
 % \begin{align}
-% s_{k_1}(0)  &= L\sum ( y_l-x_l^{F,k_1})_{+}  \\
-% s_{k_1}(c_a)  &= L\sum ( y_l-x_l^{F,k_1})_{+} + c_a k_1\\
-% s_{k_1}(c_1) &= L\sum (y_l - x_l^{F,k_1})_{+} + c_1 k_1  \\
-% s_{k_1}(c_b) &= L\sum (y_l - x_l^{F,Q, c_b})_{+} + c_b(k_1 - z_{k_1}(c_b)) \\
-% &= L\sum (y_l - x_l^{F,Q, c_b})_{+} + c_b \sum F_l^{-1}(1-c_b/L)\\
-% s_{k_1}(L)  &= L\sum {y_l}_{+}.
+% s_{k_1}(0)  &= L\sum ( y_i-x_i^{F,k_1})_{+}  \\
+% s_{k_1}(c_a)  &= L\sum ( y_i-x_i^{F,k_1})_{+} + c_a k_1\\
+% s_{k_1}(c_1) &= L\sum (y_i - x_i^{F,k_1})_{+} + c_1 k_1  \\
+% s_{k_1}(c_b) &= L\sum (y_i - x_i^{F,Q, c_b})_{+} + c_b(k_1 - z_{k_1}(c_b)) \\
+% &= L\sum (y_i - x_i^{F,Q, c_b})_{+} + c_b \sum F_i^{-1}(1-c_b/L)\\
+% s_{k_1}(L)  &= L\sum {y_i}_{+}.
 % \end{align}
 
 % If instead $C = c_1$ is fixed, then $s_{c_1}(k) = s_{tQ}(x^{F,c_1,k})$ parameterized by 
 % $k \in [0,K_2]$ take values
 % \begin{align}
-% s_{c_1}(0) & = L \sum {y_l}_{+} \\
-% s_{c_1}(k_a) & = L \sum (y_l - x_l^{F,k_a})_{+} + c_1 k_a\\
-% & = L \sum (y_l - x_l^{F,Q,c(k_a)})_{+} + c_1 \sum F_l^{-1}(1-c(k_a)/L)\\
-% s_{c_1}(k_1) & = L \sum (y_l - x_l^{F,k_1})_{+} + c_1 k_1 \\
-% s_{c_1}(k_b) & = L \sum (y_l - x_l^{F,k_1})_{+} + c_1 (k_b - z_{k_b}(c_1)) \\
-%  & = L \sum (y_l - x_l^{F,k_1})_{+} + c_1 \sum F_l^{-1}(1-c(k_1)/L)\\
-% s_{c_1}(K_2) & = L \sum (y_l - x_l^{F,k_1})_{+} + c_1 (K_2 - z_{K_2}(c_1))
+% s_{c_1}(0) & = L \sum {y_i}_{+} \\
+% s_{c_1}(k_a) & = L \sum (y_i - x_i^{F,k_a})_{+} + c_1 k_a\\
+% & = L \sum (y_i - x_i^{F,Q,c(k_a)})_{+} + c_1 \sum F_i^{-1}(1-c(k_a)/L)\\
+% s_{c_1}(k_1) & = L \sum (y_i - x_i^{F,k_1})_{+} + c_1 k_1 \\
+% s_{c_1}(k_b) & = L \sum (y_i - x_i^{F,k_1})_{+} + c_1 (k_b - z_{k_b}(c_1)) \\
+%  & = L \sum (y_i - x_i^{F,k_1})_{+} + c_1 \sum F_i^{-1}(1-c(k_1)/L)\\
+% s_{c_1}(K_2) & = L \sum (y_i - x_i^{F,k_1})_{+} + c_1 (K_2 - z_{K_2}(c_1))
 % \end{align}
 
-% Writing $k(c) = \sum F_l^{-1}(1-c/L)$,
+% Writing $k(c) = \sum F_i^{-1}(1-c/L)$,
 % \begin{align}
-% s_{k_1}(c) - s_{c_1}(k(c)) &= (c-c_1)\sum F_l^{-1}(1-\max(c,c_1)/L) \\
+% s_{k_1}(c) - s_{c_1}(k(c)) &= (c-c_1)\sum F_i^{-1}(1-\max(c,c_1)/L) \\
 % s_{c_1}(k) - s_{k_1}(c(k)) &=  
 % \end{align}
 
 
 % But 
 % \begin{align}
-% \del{k}{c}& = \sum_{l=1}^{N} \frac{-1}{L f_l(q_{F_l,\tau(c)})} := -\mathrm{MAI}(c,F)\label{eqn:dkdc}
+% \del{k}{c}& = \sum_{i=1}^{N} \frac{-1}{L f_i(q_{F_i,\tau(c)})} := -\mathrm{MAI}(c,F)\label{eqn:dkdc}
 % \end{align}
-% (where we assume that the $F_l$ have non-negative support). The name MAI refers to this derivative being the marginal total allocation increase for the total quantile loss Bayes act $x^{F,Q(C)}$ that results from a reduction of the cost $C$ of the resource by 1. Or in terms of the probability level $\tau(c)=1-c/L$,
+% (where we assume that the $F_i$ have non-negative support). The name MAI refers to this derivative being the marginal total allocation increase for the total quantile loss Bayes act $x^{F,Q(C)}$ that results from a reduction of the cost $C$ of the resource by 1. Or in terms of the probability level $\tau(c)=1-c/L$,
 % \begin{align}
 % \del{k}{\tau} = \del{k}{c}\dby{c}{\tau} = -\mathrm{MAI}(c,F) \cdot (-L\tau) = L\mathrm{MAI}(c,F) \label{eqn:dkdtau}
 % \end{align}
@@ -310,8 +312,8 @@ we use in deriving Bayes acts for all $\mathcal{X}_k$.
 % Now a constraint $K = 0$ corresponds to cost-loss parity $C=L$, i.e. $\tau = 0$, for which the Bayes act is the zero vector.  And $K \to \infty$ corresponds to the cost of over-allocation vanishing, i.e. $\tau \to 1$. So making a change of variables with \eqref{eqn:dkdc} or \eqref{eqn:dkdtau} we get
 % \begin{align}
 % s_{\mathrm{IAS}}(x^{F, \mathrm{IAS}}(k), y) 
-% &= \sum_{l=1}^N \int_0^{L} s_{\mathrm{Q}}(x^{F_l, \mathrm{Q}(c)}, y) \mathrm{MAI}(c,F) dc \\
-% &= \sum_{l=1}^N \int_0^{1} s_{\mathrm{Q}}(x^{F_l, \tau}, y) L\mathrm{MAI}(L(1-\tau),F) d\tau \\
+% &= \sum_{i=1}^N \int_0^{L} s_{\mathrm{Q}}(x^{F_i, \mathrm{Q}(c)}, y) \mathrm{MAI}(c,F) dc \\
+% &= \sum_{i=1}^N \int_0^{1} s_{\mathrm{Q}}(x^{F_i, \tau}, y) L\mathrm{MAI}(L(1-\tau),F) d\tau \\
 % &= tw\mathrm{CRPS}(F,y)
 % \end{align}
 % where MAI provides the (identical) weighting in each coordinate. Crucially though, this weighting \emph{depends} on $F$ so that IAS's of two forecasts $F$ and $\tilde{F}$ \emph{cannot} be interpreted as result of applying the same $w$CRPS to the two forecasts.
@@ -339,54 +341,54 @@ problem of finding a saddle point $(x^{F,k}, \lambda^{\star})$ of the associated
 \begin{align}
 \mathcal{L}(x, \lambda) = \mathcal{L}(x, \lambda; F, k, L) 
 &= E_F\left[s_A(Y,x)\right] + \lambda(T_x - k) \\
-&= L\sum_{l=1}^{N} E_{F_l}[(Y_l - x_l)_{+}] + \lambda\left(\sum_{l=1}^{N} x_l - k\right).  
+&= L\sum_{i=1}^{N} E_{F_i}[(Y_i - x_i)_{+}] + \lambda\left(\sum_{i=1}^{N} x_i - k\right).  
 \end{align}
-in the region $\{x \geq 0, \lambda \in \mathbb{R}\}$.\footnote{The Lagrangian in this context has the interpretation as the best (lowest) objective function value we can achieve if we forced to choose $x$ but can buy or get credit for changing the constraint level $k$ 
+in the region $\{x \geq 0, \lambda \in \mathbb{R}\}$.\footnote{The Lagrangian in this context has the interpretation as the best (lowest) objective function value we can achieve if we forced to choose $x$ but can buy or get credit for changes the constraint level $k$ 
 at the ``price'' $\lambda$.}
 The Lagrangian reformulation in particular recasts the constraint $T_x=k$ of the original problem as a first-order condition on $\mathcal{L}$ with respect to the new \emph{Lagrange multiplier} variable $\lambda$:
 \begin{align}
-0 = \del{}{\lambda} \mathcal{L}(x^{F,k}, \lambda^{\star}) &= \sum_{l=1}^{N} x_l^{F,k} - k. \label{eqn:lambda_stationary}
+0 = \del{}{\lambda} \mathcal{L}(x^{F,k}, \lambda^{\star}) &= \sum_{i=1}^{N} x_i^{F,k} - k. \label{eqn:lambda_stationary}
 \end{align}
 But for $(x^{F,k}, \lambda^{\star})$ to be a saddle point we also need
 \begin{align}
-0 = \frac{\partial}{\partial x_l} \mathcal{L}(x^{F.k}, \lambda) &= L(F_l(x_l^{F,k})-1) + \lambda^{\star} 
+0 = \frac{\partial}{\partial x_i} \mathcal{L}(x^{F.k}, \lambda) &= L(F_i(x_i^{F,k})-1) + \lambda^{\star} 
 \quad (\text{cf. \eqref{eqn:q_deriv}}) \label{eqn:x_stationary}
 \end{align}
-for any $x_l^{F,k} > 0$, which gives a formula 
+for any $x_i^{F,k} > 0$, which gives a formula 
 \begin{align}
-x_l^{F,k} = F_l^{-1}(1-\lambda^{\star}/L) \label{eqn:xfk_formula}
+x_i^{F,k} = F_i^{-1}(1-\lambda^{\star}/L) \label{eqn:xfk_formula}
 \end{align}
-for any non-zero element $x_l^{F,k}$ of the solution. Thus \eqref{eqn:lambda_stationary} becomes
+for any non-zero element $x_i^{F,k}$ of the solution. Thus \eqref{eqn:lambda_stationary} becomes
 \begin{align}
-0 = \sum_{\{l | x_l^{F,k} > 0\}} F_{l}^{-1}(1-\lambda^{\star}/L) - k. \label{eqn:lambda_stationary2}
+0 = \sum_{\{l | x_i^{F,k} > 0\}} F_{l}^{-1}(1-\lambda^{\star}/L) - k. \label{eqn:lambda_stationary2}
 \end{align}
 
 Since convexity and compactness guarantee existence of a solution, the problem is now reduced to solving \eqref{eqn:lambda_stationary} for the set 
-$\{l \mid x_l^{F,k} > 0\}$ and value $\lambda^{\star}$. Note, however, that this is a more complicated task than solving just 
+$\{l \mid x_i^{F,k} > 0\}$ and value $\lambda^{\star}$. Note, however, that this is a more complicated task than solving just 
 for $\lambda^{\star}$ under the assumption that \eqref{eqn:xfk_formula} holds for all coordinates of $x^{F,k}$.\footnote{Such an assumption would exclude fairly simple examples in which $F$ has support bounded away from $0$ in one coordinate but not in another.} The task is simplified though by bringing in the full saddle point condition for $\lambda^{\star}$ which implies not only \eqref{eqn:lambda_stationary} but also that
 $\lambda^{\star}$ is in fact the unique maximizer of the \emph{dual function} 
 $\mathcal{L}_D(\lambda) := \inf_{x \in \mathbb{R}_{+}^N} \mathcal{L}(x, \lambda)$.
-This approach is especially suitable in our situation because our original objective function $E_F\left[s_A(Y,x)\right]$ is decomposable in the coodinates $x_l$, allowing the dual function to be computed separately with respect to each coordinate:
+This approach is especially suitable in our situation because our original objective function $E_F\left[s_A(Y,x)\right]$ is decomposable in the coodinates $x_i$, allowing the dual function to be computed separately with respect to each coordinate:
 \begin{align}
-\mathcal{L}_D(\lambda) &= \inf_{x \in \mathbb{R}_{+}^N} L\sum_{l=1}^{N} E_{F_l}[(Y_l - x_l)_{+}] + \lambda\left(\sum_{l=1}^{N} x_l - k\right) \\
-&= - \lambda k + \sum_{l=1}^{N} \inf_{x_l \in \mathbb{R}_{+}}\left\{ L E_{F_l}[(Y_l - x_l)_{+}] + \lambda x_l\right\}  \label{eqn:dual_decomp} \\
-&= - \lambda k + \sum_{l=1}^{N}  LE_{F_l}[(Y_l - x_l(\lambda))_{+}] + \lambda x_l(\lambda).
+\mathcal{L}_D(\lambda) &= \inf_{x \in \mathbb{R}_{+}^N} L\sum_{i=1}^{N} E_{F_i}[(Y_i - x_i)_{+}] + \lambda\left(\sum_{i=1}^{N} x_i - k\right) \\
+&= - \lambda k + \sum_{i=1}^{N} \inf_{x_i \in \mathbb{R}_{+}}\left\{ L E_{F_i}[(Y_i - x_i)_{+}] + \lambda x_i\right\}  \label{eqn:dual_decomp} \\
+&= - \lambda k + \sum_{i=1}^{N}  LE_{F_i}[(Y_i - x_i(\lambda))_{+}] + \lambda x_i(\lambda).
 \end{align}
-Here, $x_l(\lambda)$ is any member of the set 
+Here, $x_i(\lambda)$ is any member of the set 
 \begin{align}
-\chi_l(\lambda) = \underset{x_l \in \mathbb{R}_{+}}{\mathrm{arginf}} \left\{ L E_{F_l}[(Y_l - x_l)_{+}] + \lambda x_l\right\}
+\chi_i(\lambda) = \underset{x_i \in \mathbb{R}_{+}}{\mathrm{arginf}} \left\{ L E_{F_i}[(Y_i - x_i)_{+}] + \lambda x_i\right\}
 \end{align}
-which for $F_l$ in a standard parametric family will often have simple the form $\chi_l(\lambda) = \{F_l^{-1}(1-\lambda/L)\}$ but could an interval containing $0$ or $\infty$.
-From general theory, $\mathcal{L}_D(\lambda)$ is concave, and while it may not be differentiable when the $x_l$'s attaining the infima in \eqref{eqn:dual_decomp} are zero, it does have as a subdifferential the well-defined interval
+which for $F_i$ in a standard parametric family will often have simple the form $\chi_i(\lambda) = \{F_i^{-1}(1-\lambda/L)\}$ but could an interval containing $0$ or $\infty$.
+From general theory, $\mathcal{L}_D(\lambda)$ is concave, and while it may not be differentiable when the $x_i$'s attaining the infima in \eqref{eqn:dual_decomp} are zero, it does have as a subdifferential the well-defined interval
 \begin{align}
 \partial \mathcal{L}_D(\lambda) 
-&= \sum_{l=1}^N \chi_l(\lambda) - k.
+&= \sum_{i=1}^N \chi_i(\lambda) - k.
 \end{align}
-This of course looks very similar to the right hand side of \eqref{eqn:lambda_stationary2}, but the dual perspective has the key advantage of not requiring any guesses of the set $\{l \mid x_l^{F,k} > 0\}$ when initiating a search algorithm for $\lambda^{\star}$.  Instead, given a candidate $\lambda_0$ for $\lambda^{\star}$, we proceed by calculating the sets $\chi_l(\lambda_0), l = 1,\ldots,N$, and using them to find the (usually zero-width) interval $\partial \mathcal{L}_D(\lambda_0)$. If $\partial \mathcal{L}_D(\lambda_0) \subset (-\infty,0)$, we can eliminate $\{\lambda \geq \lambda_0\}$ from our search and similarly if $\partial \mathcal{L}_D(\lambda_0) \subset (0, \infty)$, we can eliminate $\{\lambda \leq \lambda_0\}$. 
+This of course looks very similar to the right hand side of \eqref{eqn:lambda_stationary2}, but the dual perspective has the key advantage of not requiring any guesses of the set $\{l \mid x_i^{F,k} > 0\}$ when initiating a search algorithm for $\lambda^{\star}$.  Instead, given a candidate $\lambda_0$ for $\lambda^{\star}$, we proceed by calculating the sets $\chi_i(\lambda_0), l = 1,\ldots,N$, and using them to find the (usually zero-width) interval $\partial \mathcal{L}_D(\lambda_0)$. If $\partial \mathcal{L}_D(\lambda_0) \subset (-\infty,0)$, we can eliminate $\{\lambda \geq \lambda_0\}$ from our search and similarly if $\partial \mathcal{L}_D(\lambda_0) \subset (0, \infty)$, we can eliminate $\{\lambda \leq \lambda_0\}$. 
 
 Intutively, we are testing to see whether the total amount $T(\lambda_0)$ of resources that would be procured at a cost $C_0=\lambda_0$ in the unconstrained decision problem with loss function \eqref{eqn:TQ_loss} leaves a deficit or surplus relative to $k$. $T$ is a sum over a set of quantiles and both the set and the quantiles are non-decreasing with cost. (This is essentially why $\mathcal{L}_D$ is concave.) Thus by evaluating $T$ at a mid-point we cut the search interval width in half at each step, arriving quickly at a close approximation $\lambda^{\star, \varepsilon}$ of the cost corresponding to $k$. The strategy of analysing constrained optimization problems by describing the ``prices'' at which unconstrained decisions match constrained ones is ubiquitous in optimization theory and its applications, especially economics.
 
-If the $F_l$ increase steadily enough toward 1 after leaving a neigborhood of 0, we can expect $\partial \mathcal{L}_D(\lambda)$ to be bounded away from 0 for all $\lambda \neq \lambda^{\star}$, allowing a binary search to converge without ambiguity.  But when some $F_l$ exhibit internal ``plateaus'' where their densities stay at or near 0, we can and often do in our applications encounter $\overline{\lambda}$ for which $\partial \mathcal{L}_D(\overline{\lambda})$---or at least our numerical approximation of it---contains 0 as an interior point. That is, $\overline{\lambda}$ is a price at which an uncontrained decision maker informed only by $F$ can increase from total provision $T_1<k$ to another $T_2>k$ while maintaining an optimal expected utility by making (at least approximately) one-to-one trade-offs between increased resource cost and risk reduction in the one or more locations where $F_l$ has a plateau of height near $1-\overline{\lambda}/L$. 
+If the $F_i$ increase steadily enough toward 1 after leaving a neigborhood of 0, we can expect $\partial \mathcal{L}_D(\lambda)$ to be bounded away from 0 for all $\lambda \neq \lambda^{\star}$, allowing a binary search to converge without ambiguity.  But when some $F_i$ exhibit internal ``plateaus'' where their densities stay at or near 0, we can and often do in our applications encounter $\overline{\lambda}$ for which $\partial \mathcal{L}_D(\overline{\lambda})$---or at least our numerical approximation of it---contains 0 as an interior point. That is, $\overline{\lambda}$ is a price at which an uncontrained decision maker informed only by $F$ can increase from total provision $T_1<k$ to another $T_2>k$ while maintaining an optimal expected utility by making (at least approximately) one-to-one trade-offs between increased resource cost and risk reduction in the one or more locations where $F_i$ has a plateau of height near $1-\overline{\lambda}/L$. 
 
 In this event we follow-up with a ``post-processing'' step that identifies lower and upper boundaries $x_{i,L}$ and $x_{i,U}$ of any
 such low-density plateau containing points in $F_{i}^{-1}(1-\lambda^{\star, \varepsilon})$. If $F_{i}^{-1}(1-\lambda^{\star, \varepsilon})$ is single-valued 
