@@ -227,30 +227,30 @@ With this notation in place, we can develop a proper scoring rule following the 
 
 \paragraph{Step 1: specify a loss function.} The loss associated with a particular allocation is calculated by summing contributions from unmet need in each location:
 \begin{equation}
-s_A(\mathbf{x}, \mathbf{y}; L) = \sum_{i=1}^N L (y_i - x_i)_+. \label{eqn:loss_fn}
+s_A(\mathbf{x}, \mathbf{y}) = \sum_{i=1}^N L (y_i - x_i)_+. \label{eqn:loss_fn}
 \end{equation}
 Here, $(y_i - x_i)_+$ is the unmet need in location $i$, which is given by $y_i - x_i$ if the realized need $y_i$ in location $i$ is greater than the amount $x_i$ allocated to that location, or $0$ if the amount $x_i$ allocated to unit $i$ is greater than or equal to the realized need.
 
 \paragraph{Step 2: Given a probabilistic forecast $F$, identify the Bayes act.} The Bayes act associated with the forecast, $\mathbf{x}^F$, is the allocation that minimizes the expected loss:
 \begin{align}
-    \mathbf{x}^F &= \mathrm{arg min}_{\mathbf{x}}\,\, \mathbb{E}_{F} [s_A(\mathbf{x}, \mathbf{Y}; L)] \text{ subject to }
+    \mathbf{x}^F &= \mathrm{arg min}_{\mathbf{x}}\,\, \mathbb{E}_{F} [s_A(\mathbf{x}, \mathbf{Y})] \text{ subject to }
     0 \leq x_i \text{ for all $i$ and} \, \sum_{i=1}^N x_i = K, \label{AP}
 \end{align}
-where $\mathbb{E}_{F} [s_A(\mathbf{x}, \mathbf{Y}; L)] = \sum_{i=1}^{N} L \mathbb{E}_{F_i}[(Y_i - x_i)_+]$ sums the expected loss due to unmet need across all locations. It can be shown that the Bayes act has $x^F_i = F_i^{-1}(1 - \lambda^{\star}/L)$, where $\lambda^{\star}$ depends on the problem parameters $K$ and $L$ as well as the forecast distributions and is chosen so as to satisfy the equation
+where $\mathbb{E}_{F} [s_A(\mathbf{x}, \mathbf{Y})] = \sum_{i=1}^{N} L \mathbb{E}_{F_i}[(Y_i - x_i)_+]$ sums the expected loss due to unmet need across all locations. It can be shown that the Bayes act has $x^F_i = F_i^{-1}(1 - \lambda^{\star}/L)$, where $\lambda^{\star}$ depends on the problem parameters $K$ and $L$ as well as the forecast distributions and is chosen so as to satisfy the equation
 \begin{align}
 \sum_{i=1}^{N}F_i^{-1}(1 - \lambda^{\star}/L) = K.
 \end{align}
 This partial solution to the allocation problem seems to have first appeared in \cite{hadleywhitin1963}; see the supplemental materials for a derivation.
 
 One interpretation of this result is that the Bayes act sets the allocation in each location $i$ to a quantile of the forecast distribution $F_i$ for that location. The quantile is at a probability level $\alpha = 1 - \lambda^{\star}/L$ that is the same for all locations, and is chosen such that the constraint is satisfied. According to this interpretation, we divide the available resources among the locations in such a way that the forecasted probability that need will exceed the available resources is the same in all locations.
-An alternative interpretation comes from noting that for each location $i$, $\frac{\partial}{\partial x_i} \mathbb{E}_{F} [s_A(\mathbf{x}, \mathbf{Y}; L)] \vert_{\mathbf{x}=\mathbf{x}^F} = - \lambda^{\star}$ (see the supplement for a proof).
-In words, at the allocation given by the Bayes act, the rate of change of the expected score as a function of the amount allocated to location $i$ is given by $\lambda^{\star}$.
+An alternative interpretation comes from noting that for each location $i$, $\frac{\partial}{\partial x_i} \mathbb{E}_{F} [s_A(\mathbf{x}, \mathbf{Y})] \vert_{\mathbf{x}=\mathbf{x}^F} = - \lambda^{\star}$ (see the supplement for a proof).
+In words, at the allocation given by the Bayes act, the rate of change of the expected score as a function of the amount allocated to location $i$ is given by $-\lambda^{\star}$.
 This derivative is the same for all locations, so the optimal allocation divides the available resources across all locations in such a way that according to $F$, the expected benefit of 1 additional unit of resources is the same in all locations.
 
 
 \paragraph{Step 3: Define the scoring rule.} We can now define a proper scoring rule for the probabilistic forecast $F$ as
 \begin{equation}
-S_A(F, y; L, K) = s_A(\mathbf{x}^F, y; L) = \sum_{i=1}^n L (y_i - F_i^{-1}(1 - \lambda^{\star}/L))_+
+S_A(F, y; K) = s_A(\mathbf{x}^F, y) = \sum_{i=1}^n L (y_i - F_i^{-1}(1 - \lambda^{\star}/L))_+
 \end{equation}
 This score measures the total unmet need across all locations that results from using the Bayes allocation associated with the forecast $F$ when the actual level of need in each location is observed to be $y_i$.
 
@@ -258,7 +258,7 @@ This score measures the total unmet need across all locations that results from 
 \label{sec:methods.detailed.integrated_allocation}
 
 The allocation score $S_A$ that we developed in the previous section measures the skill of the forecast distributions $F$ based on a single probability level $\alpha = 1 - \lambda^{\star}/L$. This is appropriate if the resource constraint $K$ is a known constant. However, if $K$ is not precisely known at the time of decision making or there is interest in measuring the value of forecasts across a range of decision making scenarios with different resource constraints, we can use an \emph{integrated allocation score} (IAS) that integrates the allocation score across values of $K$, weighting by a distribution $p$:
-$$S_{IAS}(F, y; L) = \int S_A(F,y; L, K) p(K) \, dK$$
+$$S_{IAS}(F, y) = \int S_A(F,y; K) p(K) \, dK$$
 
 
 \subsection{Generalizations and Connections to Other Scores}
