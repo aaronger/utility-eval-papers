@@ -233,22 +233,17 @@ Here, $(y_i - x_i)_+$ is the unmet need in location $i$, which is given by $y_i 
 
 \paragraph{Step 2: Given a probabilistic forecast $F$, identify the Bayes act.} The Bayes act associated with the forecast, $\mathbf{x}^F$, is the allocation that minimizes the expected loss:
 \begin{align}
-    \mathbf{x}^F &= \mathrm{arg min}\,\, \sbar_A^F(\mathbf{x}; L) \text{ subject to }
-    0 \leq x_i \text{ for all $i$ and} \, \sum_{i=1}^N x_i = K \text{, where} \label{AP} \\
-    \sbar_A^F(\mathbf{x}; L) &= \mathbb{E}_{F} [s_A(\mathbf{x}, \mathbf{Y}; L)] = \sum_{i=1}^{N} L \mathbb{E}_{F_i}[(Y_i - x_i)_+] \label{eqn:sbar}
+    \mathbf{x}^F &= \mathrm{arg min}_{\mathbf{x}}\,\, \mathbb{E}_{F} [s_A(\mathbf{x}, \mathbf{Y}; L)] \text{ subject to }
+    0 \leq x_i \text{ for all $i$ and} \, \sum_{i=1}^N x_i = K, \label{AP}
 \end{align}
-It can be shown that with the loss function given in Equation \eqref{eqn:loss_fn}, the Bayes act has $x^F_i = F_i^{-1}(1 - \lambda^{\star}/L)$, where $\lambda^{\star}$ depends on the problem parameters $K$ and $L$ as well as the forecast distributions and is chosen so as to satisfy the equation
+where $\mathbb{E}_{F} [s_A(\mathbf{x}, \mathbf{Y}; L)] = \sum_{i=1}^{N} L \mathbb{E}_{F_i}[(Y_i - x_i)_+]$ sums the expected loss due to unmet need across all locations. It can be shown that the Bayes act has $x^F_i = F_i^{-1}(1 - \lambda^{\star}/L)$, where $\lambda^{\star}$ depends on the problem parameters $K$ and $L$ as well as the forecast distributions and is chosen so as to satisfy the equation
 \begin{align}
 \sum_{i=1}^{N}F_i^{-1}(1 - \lambda^{\star}/L) = K.
 \end{align}
-This partial solution to the allocation problem seems to have first appeared in \cite{hadleywhitin1963}; see the supplemental materials for a derivation. %Figure *** panel (a) \elr{TODO: first figure from notes crps\_connection\_exp.Rmd} illustrates the expected loss function $\sbar_A^F$ and the allocation given by the Bayes act in a simple example with $n = 2$ locations, $L = 1$, $K = 5$, and forecasts $Y_1 \sim \text{Exp}(1 / \sigma_1)$ and $Y_2 \sim \text{Exp}(1 / \sigma_2)$, using a scale parameterization of the exponential distribution with $\sigma_1 = 1$ and $\sigma_2 = 5$.
+This partial solution to the allocation problem seems to have first appeared in \cite{hadleywhitin1963}; see the supplemental materials for a derivation.
 
 One interpretation of this result is that the Bayes act sets the allocation in each location $i$ to a quantile of the forecast distribution $F_i$ for that location. The quantile is at a probability level $\alpha = 1 - \lambda^{\star}/L$ that is the same for all locations, and is chosen such that the constraint is satisfied. According to this interpretation, we divide the available resources among the locations in such a way that the forecasted probability that need will exceed the available resources is the same in all locations.
-An alternative interpretation comes from noting that for each location $i$, $\frac{\partial}{\partial x_i} \sbar_A^F(\mathbf{x}) \vert_{\mathbf{x}=\mathbf{x}^F} = \lambda^{\star}$ (see the supplement for a proof).
-%$\frac{\partial}{\partial x_i} \sbar_F(\mathbf{x}) = L[F_i(x_i) - 1]$ (see the supplement for a derivation), and evaluating at the Bayes allocation we arrive at
-%\begin{align}
-%\frac{\partial}{\partial x_i} \sbar_F(\mathbf{x}) \vert_{\mathbf{x}=\mathbf{x}^F} &= L[F_i(x^F_i) - 1] = L[F_i(F_i^{-1}(1 - \lambda^{\star}/L)) - 1] = \lambda^{\star}.
-%\end{align}
+An alternative interpretation comes from noting that for each location $i$, $\frac{\partial}{\partial x_i} \mathbb{E}_{F} [s_A(\mathbf{x}, \mathbf{Y}; L)] \vert_{\mathbf{x}=\mathbf{x}^F} = - \lambda^{\star}$ (see the supplement for a proof).
 In words, at the allocation given by the Bayes act, the rate of change of the expected score as a function of the amount allocated to location $i$ is given by $\lambda^{\star}$.
 This derivative is the same for all locations, so the optimal allocation divides the available resources across all locations in such a way that according to $F$, the expected benefit of 1 additional unit of resources is the same in all locations.
 
