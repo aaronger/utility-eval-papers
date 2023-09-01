@@ -125,7 +125,7 @@ Suppose that a decision maker is tasked with determining how to allocate $K$ ava
 If the decision maker is provided with a multivariate forecast $F$ where each marginal forecast distribution $F_i$ predicts resource need in a particular location, one option is to choose the resource allocation that minimizes the expected total unmet need according to the forecast.
 We will give a more precise mathematical statement in section \ref{sec:methods.detailed}, but informally, the total expected unmet need according to the forecast is
 \begin{align}
-\sum_{i=1}^N E_{F_i}[\text{unmet need in location $i$}], \label{eqn:informal_objective}
+\sum_{i=1}^N \mathbb{E}_{F_i}[\text{unmet need in location $i$}], \label{eqn:informal_objective}
 \end{align}
 where the unmet need in a particular location is the difference between resource need in that location and the number of resources that were allocated there.
 This allocation problem has an intuitively appealing solution: allocate so that the probabilities of need exceeding allocation in various locations are as close to each other as possible.
@@ -211,16 +211,16 @@ With this notation in place, we can develop a proper scoring rule following the 
 
 \paragraph{Step 1: specify a loss function.} The loss associated with a particular allocation is calculated by summing contributions from unmet need in each location:
 \begin{equation}
-s_A(x, y) = \sum_{i=1}^N L (y_i - x_i)_+. \label{eqn:loss_fn}
+s_A(x, y) = \sum_{i=1}^N L \cdot \max(0, y_i - x_i). \label{eqn:loss_fn}
 \end{equation}
-Here, $(y_i - x_i)_+$ is the unmet need in location $i$, which is given by $y_i - x_i$ if the realized need $y_i$ in location $i$ is greater than the amount $x_i$ allocated to that location, or $0$ if the amount $x_i$ allocated to unit $i$ is greater than or equal to the realized need.
+Here, $\max(0, y_i - x_i)$ is the unmet need in location $i$, which is given by $y_i - x_i$ if the realized need $y_i$ in location $i$ is greater than the amount $x_i$ allocated to that location, or $0$ if the amount $x_i$ allocated to unit $i$ is greater than or equal to the realized need. Also, $L$ is a constant scalar value, the same across all locations, specifying the ``cost'' of one unit of unmet need.
 
 \paragraph{Step 2: Given a probabilistic forecast $F$, identify the Bayes act.} The Bayes act associated with the forecast, $x^F$, is the allocation that minimizes the expected loss:
 \begin{align}
     x^F &= \underset{0 \leq x}{\mathrm{arg min}}\,\, \mathbb{E}_{F} [s_A(x, Y)] \text{ subject to }
      \, \sum_{i=1}^N x_i = K, \label{AP}
 \end{align}
-where $\mathbb{E}_{F} [s_A(x, Y)] = \sum_{i=1}^{N} L \mathbb{E}_{F_i}[(Y_i - x_i)_+]$ sums the expected loss due to unmet need across all locations. It can be shown that the Bayes act has $x^F_i = F_i^{-1}(1 - \lambda^{\star}/L)$, where $\lambda^{\star}$ depends on the problem parameters $K$ and $L$ as well as the forecast distributions and is chosen so as to satisfy the equation
+where $\mathbb{E}_{F} [s_A(x, Y)] = \sum_{i=1}^{N} L \mathbb{E}_{F_i}[max(0, Y_i - x_i)]$ sums the expected loss due to unmet need across all locations. It can be shown that the Bayes act has $x^F_i = F_i^{-1}(1 - \lambda^{\star}/L)$, where $\lambda^{\star}$ depends on the problem parameters $K$ and $L$ as well as the forecast distributions and is chosen so as to satisfy the equation
 \begin{align}
 \sum_{i=1}^{N}F_i^{-1}(1 - \lambda^{\star}/L) = K.
 \end{align}
@@ -234,7 +234,7 @@ This derivative is the same for all locations, so the optimal allocation divides
 
 \paragraph{Step 3: Define the scoring rule.} We can now define a proper scoring rule for the probabilistic forecast $F$ as
 \begin{equation}
-S_A(F, y; K) = s_A(x^F, y) = \sum_{i=1}^n L (y_i - F_i^{-1}(1 - \lambda^{\star}/L))_+
+S_A(F, y; K) = s_A(x^F, y) = \sum_{i=1}^n L \max(0, y_i - F_i^{-1}(1 - \lambda^{\star}/L))
 \end{equation}
 This score measures the total unmet need across all locations that results from using the Bayes allocation associated with the forecast $F$ when the actual level of need in each location is observed to be $y_i$.
 
