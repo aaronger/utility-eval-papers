@@ -25,7 +25,8 @@ tar_option_set(
 tar_source(files = c("R/data-ingestion.R",
                      "R/plot-alloscores.R",
                      "R/run-alloscore.R",
-                     "R/determine-model-eligibility.R"))
+                     "R/determine-model-eligibility.R",
+                     "R/exponential-examples.R"))
 
 values <- tibble(forecast_dates = as.character(seq.Date(as.Date("2021-11-22"), as.Date("2022-02-28"), by = "7 days")))
 
@@ -62,6 +63,10 @@ list(
   tar_target(
     name = all_alloscore_data,
     command = assemble_alloscores()
+  ),
+  tar_target(
+    name = exponential_example,
+    command = make_exponential_example_figure()
   )
   # tar_target(
   #   name = figure_K_v_alloscore,
