@@ -50,6 +50,7 @@ vignettes/*.pdf
 *.out
 *.run.xml
 *.synctex.gz
+*-concordance.tex
 
 # DS_Store files from mac
 *.DS_Store
