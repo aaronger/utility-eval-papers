@@ -44,6 +44,9 @@ library(tidyverse)
 library(ggbump)
 
 theme_set(theme_bw())
+
+## necessary to have project root as wd, to override document directory
+knitr::opts_knit$set(root.dir = '../')
 @
 
 
@@ -242,7 +245,7 @@ ggplot(all_data,
 Models show differing levels of correlation between their allocation scores and MWIS values (Figure XX).
 Here are some examples of the different patterns observed:
 \begin{itemize}
-\item positive association between allocation score and MWIS ranks: \texttt{Karlen-pypm} and \texttt{USC-SI_kJalpha} models
+\item positive association between allocation score and MWIS ranks: \texttt{Karlen-pypm} and \texttt{USC-SI\_kJalpha} models
 \item consistently strong MWIS ranks, highly variable allocation score ranks, no clear association: \texttt{JHUAPL-SLPHospEns} and \texttt{CU-select}
 \item consistently strong ranks for both metrics, no clear association: \texttt{COVIDhub-ensemble}
 \end{itemize}
