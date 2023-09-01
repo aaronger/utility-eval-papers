@@ -221,7 +221,7 @@ if (margin_type == "pdf") {
 }
 
 
-pdf('../figures/exponential_pred_expected_loss.pdf',
+pdf('figures/exponential_pred_expected_loss.pdf',
     width = 8,
     height = 6.2)
 if (margin_type == "pdf") {
