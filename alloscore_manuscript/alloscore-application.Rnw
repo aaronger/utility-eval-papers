@@ -215,15 +215,16 @@ s_A(x, y) = \sum_{i=1}^N L \cdot \max(0, y_i - x_i). \label{eqn:loss_fn}
 \end{equation}
 Here, $\max(0, y_i - x_i)$ is the unmet need in location $i$, which is given by $y_i - x_i$ if the realized need $y_i$ in location $i$ is greater than the amount $x_i$ allocated to that location, or $0$ if the amount $x_i$ allocated to unit $i$ is greater than or equal to the realized need. Also, $L$ is a constant scalar value, the same across all locations, specifying the ``cost'' of one unit of unmet need.
 
-\paragraph{Step 2: Given a probabilistic forecast $F$, identify the Bayes act.} The Bayes act associated with the forecast, $x^{F,K}$, is the allocation that minimizes the expected loss:
+\paragraph{Step 2: Given a probabilistic forecast $F$, identify the Bayes act.} The Bayes act associated with the forecast, $x^{F,K}$, is the allocation that minimizes the expected loss, that is, the solution of the \emph{allocation problem} associated with $K$
 \begin{align}
-    x^{F,K} &= \underset{0 \leq x}{\mathrm{arg min}}\,\, \mathbb{E}_{F} [s_A(x, Y)] \text{ subject to }
+    \underset{0 \leq x}{\mathrm{minimize}}\,\, \mathbb{E}_{F} [s_A(x, Y)] \text{ subject to }
      \, \sum_{i=1}^N x_i = K, \label{AP}
 \end{align}
 where $\mathbb{E}_{F} [s_A(x, Y)] = \sum_{i=1}^{N} L \mathbb{E}_{F_i}[\max(0, Y_i - x_i)]$ sums the expected loss due to unmet need across all locations.
 
 In the supplement we show that for a typical forecast $F$ and constraint level $K$, the components $x_i^{F,K}$ of the Bayes act are quantiles 
-$q_{i,\tau} = F_i^{-1}(\tau)$ of the marginal forecasts $F_i$ for a probability level $\tau = \tau(K,F)$ satisfying the equation
+$q_{i,\tau} = F_i^{-1}(\tau)$ of the marginal forecasts $F_i$ for a probability level $\tau = \tau(K,F)$ that is defined by the constraint equation of the
+allocation problem
 \begin{align}
 \sum_{i=1}^{N}q_{i,\tau} = K.
 \end{align}
