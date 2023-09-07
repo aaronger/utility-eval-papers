@@ -126,17 +126,16 @@ Here, $p_C = \{p_j\}, j = 1,\ldots,m$ is a prior distribution on $\mathcal{C}$ a
 We can also consider $C$ a continuous random variable with a prior density $f_C$ and accommodate this by letting $m \to \infty$ in \eqref{eqn:sum_CL_loss} 
 which (with some mathematical care) converts the weighted mean into an integral
 \begin{align}
-s_{Q,f_C}(x,y) = \frac{1}{L}\int_{0}^{L} (cx(c) + L(x(c) - y)_+) f_C(c)dc{}.
+s_{Q,f_C}(x,y) = \frac{1}{L}\int_{0}^{L} (cx(c) + L(x(c) - y)_+) f_C(c)dc{}. \label{eqn:CRPS_loss}
 \end{align}
 
 It is important to note that these generalizations change not only the loss function but also the structure of the decision problem by using higher dimensional action sets $\mathcal{X}= \mathbb{R}_+^m$ or the set $\mathcal{X} = \{x(c):[0,\infty) \to \mathbb{R}_+\}$ of $\mathbb{R}_+$ valued functions on $[0,\infty)$.
 
 The Bayes acts for losses $s_{Q,\mathcal{C}, p_C}$ and $s_{Q,f_C}$ therefore correspond not just to the vanishing of the derivative with respect to a single
-decision variable $x$ but to the vanishing of the partial derivatives with respect to all $m$ decision variables $\{x_i\}$ in the first case or the infinitely many variables $\{x(c)\}$ in the second case.  But since the losses are sums of single varianble losses, passing to solutions of these higher dominsional equations is a mere formality of the viewing the set of Bayes acts, i.e. quantiles, for costs $c \in \mathcal{C}$ or $(0,L)$ as a vector 
+decision variable $x$ but to the vanishing of the partial derivatives with respect to all $m$ decision variables $\{x_i\}$ in the first case or the infinitely many variables $\{x(c)\}$ in the second case.  But since the losses are sums of single variable losses, passing to solutions of these higher diminsional equations is a mere formality of the viewing the set of Bayes acts, i.e. quantiles, for costs $c \in \mathcal{C}$ or $(0,L)$ as a vector 
 $(x^F(1),\ldots,x^F(m))=(q_{F,\tau_1},\ldots,q_{F,\tau_m})$ or a function $x(c) = q_{F,\tau(c)}$.
 
-Similarly, given an outcome $y$, evaluation of the scoring rules $s_{Q,\mathcal{C}, p_C}$ and $s_{Q,f_C}$ on the forecast $F$ amounts to vectorizing the
-formula for $S_Q(F,y)$. That is,
+Accordingly, evaluation of the scoring rules $S_{Q,\mathcal{C}, p_C}$ and $S_{Q,f_C}$ on the forecast $F$ given an outcome $y$ amounts to summing the formula for $S_Q(F,y)$ across such a vector or function. That is,
 \begin{align}
 S_{Q,\mathcal{C}, p_C}(F,y) &= \frac{1}{m}\sum_{j=1}^{m}p_j(C_j q_{F,\tau_j} + L(q_{F,\tau_j} - y)_+) \\
 S_{Q, f_C}(F,y) &= \frac{1}{L}\int_{0}^{L}(cq_{F,\tau(c)} + L(q_{F,\tau(c)} - y)_+) f_C(c)dc. \label{eqn:CRPS_cform}
@@ -177,18 +176,33 @@ Again, the hierarchy we have introduced here describing WIS and CRPS as parallel
 
 \section{Aggregating QS, WIS, and CRPS across dimensions}
 
-We next expand our decision problem to include multiple actions that will all, in fact (not counterfactually), have to be taken.  This includes the motivating scenario for our work, the simultaneous procurement of resources across several locations (U.S. states and territories) during a pandemic. And again, summing the losses  \eqref{eqn:quantile_loss} over the locations (for a particular $C$ and $L$) creates a loss function that is reactive to the overall procurement decision. Let the locations be indexed by $i \in 1,\ldots,N$.  The action sets for the decision problem corresponding to a single certain cost $C$, a discrete cost distribution over $\{C_j\}, j = 1,\ldots,m$, and a continuous cost distribution $f_C$ with support on $[0,L]$ are now
+But before introducing an allocation scoring rule, we need to expand our decision problem along one more dimension to include composite actions that address multivariate outcomes $y = (y_1,\ldots,y_N)$ being forecasted by a multivariate distribution $F$
+with marginal distributions $F_i, i = 1,\ldots,N$. 
+This includes our motivating scenario of simultaneous procurement of medical countermeasures across several locations (U.S. states and territories) during a pandemic. And again, we simply aggregate the lower dimensional losses \eqref{eqn:quantile_loss}, \eqref{eqn:sum_CL_loss}, or \eqref{eqn:CRPS_loss} over the locations (or multiple forecast targets more generally) in order to formally obtain a single loss function that is reactive to all components of the overall procurement decision. 
+
+The action sets for the decision problem corresponding to a single certain cost $C$, a discrete cost distribution over $\{C_j\}, j = 1,\ldots,m$, and a continuous cost distribution $f_C$ with support on $[0,L]$ are now
 \begin{align}
 \mathcal{X}_{cert} &= \mathbb{R}_{+}^N \\
 \mathcal{X}_{disc} &= (\mathbb{R}_{+}^m)^N = \{x(j):\{1,\ldots,m\} \to \mathbb{R}_{+}^N\}\\
 \mathcal{X}_{cont} &= \{x(c):[0,\infty) \to \mathbb{R}_{+}^N\}.
 \end{align}
-And for these ``vector-action'' problems we can define \emph{total} versions of our loss functions
+For these ``vector-action'' problems we define \emph{total} versions of our loss functions
 \begin{align}
-s_{TQ}(x,y) &= \sum_{i=1}^N Cx_i + L(y_i-x_i)_+ \label{eqn:TQ_loss} \\
+s_{TQ, C}(x,y) &= \sum_{i=1}^N Cx_i + L(y_i-x_i)_+ \label{eqn:TQ_loss} \\
 s_{TQ, \mathcal{C}, p_C}(x,y) &= \frac{1}{m}\sum_{i=1}^N \sum_{j=1}^{m}p_j(C_i x_{i,j} + L(x_{i,j} - y_i)_+)\\
 s_{TQ, f_C}(x,y) &= \sum_{i=1}^N \int_{0}^{L} (cx_i(c) + L(x_i(c) - y_i)_+) f_C(c)dc.
 \end{align}
+Similarly as for the expansion to multiple cost contingencies---though now with respect to forecasts $F_i$ depending on the 
+outcome component $y_i$---first order conditions for optimality decouple under the additive separability of the loss function so that the Bayes act $x^F$ for $F$ is just a vector of quantiles $q_{F,\tau} := (q_{F_1,\tau},\ldots,q_{F_N,\tau})$ or quantile functions when $\tau = 1 - c/L$, $c \in \mathcal{C}$ or $[0,L]$. Note that while $x^F=q_{F,\tau}$ only depends on the marginals 
+$F_i$, it is indeed the Bayes act for the joint $F$ since $E_F[s_{Q,c}(x_i, y_i)] = E_{F_i}[s_{Q,c}(x_i, y_i)]$.
+
+Combining the total loss functions with these composite Bayes acts gives us total versions of scoring rules for the composite decisiion problem
+\begin{align}
+S_{TQ,C}(F,y) &= \sum_{i=1}^{N}Cq_{F_i,\tau} + L(y_i-x_i)_+ \\
+S_{TQ,\mathcal{C}, p_C}(F,y) &= \frac{1}{m}\sum_{i=1}^{N}\sum_{j=1}^{m}p_j(C_j q_{F_i,\tau_j} + L(q_{F_i,\tau_j} - y_i)_+) \\
+S_{TQ, f_C}(F,y) &= \frac{1}{L}\sum_{i=1}^{N}\int_{0}^{L}(cq_{F_i,\tau(c)} + L(q_{F_i,\tau(c)} - y_i)_+) f_C(c)dc.
+\end{align}
+
 A key point for our presentation will be that the same $C$, set $\{C_j\}$, probabilities $\{p_j\}$, and density $f_C$ are used for all locations simultaneously.  We believe that our methods could be adapted to variations across locations (which could be important in practice), but we leave this generalization for later work. 
 
 \section{The allocation score}
@@ -207,11 +221,11 @@ In these action set variables, the loss function we used for the unconstrained $
 \begin{align}
 s_{tQ}\left(x, y\right) = Ck + \sum_{i=1}^{N} L(y_i - x_i)_{+}.
 \end{align}
-We see then that the cost $C$ will not effect the Bayes act for this component of the decision problem motivating the definition of a new single loss function (component), the \emph{allocation loss function}
+The component of the Bayes act for the contingency that $K=k$ is thus independent of the realized cost $C$, motivating the definition of a new single loss function (component), the \emph{allocation loss function}
 \begin{align}
 s_{A}(x,y):= L\sum_{i=1}^{N} (y_i - x_i)_{+},
 \end{align}
-we use in deriving Bayes acts for all $\mathcal{X}_k$.
+we use in deriving these Bayes acts components for all $\mathcal{X}_k$.
 
 
 % \subsubsection*{Old allocation intro}
@@ -360,11 +374,11 @@ x_i^{F,k} = F_i^{-1}(1-\lambda^{\star}/L) \label{eqn:xfk_formula}
 \end{align}
 for any non-zero element $x_i^{F,k}$ of the solution. Thus \eqref{eqn:lambda_stationary} becomes
 \begin{align}
-0 = \sum_{\{l | x_i^{F,k} > 0\}} F_{l}^{-1}(1-\lambda^{\star}/L) - k. \label{eqn:lambda_stationary2}
+0 = \sum_{\{i | x_i^{F,k} > 0\}} F_{i}^{-1}(1-\lambda^{\star}/L) - k. \label{eqn:lambda_stationary2}
 \end{align}
 
 Since convexity and compactness guarantee existence of a solution, the problem is now reduced to solving \eqref{eqn:lambda_stationary} for the set 
-$\{l \mid x_i^{F,k} > 0\}$ and value $\lambda^{\star}$. Note, however, that this is a more complicated task than solving just 
+$\{i \mid x_i^{F,k} > 0\}$ and value $\lambda^{\star}$. Note, however, that this is a more complicated task than solving just 
 for $\lambda^{\star}$ under the assumption that \eqref{eqn:xfk_formula} holds for all coordinates of $x^{F,k}$.\footnote{Such an assumption would exclude fairly simple examples in which $F$ has support bounded away from $0$ in one coordinate but not in another.} The task is simplified though by bringing in the full saddle point condition for $\lambda^{\star}$ which implies not only \eqref{eqn:lambda_stationary} but also that
 $\lambda^{\star}$ is in fact the unique maximizer of the \emph{dual function} 
 $\mathcal{L}_D(\lambda) := \inf_{x \in \mathbb{R}_{+}^N} \mathcal{L}(x, \lambda)$.
@@ -384,7 +398,7 @@ From general theory, $\mathcal{L}_D(\lambda)$ is concave, and while it may not b
 \partial \mathcal{L}_D(\lambda) 
 &= \sum_{i=1}^N \chi_i(\lambda) - k.
 \end{align}
-This of course looks very similar to the right hand side of \eqref{eqn:lambda_stationary2}, but the dual perspective has the key advantage of not requiring any guesses of the set $\{l \mid x_i^{F,k} > 0\}$ when initiating a search algorithm for $\lambda^{\star}$.  Instead, given a candidate $\lambda_0$ for $\lambda^{\star}$, we proceed by calculating the sets $\chi_i(\lambda_0), l = 1,\ldots,N$, and using them to find the (usually zero-width) interval $\partial \mathcal{L}_D(\lambda_0)$. If $\partial \mathcal{L}_D(\lambda_0) \subset (-\infty,0)$, we can eliminate $\{\lambda \geq \lambda_0\}$ from our search and similarly if $\partial \mathcal{L}_D(\lambda_0) \subset (0, \infty)$, we can eliminate $\{\lambda \leq \lambda_0\}$. 
+This of course looks very similar to the right hand side of \eqref{eqn:lambda_stationary2}, but the dual perspective has the key advantage of not requiring any guesses of the set $\{i \mid x_i^{F,k} > 0\}$ when initiating a search algorithm for $\lambda^{\star}$.  Instead, given a candidate $\lambda_0$ for $\lambda^{\star}$, we proceed by calculating the sets $\chi_i(\lambda_0), i = 1,\ldots,N$, and using them to find the (usually zero-width) interval $\partial \mathcal{L}_D(\lambda_0)$. If $\partial \mathcal{L}_D(\lambda_0) \subset (-\infty,0)$, we can eliminate $\{\lambda \geq \lambda_0\}$ from our search and similarly if $\partial \mathcal{L}_D(\lambda_0) \subset (0, \infty)$, we can eliminate $\{\lambda \leq \lambda_0\}$. 
 
 Intutively, we are testing to see whether the total amount $T(\lambda_0)$ of resources that would be procured at a cost $C_0=\lambda_0$ in the unconstrained decision problem with loss function \eqref{eqn:TQ_loss} leaves a deficit or surplus relative to $k$. $T$ is a sum over a set of quantiles and both the set and the quantiles are non-decreasing with cost. (This is essentially why $\mathcal{L}_D$ is concave.) Thus by evaluating $T$ at a mid-point we cut the search interval width in half at each step, arriving quickly at a close approximation $\lambda^{\star, \varepsilon}$ of the cost corresponding to $k$. The strategy of analysing constrained optimization problems by describing the ``prices'' at which unconstrained decisions match constrained ones is ubiquitous in optimization theory and its applications, especially economics.
 
