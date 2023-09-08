@@ -228,18 +228,16 @@ allocation problem
 \begin{align}
 \sum_{i=1}^N F_i^{-1}(\tau) = K.
 \end{align}
-We note that $\tau(K,F)$ depends not only on the constraint level $K$ defining the decision problem but also on the forecast $F$. This is quite
-different from the situation for quantile scores and the WIS, where the probability levels used to calculate scores are fixed.
+This partial solution to the allocation problem is well-known in inventory management and is often attributed to \cite{hadleywhitin1963}.
+In our context, this result has the interpretation that in order to allocate optimally (according to $F$), we must divide resources among the locations so that there is an equal forecasted probability in every location that the allocation is sufficient to meet resource need.
+We note that this probability, $\tau(K,F)$, depends not only on the constraint level $K$ defining the decision problem but also on the forecast $F$.
+This is quite different from the situation for quantile scores and the WIS, where the probability levels used to calculate scores are fixed.
 
-The fact that the vector $(q_{1,\tau},\ldots,q_{N,\tau})$ of quantiles solves the allocation problem \eqref{AP} has the 
-interpretation that 
-in order to allocate optimally (according to $F$) we must divide resoruces among the locations so that the forecasted probability of need exceeding local allocation is the same everywhere. A related interpretation is offered by our model's expression as a partial derivative (derived in the supplement) for the reduction in expected score (i.e., increase in expected utility) in location $i$ that results from a unit increase in the resource:
+A related interpretation comes from the observation that at the allocation given by the Bayes act, the rate of change of the expected loss with respect to the amount of resources allocated to a particular location $i$ is the same for all locations, and is given by
 \begin{align}
-\frac{\partial}{\partial x_i} \mathbb{E}_{F} [s_A(x, Y)] \vert_{x=x^{F,K}} = L \cdot (1-\tau).
+    \frac{\partial}{\partial x_i} \mathbb{E}_{F} [s_A(x, Y)] \vert_{x=x^{F,K}} = L \cdot (\tau - 1).
 \end{align}
-This equation tells us that when our allocations are set to the Bayes act $x^{F,K}$, shifting a small amount $\Delta x$ of the resource from one location to another would yield no change in expected utility since the gain $\Delta x \cdot L \cdot (1-\tau)$ in the receiving location would be canceled out by the loss $\Delta x \cdot L \cdot (\tau-1)$ in the location giving up the resource. 
-This partial solution to the allocation problem is well-known in inventory management and is often attributed to \cite{hadleywhitin1963}. There, products and order quantities play the roles we have given to locations and resource allocation levels. 
-
+Therefore, when our allocations are set to the Bayes act $x^{F,K}$, shifting a small amount of the resource from one location to another would yield no change in total expected unmet need since the change in expected unmet need in the receiving location would be canceled out by the change in the location giving up the resource.
 
 \paragraph{Step 3: Define the scoring rule.} We can now define a proper scoring rule for the probabilistic forecast $F$ as
 \begin{equation}
