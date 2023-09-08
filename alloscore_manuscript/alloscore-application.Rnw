@@ -226,7 +226,7 @@ In the supplement we show that in general, the components $x_i^{F,K}$ of the Bay
 $q_{i,\tau} = F_i^{-1}(\tau)$ of the marginal forecasts $F_i$ for a probability level $\tau = \tau(K,F)$ that is defined by the constraint equation of the
 allocation problem
 \begin{align}
-\sum_{i=1}^{N}q_{i,\tau} = K.
+\sum_{i=1}^{N}x_i^{F,K} = \sum_{i=1}^N F_i^{-1}(\tau) = K.
 \end{align}
 We note that $\tau(K,F)$ depends not only on the constraint level $K$ defining the decision problem but also on the forecast $F$. This is quite
 different from the situation for quantile scores and the WIS, where the probability levels used to calculate scores are fixed.
