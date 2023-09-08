@@ -223,7 +223,7 @@ Here, $\max(0, y_i - x_i)$ is the unmet need in location $i$, which is given by 
 where $\mathbb{E}_{F} [s_A(x, Y)] = \sum_{i=1}^{N} L \mathbb{E}_{F_i}[\max(0, Y_i - x_i)]$ sums the expected loss due to unmet need across all locations.
 
 In the supplement we show that in general, the components $x_i^{F,K}$ of the Bayes act are quantiles 
-$q_{i,\tau} = F_i^{-1}(\tau)$ of the marginal forecasts $F_i$ for a probability level $\tau = \tau(K,F)$ that is defined by the constraint equation of the
+$F_i^{-1}(\tau)$ of the marginal forecasts $F_i$ for a probability level $\tau = \tau(K,F)$ that is defined by the constraint equation of the
 allocation problem
 \begin{align}
 \sum_{i=1}^N F_i^{-1}(\tau) = K.
