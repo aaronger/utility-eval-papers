@@ -414,6 +414,24 @@ We note though that by using this linear interpolation (rather than some other p
 guided by any expected utility maximization principle. As such, this choice may imply strong and potentially questionable assumptions about fairness and
 equity principles for the decision maker when forecasts tend to be ``clumped,'' leaving many regions with very low forecasted probability.
 
+\section{Approximating the allocation score}
+
+cdf of $TY_F$:
+\begin{align}
+TF(K) = \sup \left\{\tau \in [0,1] \mid \sum F_i^{-1}(\tau) \leq K \right\} 
+\end{align}
+Given a set of distinct and increasing probability levels $\boldsymbol{\alpha} = \{\alpha_1,\ldots,\alpha_J\} \subset (0,1)$, we can define a function
+\begin{align}
+j_{\boldsymbol{\alpha},-}(K) = \max \left\{j \in \{1,\ldots,J\} \mid \sum F_i^{-1}(\alpha_j) \leq K \right\} 
+\end{align}
+
+An approximation of $S_{A,K}(F,y)$ using elicited quantiles:
+\begin{align}
+S_{A, \boldsymbol{\alpha}}(F,y) := w_1 s_A(q_{F,j}, y) + w_2 s_A(q_{F,j+1}, y)
+\end{align}
+
+
+
 
 \section{Discussion}
 \label{sec:discussion}
