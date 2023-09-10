@@ -222,26 +222,37 @@ Here, $\max(0, y_i - x_i)$ is the unmet need in location $i$, which is given by 
 \end{align}
 where $\mathbb{E}_{F} [s_A(x, Y)] = \sum_{i=1}^{N} L \mathbb{E}_{F_i}[\max(0, Y_i - x_i)]$ sums the expected loss due to unmet need across all locations.
 
-In the supplement we show that in general, the components $x_i^{F,K}$ of the Bayes act are quantiles 
-$F_i^{-1}(\tau)$ of the marginal forecasts $F_i$ for a probability level $\tau = \tau(K,F)$ that solves the constraint equation of the
-allocation problem
+In the supplement we derive a general form of this solution by beginning with the fact that a condition for minimizing
+expected loss under the constraint is that there is no way to decrease expected loss further by shifting a small amount of the resource from one location to another.  As a consequence, at $x^{F,K}$, all the rates of change of expected loss with respect to the amount of resources allocated to a particular location $i$ must be equal:
 \begin{align}
-\sum_{i=1}^N F_i^{-1}(\tau) = K.
+ \frac{\partial}{\partial x_i} \mathbb{E}_{F} [s_A(x, Y)] \vert_{x=x^{F,K}} = \lambda
 \end{align}
+for some constant $\lambda$ independent of $i$. It turns out that these derivatives can also be expressed in terms of 
+the marginal forecasts $F_i$ as
+\begin{align}
+ \frac{\partial}{\partial x_i} \mathbb{E}_{F} [s_A(x, Y)] = L \cdot (F_i(x_i) - 1)
+\end{align}
+so that 
+\begin{align}
+F(x_i^{F,K}) = 1-\lambda/L.
+\end{align}
+This tells us that in order to allocate optimally (according to $F$), we must divide resources among the locations so that there is an equal forecasted probability in every location that the allocation is sufficient to meet resource need. 
+It also allows us to write the components $x_i^{F,K}$ of the Bayes act as quantiles
+\begin{align}
+x_i^{F,K} = F_i^{-1}(1 - \lambda/L)
+\end{align}
+which can be substituted into the constraint equation of the allocation problem to get an equation for $\lambda$,
+\begin{align}
+\sum_{i=1}^N F_i^{-1}(1 - \lambda/L) = K.
+\end{align}
+A solution to this equation---which almost always must be approximated with a numerical method---can be substituted back into the quantile formulas
+to arrive at an explicit expression for the Bayes act.
 This partial solution to the allocation problem is well-known in inventory management and is often attributed to \cite{hadleywhitin1963}.
-In our context, this result has the interpretation that in order to allocate optimally (according to $F$), we must divide resources among the locations so that there is an equal forecasted probability in every location that the allocation is sufficient to meet resource need.
-We note that this probability, $\tau(K,F)$, depends not only on the constraint level $K$ defining the decision problem but also on the forecast $F$.
-This is quite different from the situation for quantile scores and the WIS, where the probability levels used to calculate scores are fixed.
-
-A related interpretation comes from the observation that at the allocation given by the Bayes act, the rate of change of the expected loss with respect to the amount of resources allocated to a particular location $i$ is the same for all locations, and is given by
-\begin{align}
-    \frac{\partial}{\partial x_i} \mathbb{E}_{F} [s_A(x, Y)] \vert_{x=x^{F,K}} = L \cdot (\tau - 1).
-\end{align}
-Therefore, when our allocations are set to the Bayes act $x^{F,K}$, shifting a small amount of the resource from one location to another would yield no change in total expected unmet need since the change in expected unmet need in the receiving location would be canceled out by the change in the location giving up the resource.
+We note that $\lambda = \lambda(K,F)$ and the probability level $1-\lambda/L$ depend on both the constraint level $K$ defining the decision problem and on the forecast $F$. This is quite different from the situation for quantile scores and the WIS, where the probability levels used to calculate scores are fixed.
 
 \paragraph{Step 3: Define the scoring rule.} We can now define a proper scoring rule for the probabilistic forecast $F$ as
 \begin{equation}
-S_A(F, y; K) = s_A(x^{F,K}, y) = \sum_{i=1}^n L \max(0, y_i - F_i^{-1}(\tau(K,L,F)))
+S_A(F, y; K) = s_A(x^{F,K}, y) = \sum_{i=1}^n L \max(0, y_i - F_i^{-1}(1- \lambda(K,F)/L))
 \end{equation}
 This score measures the total unmet need across all locations that results from using the Bayes allocation associated with the forecast $F$ when the actual level of need in each location is observed to be $y_i$.
 
