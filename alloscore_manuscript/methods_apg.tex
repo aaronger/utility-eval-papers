@@ -349,40 +349,47 @@ The optimal allocation $x^{F,k}$ according to a forecast $F$ is a solution to th
     (\mathrm{AP}) \quad \underset{x \in \mathbb{R}_{+}^N}{\mathrm{minimize}}\,\, E_{F}\left[s_A(Y,x)\right] \text{ subject to } 
     T_x = k. \label{AP}
 \end{align}
-The AP has a convex objective function and affine constraint, so from general convex optimization theory 
-(see e.g. \cite{ruszczynski2011nonlinear}, Chapter 4), it is equivalent to the
-problem of finding a saddle point $(x^{F,k}, \lambda^{\star})$ of the associated Lagrangian 
+The AP has a convex objective function and affine constraint, so from general convex optimization theory, a solution $x^{F,k}$ must satisfy a set of \emph{Karush-Kuhn-Tucker} (KKT) conditions. These include that for any $i$ such that $x_i^{F,K} > 0$,
 \begin{align}
+\frac{\partial}{\partial x_i} E_{F}\left[s_A(Y,x^{F,k})\right] &= L(F_i(x_i^{F,k})-1) = \lambda
+\quad (\text{cf. \eqref{eqn:q_deriv}}) \label{eqn:x_stationary}
+\end{align}
+for some $\lambda$ independent of $i$. These equations follow from the assumption that when $x=x^{F,k}$, the objective $E_{F}\left[s_A(Y,x)\right]$ cannot be reduced by any small
+resource shifts between locations and they provide a quantile formula for any non-zero optimal allocation level,
+\begin{align}
+x_i^{F,k} = F_i^{-1}(1-\lambda/L). \label{eqn:xfk_formula}
+\end{align}
+Another KKT condition is the constraint equation, which can now be written in terms of $\lambda$ as
+\begin{align}
+0 = \sum_{i \in I_+} F_{i}^{-1}(1-\lambda/L) - k, \label{eqn:lambda_stationary2}
+\end{align}
+where $I_+ = \{i \mid x_i^{F,k} > 0\}$.
+Since convexity and compactness guarantee existence of a solution, the problem is now reduced to solving 
+\eqref{eqn:lambda_stationary2} for the set 
+$\{i \mid x_i^{F,k} > 0\}$ and a root $\lambda^{\star}$, in terms of which we can exrpess the Bayes act as
+\begin{align}
+x_i^{F,k} = 
+\begin{cases}
+F_i^{-1}(1-\lambda^{\star}/L) &  i \in I_+ \\
+0 & \text{otherwise}.
+\end{cases}
+\end{align}
+Note, however, that this is a more complicated task than just solving \eqref{eqn:lambda_stationary2}
+for $\lambda^{\star}$ under the assumption that $I_+ = \{1,\ldots,N\}$.\footnote{Such an assumption would exclude fairly simple examples in which $F$ has support bounded away from $0$ in one coordinate but not in another.} 
+
+The task can be simplified though by turning our attention to the \emph{dual} formulation of the AP. (See e.g. \cite{ruszczynski2011nonlinear}, Chapter 4, which we follow here.) This involves recasting the KKT equations \eqref{eqn:x_stationary}
+and the constraint $T_x=k$ as the first order conditions in variables $x$ and $\lambda$, respectively, for $(x^{F,k}, \lambda^{\star})$ to be a saddle point of the \emph{Lagrangian}
+\begin{align}{}
 \mathcal{L}(x, \lambda) = \mathcal{L}(x, \lambda; F, k, L) 
 &= E_F\left[s_A(Y,x)\right] + \lambda(T_x - k) \\
 &= L\sum_{i=1}^{N} E_{F_i}[(Y_i - x_i)_{+}] + \lambda\left(\sum_{i=1}^{N} x_i - k\right).  
 \end{align}
-in the region $\{x \geq 0, \lambda \in \mathbb{R}\}$.\footnote{The Lagrangian in this context has the interpretation as the best (lowest) objective function value we can achieve if we forced to choose $x$ but can buy or get credit for changes the constraint level $k$ 
+in the region $\{x \geq 0, \lambda \in \mathbb{R}\}$.\footnote{The Lagrangian in this context has the interpretation as the best (lowest) objective function value we can achieve if we forced to choose $x$ but can buy or get credit for changes in the constraint level $k$ 
 at the ``price'' $\lambda$.}
-The Lagrangian reformulation in particular recasts the constraint $T_x=k$ of the original problem as a first-order condition on $\mathcal{L}$ with respect to the new \emph{Lagrange multiplier} variable $\lambda$:
-\begin{align}
-0 = \del{}{\lambda} \mathcal{L}(x^{F,k}, \lambda^{\star}) &= \sum_{i=1}^{N} x_i^{F,k} - k. \label{eqn:lambda_stationary}
-\end{align}
-But for $(x^{F,k}, \lambda^{\star})$ to be a saddle point we also need
-\begin{align}
-0 = \frac{\partial}{\partial x_i} \mathcal{L}(x^{F.k}, \lambda) &= L(F_i(x_i^{F,k})-1) + \lambda^{\star} 
-\quad (\text{cf. \eqref{eqn:q_deriv}}) \label{eqn:x_stationary}
-\end{align}
-for any $x_i^{F,k} > 0$, which gives a formula 
-\begin{align}
-x_i^{F,k} = F_i^{-1}(1-\lambda^{\star}/L) \label{eqn:xfk_formula}
-\end{align}
-for any non-zero element $x_i^{F,k}$ of the solution. Thus \eqref{eqn:lambda_stationary} becomes
-\begin{align}
-0 = \sum_{\{i | x_i^{F,k} > 0\}} F_{i}^{-1}(1-\lambda^{\star}/L) - k. \label{eqn:lambda_stationary2}
-\end{align}
-
-Since convexity and compactness guarantee existence of a solution, the problem is now reduced to solving \eqref{eqn:lambda_stationary} for the set 
-$\{i \mid x_i^{F,k} > 0\}$ and value $\lambda^{\star}$. Note, however, that this is a more complicated task than solving just 
-for $\lambda^{\star}$ under the assumption that \eqref{eqn:xfk_formula} holds for all coordinates of $x^{F,k}$.\footnote{Such an assumption would exclude fairly simple examples in which $F$ has support bounded away from $0$ in one coordinate but not in another.} The task is simplified though by bringing in the full saddle point condition for $\lambda^{\star}$ which implies not only \eqref{eqn:lambda_stationary} but also that
-$\lambda^{\star}$ is in fact the unique maximizer of the \emph{dual function} 
-$\mathcal{L}_D(\lambda) := \inf_{x \in \mathbb{R}_{+}^N} \mathcal{L}(x, \lambda)$.
-This approach is especially suitable in our situation because our original objective function $E_F\left[s_A(Y,x)\right]$ is decomposable in the coodinates $x_i$, allowing the dual function to be computed separately with respect to each coordinate:
+The \emph{dual function} is then defined as $\mathcal{L}_D(\lambda) := \inf_{x \in \mathbb{R}_{+}^N} \mathcal{L}(x, \lambda)$. 
+From general theory, $\mathcal{L}_D(\lambda)$ is concave and $\lambda^{\star}$ is its unique maximizer.
+The reason why the dual approach is especially suitable in our situation is that 
+our original objective function $E_F\left[s_A(Y,x)\right]$ is decomposable in the coodinates $x_i$, allowing the corresponding infima in $\mathcal{L}_D$ to be computed separately:
 \begin{align}
 \mathcal{L}_D(\lambda) &= \inf_{x \in \mathbb{R}_{+}^N} L\sum_{i=1}^{N} E_{F_i}[(Y_i - x_i)_{+}] + \lambda\left(\sum_{i=1}^{N} x_i - k\right) \\
 &= - \lambda k + \sum_{i=1}^{N} \inf_{x_i \in \mathbb{R}_{+}}\left\{ L E_{F_i}[(Y_i - x_i)_{+}] + \lambda x_i\right\}  \label{eqn:dual_decomp} \\
@@ -392,12 +399,34 @@ Here, $x_i(\lambda)$ is any member of the set
 \begin{align}
 \chi_i(\lambda) = \underset{x_i \in \mathbb{R}_{+}}{\mathrm{arginf}} \left\{ L E_{F_i}[(Y_i - x_i)_{+}] + \lambda x_i\right\}
 \end{align}
-which for $F_i$ in a standard parametric family will often have simple the form $\chi_i(\lambda) = \{F_i^{-1}(1-\lambda/L)\}$ but could an interval containing $0$ or $\infty$.
-From general theory, $\mathcal{L}_D(\lambda)$ is concave, and while it may not be differentiable when the $x_i$'s attaining the infima in \eqref{eqn:dual_decomp} are zero, it does have as a subdifferential the well-defined interval
+which for $F_i$ in a standard parametric family will often simply be $\{F_i^{-1}(1-\lambda/L)\}$ but could an interval containing $0$ or $\infty$.
+While $\mathcal{L}_D(\lambda)$ may not be differentiable when the $x_i$'s attaining the infima in \eqref{eqn:dual_decomp} are zero, it does have as a well-defined subdifferential which is the sum of intervals
 \begin{align}
 \partial \mathcal{L}_D(\lambda) 
-&= \sum_{i=1}^N \chi_i(\lambda) - k.
+&= \sum_{i=1}^N \chi_i(\lambda) - k \\
+&= \left[ \sum_{i=1}^N \min(\chi_i(\lambda))  - k, \sum_{i=1}^N \max(\chi_i(\lambda))  - k\right]
 \end{align}
+
+
+% The Lagrangian reformulation in particular recasts the constraint $T_x=k$ of the original problem as a first-order condition on $\mathcal{L}$ with respect to the new \emph{Lagrange multiplier} variable $\lambda$:
+% \begin{align}
+% 0 = \del{}{\lambda} \mathcal{L}(x^{F,k}, \lambda^{\star}) &= \sum_{i=1}^{N} x_i^{F,k} - k. \label{eqn:lambda_stationary}
+% \end{align}
+% But for $(x^{F,k}, \lambda^{\star})$ to be a saddle point we also need
+% \begin{align}
+% 0 = \frac{\partial}{\partial x_i} \mathcal{L}(x^{F.k}, \lambda) &= L(F_i(x_i^{F,k})-1) + \lambda^{\star} 
+% \quad (\text{cf. \eqref{eqn:q_deriv}}) \label{eqn:x_stationary}
+% \end{align}
+% for any $x_i^{F,k} > 0$, which gives a formula 
+% \begin{align}
+% x_i^{F,k} = F_i^{-1}(1-\lambda^{\star}/L) \label{eqn:xfk_formula}
+% \end{align}
+% for any non-zero element $x_i^{F,k}$ of the solution. Thus \eqref{eqn:lambda_stationary} becomes
+% \begin{align}
+% 0 = \sum_{\{i | x_i^{F,k} > 0\}} F_{i}^{-1}(1-\lambda^{\star}/L) - k. \label{eqn:lambda_stationary2}
+% \end{align}
+
+
 This of course looks very similar to the right hand side of \eqref{eqn:lambda_stationary2}, but the dual perspective has the key advantage of not requiring any guesses of the set $\{i \mid x_i^{F,k} > 0\}$ when initiating a search algorithm for $\lambda^{\star}$.  Instead, given a candidate $\lambda_0$ for $\lambda^{\star}$, we proceed by calculating the sets $\chi_i(\lambda_0), i = 1,\ldots,N$, and using them to find the (usually zero-width) interval $\partial \mathcal{L}_D(\lambda_0)$. If $\partial \mathcal{L}_D(\lambda_0) \subset (-\infty,0)$, we can eliminate $\{\lambda \geq \lambda_0\}$ from our search and similarly if $\partial \mathcal{L}_D(\lambda_0) \subset (0, \infty)$, we can eliminate $\{\lambda \leq \lambda_0\}$. 
 
 Intutively, we are testing to see whether the total amount $T(\lambda_0)$ of resources that would be procured at a cost $C_0=\lambda_0$ in the unconstrained decision problem with loss function \eqref{eqn:TQ_loss} leaves a deficit or surplus relative to $k$. $T$ is a sum over a set of quantiles and both the set and the quantiles are non-decreasing with cost. (This is essentially why $\mathcal{L}_D$ is concave.) Thus by evaluating $T$ at a mid-point we cut the search interval width in half at each step, arriving quickly at a close approximation $\lambda^{\star, \varepsilon}$ of the cost corresponding to $k$. The strategy of analysing constrained optimization problems by describing the ``prices'' at which unconstrained decisions match constrained ones is ubiquitous in optimization theory and its applications, especially economics.
