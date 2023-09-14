@@ -227,7 +227,7 @@ expected loss under the constraint is that there is no way to decrease expected 
 \begin{align}
  \frac{\partial}{\partial x_i} \mathbb{E}_{F} [s_A(x, Y)] \vert_{x=x^{F,K}} = \lambda
 \end{align}
-for some constant $\lambda$ independent of $i$. It turns out that these derivatives can also be expressed in terms of 
+for some constant $\lambda$ that is the same for all locations $i$. It turns out that these derivatives can also be expressed in terms of 
 the marginal forecasts $F_i$ as
 \begin{align}
  \frac{\partial}{\partial x_i} \mathbb{E}_{F} [s_A(x, Y)] = L \cdot (F_i(x_i) - 1)
