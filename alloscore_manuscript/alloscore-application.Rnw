@@ -248,7 +248,7 @@ which can be substituted into the constraint equation of the allocation problem 
 The value of $\lambda$ that solves this equation---which almost always must be approximated with a numerical method---can be substituted back into the quantile formulas
 to arrive at an explicit expression for the Bayes act.
 This partial solution to the allocation problem is well-known in inventory management and is often attributed to \cite{hadleywhitin1963}.
-We note that $\lambda = \lambda(K,F)$ and the probability level $1-\lambda/L$ depend on both the constraint level $K$ defining the decision problem and on the forecast $F$. This is quite different from the situation for quantile scores and the WIS, where the probability levels used to calculate scores are fixed.
+We note that $\lambda$ and the probability level $1-\lambda/L$ depend on both the constraint level $K$ defining the decision problem and on the forecast $F$. This is quite different from the situation for quantile scores and the WIS, where the probability levels used to calculate scores are fixed.
 
 \paragraph{Step 3: Define the scoring rule.} We can now define a proper scoring rule for the probabilistic forecast $F$ as
 \begin{equation}
