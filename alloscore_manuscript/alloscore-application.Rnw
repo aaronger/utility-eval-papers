@@ -223,12 +223,12 @@ Here, $\max(0, y_i - x_i)$ is the unmet need in location $i$, which is given by 
 where $\mathbb{E}_{F} [s_A(x, Y)] = \sum_{i=1}^{N} L \mathbb{E}_{F_i}[\max(0, Y_i - x_i)]$ sums the expected loss due to unmet need across all locations.
 
 In the supplement we derive a general form of this solution by beginning with the fact that a condition for minimizing
-expected loss under the constraint is that there is no way to decrease expected loss further by shifting a small amount of the resource from one location to another.  As a consequence, at $x^{F,K}$, all the rates of change of expected loss with respect to the amount of resources allocated to a particular location $i$ must be equal:
+expected loss under the constraint is that there is no way to decrease expected loss further by shifting a small amount of the resource from one location to another.
+As a consequence, at $x^{F,K}$, adding resources to any particular location $i$ reduces expected loss at the same rate $\lambda$:
 \begin{align}
- \frac{\partial}{\partial x_i} \mathbb{E}_{F} [s_A(x, Y)] \vert_{x=x^{F,K}} = \lambda
+\frac{\partial}{\partial x_i} \mathbb{E}_{F} [s_A(x, Y)] \vert_{x=x^{F,K}} = -\lambda.
 \end{align}
-for some constant $\lambda$ that is the same for all locations $i$. It turns out that these derivatives can also be expressed in terms of 
-the marginal forecasts $F_i$ as
+It turns out that these derivatives can also be expressed in terms of the marginal forecasts $F_i$ as
 \begin{align}
  \frac{\partial}{\partial x_i} \mathbb{E}_{F} [s_A(x, Y)] = L \cdot (F_i(x_i) - 1)
 \end{align}
