@@ -83,7 +83,7 @@ run_alloscore <- function(
 
 ## take estimated alloscores and put them in one clean dataset
 ## returned object has a row for each model, reference_date, K, state
-assemble_alloscores <- function() {
+assemble_alloscores <- function(...) {
   library(targets)
   require(dplyr)
 
