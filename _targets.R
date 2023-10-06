@@ -38,8 +38,8 @@ reqd_locs <- hub_locations |>
   dplyr::filter(geo_type == "state", !(geo_value %in% c("us", "as", "gu", "mp", "pr", "um", "vi"))) |>
   dplyr::pull(fips)
 
-# List of targets:
-list(
+# Lists of targets:
+setup <- list(
   tar_target(
     name = eligible_models,
     command = determine_eligible_models(values$forecast_dates, locations = reqd_locs)
@@ -56,21 +56,30 @@ list(
     name = score_data,
     command = get_forecast_scores(forecast_data, truth_data)
   ),
-  tar_map(
-    values = values,
-    tar_target(alloscore, run_alloscore_one_date(forecast_data, truth_data, forecast_dates))
-  ),
-  tar_target(
-    name = all_alloscore_data,
-    command = assemble_alloscores()
-  ),
   tar_target(
     name = exponential_example,
     command = make_exponential_example_figure()
   )
-  # tar_target(
-  #   name = figure_K_v_alloscore,
-  #   command = plot_K_v_alloscore(alloscore_df),
-  #   format = "file"
-  # )
 )
+
+mapped <- tar_map(
+  unlist = FALSE,
+  values = values,
+  tar_target(
+    alloscore,
+    run_alloscore_one_date(forecast_data, truth_data, forecast_dates)
+    )
+)
+
+combined <- tar_combine(
+  name = all_alloscore_data,
+  mapped[["alloscore"]],
+  command = assemble_alloscores(!!!.x)
+)
+# tar_target(
+#   name = figure_K_v_alloscore,
+#   command = plot_K_v_alloscore(alloscore_df),
+#   format = "file"
+# )
+
+list(setup, mapped, combined)
