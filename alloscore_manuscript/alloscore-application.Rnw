@@ -250,11 +250,27 @@ to arrive at an explicit expression for the Bayes act.
 This partial solution to the allocation problem is well-known in inventory management and is often attributed to \cite{hadleywhitin1963}.
 We note that $\lambda$ and the probability level $1-\lambda/L$ depend on both the constraint level $K$ defining the decision problem and on the forecast $F$. This is quite different from the situation for quantile scores and the WIS, where the probability levels used to calculate scores are fixed.
 
-\paragraph{Step 3: Define the scoring rule.} We can now define a proper scoring rule for the probabilistic forecast $F$ as
-\begin{equation}
-S_A(F, y; K) = s_A(x^{F,K}, y) = \sum_{i=1}^n L \max(0, y_i - F_i^{-1}(1- \lambda(K,F)/L))
-\end{equation}
-This score measures the total unmet need across all locations that results from using the Bayes allocation associated with the forecast $F$ when the actual level of need in each location is observed to be $y_i$.
+\paragraph{Step 3: Define the scoring rule.} We can now use the Bayes act to define a proper scoring rule for the probabilistic forecast $F$.  
+Consider first the ``raw'' score defined as
+\begin{align}
+S_A^{\text{raw}}(F, y; K) = s_A(x^{F,K}, y) = \sum_{i=1}^N L \max(0, y_i - F_i^{-1}(1- \lambda(K,F)/L))
+\end{align}
+This measures the total unmet need across all locations that results from using the Bayes allocation associated with the forecast $F$ when the actual level of need in each location is observed to be $y_i$. But to make this a more easily interpreted measure of 
+forecast performance, we will adjust it by the the minimum loss $l_{\text{oracle}}(y;K)$ achievable by an \emph{oracle} allocator which has precise foreknowledge of the outcomes $y_i$ which is $l_{\text{oracle}}(y;K) = L \max(0, \sum_{i=1}^{N}y_i - K)$.  Our scoring rule is then given by
+\begin{align}
+S_A(F, y; K) &= S_A^{\text{raw}}(F, y; K) - l_{\text{oracle}}(y;K) \\
+& = \sum_{i=1}^N L \max(0, y_i - x_i^{F,K}) - L \max(0, \sum_{i=1}^{N}y_i - K) \\
+& = 
+\begin{cases}
+\sum_{i=1}^n L \max(0, y_i - x_i^{F,K}), &  \sum_{i=1}^{N}y_i \leq K \\
+LK - L\sum_{i=1}^{N} \min(x_i^{F,K}, y_i), &  \sum_{i=1}^{N}y_i > K.
+\end{cases}
+\end{align}
+In the first case, the oracle incurs no loss so that the raw and adjusted scores coincide. The second case can be read as taking the $K$ resource units perfectly allocated by the oracle as a base penalty on 
+the imperfect forecast $F$ and then, for each location $i$, reducing this penalty by however much of the need $y_i$ 
+is met with the Bayes act component $x_i^{F,K}$.
+The oracle adjustment aligns with a central theme in modern decision theory across disciplines including economics, computer science, and psychology which is that 
+\emph{opportunity loss} (often known as \emph{regret} or (negative) \emph{relative utility}) is often a more important quantity than absolute loss from both a descriptive and normative perspective.
 
 \subsubsection{Integrating the allocation score across resource constraint levels}
 \label{sec:methods.detailed.integrated_allocation}
