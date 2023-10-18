@@ -340,13 +340,13 @@ The data were updated daily and were available for download by the public throug
 For this analysis, we downloaded the hospitalizations data through the covidHubUtils R package, which connects users to the most recent version of the data.(cite package) \ngr{can we use tar\_manifest() to reproducibly display the date the data were stored?}
 
 \subsubsection{Forecast data}
-The US COVID-19 Forecast Hub, a consortium funded by the US CDC and led by a research group at UMass-Amherst, collected short-term forecasts of hospitalizations starting in December 2020.(cite Data descriptor paper)
+The US COVID-19 Forecast Hub, a consortium funded by the US CDC and led by a research group at UMass-Amherst, collected short-term forecasts of hospitalizations starting in December 2020.\citep{cramer_united_2022}
 Any team that with appropriately formatted forecasts could submit them to the Forecast Hub data repository on GitHub.(cite repo site)
 Forecasts were time-stamped by GitHub upon submission and passed validation checks that ensured correct formatting and that the forecasts were being submitted only for dates in the future, not for data that had already been observed.
 
 Forecast submission followed a weekly cycle and culminated in the creation of an ensemble forecast.
 Forecasts could be submitted on any day during the week.
-However once a week on Mondays, the Forecast Hub would collect the most recent forecasts submitted by all teams that met certain inclusion criteria and create an ensemble forecast using quantile averaging.(cite Evan's paper)
+However once a week on Mondays, the Forecast Hub would collect the most recent forecasts submitted by all teams that met certain inclusion criteria and create an ensemble forecast using quantile averaging.\citep{ray_comparing_2023}
 An ensemble that treated all models equally was created (COVIDhub-ensemble) as was a model that created weights of submitted models based on performance in the past 12 weeks (COVIDhub-trained\_ensemble).
 One other model that combined multiple forecasts from different teams but used a different ensembling algorithm, a linear pooling method with tail extrapolation, was also included in our analyses (JHUAPL-SLPHospEns).
 Several other models have ``ensemble'' in their name, but this refers to combinations of different variations of models that the specific team created, not to a multi-model ensemble combining different submitted forecasts to the Forecast Hub.
