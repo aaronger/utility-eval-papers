@@ -40,5 +40,7 @@ plot_allocation_forecasts <- function(forecast_data, truth_data, loc_abbr, tar_d
     scale_x_discrete(name="models", labels=NULL) +
     ggtitle(tar_date)
 
-  p_medians + patchwork::inset_element(p_one_date, left = .6, right = .99, top = .99, bottom = .5)
+  pdf('figures/allocation-forecasts.pdf', height=6, width=8)
+  print(p_medians + patchwork::inset_element(p_one_date, left = .6, right = .99, top = .99, bottom = .5))
+  dev.off()
 }

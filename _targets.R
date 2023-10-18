@@ -26,7 +26,8 @@ tar_source(files = c("R/data-ingestion.R",
                      "R/plot-alloscores.R",
                      "R/run-alloscore.R",
                      "R/determine-model-eligibility.R",
-                     "R/exponential-examples.R"))
+                     "R/exponential-examples.R",
+                     "R/plot-allocation-forecasts.R"))
 
 values <- tibble(forecast_dates = as.character(seq.Date(as.Date("2021-11-22"), as.Date("2022-02-28"), by = "7 days")))
 
@@ -59,6 +60,10 @@ setup <- list(
   tar_target(
     name = exponential_example,
     command = make_exponential_example_figure()
+  ),
+  tar_target(
+    name = forecasts_plot,
+    command = plot_allocation_forecasts(forecast_data, truth_data, loc_abbr="MA", tar_date = "2022-01-24")
   )
 )
 
