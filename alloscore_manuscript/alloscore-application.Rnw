@@ -329,7 +329,12 @@ Case study heading into the Omicron wave. Some more detailed discussion of impli
 Look at results over a broader range of time.
 
 
-\ngr{TODO: add a figure showing some forecasts and ground truth data.}
+\begin{figure}
+    \includegraphics[width=\textwidth]{../figures/allocation-forecasts-v2.pdf}
+    \caption{Hospitalization data and example forecasts for Virginia, US. New daily hospital admissions are shown by the line of data. The dark line indicates data up to the time the forecast was made on December 27, 2021; the grey line indicates data available in retrospect. The set of colored bars represent forecasts made for 14 days into the future, with a target date of January 10, 2022 (dashed vertical line). The horizontal dashed line indicates the level of the observed value on this day. Note that all three forecasts correspond to forecasts for the same day, but they are spread out for better visibility. }
+    \label{fig:sample-forecasts}
+\end{figure}
+
 
 \subsection{Data}
 \subsubsection{Hospitalization data}
@@ -365,14 +370,11 @@ Models had to have a complete forecast for at least 4 of the 15 weeks in the ana
 
 \subsection{Evaluation metrics}
 
-This manuscript focuses on two proper forecast scores, the allocation score and the weighted interval score (WIS).(cite Gerding and Bracher)
-Propriety of forecast scoring rules is desirable as it ensures that forecasters are not incentivized to modify their forecast distribution to achieve a better score.(cite Gneiting and Raftery or Raftery and Gneiting)
+This manuscript focuses on two proper forecast scores, the allocation score and the weighted interval score (WIS), both defined above.
 
 \subsubsection{Allocation Score}
 
-\ngr{TODO: general introduction to the alloscore}
-
-For the analysis, we fixed a resource constraint $K$ to be 15,000, based roughly on a reported number of ventilators available for reallocation in the US.(cite paper)
+For this analysis, we fixed a resource constraint $K$ to be 15,000, based roughly on a reported number of ventilators available for reallocation in the US.\citep{ajao_assessing_2015}
 For each week, we computed a the allocation score for each 14 day-ahead forecast based on $K=15,000$.
 \ngr{it appears that for the last two weeks selected (forecast dates: 2022-02-14 and 2022-02-28) the upper limit of K was 11400 and 9200 respectively, so we do not have alloscores computed for K=15000. Maybe they would have all been zero, since the limits were likely set based on the number of cases being low. What is the rule used to determine the max K computed? Don't think we need to change it, but would be nice to state in the manuscript what it is.}
 
@@ -389,9 +391,13 @@ sr_{m,w}^{AS} = 1 - \frac{r^{AS}_{m,w}-1}{n_w-1}
 
 \subsubsection{Weighted Interval Score (WIS)}
 
-\ngr{TODO: general introduction to WIS and define MWIS as mean WIS.}
-
-We computed standardized ranks for MWIS ($sr_{m,w}^{MWIS}$) using the same procedure as for allocation scores described above.
+The Weighted Interval Score (WIS), as described in earlier sections, measures the alignment of a single probabilistic forecast ($F$) with an observation ($y$).
+We computed the mean WIS across all $L$ locations for each model and each forecasted week as
+\begin{equation}
+MWIS_{m,w} = \frac{1}{L}\sum_{l=1}^L WIS(F_{l,m,w},y)
+\end{equation}
+where $F_{l,m,w}$ is the probabilistic forecast from model $m$ for location $l$ and week $w$.
+Using the same procedure as for allocation scores described above, we computed standardized ranks for MWIS ($sr_{m,w}^{MWIS}$).
 
 \subsection{Data and code availability}
 

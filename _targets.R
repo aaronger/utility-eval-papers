@@ -27,7 +27,7 @@ tar_source(files = c("R/data-ingestion.R",
                      "R/run-alloscore.R",
                      "R/determine-model-eligibility.R",
                      "R/exponential-examples.R",
-                     "R/plot-allocation-forecasts.R"))
+                     "R/plot_functions.R"))
 
 values <- tibble(forecast_dates = as.character(seq.Date(as.Date("2021-11-22"), as.Date("2022-02-28"), by = "7 days")))
 
@@ -61,9 +61,19 @@ setup <- list(
     name = exponential_example,
     command = make_exponential_example_figure()
   ),
+  # other version of figure with point forecasts for all dates and inset
+  # tar_target(
+  #   name = forecasts_plot,
+  #   command = plot_allocation_forecasts(forecast_data, truth_data, loc_abbr="MA", tar_date = "2022-01-24")
+  # ),
   tar_target(
-    name = forecasts_plot,
-    command = plot_allocation_forecasts(forecast_data, truth_data, loc_abbr="MA", tar_date = "2022-01-24")
+    name = application_figure_1,
+    command = plot_hosp(forecast_data,
+                        truth_data,
+                        models = c("CU-select","COVIDhub-ensemble", "MUNI-ARIMA"),
+                        f_width1 = 3,
+                        f_alpha = .4,
+                        locations = "VA")
   )
 )
 
