@@ -1,0 +1,194 @@
+---
+title: |
+  | Infectious Disease Forecast Evaluation Via Social Utility: Allocation Scores
+subtitle: MIDAS 2023
+author: Aaron Gerding, Nick Reich, Ben Rogers, Evan Ray
+institute: "School of Public Health and Health Sciences, UMass, Amherst"
+format: 
+  beamer:
+    navigation: horizontal
+    fontsize: 9pt
+    header-includes: |
+      \titlegraphic{
+      \begin{minipage}{0.4\linewidth}
+          \includegraphics[width=\linewidth]{reichlab.png}
+      \end{minipage}%
+      \hspace{0.06\linewidth}
+      \begin{minipage}{0.4\linewidth}
+          \includegraphics[width=\linewidth]{C19FH.png}
+      \end{minipage}%
+      }
+  # revealjs: 
+  #   width: 1050
+  #   height: 700
+# revealjs-plugins:
+#   - attribution
+editor: visual
+# css: styles.css
+---
+
+## The Role of ID forecasting Hubs
+
+Outbreak forecasting hubs developed to **"inform public health responses"**
+
+Basic examples of **responses** are **allocation decisions** regarding
+
+-   medical supplies
+-   facility capacity
+-   personnel
+-   R&D funding
+-   public tolerance for NPIs
+
+## Basic Hub Products
+
+![](plots/p_VA_CU_IHME.png)
+
+::: notes
+quantiles flexible interpretable - closer to describing full distribution which DM probably always wants
+
+multicenter effort to collect forecasts via hubs for ID outbreaks (epi/pan/endemic)
+
+With uncertainty quantification being well-established as needed DM input,
+
+Allocations can be wrt space, time, demographic
+
+Next: formalize this.
+:::
+
+## Scoring rules and social welfare
+
+A **scoring rule** $S$ assigns a number $S(F,y)$ to the forecast $F$ of $Y$ when $Y=y$.
+
+$S$ if **proper** if $\displaystyle{E_{F}[S(F,Y)] \leq E_{F}S(G,Y)]}$ for all $F, G$
+
+-   ensures that honesty maximizes expected score
+
+Hub goal of increasing social welfare by ranking and combining forecasts to best support PH responses seems to require use of proper scores.
+
+Current standard is the **Weighted Interval Score** (a discrete version of the **Continuous Ranked Probability Score**)
+
+-   adopted for convenient scoring of quantile forecasts.
+
+<br>
+
+#### A central goal in design of scoring rules for social welfare
+
+::: box
+Create scenario where the forecaster believes maximizing her own expected utility aligns with leading the DM toward actions that maximize social utility.
+:::
+
+## Bayes Acts
+
+Scoring rules can be cast in decision-theoretic framework of **Bayes acts**.
+
+::: box
+The **Bayes act** relative to a forecast $Y \sim F$ is the action $x^F$ by which a DM will minimize **expected loss** $E_F[l(x,Y)]$.
+:::
+
+-   loss $l(x,y)$ is the **consequence** of experiencing $y$ having prepared with $x$
+
+::: box
+Key point: $S(F,y) := l(x^F, y)$ is an *automatically proper* scoring rule.
+:::
+
+<br>
+
+#### Our basic example:
+
+-   $x$ and $y$ are vectors in $\mathbb{N}_0^{52}$
+-   $y =$ number of severe cases in US states and territories
+-   $l(x,y) =$ unmet need when $x$ beds allocated and $y$ severe cases occur
+
+```{=tex}
+\begin{align*}
+l(x,y) &= \sum_{i=1}^{52} \max(y_i - x_i, 0)\\
+x^F &= \text{minimizer of } E_{F}[l(x,Y)] \text{ over all feasible } x
+\end{align*} 
+```
+<br>
+
+**Our new idea:** Define **feasible** $x$ as satisfying $\displaystyle{\sum x_i \leq K}$
+
+<br>
+
+::: notes
+social/political/economic/psychological/moral utility
+
+this must somehow acknowledge risk attitude heterogeneity among various DM's that a forecast hub might serve
+
+gpl parameters, weights, multiple constraints
+:::
+
+## Computation
+
+Obtaining $x^F$ is a constrained stochastic optimization problem
+
+-   known in inventory management as a **constrained multi-product newsvendor** problem
+
+-   formally solvable using Lagrange multiplier method to get a quantile representation $x_i^F = F_i^{-1}(\tau(K,F)), i = 1,\ldots,N$
+
+-   in practice, we find $x_i^F$'s via an iterative method:
+
+![](plots/iter_combo.png)
+
+## Application
+
+December 2021: Omicron wave clearly started US but forecast teams unsure of severity given uncertainty about $R_0$, cross-protection by vaccination, previous infection, etc.
+
+![](plots/nat_hosps.png)
+
+## Oracle adjusted allocation scores near Omicron peak
+
+![](plots/peak_alloscore.png)
+
+## Some Observations
+
+::: columns
+::: {.column width="40%"}
+-   related to the Murphy curves of Ehm, Gneiting, Jordan, Krüger, 2016
+
+-   extreme shortage or surplus diminishes oracle's advantage
+
+-   ranking consistent across large $K$ region.
+:::
+
+::: {.column width="60%"}
+![](plots/peak_alloscore_min.png)
+:::
+:::
+
+## Alloscore and WIS rank models differently
+
+![](plots/p_wis_v_alloscore.png)
+
+## Explanations?
+
+![](plots/mvbucky_dist_alloc.png)
+
+## Limitations
+
+This is **post-hoc** analysis
+
+Hub forecasters were unaware of
+
+-   an allocation score (on joint forecast)
+
+-   any allocation based loss
+
+-   our quantile interpolation/extrapolation methods (`distfromq`)
+
+    -   might be especially important for tails
+
+We hope/think that allocation scoring is sensitive to implicit dependence structures in forecasts, but all work so far only refers directly to marginals - nothing yet with copulas, etc.
+
+<br>
+
+### Thank you!
+
+A very rough R package I wrote to implement scoring procedures:
+
+<https://github.com/aaronger/alloscore>
+
+A less rough package Evan wrote to implement cdf reconstruction
+
+<https://github.com/reichlab/distfromq>

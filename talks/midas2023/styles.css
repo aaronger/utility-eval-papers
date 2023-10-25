@@ -1,0 +1,38 @@
+
+#title-slide .author::after {
+  content: url('../reichlab.png');
+  display: block;
+}
+
+.important {
+  color: maroon;
+}
+
+.illustration {
+  border: 4px solid rgb(230, 230, 230); 
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 3px;
+}
+
+.grid-item {
+  padding: 1px;
+}
+
+.reveal {
+  font-size: 25px;
+  /*font-family: Palatino !important;*/
+}
+
+.box {
+  margin-top: 10px;
+  margin-right: 10px;
+  border: 5px solid #006DAE;
+  padding: 10px;
+  font-size: 26px;
+  background-color: #E6E6E6;
+}
