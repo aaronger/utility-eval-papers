@@ -39,7 +39,7 @@ p_peak_out <- p_peak + theme_bw() +
            label = paste("Total hospitalizations on 2022-01-10 →"), hjust = 1) +
   labs(
     x = expression(paste("Total Allocation Constraint,  ", italic("K"))),
-    y = TeX("Allocation Score = $\\sum (y_i - x_i^F)_{+}$")) +
+    y = TeX("Allocation Score = $\\sum \\max (y_i - x_i^F, 0) - \\max (\\sum y_i - K,0)$")) +
   theme(axis.title.x = element_text(size = 15),
         axis.title.y = element_text(size = 15))
 
