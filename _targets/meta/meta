@@ -1,12 +1,25 @@
 name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
 add_pdqr_funs|function|e70525b5ffdbf585|||||||||||||||
-all_alloscore_data|stem||589dfb653e3153bc|34cbdeee32eb3ca6|-627143361||t19636.0384383225s||0|rds|local|vector|||0.771||names must be a character.
-allocate|function|97bc8f1f2decd146|||||||||||||||
+all_alloscore_data|stem|62f5d3d58e7a577c|7ceb25b052c510b2|42953ee9090ff903|-627143361||t19641.0779561478s|141be183230a0d10|29920774|rds|local|vector|||4.551||
+allocate|function|2751a1ec5f242303|||||||||||||||
 alloscore|function|f589239c325117e3|||||||||||||||
-alloscore_2021.12.06|stem||1d55446b519e9e44|ddca493683bb041a|957381605||t19636.7928351118s||0|rds|local|vector|||24.091|NaNs produced|ℹ In index 4.Caused by error in select Cant subset columns that dont exist. Column abbreviation doesnt exist.
-alloscore_2022.01.31|stem||ad0fbecb7f355e08|ddca493683bb041a|419407013||t19636.7913163372s||0|rds|local|vector|||90.935|NaNs produced|ℹ In index 5.Caused by error in select Cant subset columns that dont exist. Column abbreviation doesnt exist.
-alloscore.allocated|function|c8a8a3caf58015ee|||||||||||||||
-alloscore.default|function|82840804effd3098|||||||||||||||
+alloscore_2021.11.22|stem|ee6326fd796f22b2|e3e2d294d80f0561|ddca493683bb041a|71955689||t19641.0235531422s|1baa528466a23a84|1364525|rds|local|vector|||444.926||
+alloscore_2021.11.29|stem|76d523f7571c6c66|fd6ab29e39580d85|ddca493683bb041a|997057336||t19641.0235625826s|d1ea62420693fcb8|1307209|rds|local|vector|||432.711||
+alloscore_2021.12.06|stem|5f28712288c39784|1d55446b519e9e44|ddca493683bb041a|957381605||t19641.0238770814s|28f86de69696db83|1423006|rds|local|vector|||473.9||
+alloscore_2021.12.13|stem|d9c5bf02e2cfd22b|25311399d4427781|ddca493683bb041a|-700340831||t19641.0300756702s|929e7c1b16ca00b0|2015955|rds|local|vector|||558.036||
+alloscore_2021.12.20|stem|e45e6bdc295875ea|be6eeb36edd08d83|ddca493683bb041a|-622383116||t19641.0338591225s|9369418ec0836399|2720538|rds|local|vector|||780.849||
+alloscore_2021.12.27|stem|8f17d91137c01891|668bd7a1a06193a2|ddca493683bb041a|-1712181725||t19641.0342618426s|8cb842619d211185|3413755|rds|local|vector|||893.214||
+alloscore_2022.01.03|stem|befd09520bbd6d55|0ba70bf0c6e6e459|ddca493683bb041a|-1616730843||t19641.0555182494s|4fb974e29f40cb6d|3717447|rds|local|vector|||1041.502||
+alloscore_2022.01.10|stem|4149543c40a1b129|9f7145c4649db589|ddca493683bb041a|618507329||t19641.0615132558s|09a22e1a9d842bdc|3489565|rds|local|vector|||2229.001||
+alloscore_2022.01.17|stem|4fc91cff3d95ddf2|870a6c5944e29952|ddca493683bb041a|-1505480944||t19641.0648962879s|dfc46123d93330f7|3856955|rds|local|vector|||2606.304||
+alloscore_2022.01.24|stem|5c173c3acde9bb05|83072ce47654eb55|ddca493683bb041a|-236664904||t19641.0628542826s|3ab160165aa4d439|3038713|rds|local|vector|||2466.105||
+alloscore_2022.01.31|stem|c61b251f949c3b93|ad0fbecb7f355e08|ddca493683bb041a|419407013||t19641.0300633546s|d90a53310db0c770|2014774|rds|local|vector|||935.71||
+alloscore_2022.02.07|stem|6913a4600306ff02|ff8cd3c9c3a1a9b1|ddca493683bb041a|-1861154122||t19641.0648790084s|da5f254cccc5d248|1578393|rds|local|vector|||789.765||
+alloscore_2022.02.14|stem|e461665459c6f746|948b1c3971316c36|ddca493683bb041a|2109531506||t19641.0773747683s|66419c96b679ed97|1106977|rds|local|vector|||1255.292||
+alloscore_2022.02.21|stem|161c2fb7d37a08e1|d8157af9b014e45b|ddca493683bb041a|-348832579||t19641.0768731962s|6f30d838ae52afd5|841608|rds|local|vector|||1170.514||
+alloscore_2022.02.28|stem|d5dfc36a2fe788f4|cffb9ad7da43fa55|ddca493683bb041a|-58826849||t19641.0768572479s|25bd0939e105dd07|560537|rds|local|vector|||1031.493||
+alloscore.allocated|function|a953b255718f887d|||||||||||||||
+alloscore.default|function|d4cf4c1026f647fc|||||||||||||||
 alloscore.slim|function|c62351bf4b0a64f5|||||||||||||||
 assemble_alloscores|function|d480dbcdca2918c6|||||||||||||||
 determine_eligible_models|function|518aa8ad0d3bde5b|||||||||||||||
@@ -14,13 +27,14 @@ dexp_gpl_df|function|775ab2c74f474765|||||||||||||||
 dexp_gpl_loss|function|acf92c44de2776e7|||||||||||||||
 dexp_over_loss|function|7e392277b86071d6|||||||||||||||
 dexp_under_loss|function|e2a2b95cd21d7e18|||||||||||||||
-eligible_models|stem|276ee0f82e2b669d|79be0cdd46a9118d|71262da4d5fe0055|23097056||t19636.7890584422s|c84d5c2d39c525c2|268|rds|local|vector|||177.596|lengthx  2  1 in coercion to logical1. lengthx  2  1 in coercion to logical1. lengthx  2  1 in coercion to logical1|
+eligible_models|stem|276ee0f82e2b669d|79be0cdd46a9118d|71262da4d5fe0055|23097056||t19556.8672295178s|c84d5c2d39c525c2|268|rds|local|vector|||177.596|lengthx  2  1 in coercion to logical1. lengthx  2  1 in coercion to logical1. lengthx  2  1 in coercion to logical1|
 exp_gpl_loss_fun|function|ba9b94032bf3056d|||||||||||||||
 exp_over_loss|function|5635a76a7b222fff|||||||||||||||
 exp_under_loss|function|6277476d7a6b9198|||||||||||||||
+exponential_example|stem|737d67db83278d4a|07e6fd510221f377|6b6290e41b15dc97|-1888714330||t19641.0648963876s|dff9495c51b724c1|77|rds|local|vector|||1.613||
 filter_problematic_data|function|073a15c40fe92ad5|||||||||||||||
 find_linear_intervals|function|16395442c5e7853c|||||||||||||||
-forecast_data|stem|2e63a8f3bc117322|bdfdfa1f5b593056|c2e39ace99b6b2df|2053382514||t19636.789896196s|90b4c142257d4d63|1320413|rds|local|vector|||58.365|lengthx  2  1 in coercion to logical1. lengthx  2  1 in coercion to logical1. lengthx  2  1 in coercion to logical1|
+forecast_data|stem|2e63a8f3bc117322|bdfdfa1f5b593056|c2e39ace99b6b2df|2053382514||t19556.8672295703s|90b4c142257d4d63|1320413|rds|local|vector|||58.365|lengthx  2  1 in coercion to logical1. lengthx  2  1 in coercion to logical1. lengthx  2  1 in coercion to logical1|
 get_args_from_df|function|2789852a528d7a7b|||||||||||||||
 get_derivative|function|e78ac4a9118b6246|||||||||||||||
 get_forecast_data|function|0d6461164af7590f|||||||||||||||
@@ -35,9 +49,9 @@ mapped|object|af59d96eeacb8449|||||||||||||||
 meb_gpl_df|function|e2a50a031c81e589|||||||||||||||
 new_gpl_df|function|6ec8a54fd0f6f30e|||||||||||||||
 normalize_col_names|function|494854517769f78b|||||||||||||||
-oracle_allocate|function|6b317a856c76d542|||||||||||||||
+oracle_allocate|function|0d9b13cfab21539d|||||||||||||||
 oracle_allocate_direct|function|43e2f7eea05b5bdd|||||||||||||||
-oracle_alloscore|function|52b7af99f8466ef2|||||||||||||||
+oracle_alloscore|function|112c543a478b7f0d|||||||||||||||
 oracle_alloscore_direct|function|6868ffa822e5a16e|||||||||||||||
 over_loss|function|d1a3f1a60a9930e1|||||||||||||||
 pdqr_factory|function|11e0dc92dad3c35f|||||||||||||||
@@ -52,13 +66,13 @@ post_process|function|6c2f4885e1abd291|||||||||||||||
 reqd_locs|object|f730627f6865f755|||||||||||||||
 run_alloscore|function|e2ba45f6a602fbd9|||||||||||||||
 run_alloscore_one_date|function|e65af92ebcd8bb70|||||||||||||||
-score_data|stem|fd052fe9d4cf64e7|9929d49cc92b0dbb|a8c9c1fd3d5a2064|-880466632||t19636.792787729s|e7fc305e8e643a66|330887|rds|local|vector|||20.145||
+score_data|stem|fd052fe9d4cf64e7|9929d49cc92b0dbb|a8c9c1fd3d5a2064|-880466632||t19601.7243429495s|e7fc305e8e643a66|330887|rds|local|vector|||20.145||
 setup|object|23c9400ffbb60243|||||||||||||||
 slim|function|25bd603f6d970ea2|||||||||||||||
 stdize_met_params|function|fedac6a72e030f7d|||||||||||||||
 stdize_news_params|function|8442184e19e93b62|||||||||||||||
 stdize_ou_params|function|9443367c7601b3e4|||||||||||||||
-truth_data|stem|b669837b7893c0b0|1aaaa66b4a509b69|766c12ce0397936d|359122932||t19636.7870340294s|65168405ca99d9df|786970|rds|local|vector|||2.302||
+truth_data|stem|b669837b7893c0b0|1aaaa66b4a509b69|766c12ce0397936d|359122932||t19636.8137073938s|65168405ca99d9df|786970|rds|local|vector|||2.558||
 under_loss|function|90bbca87d863ef4a|||||||||||||||
 unirootL|function|f9f80d501a5ada11|||||||||||||||
 values|object|3767a4c750331c2e|||||||||||||||

@@ -69,4 +69,6 @@ ggplot() + map(2:5, function(i) {
   map(c(1,6:51), function(i) geom_function(fun = ascores$F[[i]], alpha = .5)) + lims(x=c(0,500)) +
   labs(color = "problem states", y = "distfromq F")
 
-
+for (i in 6:17) {
+as <- run_alloscore(forecast_data, truth_data, "2022-01-31", eligible_models[i])
+}
