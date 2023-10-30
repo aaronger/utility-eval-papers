@@ -404,10 +404,9 @@ Using the same procedure as for allocation scores described above, we computed s
 \subsection{Application results}
 
 <<score-computation>>=
-tar_load("all_alloscore_data")
+tar_load("Kat15k_alloscores")
 
-alloscore_data_summaries <- all_alloscore_data |>
-  filter(K == 15000)|>
+alloscore_data_summaries <- Kat15k_alloscores |>
   group_by(model, reference_date) |>
   summarize(alloscore = sum(components), yobs = sum(y)) |>
   group_by(reference_date) |>
@@ -479,7 +478,7 @@ cowplot::plot_grid(p1, p2, p4,
                    labels = "AUTO")
 @
 
-Allocation scores varied substantially by date and by model (Figure XX).
+Allocation scores varied substantially by date and by model (Figure \ref{fig:metrics-over-time}).
 For predictions made for the first three Mondays in December 2021 and the last three Mondays in February 2022 all models had allocation scores under 500 (and the mean across all models was less than 100), indicating that the unnecessary unmet need was fairly low relative to the total number of hospital admissions on those days.
 The allocation scores are on the whole highest when the observed number of new hospital admissions is closest to the resource threshold of 15,000, as this is the time when any mistakes in allocation are costly in terms of wasting resources in one location that could have been used in another.
 Predictions made during the peak week and just after showed the highest variation in allocation scores, with some models having values under 1000 and others having values over 3500.
@@ -526,7 +525,7 @@ ggplot(all_data,
 
 @
 
-Models show differing levels of correlation between their allocation scores and MWIS values (Figure XX).
+Models show differing levels of correlation between their allocation scores and MWIS values (Figure \ref{fig:metrics-correlation}).
 Here are some examples of the different patterns observed:
 \begin{itemize}
 \item positive association between allocation score and MWIS ranks: \texttt{Karlen-pypm} and \texttt{USC-SI\_kJalpha} models
