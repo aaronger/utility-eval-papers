@@ -1,0 +1,13 @@
+
+Losses defined on A(ctions) and O(utcomes)
+
+Actions can range from being very real (treat or not), to more abstract (distributions)
+
+Forecast is information intended to support a choice of action
+via a functional or decision rule
+ - this could be identity or recalibration for A = P
+ - PI for A = intervals
+ - histogram for A = R^k
+ - mean, median
+
+Accuracy defined as expected loss

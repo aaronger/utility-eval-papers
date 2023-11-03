@@ -3,9 +3,12 @@ title: |
   | Infectious Disease Forecast Evaluation Via Social Utility: Allocation Scores
 subtitle: MIDAS 2023
 author: Aaron Gerding, Nick Reich, Ben Rogers, Evan Ray
-institute: "School of Public Health and Health Sciences, UMass, Amherst"
+institute: |
+ | School of Public Health and Health Sciences, UMass, Amherst
+ | Department of Biostatistics and Epidemiology
 format: 
   beamer:
+    keep-tex: true
     navigation: horizontal
     fontsize: 9pt
     header-includes: |
@@ -27,21 +30,15 @@ editor: visual
 # css: styles.css
 ---
 
-## The Role of ID forecasting Hubs
+## Outbreak Forecast Hubs and **Informed** Resource Allocation
 
-Outbreak forecasting hubs developed to **"inform public health responses"**
+Hubs developed to **"inform public health responses"**
 
-Basic examples of **responses** are **allocation decisions** regarding
+-   such as how resources are **allocated** among locations
 
--   medical supplies
--   facility capacity
--   personnel
--   R&D funding
--   public tolerance for NPIs
+-   e.g., medical supplies, facility capacity, personnel
 
-## Basic Hub Products
-
-![](plots/p_VA_CU_IHME.png)
+![](../plots/output/p_VA_JHU_MUNI.jpeg)
 
 ::: notes
 quantiles flexible interpretable - closer to describing full distribution which DM probably always wants
@@ -57,46 +54,48 @@ Next: formalize this.
 
 ## Scoring rules and social welfare
 
-A **scoring rule** $S$ assigns a number $S(F,y)$ to the forecast $F$ of $Y$ when $Y=y$.
+Hubs strive to rank and combine forecasts so as to optimize social welfare via the public health decisions that forecasts inform
 
-$S$ if **proper** if $\displaystyle{E_{F}[S(F,Y)] \leq E_{F}S(G,Y)]}$ for all $F, G$
+-   uncertainty quantification, and therefore, probabilistic forecasting essential
 
--   ensures that honesty maximizes expected score
+-   basic strategy: use a **scoring rule** $S$ which assigns a loss $S(F,y)$ when a probabilistic forecast $F$ of $Y$ is chosen and $Y=y$ is observed.
 
-Hub goal of increasing social welfare by ranking and combining forecasts to best support PH responses seems to require use of proper scores.
+-   optimizing welfare requires that forecasters say what they believe; so $S$ should be **proper** meaning $\displaystyle{E_{F}[S(F,Y)] \leq E_{F}S(G,Y)]}$ for all $F, G$
 
-Current standard is the **Weighted Interval Score** (a discrete version of the **Continuous Ranked Probability Score**)
+Current standard is the **Weighted Interval Score** (discrete CRPS)
 
--   adopted for convenient scoring of quantile forecasts.
+-   adopted largely for convenient scoring of quantile forecasts.
 
-<br>
+## Tools from decision theory
 
-#### A central goal in design of scoring rules for social welfare
+### A central goal in design of scoring rules
 
-::: box
-Create scenario where the forecaster believes maximizing her own expected utility aligns with leading the DM toward actions that maximize social utility.
-:::
+Tie forecast scores directly to the benefits to society of the decisions they inform
 
-## Bayes Acts
+Key tools from decision theory for linking success/failure of forecast-informed policy actions to scoring rules:
 
-Scoring rules can be cast in decision-theoretic framework of **Bayes acts**.
+-   Let $l(x,y)$ be the **loss** of experiencing $y$ after taking policy action $x$
 
-::: box
-The **Bayes act** relative to a forecast $Y \sim F$ is the action $x^F$ by which a DM will minimize **expected loss** $E_F[l(x,Y)]$.
-:::
+-   The **Bayes risk** of a forecast $Y \sim F$ is $\min_x E_F[l(x,Y)]$
 
--   loss $l(x,y)$ is the **consequence** of experiencing $y$ having prepared with $x$
+-   A **Bayes act** for $F$ is an action $x^F$ that attains this minimum
 
-::: box
-Key point: $S(F,y) := l(x^F, y)$ is an *automatically proper* scoring rule.
-:::
+-   Losses from Bayes acts define an *automatically proper* scoring rule
 
-<br>
+$$
+S(F,y) := l(x^F, y)
+$$
 
-#### Our basic example:
+**Note:** Scoring rules are really only a means to an end.  It is the expected score, in this case the Bayes risk, which characterize the value a forecast adds for a decision maker.  Scoring rule sample averages estimate the expected score.
+
+## A new scoring rule via a new loss function for constrained actions
+
+### Our basic example:
 
 -   $x$ and $y$ are vectors in $\mathbb{N}_0^{52}$
+
 -   $y =$ number of severe cases in US states and territories
+
 -   $l(x,y) =$ unmet need when $x$ beds allocated and $y$ severe cases occur
 
 ```{=tex}
@@ -129,17 +128,17 @@ Obtaining $x^F$ is a constrained stochastic optimization problem
 
 -   in practice, we find $x_i^F$'s via an iterative method:
 
-![](plots/iter_combo.png)
+![](../plots/output/iter_combo.png)
 
 ## Application
 
 December 2021: Omicron wave clearly started US but forecast teams unsure of severity given uncertainty about $R_0$, cross-protection by vaccination, previous infection, etc.
 
-![](plots/nat_hosps.png)
+![](../plots/output/nat_hosps.png)
 
 ## Oracle adjusted allocation scores near Omicron peak
 
-![](plots/peak_alloscore.png)
+![](../plots/output/peak_alloscore.png)
 
 ## Some Observations
 
@@ -153,17 +152,17 @@ December 2021: Omicron wave clearly started US but forecast teams unsure of seve
 :::
 
 ::: {.column width="60%"}
-![](plots/peak_alloscore_min.png)
+![](../plots/output/peak_alloscore_min.png)
 :::
 :::
 
 ## Alloscore and WIS rank models differently
 
-![](plots/p_wis_v_alloscore.png)
+![](../plots/output/p_wis_v_alloscore.png)
 
 ## Explanations?
 
-![](plots/mvbucky_dist_alloc.png)
+![](../plots/output/mvbucky_dist_alloc.png)
 
 ## Limitations
 
