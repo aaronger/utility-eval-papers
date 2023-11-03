@@ -485,8 +485,6 @@ For predictions made for the first three Mondays in December 2021 and the last t
 The allocation scores are on the whole highest when the observed number of new hospital admissions is closest to the resource threshold of 15,000, as this is the time when any mistakes in allocation are costly in terms of wasting resources in one location that could have been used in another.
 Predictions made during the peak week and just after showed the highest variation in allocation scores, with some models having allocation scores under 1000 and others having values over 3500.
 
-Overall, the \texttt{COVIDhub-baseline} model, which predicts a flat line from the most recent observation with uncertainty bounds based on a random walk, had the highest rank for allocation score in six weeks, more than any other model except the \texttt{COVIDhub-ensemble} which also had six.
-
 <<eval=FALSE>>=
 ## some analysis to support above statements
 alloscore_data_summaries |>
@@ -496,6 +494,14 @@ alloscore_data_summaries |>
             minAS = min(alloscore, na.rm=TRUE),
             maxAS = max(alloscore, na.rm=TRUE),
             range = maxAS-minAS)
+@
+
+Overall, across the first 11 weeks evaluated (we excluded the last four since nearly all the models achieved an allocation score of zero), the \texttt{COVIDhub-baseline} model, which predicts a flat line from the most recent observation with uncertainty bounds based on a random walk, had the highest rank for allocation score in four weeks, more than any other model except the \texttt{COVIDhub-ensemble} which also had four.
+
+<<eval=FALSE>>=
+## analysis for the above statements
+alloscore_data_summaries |>
+  filter(as.Date(reference_date) < as.Date("2022-02-01"), allo_rank == 1)
 @
 
 
@@ -520,8 +526,9 @@ score_data_summaries |>
 all_data <- left_join(alloscore_data_summaries, score_data_summaries,
                       by=c("model", "target_end_date"))
 
-ggplot(all_data,
-       aes(x=mwis_rank_std, y=allo_rank_std, color=target_end_date, size=yobs)) +
+all_data |>
+  filter(as.Date(reference_date.x) < as.Date("2022-02-01") ) |>
+  ggplot(aes(x=mwis_rank_std, y=allo_rank_std, color=target_end_date, size=yobs)) +
   geom_point(alpha=.7) +
   scale_x_continuous("MWIS standardized rank", limits=c(0,1)) +
   scale_y_continuous("Allocation score standardized rank", limits=c(0,1)) +
