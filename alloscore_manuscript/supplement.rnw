@@ -1,0 +1,88 @@
+\documentclass{article}
+
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+\usepackage{amsmath, amsfonts, amssymb}
+\usepackage{graphicx}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\usepackage{amsthm}
+\usepackage{bm}
+\usepackage{cases}
+\usepackage{caption}
+\usepackage{hyperref}
+
+\DeclareMathOperator*{\argmin}{argmin}
+
+
+\usepackage{setspace}
+\onehalfspacing
+
+\usepackage{parskip}
+
+\usepackage{soul}
+\usepackage{xcolor}
+\def\elr#1{{\color{cyan}\textbf{ELR:[#1]}}}
+\def\apg#1{{\color{red}\textbf{APG:[#1]}}}
+\def\bwr#1{{\color{violet}\textbf{BWR:[#1]}}}
+\def\ngr#1{{\color{blue}\textbf{NGR:[#1]}}}
+
+\usepackage{natbib}
+\bibliographystyle{unsrtnat}
+
+\title{Supplementary Material for ``Evaluating infectious disease forecasts with allocation scoring rules''}
+\author{Aaron Gerding, Nicholas G. Reich, Benjamin Rogers, Evan L. Ray}
+
+\begin{document}
+
+\newcommand{\del}[2]{\frac{\partial {#1} }{\partial {#2}} }
+\newcommand{\dby}[2]{\frac{d {#1} }{d {#2}} }
+\newcommand{\sbar}{\overline{s}}
+\newtheorem{proposition}{Proposition}
+
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+\maketitle
+
+
+
+<<setup, tidy=FALSE, echo=FALSE, message=FALSE>>=
+knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE)
+@
+
+<<environment-setup>>=
+library(targets)
+library(tidyverse)
+library(ggbump)
+
+theme_set(theme_bw())
+
+## necessary to have project root as wd, to override document directory
+knitr::opts_knit$set(root.dir = '../')
+@
+
+\begin{abstract}
+We briefly address some technical and methodological points in the main text, referring to the forthcoming ... for 
+more thorough discussion.
+\end{abstract}
+
+\begin{itemize}
+	\item From 2.2.1, why are Bayes act scoring rules proper?
+	\item Explain ``All proper scoring rules for probabilistic forecasts have an explicit link to a loss function'' from discussion.
+	\item DGP as optimal for any decision problem, ref Diebold, Gunther, Tay p. 866.
+	\item For 2.2.2, how to get quantile representation of Bayes act using Lagrange multiplier, assuming smooth, never-zero densities well behaved at $x=0$. Work out exponetial example. Refer to methods paper for general case.
+	\item Derivation of quantile scoring rule with quantile as Bayes act for C/L problem, assuming never-zero densities. 
+	\item Descriptions of 
+		\begin{itemize}		
+			\item CRPS as average quantile score across $C \in [0/L]$ decision problems
+			\item IS as average of two quantile scores with a prob-width penalty
+			\item WIS as average quantile score across 23 C/L problems.
+		\end{itemize}
+	\item Sketch of scoring for decision problems involving both cost and constraint.
+	
+\end{itemize}
+
+
+
+\end{document}
