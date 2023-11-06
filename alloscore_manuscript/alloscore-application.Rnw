@@ -66,19 +66,16 @@ knitr::opts_knit$set(root.dir = '../')
 
 The COVID-19 pandemic has led to rapid innovation in methods for eliciting and evaluating forecasts of infectious disease burdens, with a primary goal being to help public health workers make informed decisions about how to manage these burdens. However, explicit descriptions or quantifications of the value forecasts add to society through the decisions they support are elusive.  Moreover, there has only been limited discussion of how predominant forecast evaluation metrics might indicate the success of policies based in part on those forecasts.
 
-Here we pursue one possible tether between multivariate forecasts and policy: the allocation of limited medical resources in response to COVID-19 hospitalizations in various regions so as to minimize expected unmet need. Given probabilistic forecasts of hospitalizations in each region, we formulate an allocation algorithm following techniques developed in operations research. We then score forecasts according to how much unmet need their associated allocations would have allowed. We illustrate this scheme with quantile forecasts of COVID-19 hospitalizations in the US at the state level that are recorded in the COVID-19 Forecast Hub, with the goal of determining the allocation of a hypothetical limited resource across the states. The forecast skill ranking given by this allocation scoring rule can vary substantially from the ranking given by the weighted interval score now used by the CDC, especially during surges in hospitalizations such as in late 2021 as the Omicron wave began. We see this as strong evidence that the allocation scoring rule detects forecast value that is missed by traditional accuracy measures and that the general strategy of designing scoring rules that are directly linked to policy performance is a promising research direction for epidemic forecast evaluation.
+Here we pursue one possible tether between multivariate forecasts and policy: the allocation of limited medical resources in response to COVID-19 hospitalizations in various regions so as to minimize expected unmet need. Given probabilistic forecasts of hospitalizations in each region, we formulate an allocation algorithm following techniques developed in operations research. We then score forecasts according to how much unmet need their associated allocations would have allowed. We illustrate this scheme with quantile forecasts of COVID-19 hospitalizations in the US at the state level that are recorded in the COVID-19 Forecast Hub, with the goal of determining the allocation of a hypothetical limited resource across the states. The forecast skill ranking given by this allocation scoring rule can vary substantially from the ranking given by the weighted interval score that is often used to score quantile forecasts, especially during surges in hospitalizations such as in late 2021 as the Omicron wave began. We see this as strong evidence that the allocation scoring rule detects forecast value that is missed by traditional accuracy measures and that the general strategy of designing scoring rules that are directly linked to policy performance is a promising research direction for epidemic forecast evaluation.
 
 \end{abstract}
 
 \section{Introduction}
 
-Infectious disease forecasting models have emerged as important tools in public health. Predictions of disease dynamics have been used to inform decision making about a wide variety of measures to reduce disease spread and/or mitigate the severity of disease outcomes. For example, estimates of expected onset of flu season have been used to aid national vaccination strategies \citep{igboh2023timing}, and forecasts of Ebola dynamics have been used to allocate surveillance resources \citep{meltzer2014estimating, rainisch2015regional}. \cite{bertsimas2021predictionsCOVID} developed tools to inform decision making from infectious disease forecasts, which have been used to inform allocation of limited medical supplies such as ventilators, ICU capacity planning, and vaccine distribution strategy. Models developed by \cite{fox_real-time_2022} have been used to inform resource and care site planning, as well as community guidelines for masking, traveling, dining and shopping (University of Texas, 2022) \nocite{utnews2022}. In April of 2022, the Centers for Disease Control and Prevention (CDC) announced the launch of the Center for Forecasting and Outbreak Analytics (CFA) to translate disease forecasts into decision making (CDC, 2022)\nocite{cdc2022cfa}, indicating that this has been identified as an important direction at the highest levels of government public health response. The value of infectious disease forecasts has typically been measured by how closely they predict disease outcomes such as cases, hospitalizations or deaths using, for example, root mean square error (RMSE) \citep{papastefanopoulos2020covid} or weighted interval score (WIS) \citep{bracher2021evaluating}, however, recently authors have been calling for evaluating forecasts through their impact on policy \citep{marshall2023predictions}.
+Infectious disease forecasting models have emerged as important tools in public health. Predictions of disease dynamics have been used to inform decision making about a wide variety of measures to reduce disease spread and/or mitigate the severity of disease outcomes. For example, estimates of expected onset of flu season have been used to aid national vaccination strategies \citep{igboh2023timing}, and forecasts of Ebola dynamics have been used to allocate surveillance resources \citep{meltzer2014estimating, rainisch2015regional}. \cite{bertsimas2021predictionsCOVID} developed tools to inform decision making from infectious disease forecasts, which have been used to inform allocation of limited medical supplies such as ventilators, ICU capacity planning, and vaccine distribution strategy. Models developed by \cite{fox_real-time_2022} have been used to inform resource and care site planning, as well as community guidelines for masking, traveling, dining and shopping (University of Texas, 2022)\nocite{utnews2022}. In April of 2022, the Centers for Disease Control and Prevention (CDC) announced the launch of the Center for Forecasting and Outbreak Analytics (CFA) to translate disease forecasts into decision making (CDC, 2022)\nocite{cdc2022cfa}, indicating that this has been identified as an important direction at the highest levels of government public health response. The value of infectious disease forecasts has typically been measured by how closely they predict disease outcomes such as cases, hospitalizations or deaths using, for example, root mean square error (RMSE) \citep{papastefanopoulos2020covid} or weighted interval score (WIS) \citep{bracher2021evaluating}, however, recently authors have been calling for evaluating forecasts through their impact on policy \citep{marshall2023predictions}.
 
-In decision making settings where it is possible to quantify the utility or loss associated with a particular action, standard tools of decision theory provide a procedure for developing forecast scoring rules that measure the value of forecasts through the quality of the decisions that they lead to. We give an overview of these procedures in Section \ref{sec:methods.decisiontheory}.
-\ngr{This section label doesn't exist. Should it point to methods.detailed?}
-There is a large history of literature applying these ideas to obtain measures of the value of forecasts that are tied to a decision making context, primarily in fields such as economics and finance, supply chain management, and meteorology. We review this work only briefly here, and we refer the reader to \cite{yardley2021utility_cost_forecasts} for a general overview, and to \cite{pesaran2002decision_based_eval} and \elr{TODO: identify relevant review or book style summary for meteorology} for discussions focused on applications to economics and meteorology, respectively. In finance, the value of forecasts can often be measured by the profits generated by trading decisions informed by the forecasts, perhaps adjusted for risk levels \cite[e.g.,][]{leitch1991economicForecastEval, cenesizoglu2012returnPredictionEconValue}. In applications to supply chain management and meteorology, the value of forecasts has typically been operationalized by considering the costs associated with decisions regarding the amount of inventory to hold or the level of protection against the impacts of extreme weather events to enact {Peter Catt (2007), Fotios Petropoulos and colleagues (2019), Nada Sanders and Gregory Graman (2009), T.N. Palmer (2002), Florian Pappenberger and colleagues (2015)}. For example, in supply chain management these decisions may incur costs related to holding inventory, labor, or providing poor service, while in meteorology we may need to balance the costs of implementing protective measures with the costs of potentially preventable weather damages. In this framework, a forecast has value if it leads to decisions with low total costs. In all of these fields, analyses have consistently found that common measures of statistical forecast accuracy do not necessarily correspond directly to measures of the value of forecasts as an input to decision making \cite[e.g.,][]{leitch1991economicForecastEval, cenesizoglu2012returnPredictionEconValue}.
-
-
+In decision making settings where it is possible to quantify the utility or loss associated with a particular action, standard tools of decision theory provide a procedure for developing forecast scoring rules that measure the value of forecasts through the quality of the decisions that they lead to. We give an overview of these procedures in Section \ref{sec:methods.detailed.decisiontheory}.
+There is a large history of literature applying these ideas to obtain measures of the value of forecasts that are tied to a decision making context, primarily in fields such as economics and finance, supply chain management, and meteorology. We review this work only briefly here, and we refer the reader to \cite{yardley2021utility_cost_forecasts} for a general overview, and to \cite{pesaran2002decision_based_eval} and \cite{murphy1993whatisagoodforecast} for discussions focused on applications to economics and meteorology, respectively. In finance, the value of forecasts can often be measured by the profits generated by trading decisions informed by the forecasts, perhaps adjusted for risk levels \cite[e.g.,][]{leitch1991economicForecastEval, cenesizoglu2012returnPredictionEconValue}. In applications to supply chain management and meteorology, the value of forecasts has typically been operationalized by considering the costs associated with decisions regarding the amount of inventory to hold or the level of protection against the impacts of extreme weather events to enact \cite[e.g.,][]{catt2007assessingcostofforecasterror, petropoulos2019inventoryperformanceforecasting, palmer2002economic, pappenberger2015monetarybenefitfloodwarnings}. For example, in supply chain management these decisions may incur costs related to holding inventory, labor, or providing poor service, while in meteorology we may need to balance the costs of implementing protective measures with the costs of potentially preventable weather damages. In this framework, a forecast has value if it leads to decisions with low total costs. In all of these fields, analyses have consistently found that common measures of statistical forecast accuracy do not necessarily correspond directly to measures of the value of forecasts as an input to decision making \cite[e.g.,][]{leitch1991economicForecastEval, murphy1993whatisagoodforecast, cenesizoglu2012returnPredictionEconValue}.
 
 However, we are aware of only a limited body of work that explicitly attempts to measure the value of infectious disease forecasts through their impact on policy, and much of this discussion has proceeded informally. For example, \cite{ioannidis2022forecastingCOVIDfailed} discuss the possible negative consequences of inaccurate forecasts of infectious disease, but do not attempt to quantify the utility or loss incurred as a result of those forecasts. Separately, there is a thread of literature that does quantify the link between infectious disease modeling and policy making, but this work has been done outside of a forecasting context. As an example, \cite{Probert2016decisionMakingFootMouth} develop measures of the cost of actions designed to control a hypothetical outbreak of foot-and-mouth disease and use this framework to explore policy recommendations from a variety of simulation-based projection models.
 
@@ -322,31 +319,37 @@ These decision making problems differ according to the challenge faced by the de
 \section{Evaluating forecasts of COVID hospitalizations using the allocation score}
 \label{sec:application}
 
-We illustrate with an application to hospital admissions in the U.S., considering the problem of allocation of a limited supply of medical resources to {}the states.
+We illustrate with an application to hospital admissions in the U.S., considering the problem of allocation of a limited supply of medical resources to states.
 
-Case study heading into the Omicron wave. Some more detailed discussion of implications of bad forecasts for specific decision making purposes -- take a "deep dive" into one or two example states like FL.
+\begin{figure}
+    \includegraphics[width=\textwidth]{../figures/allocation-forecasts-v2.pdf}
+    \caption{Hospitalization data and example forecasts for Virginia, US. New daily hospital admissions are shown by the line of data. The dark line indicates data up to the time the forecast was made on December 27, 2021; the grey line indicates data available in retrospect. The set of colored bars represent forecasts made for 14 days into the future, with a target date of January 10, 2022 (dashed vertical line). The horizontal dashed line indicates the level of the observed value on this day. Note that all three forecasts correspond to forecasts for the same day, but they are spread out for better visibility. }
+    \label{fig:sample-forecasts}
+\end{figure}
 
-Look at results over a broader range of time.
-
-
-\ngr{TODO: add a figure showing some forecasts and ground truth data.}
 
 \subsection{Data}
+<<get-data-dates>>=
+metadata <- tar_meta()
+@
+
+
 \subsubsection{Hospitalization data}
-Starting in the summer of 2020, the US Health and Human Services began reporting counts of daily new admissions to hospitals for individuals with COVID-19.(cite HHS Protect)
+Starting in the summer of 2020, the US Health and Human Services began reporting counts of daily new admissions to hospitals for individuals with COVID-19.\citep{healthdatagov_covid-19_nodate}
 These data served as the source of ``ground truth'' data for the US COVID-19 Forecast Hub which, starting in December 2020, collected short-term forecasts of new hospital admissions at the daily scale.
 These daily counts were available for the US as a whole, and all states and several additional jurisdictions such as Puerto Rico and Washington DC.
 The data were updated daily and were available for download by the public through the HHS HealthData.gov website.
-For this analysis, we downloaded the hospitalizations data through the covidHubUtils R package, which connects users to the most recent version of the data.(cite package) \ngr{can we use tar\_manifest() to reproducibly display the date the data were stored?}
+For this analysis, we downloaded the hospitalizations data through the covidHubUtils R package, which connects users to the most recent version of the data.\cite{wang-covidhubutils}
+The hospitalization data were downloaded for analysis on \Sexpr{as.Date(metadata$time[which(metadata$name == "truth_data")])}.
 
 \subsubsection{Forecast data}
-The US COVID-19 Forecast Hub, a consortium funded by the US CDC and led by a research group at UMass-Amherst, collected short-term forecasts of hospitalizations starting in December 2020.(cite Data descriptor paper)
+The US COVID-19 Forecast Hub, a consortium funded by the US CDC and led by a research group at UMass-Amherst, collected short-term forecasts of hospitalizations starting in December 2020.\citep{cramer_united_2022}
 Any team that with appropriately formatted forecasts could submit them to the Forecast Hub data repository on GitHub.(cite repo site)
 Forecasts were time-stamped by GitHub upon submission and passed validation checks that ensured correct formatting and that the forecasts were being submitted only for dates in the future, not for data that had already been observed.
 
 Forecast submission followed a weekly cycle and culminated in the creation of an ensemble forecast.
 Forecasts could be submitted on any day during the week.
-However once a week on Mondays, the Forecast Hub would collect the most recent forecasts submitted by all teams that met certain inclusion criteria and create an ensemble forecast using quantile averaging.(cite Evan's paper)
+However once a week on Mondays, the Forecast Hub would collect the most recent forecasts submitted by all teams that met certain inclusion criteria and create an ensemble forecast using quantile averaging.\citep{ray_comparing_2023}
 An ensemble that treated all models equally was created (COVIDhub-ensemble) as was a model that created weights of submitted models based on performance in the past 12 weeks (COVIDhub-trained\_ensemble).
 One other model that combined multiple forecasts from different teams but used a different ensembling algorithm, a linear pooling method with tail extrapolation, was also included in our analyses (JHUAPL-SLPHospEns).
 Several other models have ``ensemble'' in their name, but this refers to combinations of different variations of models that the specific team created, not to a multi-model ensemble combining different submitted forecasts to the Forecast Hub.
@@ -357,6 +360,8 @@ The submitted quantiles included a median (treated as a ``point'' prediction) an
 
 The analysis in this work focuses on forecasts made before and during the first wave of the Omicron SARS-CoV-2 variant in the US.
 As such, we downloaded forecasts for the 15 weeks starting with Monday 2021-11-22 through Monday 2022-02-28.
+Forecast data were downloaded on for analysis on \Sexpr{as.Date(metadata$time[which(metadata$name == "forecast_data")])}.
+
 
 We established a set of inclusion criteria to determine which forecasts and models to include in our analysis.
 Models were eligible to be included in the analysis if they were considered a ``primary'' model from a team. (If a team submitted multiple versions of similar models, they were required to designate one as ``primary''.)
@@ -365,16 +370,12 @@ Models had to have a complete forecast for at least 4 of the 15 weeks in the ana
 
 \subsection{Evaluation metrics}
 
-This manuscript focuses on two proper forecast scores, the allocation score and the weighted interval score (WIS).(cite Gerding and Bracher)
-Propriety of forecast scoring rules is desirable as it ensures that forecasters are not incentivized to modify their forecast distribution to achieve a better score.(cite Gneiting and Raftery or Raftery and Gneiting)
+This manuscript focuses on two proper forecast scores, the allocation score and the weighted interval score (WIS), both defined above.
 
 \subsubsection{Allocation Score}
 
-\ngr{TODO: general introduction to the alloscore}
-
-For the analysis, we fixed a resource constraint $K$ to be 15,000, based roughly on a reported number of ventilators available for reallocation in the US.(cite paper)
+For this analysis, we fixed a resource constraint $K$ to be 15,000, based roughly on a reported number of ventilators available for reallocation in the US.\citep{ajao_assessing_2015}
 For each week, we computed a the allocation score for each 14 day-ahead forecast based on $K=15,000$.
-\ngr{it appears that for the last two weeks selected (forecast dates: 2022-02-14 and 2022-02-28) the upper limit of K was 11400 and 9200 respectively, so we do not have alloscores computed for K=15000. Maybe they would have all been zero, since the limits were likely set based on the number of cases being low. What is the rule used to determine the max K computed? Don't think we need to change it, but would be nice to state in the manuscript what it is.}
 
 We also computed a standardized rank for the allocation score for each model $m$ and week $w$.
 First, we computed the number of models that forecasted that week ($n_w$) and the rank of model $m$ among the $n_w$ models ($r_{m,w}^{AS}$).
@@ -389,19 +390,22 @@ sr_{m,w}^{AS} = 1 - \frac{r^{AS}_{m,w}-1}{n_w-1}
 
 \subsubsection{Weighted Interval Score (WIS)}
 
-\ngr{TODO: general introduction to WIS and define MWIS as mean WIS.}
-
-We computed standardized ranks for MWIS ($sr_{m,w}^{MWIS}$) using the same procedure as for allocation scores described above.
+The Weighted Interval Score (WIS), as described in earlier sections, measures the alignment of a single probabilistic forecast ($F$) with an observation ($y$).
+We computed the mean WIS across all $L$ locations for each model and each forecasted week as
+\begin{equation}
+MWIS_{m,w} = \frac{1}{L}\sum_{l=1}^L WIS(F_{l,m,w},y)
+\end{equation}
+where $F_{l,m,w}$ is the probabilistic forecast from model $m$ for location $l$ and week $w$.
+Using the same procedure as for allocation scores described above, we computed standardized ranks for MWIS ($sr_{m,w}^{MWIS}$).
 
 \subsection{Data and code availability}
 
 \subsection{Application results}
 
 <<score-computation>>=
-tar_load("all_alloscore_data")
+tar_load("Kat15k_alloscores")
 
-alloscore_data_summaries <- all_alloscore_data |>
-  filter(K == 15000)|>
+alloscore_data_summaries <- Kat15k_alloscores |>
   group_by(model, reference_date) |>
   summarize(alloscore = sum(components), yobs = sum(y)) |>
   group_by(reference_date) |>
@@ -431,7 +435,7 @@ score_data_summaries <- score_data |>
 @
 
 
-\subsubsection{Metrics as a function of time}
+\subsubsection{Forecast scores showed differences over time}
 <<grob-hosps-over-time>>=
 tar_load("truth_data")
 dat_to_plot <- truth_data |>
@@ -473,10 +477,11 @@ cowplot::plot_grid(p1, p2, p4,
                    labels = "AUTO")
 @
 
-Allocation scores varied substantially by date and by model (Figure XX).
+Allocation scores varied substantially by date and by model (Figure \ref{fig:metrics-over-time}).
 For predictions made for the first three Mondays in December 2021 and the last three Mondays in February 2022 all models had allocation scores under 500 (and the mean across all models was less than 100), indicating that the unnecessary unmet need was fairly low relative to the total number of hospital admissions on those days.
 The allocation scores are on the whole highest when the observed number of new hospital admissions is closest to the resource threshold of 15,000, as this is the time when any mistakes in allocation are costly in terms of wasting resources in one location that could have been used in another.
-Predictions made during the peak week and just after showed the highest variation in allocation scores, with some models having values under 1000 and others having values over 3500.
+Predictions made during the peak week and just after showed the highest variation in allocation scores, with some models having allocation scores under 1000 and others having values over 3500.
+
 <<eval=FALSE>>=
 ## some analysis to support above statements
 alloscore_data_summaries |>
@@ -486,6 +491,14 @@ alloscore_data_summaries |>
             minAS = min(alloscore, na.rm=TRUE),
             maxAS = max(alloscore, na.rm=TRUE),
             range = maxAS-minAS)
+@
+
+Overall, across the first 11 weeks evaluated (we excluded the last four since nearly all the models achieved an allocation score of zero), the \texttt{COVIDhub-baseline} model, which predicts a flat line from the most recent observation with uncertainty bounds based on a random walk, had the highest rank for allocation score in four weeks, more than any other model except the \texttt{COVIDhub-ensemble} which also had four.
+
+<<eval=FALSE>>=
+## analysis for the above statements
+alloscore_data_summaries |>
+  filter(as.Date(reference_date) < as.Date("2022-02-01"), allo_rank == 1)
 @
 
 
@@ -504,14 +517,15 @@ score_data_summaries |>
             range = maxWIS-minWIS)
 @
 
-\subsubsection{correlation between WIS and allocation score}
+\subsubsection{Model rankings for different scores did not reliably correlate}
 
-<<metrics-correlation, fig.width=7, fig.height=6, fig.cap="Association of standardized ranks for MWIS and allocation score by model and week. Each facet of the plot corresponds to one model. Within each facet, each point corresponds to a week. The x- and y-values correspond to the MWIS standardized rank and the allocation score standardized rank for that week. Points corresponding to earlier dates have darker shading. The size of the point corresponds to the observed value on the date for which the prediction was made. Models show different degrees of association between the two metrics.">>=
+<<metrics-correlation, fig.width=10, fig.height=7.5, fig.cap="Association of standardized ranks for MWIS and allocation score by model and week. Each facet of the plot corresponds to one model. Within each facet, each point corresponds to a week. The x- and y-values correspond to the MWIS standardized rank and the allocation score standardized rank for that week. Points corresponding to earlier dates have darker shading. The size of the point corresponds to the observed value on the date for which the prediction was made. Models show different degrees of association between the two metrics.">>=
 all_data <- left_join(alloscore_data_summaries, score_data_summaries,
                       by=c("model", "target_end_date"))
 
-ggplot(all_data,
-       aes(x=mwis_rank_std, y=allo_rank_std, color=target_end_date, size=yobs)) +
+all_data |>
+  filter(as.Date(reference_date.x) < as.Date("2022-02-01") ) |>
+  ggplot(aes(x=mwis_rank_std, y=allo_rank_std, color=target_end_date, size=yobs)) +
   geom_point(alpha=.7) +
   scale_x_continuous("MWIS standardized rank", limits=c(0,1)) +
   scale_y_continuous("Allocation score standardized rank", limits=c(0,1)) +
@@ -520,14 +534,14 @@ ggplot(all_data,
 
 @
 
-Models show differing levels of correlation between their allocation scores and MWIS values (Figure XX).
-Here are some examples of the different patterns observed:
+Models showed differing levels of correlation between their allocation scores and MWIS values (Figure \ref{fig:metrics-correlation}).
+Here are some examples of the different model-specific patterns observed:
 \begin{itemize}
-\item positive association between allocation score and MWIS ranks: \texttt{Karlen-pypm} and \texttt{USC-SI\_kJalpha} models
-\item consistently strong MWIS ranks, highly variable allocation score ranks, no clear association: \texttt{JHUAPL-SLPHospEns} and \texttt{CU-select}
-\item consistently strong ranks for both metrics, no clear association: \texttt{COVIDhub-ensemble}
+\item Several models showed a positive association between allocation score and MWIS ranks (e.g., \texttt{Karlen-pypm} and \texttt{USC-SI\_kJalpha}).
+\item Several models had consistently strong MWIS ranks but also had highly variable allocation score ranks with no clear association between the two (e.g., \texttt{JHUAPL-SLPHospEns} and \texttt{CU-select})
+\item One model performed consistently well for both metrics with no clear association (\texttt{COVIDhub-ensemble})
+\item One model performed consistently well for allocation score but had only middlings ranks for MWIS (\texttt{CMU-TimeSeries})
 \end{itemize}
-Additionally, the \texttt{COVIDhub-baseline} model, which predicts a flat line from the most recent observation with uncertainty bounds based on a random walk, had the highest rank for allocation score in six weeks, more than any other model except the \texttt{COVIDhub-ensemble} which also had six.
 
 <<eval=FALSE>>=
 alloscore_data_summaries |>
@@ -536,44 +550,68 @@ alloscore_data_summaries |>
 @
 
 
- - bubble figure with ranks sized by total observations
-
 \subsubsection{Integrated allocation score across values of K}
 
+Using the integrated allocation score summarizes allocation scores across a range of possible values of the constraint ($K$) (Section \ref{sec:methods.detailed.integrated_allocation}).
+This could be useful in situations where the actual constraint may not be known, or could only be specified as a probability distribution.
+
  - something here from Ben's analysis?
+
+
+\ngr{include figure here that shows relative rankings of locations?}
 
 \section{Discussion}
 \label{sec:discussion}
 
-In summary, proper scoring rules for probabilistic forecasts can be traced back to a loss function motivated by a specific decision-making context.
-Often, forecast scores are used to rank models according to accuracy with that particular score, but without reference to the underlying decision-making process for which that score was designed.
+All proper scoring rules for probabilistic forecasts have an explicit link to a loss function, thereby placing numerical value on different kinds of errors in specifying forecasts.
+In epidemiological forecasting, well-known proper scoring rules such as the log score or variations on the continuous rank probability score (such as the weighted interval score, or WIS) have been frequently utilized to evaluate probabilistic forecasts.
+Often, these scores are used to rank models according to accuracy with that particular score, but without reference to the underlying decision-making process for which that score was designed.
 With careful thought and collaboration between modelers and public health officials, we argue that scores that are more aligned with public health decisions could be developed to inform specific problems.
-In some situations, individual or ensemble models could be developed to minimize the loss for a particular setting, although this is also an area largely unexplored in the realm of public health to date.
-
-Notes for the application
-
- - It is clear that the metrics are capturing different aspects of performance
-
- - WIS is scale dependent, alloscore not as much
-
- - the fact that it is hard to beat the baseline for allocation suggests that we are not consistently adding value over just looking at the current levels. \ngr{although is there something more to it about how the baseline accounts for uncertainty?}
-
+We have demonstrated that forecast evaluation methods that are tied to a specific decision making context can yield model rankings that are substantively different from standard measures of forecast skill.
 
 We often conceive of infectious disease forecasts as being useful for decision making purposes, but it is rare for forecast evaluation to be tied directly to the value of the forecasts for informing those decisions. This work seeks to address that gap.
+However, we do note that the decision-making context presented in this work, while motivated by examples from real-world public health resource allocation problems, has not used to inform an actual real-time decision-making process.
 
-We have demonstrated that evaluation methods that are tied to decision making context can yield model rankings that are substantively different from generic measures of forecast skill like WIS.
+Resource allocation decisions are a realistic example of the kinds of decisions that could motivate more targeted forecasting exercises.
+One real-world example is allocation of ventilators during a respiratory viral pandemic.
+This was the motivating example for the examples presented in the work above.
+However, other examples where allocation is a central concern exist as well, such as the allocation of a limited stockpile of vaccinations\citep{persad_fair_2023} or diagnostic tests\citep{du_optimal_2022}.
 
-In practice, there are many users of forecasts with many different decision making problems. Not all can be easily quantified. Those that can be easily quantified may differ enough that no single score is appropriate for all users. We suggest reporting multiple scores. This may be tricky to operationalize in the setting of a general forecast hub. It matters how you elicit and represent probabilistic forecasts (quantiles? samples? cdfs?).
+In practice, there are many potential users of forecasts with many different decision making problems.
+Not all can be easily quantified.
+Those that can be easily quantified may differ enough that it seems likely that no single score would be appropriate for all users.
+In an ideal setting, a forecasting tool could be developed through close collaboration between modelers and public health officials.
+However, this setting may only be possible in settings with enough resources to support both an analytics and public heatlh team.
+Increasingly, collaborative modeling hubs are being used to generate ``one-size-fits-all'' forecasts for many locations at once.
+In these settings, where tailored models are not available, it still could be possible to evaluate contributed models against a set of multiple scores.
+% NGR: leaving this out for now as it feels like too much detail?
+% This may be tricky to operationalize in the setting of a general forecast hub. It matters how you elicit and represent probabilistic forecasts (quantiles? samples? cdfs?).
 
-The allocation score we developed here does not directly account for important considerations such as fairness/equity of allocations.
 
-The allocation score we developed also does not attempt to capture the broader context of decision making. For example, in practice it may be possible to increase the resource constraint $K$ by shifting funding from other disease mitigation measures.
+In our specific application, we made several key observations that we believe should inform future work in this area.
+First, it is clear that different metrics (in our case allocation score and mean weighted interval score) captured different aspects of forecast performance.
+The MWIS was strongly dependent on the scale of the forecasted quantity (e.g., when hospitalizations were high, so was WIS).
+The allocation score was not as scale-dependent, as the highest/worst allocation scores were observed when the number of hospitalizations was closest to the allocation constraint.
+We also note that contributed models found it hard to have a better allocation score than a na\"ive baseline model that just predicted a flat line from the last previous observation with wide uncertainty.
+This suggests suggests that contributed models (other than the ensemble, which combined forecasts from all contributed models) were not consistently adding value over just extrapolating from the current levels.
 
-Forecaster's dilemma: a successful forecast may lead to decisions that change the distribution of the outcome $Y$. Our framework cannot be used in those settings.
 
-There is much more to do in this general area.
+There are several important limitations to the current work.
+The allocation score we developed here does not directly account for important considerations such as fairness or equity of allocations.
+Nor does the proposed framework attempt to capture the broader context of decision making. For example, in practice it may be possible to increase the resource constraint $K$ by shifting funding from other disease mitigation measures.
+We also note that in some settings, a ``successful'' epidemiological forecast may lead to policy decisions that change the distribution of the predicted outcome $Y$. Our framework cannot be used to evaluate a forecast at a horizon that may have been impacted by such a decision.
 
-\section{References}
+
+We see this work as an initial overture for what we hope will grow to be a large, collaborative body of work in more closely coupling applied epidemiological forecasting with public health decision-making.
+We note that others have explored similar linkages.
+For example, \cite{bilinski_adaptive_2023} explore ways in which policymaker preferences could inform risk thresholds for predictive models.
+\ngr{Would be nice to have a few other examples here.}
+In some situations, individual or ensemble models could be developed to minimize the loss for a particular setting, although this is also an area largely unexplored in the realm of public health to date, with some initial methodological development in econometrics.\citep{loaiza-maya_focused_2021}
+
+In conclusion, we argue that the way modelers and policymakers view and evaluate forecasts should change depending on the specific decision-making context.
+Using standard forecast evaluation metrics can mask the utility of certain forecasts, or lead to forecasts being used to inform a particular decision that are not optimal for that particular set of values that are important for that context.
+Further collaborative work is needed to assess the value and relevance of the initial findings presented here, including real-time pilot studies or simulation exercises that could be used to inform further development of new or alternative scoring metrics.
+
 
 \bibliography{allocation}
 

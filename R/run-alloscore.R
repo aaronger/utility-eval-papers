@@ -84,7 +84,7 @@ run_alloscore <- function(
 ## take estimated alloscores and put them in one clean dataset
 ## returned object has a row for each model, reference_date, K, state
 assemble_alloscores <- function(...) {
-  library(targets)
+  require(targets)
   require(dplyr)
 
   ## load all alloscore targets and get their names
@@ -100,3 +100,21 @@ assemble_alloscores <- function(...) {
   return(alloscore::slim(alloscores_with_data, id_cols = c("model", "reference_date")))
 }
 
+run_and_assemble_alloscores <- function(
+    forecast_data,
+    truth_data,
+    reference_dates,
+    one_K) {
+  require(tidyverse)
+  require(alloscore)
+  require(distfromq)
+
+  ## for each reference date, compute allocation, return as df
+  map(reference_dates,
+      \(x) alloscore::slim(run_alloscore_one_date(forecast_data,
+                                                  truth_data,
+                                                  one_reference_date = x,
+                                                  one_K = one_K),
+                           id_cols = c("model", "reference_date"))) %>%
+    list_rbind()
+}
