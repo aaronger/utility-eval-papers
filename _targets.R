@@ -59,8 +59,21 @@ setup <- list(
   tar_target(
     name = exponential_example,
     command = make_exponential_example_figure()
+  ),
+  tar_target(
+    name = Kat15k_alloscores,
+    command = run_and_assemble_alloscores(forecast_data,
+                                          truth_data,
+                                          reference_dates = values$forecast_dates,
+                                          one_K = 15000)
   )
 )
+
+## from Ben's "overk" analysis
+# tar_map(
+#   values=values,
+#   tar_target(alloscore_overk, run_alloscore_overk(forecast_data, truth_data, forecast_dates))
+# )
 
 mapped <- tar_map(
   unlist = FALSE,
