@@ -29,7 +29,7 @@ dexp_gpl_df|function|775ab2c74f474765|||||||||||||||
 dexp_gpl_loss|function|acf92c44de2776e7|||||||||||||||
 dexp_over_loss|function|7e392277b86071d6|||||||||||||||
 dexp_under_loss|function|e2a2b95cd21d7e18|||||||||||||||
-eligible_models|stem|276ee0f82e2b669d|79be0cdd46a9118d|71262da4d5fe0055|23097056||t19636.7890584422s|c84d5c2d39c525c2|268|rds|local|vector|||177.596|lengthx  2  1 in coercion to logical1. lengthx  2  1 in coercion to logical1. lengthx  2  1 in coercion to logical1|
+eligible_models|stem|ccad3f19d16b5687|79be0cdd46a9118d|db16529f3b75e2a8|23097056||t19657.8730569349s|c84d5c2d39c525c2|268|rds|local|vector|||108.686||
 exp_gpl_loss_fun|function|ba9b94032bf3056d|||||||||||||||
 exp_over_loss|function|5635a76a7b222fff|||||||||||||||
 exp_under_loss|function|6277476d7a6b9198|||||||||||||||
@@ -51,7 +51,7 @@ gpl_loss_fun|function|a2df2c14f261582e|||||||||||||||
 hub_locations|object|c01b61db5ebff183|||||||||||||||
 Kat15k_alloscores|stem|8733f5cabe45ecbb|01518237cd3c129b|daed5458d06bbc8c|-1395209973||t19659.8620330768s|b61e1edd0c971582|141414|rds|local|vector|||113.161||
 make_exponential_example_figure|function|247633c2ec57e092|||||||||||||||
-mapped|object|af59d96eeacb8449|||||||||||||||
+mapped|object|da35e78a885bfaef|||||||||||||||
 meb_gpl_df|function|e2a50a031c81e589|||||||||||||||
 new_gpl_df|function|6ec8a54fd0f6f30e|||||||||||||||
 normalize_col_names|function|494854517769f78b|||||||||||||||
@@ -75,6 +75,7 @@ post_process|function|6c2f4885e1abd291|||||||||||||||
 reqd_locs|object|f730627f6865f755|||||||||||||||
 run_alloscore|function|e2ba45f6a602fbd9|||||||||||||||
 run_alloscore_one_date|function|e65af92ebcd8bb70|||||||||||||||
+
 run_and_assemble_alloscores|function|f83eac8df423b51c|||||||||||||||
 score_data|stem|fd052fe9d4cf64e7|9929d49cc92b0dbb|a8c9c1fd3d5a2064|-880466632||t19636.792787729s|e7fc305e8e643a66|330887|rds|local|vector|||20.145||
 setup|object|f0e491f76e70b811|||||||||||||||

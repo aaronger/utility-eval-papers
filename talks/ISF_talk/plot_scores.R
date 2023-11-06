@@ -3,6 +3,7 @@ library(alloscore)
 library(tidyverse)
 library(geofacet)
 library(latex2exp)
+library(here)
 
 source("_targets.R")
 save_dir <- file.path("talks/ISF_talk/plots/")
@@ -31,20 +32,27 @@ three_days <- bind_rows(slim_dfs) %>% filter(reference_date %in% forecast_dates[
 plot_scores_slim(peak_day)
 plot_scores_slim(three_days) + lims(x=c(500, 30000))
 
-p_peak <- plot_scores_slim(peak_day)
+p_peak <- plot_scores_slim(peak_day, palette = score_palette, linetypes = score_linetypes) + 
+  theme_bw() +
+  scale_x_continuous(expand = c(0,0), limits = c(5000,40000))
 
-p_peak_out <- p_peak + theme_bw() +
-  scale_x_continuous(expand = c(0,0), limits = c(5000,40000)) +
+p_peak_out <- p_peak + 
   annotate(geom = "text", x = 22000, y = -250, size = 3,
            label = paste("Total hospitalizations on 2022-01-10 →"), hjust = 1) +
   labs(
     x = expression(paste("Total Allocation Constraint,  ", italic("K"))),
-    y = TeX("Allocation Score = $\\sum (y_i - x_i^F)_{+}$")) +
+    y = TeX("Allocation Score = $\\sum \\max (y_i - x_i^F, 0) - \\max (\\sum y_i - K,0)$")) +
   theme(axis.title.x = element_text(size = 15),
         axis.title.y = element_text(size = 15))
 
+p_peak_out_min <- p_peak + theme_bw() + 
+  theme(legend.position = "none")
+
 ggsave(plot = p_peak_out, filename = "peak_alloscore.png",
-       width = 8, height = 6, path = save_dir)
+       width = 8, height = 6, path = save_dir, dpi = 600)
+
+ggsave(plot = p_peak_out_min, filename = "peak_alloscore_min.png",
+       width = 6, height = 6, path = save_dir)
 
 # plot score time series
 
