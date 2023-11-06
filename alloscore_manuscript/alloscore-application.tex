@@ -1,4 +1,54 @@
-\documentclass{article}
+\documentclass{article}\usepackage[]{graphicx}\usepackage[]{xcolor}
+% maxwidth is the original width if it is less than linewidth
+% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
 
 \usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
 
@@ -32,7 +82,7 @@
 
 \title{Evaluating infectious disease forecasts with allocation scoring rules}
 \author{Aaron Gerding, Nicholas G. Reich, Benjamin Rogers, Evan L. Ray}
-
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 
 \newcommand{\del}[2]{\frac{\partial {#1} }{\partial {#2}} }
@@ -47,20 +97,9 @@
 
 
 
-<<setup, tidy=FALSE, echo=FALSE, message=FALSE>>=
-knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE)
-@
 
-<<environment-setup>>=
-library(targets)
-library(tidyverse)
-library(ggbump)
 
-theme_set(theme_bw())
 
-## necessary to have project root as wd, to override document directory
-knitr::opts_knit$set(root.dir = '../')
-@
 
 \begin{abstract}
 
@@ -329,9 +368,7 @@ We illustrate with an application to hospital admissions in the U.S., considerin
 
 
 \subsection{Data}
-<<get-data-dates>>=
-metadata <- tar_meta()
-@
+
 
 
 \subsubsection{Hospitalization data}
@@ -340,7 +377,7 @@ These data served as the source of ``ground truth'' data for the US COVID-19 For
 These daily counts were available for the US as a whole, and all states and several additional jurisdictions such as Puerto Rico and Washington DC.
 The data were updated daily and were available for download by the public through the HHS HealthData.gov website.
 For this analysis, we downloaded the hospitalizations data through the covidHubUtils R package, which connects users to the most recent version of the data.\cite{wang-covidhubutils}
-The hospitalization data were downloaded for analysis on \Sexpr{as.Date(metadata$time[which(metadata$name == "truth_data")])}.
+The hospitalization data were downloaded for analysis on 2023-10-29.
 
 \subsubsection{Forecast data}
 The US COVID-19 Forecast Hub, a consortium funded by the US CDC and led by a research group at UMass-Amherst, collected short-term forecasts of hospitalizations starting in December 2020.\citep{cramer_united_2022}
@@ -360,7 +397,7 @@ The submitted quantiles included a median (treated as a ``point'' prediction) an
 
 The analysis in this work focuses on forecasts made before and during the first wave of the Omicron SARS-CoV-2 variant in the US.
 As such, we downloaded forecasts for the 15 weeks starting with Monday 2021-11-22 through Monday 2022-02-28.
-Forecast data were downloaded on for analysis on \Sexpr{as.Date(metadata$time[which(metadata$name == "forecast_data")])}.
+Forecast data were downloaded on for analysis on 2023-10-06.
 
 
 We established a set of inclusion criteria to determine which forecasts and models to include in our analysis.
@@ -402,137 +439,70 @@ Using the same procedure as for allocation scores described above, we computed s
 
 \subsection{Application results}
 
-<<score-computation>>=
-tar_load("Kat15k_alloscores")
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 
-alloscore_data_summaries <- Kat15k_alloscores |>
-  group_by(model, reference_date) |>
-  summarize(alloscore = sum(components), yobs = sum(y)) |>
-  group_by(reference_date) |>
-  mutate(nmodels = n(),
-         allo_rank = rank(alloscore, ties.method = "min"),
-         allo_rank_std = 1- (allo_rank-1)/(nmodels-1)) |>
-  ungroup() |>
-  complete(model, reference_date) |>
-  mutate(target_end_date = as.Date(reference_date) + 14)
 
-tar_load("score_data")
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in gzfile(file, "{}rb"{}): cannot open the connection}}
 
-alloscore_models <- unique(alloscore_data_summaries$model)
-score_data_summaries <- score_data |>
-  mutate(reference_date = target_end_date - 14) |>
-  filter(model %in% alloscore_models) |>
-  group_by(model, reference_date) |>
-  summarize(mwis = mean(wis)) |>
-  ungroup() |>
-  group_by(reference_date) |>
-  mutate(nmodels = n(),
-         mwis_rank = rank(mwis, ties.method = "min"),
-         mwis_rank_std = 1- (mwis_rank-1)/(nmodels-1)) |>
-  ungroup() |>
-  complete(model, reference_date) |>
-  mutate(target_end_date = as.Date(reference_date) + 14)
-@
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in group\_by(Kat15k\_alloscores, model, reference\_date): object 'Kat15k\_alloscores' not found}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in unique(alloscore\_data\_summaries\$model): object 'alloscore\_data\_summaries' not found}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in `filter()`:\\\#\# i In argument: `model \%in\% alloscore\_models`.\\\#\# Caused by error in `model \%in\% alloscore\_models`:\\\#\# ! object 'alloscore\_models' not found}}\end{kframe}
+\end{knitrout}
 
 
 \subsubsection{Forecast scores showed differences over time}
-<<grob-hosps-over-time>>=
-tar_load("truth_data")
-dat_to_plot <- truth_data |>
-  filter(location == "US",
-         target_end_date %in% score_data_summaries$target_end_date)
-p1 <- ggplot(dat_to_plot,
-             aes(x=target_end_date, y=value)) +
-  geom_line() +
-  geom_point() +
-  geom_hline(yintercept=15000, linetype=2) +
-  ylab("hospital admissions") +
-  xlab(NULL) +
-  ylim(c(0, NA))
-@
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 
 
-<<metrics-over-time, fig.height=9, fig.width=7, fig.cap="Hospital admissions and evaluation metrics over time. Panel A shows the number of hospital admissions in the US as a whole due to COVID-19 on a sequence of 15 Mondays from December 2021 through March 2022. These are the days for which forecasts were made and evaluated. A horizontal dashed line at 15,000 shows the assumed resource constraint $K$. Panel B shows allocation scores for each model's 14-day ahead forecast, across all US states. The x-axis corresponds to the date for which the prediction was made. Allocation scores typically are high when the observed value is near to the constraint, which occurs during the last Monday in December (on the way up) and the last Monday in January (on the way down). Panel C shows the MWIS metric across weeks, averaged across all states. Similarly to panel B, the x-axis corresponds to the date for which the prediction was made. MWIS values tend to scale with the observed and predicted values, and the peak MWIS values happen around and just after the pean of the Omicron wave.">>=
-p2 <- ggplot(alloscore_data_summaries,
-             aes(x=target_end_date, y=alloscore, color=model, shape=model)) +
-  scale_x_date(limits=range(score_data_summaries$target_end_date)) +
-  scale_shape_manual(values=c(15:18, 4, 6, 15:18, 4, 6, 15:18, 4)) +
-  ylab("Allocation score") +
-  geom_point() + geom_line()+
-  theme(legend.pos="none") +
-  xlab(NULL)
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in `filter()`:\\\#\# i In argument: `target\_end\_date \%in\%\\\#\# \ \ score\_data\_summaries\$target\_end\_date`.\\\#\# Caused by error in `target\_end\_date \%in\% score\_data\_summaries\$target\_end\_date`:\\\#\# ! object 'score\_data\_summaries' not found}}
 
-p4 <- ggplot(score_data_summaries,
-             aes(x=target_end_date, y=mwis, color=model,shape=model)) +
-  geom_point() + geom_line() +
-  scale_shape_manual(values=c(15:18, 4, 6, 15:18, 4, 6, 15:18, 4)) +
-  ylab("MWIS")+
-  theme(legend.pos="bottom")+
-  xlab(NULL)
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in ggplot(dat\_to\_plot, aes(x = target\_end\_date, y = value)): object 'dat\_to\_plot' not found}}\end{kframe}
+\end{knitrout}
 
-cowplot::plot_grid(p1, p2, p4,
-                   nrow=3,
-                   align="v",
-                   rel_heights = c(1, 1, 1.5),
-                   labels = "AUTO")
-@
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in ggplot(alloscore\_data\_summaries, aes(x = target\_end\_date, y = alloscore, : object 'alloscore\_data\_summaries' not found}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in ggplot(score\_data\_summaries, aes(x = target\_end\_date, y = mwis, : object 'score\_data\_summaries' not found}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in cowplot::plot\_grid(p1, p2, p4, nrow = 3, align = "{}v"{}, rel\_heights = c(1, : object 'p1' not found}}\end{kframe}
+\end{knitrout}
 
 Allocation scores varied substantially by date and by model (Figure \ref{fig:metrics-over-time}).
 For predictions made for the first three Mondays in December 2021 and the last three Mondays in February 2022 all models had allocation scores under 500 (and the mean across all models was less than 100), indicating that the unnecessary unmet need was fairly low relative to the total number of hospital admissions on those days.
 The allocation scores are on the whole highest when the observed number of new hospital admissions is closest to the resource threshold of 15,000, as this is the time when any mistakes in allocation are costly in terms of wasting resources in one location that could have been used in another.
 Predictions made during the peak week and just after showed the highest variation in allocation scores, with some models having allocation scores under 1000 and others having values over 3500.
 
-<<eval=FALSE>>=
-## some analysis to support above statements
-alloscore_data_summaries |>
-  group_by(target_end_date) |>
-  summarize(meanAS = mean(alloscore, na.rm=TRUE),
-            medianAS = median(alloscore, na.rm=TRUE),
-            minAS = min(alloscore, na.rm=TRUE),
-            maxAS = max(alloscore, na.rm=TRUE),
-            range = maxAS-minAS)
-@
+
 
 Overall, across the first 11 weeks evaluated (we excluded the last four since nearly all the models achieved an allocation score of zero), the \texttt{COVIDhub-baseline} model, which predicts a flat line from the most recent observation with uncertainty bounds based on a random walk, had the highest rank for allocation score in four weeks, more than any other model except the \texttt{COVIDhub-ensemble} which also had four.
 
-<<eval=FALSE>>=
-## analysis for the above statements
-alloscore_data_summaries |>
-  filter(as.Date(reference_date) < as.Date("2022-02-01"), allo_rank == 1)
-@
+
 
 
 Mean weighted interval scores (MWIS) also varied by date and model, and more clearly were dependent on the scale of the observed data.
 MWIS values were low (all models under 100) for all Mondays in December 2021 and the final four Mondays evaluated.
 Across all models both the average and median MWIS value for every Monday in January was above 100, with the largest errors occurring one and two weeks after the peak was observed.
 
-<<eval=FALSE>>=
-## some analysis to support above statements
-score_data_summaries |>
-  group_by(target_end_date) |>
-  summarize(meanWIS = mean(mwis, na.rm=TRUE),
-            medianWIS = median(mwis, na.rm=TRUE),
-            minWIS = min(mwis, na.rm=TRUE),
-            maxWIS = max(mwis, na.rm=TRUE),
-            range = maxWIS-minWIS)
-@
+
 
 \subsubsection{Model rankings for different scores did not reliably correlate}
 
-<<metrics-correlation, fig.width=10, fig.height=7.5, fig.cap="Association of standardized ranks for MWIS and allocation score by model and week. Each facet of the plot corresponds to one model. Within each facet, each point corresponds to a week. The x- and y-values correspond to the MWIS standardized rank and the allocation score standardized rank for that week. Points corresponding to earlier dates have darker shading. The size of the point corresponds to the observed value on the date for which the prediction was made. Models show different degrees of association between the two metrics.">>=
-all_data <- left_join(alloscore_data_summaries, score_data_summaries,
-                      by=c("model", "target_end_date"))
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 
-all_data |>
-  filter(as.Date(reference_date.x) < as.Date("2022-02-01") ) |>
-  ggplot(aes(x=mwis_rank_std, y=allo_rank_std, color=target_end_date, size=yobs)) +
-  geom_point(alpha=.7) +
-  scale_x_continuous("MWIS standardized rank", limits=c(0,1)) +
-  scale_y_continuous("Allocation score standardized rank", limits=c(0,1)) +
-  facet_wrap(.~model) +
-  geom_abline(slope=1, intercept=0, linetype=2, color="gray")
 
-@
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in left\_join(alloscore\_data\_summaries, score\_data\_summaries, by = c("{}model"{}, : object 'alloscore\_data\_summaries' not found}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in filter(all\_data, as.Date(reference\_date.x) < as.Date("{}2022-02-01"{})): object 'all\_data' not found}}\end{kframe}
+\end{knitrout}
 
 Models showed differing levels of correlation between their allocation scores and MWIS values (Figure \ref{fig:metrics-correlation}).
 Here are some examples of the different model-specific patterns observed:
@@ -543,11 +513,7 @@ Here are some examples of the different model-specific patterns observed:
 \item One model performed consistently well for allocation score but had only middlings ranks for MWIS (\texttt{CMU-TimeSeries})
 \end{itemize}
 
-<<eval=FALSE>>=
-alloscore_data_summaries |>
-  group_by(model) |>
-  summarize(top_rank = sum(allo_rank_std==1))
-@
+
 
 
 \subsubsection{Integrated allocation score across values of K}
