@@ -306,7 +306,8 @@ Larger interval scores indicate less skillful forecasts.
 An interval score consists of (a) the width of the interval, with larger intervals receiving higher scores, and (b) a penalty if the interval does not cover the eventual observation, which increases the further away the interval is from the observed value.
 Equivalently, the WIS can also be characterized as a weighted sum of quantile scores for each individual predictive quantile.
 The quantile score for a particular quantile level assigns an asymmetric penalty to predictions that are too high or too low, with the relative sizes of the penalties set so that in expectation the score is minimized by the given quantile of the distribution.
-The most commonly used version of WIS is one that uses an equal weighting of all quantile levels, in which case WIS approximates the continuous rank probability score (CRPS), a commonly used score for probabilistic forecasts.
+The most commonly used version of WIS is one that uses an equal weighting of all quantile levels, in which case WIS approximates the continuous ranked probability score (CRPS), a commonly used score for probabilistic forecasts.
+\apg{Maybe a rewording and/or a supplement reference here to mention that any WIS approximates the a corresponding weighted CRPS, and that WIS actually is the wCRPS for a discrete measure/weighting.}
 \emph{It is important to note that this weighting was proposed because the resulting score approximates the CRPS, and not because it aligned with any particular public health decision-making rationale.}
 
 That said, the quantile score and WIS can be derived using the same decision theoretic procedure that we outlined in section \ref{sec:methods.detailed}.
