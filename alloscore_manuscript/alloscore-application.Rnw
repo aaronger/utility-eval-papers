@@ -312,7 +312,7 @@ The most commonly used version of WIS is one that uses an equal weighting of all
 That said, the quantile score and WIS can be derived using the same decision theoretic procedure that we outlined in section \ref{sec:methods.detailed}.
 In fields such as meteorology and supply chain management, a great deal of attention has been given to the problem where a decision must be made about the quantity of a resource to purchase for a single location in the face of a fixed cost $C$ for each unit of the resource and a loss $L$ that will be incurred for each unit of unmet need.
 This leads to the quantile score for the probability level $\tau = 1 - C/L$.
-From this point, the WIS or CRPS can be obtained by averaging across a range of decision making settings with different cost and loss parameters, using a similar motivation that we used to obtain the IAS from the AS in \ref{sec:methods.detailed.integrated_allocation}.
+From this point, the WIS or CRPS can be obtained by averaging across a range of decision making settings with different cost and loss parameters, using a similar motivation that we used to obtain the IAS from the AS in section \ref{sec:methods.detailed.integrated_allocation}.
 %\ngr{I might suggest adding a detailed Step 1/2/3 as an appendix and referencing it here. But I think that adding that full detail here might be too much.}
 %\ngr{can we make more explicit the link here to the section above? I'm not confident in my ability to describe with technical accuracy the link between quantile/pinball loss and CRPS, but I think this is a good opportunity to do so briefly.}
 
