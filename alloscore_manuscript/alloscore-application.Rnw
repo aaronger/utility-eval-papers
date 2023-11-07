@@ -291,24 +291,30 @@ We note that the device of considering a range of hypothetical decision makers o
 \subsection{Generalizations and Connections to Other Scores}
 \label{sec:methods.related}
 
-We begin this section by briefly sketching how the weighted interval score (WIS), a commonly used proper scoring rule for probabilistic forecasts during the COVID-19 pandemic, can also be derived using the approach above. Then, we discuss similarities and differences between WIS and the allocation score, and other scores in general.
+We begin this section by briefly sketching how the weighted interval score (WIS), a commonly used proper scoring rule for probabilistic forecasts during the COVID-19 pandemic, can be derived using the decision theoretic approach above. Then, we discuss similarities and differences between WIS and the allocation score, and other scores in general.
 
 \subsubsection{The quantile loss and weighted interval score (WIS)}
 \label{sec:methods.wis}
 
-The weighted interval score (WIS), is a scoring rule first defined in 2020 to assist with scoring public forecasts that were being made in the early stages of the COVID-19 pandemic.\citep{bracher2021evaluating}
-Many COVID forecasts were stored in a quantile format, where probabilistic distributions are encoded by a fixed set of quantiles.
+The weighted interval score (WIS) was proposed in 2020 as a way to score forecasts that were being made in the early stages of the COVID-19 pandemic \citep{bracher2021evaluating}; equivalent scores had also been used in previous forecast evaluation efforts \cite[e.g.,][]{hong2016probabilisticEnergyForecasting}.
+The WIS is a proper scoring rule for forecasts that use a set of quantiles to represent a probabilistic forecast distribution.
 %% optional detail
-This was largely a choice of convenience (e.g., all forecasts had a known, fixed data size) and was codified by the US COVID-19 Forecast Hub and other collaborative forecasting projects.\citep{cramer_united_2022}
+Many early COVID-19 modeling efforts, including the US COVID-19 Forecast Hub and other collaborative forecasting projects, adopted a quantile forecast format as a matter of convenience (e.g., this format does not require the forecaster to pre-specify an upper bound for disease counts as would be required to collect forecasts in the format of bin probabilities) \citep{cramer_united_2022}.
 %%
-While pointing a reader interested in more mathematical detail to \cite{bracher2021evaluating}, we note simply that the WIS, is as its name suggests, a weighted sum of interval scores at different probability levels (e.g., 50\% prediction intervals, 80\% PIs, 95\% PIs, etc...).
+While pointing a reader interested in more mathematical detail to \cite{bracher2021evaluating}, we note simply that the WIS is a weighted sum of interval scores at different probability levels (e.g., 50\% prediction intervals, 80\% PIs, 95\% PIs, etc...).
 Larger interval scores indicate less skillful forecasts.
-Interval scores themselves consist of (a) the width of the interval, with larger intervals receiving higher scores, and (b) a penalty if the interval does not cover the eventual observation, which increases the further away the interval is from the observed value.
-We note that the most commonly used version of WIS is one that chooses a specific set of weights so that WIS approximates the continuous rank probability score (CRPS) or pinball loss, a commonly used score for probabilistic forecasts.
-Other specifications of weights for the various interval scores can be used.
-\emph{It is important to note that the version of WIS that has been commonly used for evaluating COVID forecasts was proposed because it approximates a commonly used forecast scoring rule, the CRPS, and not because it aligned with any particular public health decision-making rationale.}
+An interval score consists of (a) the width of the interval, with larger intervals receiving higher scores, and (b) a penalty if the interval does not cover the eventual observation, which increases the further away the interval is from the observed value.
+Equivalently, the WIS can also be characterized as a weighted sum of quantile scores for each individual predictive quantile.
+The quantile score for a particular quantile level assigns an asymmetric penalty to predictions that are too high or too low, with the relative sizes of the penalties set so that in expectation the score is minimized by the given quantile of the distribution.
+The most commonly used version of WIS is one that uses an equal weighting of all quantile levels, in which case WIS approximates the continuous rank probability score (CRPS), a commonly used score for probabilistic forecasts.
+\emph{It is important to note that this weighting was proposed because the resulting score approximates the CRPS, and not because it aligned with any particular public health decision-making rationale.}
 
-The decision-making setup that leads to a choice of WIS as a scoring rule can be formulated using the same recipe as shown in section \ref{sec:methods.detailed.decisiontheory}. In fields such as meteorology and supply chain management, a great deal of attention has been given to the problem where a decision must be made about the quantity of a resource to purchase for a single location in the face of a fixed cost $C$ for each unit of the resource and a loss $L$ that will be incurred for each unit of unmet need.\ngr{I might suggest adding a detailed Step 1/2/3 as an appendix and referencing it here. But I think that adding that full detail here might be too much.} This decision-making problem leads to the pinball loss that is often used in quantile regression, and thence to the CRPS (or WIS, via approximation) as a scoring rule.\ngr{can we make more explicit the link here to the section above? I'm not confident in my ability to describe with technical accuracy the link between quantile/pinball loss and CRPS, but I think this is a good opportunity to do so briefly.}
+That said, the quantile score and WIS can be derived using the same decision theoretic procedure that we outlined in section \ref{sec:methods.detailed}.
+In fields such as meteorology and supply chain management, a great deal of attention has been given to the problem where a decision must be made about the quantity of a resource to purchase for a single location in the face of a fixed cost $C$ for each unit of the resource and a loss $L$ that will be incurred for each unit of unmet need.
+This leads to the quantile score for the probability level $\tau = 1 - C/L$.
+From this point, the WIS or CRPS can be obtained by averaging across a range of decision making settings with different cost and loss parameters, using a similar motivation that we used to obtain the IAS from the AS in \ref{sec:methods.detailed.integrated_allocation}.
+%\ngr{I might suggest adding a detailed Step 1/2/3 as an appendix and referencing it here. But I think that adding that full detail here might be too much.}
+%\ngr{can we make more explicit the link here to the section above? I'm not confident in my ability to describe with technical accuracy the link between quantile/pinball loss and CRPS, but I think this is a good opportunity to do so briefly.}
 
 \subsubsection{Connections between scores}
 \label{sec:methods.generalization}
@@ -318,7 +324,7 @@ The allocation score arises when the decision relates to how a fixed quantity of
 The WIS and CRPS arise when the decision relates to how much of a resource to order in the context of the cost of the resource and wanting to minimize unmet need in one or more locations.
 In both settings, the optimal solution sets the resource level in each location to a quantile of the respective forecast distributions.
 
-These decision making problems differ according to the challenge faced by the decision maker: a fixed constraint on the available resources for the allocation problem, or a cost per unit of resources in the resource purchasing problem. In fact, it is possible to combine these into a more general problem where the decision maker must decide on both the total level of resources to purchase and an allocation of those resources across multiple locations, subject to a cost per unit of resources and a constraint on the total quantity of resources that can be purchased. The quantile loss and the allocation score presented in this work are both special cases of the score that emerges from that more general decision making problem that integrates across resource cost and constraint parameters together. We pursue this direction further in other work (cite arxiv version of paper 2).
+These decision making problems differ according to the challenge faced by the decision maker: a fixed constraint on the available resources for the allocation problem, or a cost per unit of resources in the resource purchasing problem. In fact, it is possible to combine these into a more general problem where the decision maker must decide on both the total level of resources to purchase and an allocation of those resources across multiple locations, subject to a cost per unit of resources and a constraint on the total quantity of resources that can be purchased. The quantile loss and the allocation score presented in this work are both special cases of the score that emerges from that more general decision making problem that integrates across resource cost and constraint parameters together. We pursue this direction further in other work that is in progress.
 
 \section{Evaluating forecasts of COVID hospitalizations using the allocation score}
 \label{sec:application}
