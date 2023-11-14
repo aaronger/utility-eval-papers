@@ -83,17 +83,17 @@ run_alloscore <- function(
 
 ## take estimated alloscores and put them in one clean dataset
 ## returned object has a row for each model, reference_date, K, state
-assemble_alloscores <- function(...) {
+assemble_alloscores <- function(alloscores_with_data) {
   require(targets)
   require(dplyr)
 
   ## load all alloscore targets and get their names
   ## NB: if any target starts with "alloscore" that isn't one of the fits, this will cause an error
-  tar_load(starts_with("alloscore"))
-  ascore_tars <- ls(pattern="alloscore*")
+  #tar_load(starts_with("alloscore"))
+  #ascore_tars <- ls(pattern="alloscore*")
 
   ## bind all alloscore dataframes together and filter out ones with no forecasts
-  alloscores_with_data <- do.call(bind_rows, mget(ascore_tars)) |>
+  alloscores_with_data <- alloscores_with_data |>
     dplyr::filter(is.na(.data$message))
 
   ## extract alloscore matrices
