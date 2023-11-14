@@ -110,9 +110,9 @@ The underlying decision problem here consists of action and outcome sets $\mathc
 
 Note that the absolute and opportunity losses have the same dependence on action variable $x$, and therefore the same Bayes act. For $C \in (0,L)$ this is the solution of the first order equation 
 \begin{align}{}
-0 = \dby{}{x} E_F\left[s_{Q,C}(x,y)\right] &= E_F\left[\dby{}{x}s_{Q,C}(x,y)\right] \\
-&= C + LE_F\left[\dby{}{x}(y-x)_+\right] \\
-&= C - LE_F\left[\mathbf{1}\{y > x\}\right] \\
+0 = \dby{}{x} E_F\left[s_{Q,C}(x,Y)\right] &= E_F\left[\dby{}{x}s_{Q,C}(x,Y)\right] \\
+&= C + LE_F\left[\dby{}{x}(Y-x)_+\right] \\
+&= C - LE_F\left[\mathbf{1}\{Y > x\}\right] \\
 &= C + L(F(x) - 1), \label{eqn:q_deriv}
 \end{align}
 that is, the quantile $x^F = F_i^{-1}(1 - C/L) = q_{F,\tau}$ for the probability level $\tau = 1-C/L$. (That the critical point $q_{F,\tau}$ is actually a minimum follows from \eqref{eqn:q_deriv} being non-positive to its left and non-negtive to its right, and assuming as we do for now that $F$ is smooth and strictly increasing at $q_{F,\tau}$, it is a unique minimum.) The quantile solves the decision problem with respect to the forecast $F$ by being the action which best balances expected cost against expected loss among all actions available to the decision maker. 
