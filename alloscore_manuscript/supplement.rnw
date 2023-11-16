@@ -133,7 +133,7 @@ real-valued random variable $\short_x(Y)$ for every $x$, or a function-valued ra
 for any realization $Y=y$ is a convex function $\short^y(x)$ of $x$.  We see then that the 
 \emph{expected shortage}\footnote{A more natural sounding term for $(y-x)_{+}$ might have been \emph{shortfall}. Unfortunately 
 \emph{expected shortfall} has long been used in finance to refer to quantities more 
-closely related to the \emph{conditonal} expectation $\Ex_F [Y-x \mid Y - x \geq 0] = \Ex_F [(Y-x)_{+}]/\mathbb{P}_F\{Y \geq x\}$.}
+closely related to the \emph{conditional} expectation $\Ex_F [Y-x \mid Y - x \geq 0] = \Ex_F [(Y-x)_{+}]/\mathbb{P}_F\{Y \geq x\}$.}
 $\Ex_F [(Y-x)_{+}] = \Ex_F[\short^Y](x)$ (assuming it exists) is also convex (and therefore continuous) in $x$ by integrating the convexity inequality for
 $\short^y(x)$ with respect to the probability measure $dF(y)$:
 \begin{align}
