@@ -290,12 +290,57 @@ For a prediction to be useful, it must \textbf{proper}ly describe a \textbf{prop
 
 Expanding on the decision theoretic perspective sketched in Section \ref{sec:quantiles_shortage}, we can view a loss function 
 as a general tool for formalizing a decision problem that assigns numerical value to the \emph{result} of taking an \emph{action} $x$
-in preparation for an \emph{outcome} $y$.  A \emph{scoring rule} $S$ (or just \emph{score}) is a loss function where the action 
-is a probabilistic forecast $F$ of the outcome $y$ (or the stating by a forecaster of the forecast), written as $S(F,y)$.
+in preparation for an \emph{outcome} $y$.  A \emph{scoring rule} $S$ is a loss function where the action 
+is a probabilistic forecast $F$ of the outcome $y$ (or the statement of $F$ by a forecaster). Just as in 
+Section \ref{sec:quantiles_shortage}, given an action $F$, $S$ transforms a random outcome variable $Y$ into a random loss $S(F,Y)$. 
+We refer to the realized loss $S(F,y)$ as the \emph{score} of $F$ at $y$, and the process of evaluating $S(F,y_i)$ for
+a data set $\mathcal{Y}=\{y_i\}$ as \emph{scoring} $F$ against $\mathcal{Y}$.
 
-A scoring rule $S$ is \emph{proper} when it    the expected score $\Ex [S(F,Y)]$ is lowest 
- invites the mistaken impression that whether a score 
-is proper might depend on the true distribution of what is being forecasted.
+Decision theoretically, probabilistic forecasts are a unique kind of action in that they can be used to generate their own 
+(simulated) outcome data, against which they can be scored using $S$. $S$ therefore commits a probabilistic forecast $F$
+to the ``self-assessment'' $\Ex [S(F, Y^F)]$, where $Y^F \sim F$ is the random variable defined by sampling from $F$, as well
+to an assessment $\Ex [S(G, Y^F)]$ of any alternative forecast $G$.
+A natural consistency criterion for $S$ is that it does not commit $F$ to assessing any other 
+forecast $G$ as being better than $F$ itself, that is, that
+\begin{align}
+\Ex [S(F, Y^F)] \leq \Ex [S(G, Y^F)]
+\end{align} 
+for any $F,G$. Otherwise, the optimal decision for some forecaster would be to state a forecast $G$ other than the forecast $F$
+which they believe describes the outcome $Y$.
+A scoring rule meeting this criterion is called \emph{proper}.  The inequality can also be written 
+as $\Ex_F [S(F, Y)] \leq \Ex_F [S(G, Y)]$ where the subscript specifies the distribution of $Y$.  
+$S$ is \emph{strictly proper} when this inequality is sharp, in which case the \emph{only} optimal decision for a forecaster is to state
+the forecast they believe to be true.
+
+Another definition of $S$ being proper that is often used is that $\Ex[S(F,Y)]$ is lowest when $F$ is the true distribution of $Y$.  
+Under a flexible reading, this definition is equivalent to ours, but we find it problematic because it invites the mistaken impression that 
+the properness of a score might depend on the true distribution of what is being forecasted. Whether a score is proper is unrelated 
+to any particular forecast being scored or source of the data being used to score it.
+
+The condition of being proper is quite strong, and na\"{i}ve means of reducing a forecast distribution to a single
+number based on an observed outcome $y$ will generally define an improper scoring rule.  For example, the \emph{probability score} 
+$S_{\mathrm{Prob},c}(F,y):= -(F(y+c) - F(y-c))$ and the \emph{linear score} $S_{\mathrm{Lin}}
+(F,y):= \lim_{c\to 0} \frac{1}{2c}S_{\mathrm{Prob},c}(F,y) = -f(y)$ (where we assume $F$ has a density $f$) and are
+both improper because they commit a general $F$ to assessing an alternative forecast $G$ as being better than $F$
+itself whenever $G$ is sufficiently more concentrated than $F$ in the neighborhood $[m_f-c,m_f+c]$ of a mode $m_f$ of
+$f$. The same is true when the outcome is discrete (and ordered for $S_{\mathrm{Prob}}$) with index $y$: for a forecast
+pmf $p(y)$, moving the mass of $p$ onto a neigborhood of a mode $m_p$ to get a new forecast $p_m$ will improve the 
+expected score $\Ex[S_{\mathrm{Prob/Lin}}(p_m,Y^p)]$ according to $p$ itself. This creates the classic pathology
+of probabilistic forecasters having no incentive to express uncertainty. The meteorologist getting paid according to
+$p_{\text{rain}}\text{rain} + (1-p_{\text{rain}})(1-\text{rain})$ (the negative of the linear score) will say rain is 
+inevitable or impossible when the chances of rain appear to be 51\% or 49\%.
+
+Sometimes a scoring rule can be made proper with an added correction that penalizes 
+
+But given an auxiliary decision problem $\mathcal{D}_{\mathrm{Aux}} =\{\mathcal{X}, \mathcal{Y}, l(x,y)\}$, such as the
+allocation problem from the main text or the cost-loss problem from Section \ref{sec:quantiles_shortage}, we can
+produce a scoring rule $S_l$ that is automatically proper using the Bayes act formalism introduced in Section \ref
+{sec:methods.detailed.specific_allocation}. This works by defining $S_l(F, y)$ as the value $l(x^F,y)$ already given by  
+$\mathcal{D}_{\mathrm{Aux}}$ for the Bayes act $x^F$; that is, the action which \emph{by design} will be assessed via
+the forecast $F$ to have an expected loss $\Ex[l(x^F,Y^F)]$ as low as possible.
+
+by mapping a forecast $F$ to an the action $x^F$
+
 
 
 
