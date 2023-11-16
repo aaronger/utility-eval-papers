@@ -87,7 +87,7 @@ mapped <- tar_map(
 combined <- tar_combine(
   name = all_alloscore_data,
   mapped[["alloscore"]],
-  command = assemble_alloscores(!!!.x)
+  command = assemble_alloscores(dplyr::bind_rows(!!!.x))
 )
 # tar_target(
 #   name = figure_K_v_alloscore,
