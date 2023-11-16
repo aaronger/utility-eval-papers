@@ -2,7 +2,7 @@
 
 \usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
 
-\usepackage{amsmath, amsfonts, amssymb}
+\usepackage{amsmath, amsfonts, amssymb, mathtools}
 \usepackage{graphicx}
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
@@ -10,13 +10,18 @@
 \usepackage{bm}
 \usepackage{cases}
 \usepackage{caption}
+\usepackage{pgfplots}
+\usepackage{xr-hyper}
 \usepackage{hyperref}
+\externaldocument{alloscore-application}
 
 \DeclareMathOperator*{\argmin}{argmin}
+\DeclareMathOperator{\short}{sh}
+\DeclareMathOperator{\Ex}{\mathbb{E}}
 
 
 \usepackage{setspace}
-\onehalfspacing
+
 
 \usepackage{parskip}
 
@@ -38,6 +43,7 @@
 \newcommand{\del}[2]{\frac{\partial {#1} }{\partial {#2}} }
 \newcommand{\dby}[2]{\frac{d {#1} }{d {#2}} }
 \newcommand{\sbar}{\overline{s}}
+
 \newtheorem{proposition}{Proposition}
 
 \theoremstyle{remark}
@@ -70,7 +76,7 @@ more thorough discussion.
 \begin{itemize}
 	\item From 2.2.1, why are Bayes act scoring rules proper?
 	\item Explain ``All proper scoring rules for probabilistic forecasts have an explicit link to a loss function'' from discussion.
-	\item DGP as optimal for any decision problem, ref Diebold, Gunther, Tay p. 866.
+	\item DGP as optimal for any decision problem, ref Diebold, Gunther, Tay p. 866; and if forecasts are ideal, then forecasts with better information always yield better decisions, ref Holzmann and Eulert, Corr 2.
 	\item For 2.2.2, how to get quantile representation of Bayes act using Lagrange multiplier, assuming smooth, never-zero densities well behaved at $x=0$. Work out exponetial example. Refer to methods paper for general case.
 	\item Derivation of quantile scoring rule with quantile as Bayes act for C/L problem, assuming never-zero densities. 
 	\item Descriptions of 
@@ -82,6 +88,260 @@ more thorough discussion.
 	\item Sketch of scoring for decision problems involving both cost and constraint.
 	
 \end{itemize}
+
+\section{Shortages}
+\label{sec:shortage}
+
+For convenience, we write $u_{+} = \max\{0,u\}$, and refer to $(y - x)_{+}$ as a \emph{shortage} in accordance with our
+typical use of $y$ for a demand or need and $x$ for an available supply. To regard shortage as a function depending on only one 
+variable $x$ or $y$, with the other being a parameter describing the dependence we can write 
+$(y - x)_{+} = \short^{y}(x) = \short_{x}(y)$.  Note that 
+$\short^{y}(x)$ and $\short_{x}(y)$ are both convex functions and ``mirror'' each other:
+
+
+\pgfplotsset{compat=1.16} % Set the compatibility of pgfplots
+
+\begin{tikzpicture}
+\begin{axis}[
+    axis lines=middle, % Center the axis
+    xmin=0, xmax=10, % Set the range for the x-axis
+    ymin=0, ymax=10, % Set the range for the y-axis
+    xlabel={$x$ or $y$},
+    ylabel={shortage},
+    xtick={4, 6}, % Set the position of the ticks on the x-axis
+    ytick=\empty, % No ticks on the y-axis
+    xticklabels={$x_0$, $y_0$}, % Label for the tick on the x-axis
+    clip=false,
+    every axis x label/.style={at={(current axis.right of origin)},anchor=north west},
+    every axis y label/.style={at={(current axis.above origin)},anchor=south east}
+]
+
+% Add the plot for max(0, y_0 - x)
+\addplot+[sharp plot, no marks, thick, blue] coordinates {(0,6) (6,0) (10,0)}
+node[pos=.1,anchor=south west] {$\short^{y_0}(x) = (y_0 - x)_{+}$}; % Label for the first function
+
+
+% Add the plot for max(0, y - x_0)
+\addplot+[sharp plot, no marks, thick, red, ->] coordinates {(0,0) (4,0) (10,6)}
+node[pos=.7,anchor=north west] {$\short_{x_0}(y) = (y - x_0)_{+}$};
+
+\end{axis}
+\end{tikzpicture}
+
+Let $Y$ be a random variable with distribution $F$. The random shortage $(Y-x)_{+}$ can be thought of as either a 
+real-valued random variable $\short_x(Y)$ for every $x$, or a function-valued random variable $\short^Y$ whose value
+for any realization $Y=y$ is a convex function $\short^y(x)$ of $x$.  We see then that the 
+\emph{expected shortage}\footnote{A more natural sounding term for $(y-x)_{+}$ might have been \emph{shortfall}. Unfortunately 
+\emph{expected shortfall} has long been used in finance to refer to quantities more 
+closely related to the \emph{conditonal} expectation $\Ex_F [Y-x \mid Y - x \geq 0] = \Ex_F [(Y-x)_{+}]/\mathbb{P}_F\{Y \geq x\}$.}
+$\Ex_F [(Y-x)_{+}] = \Ex_F[\short^Y](x)$ (assuming it exists) is also convex (and therefore continuous) in $x$ by integrating the convexity inequality for
+$\short^y(x)$ with respect to the probability measure $dF(y)$:
+\begin{align}
+	\Ex_F[\short^Y](\lambda x_1+(1-\lambda) x_2) &= \int \short^y(\lambda x_1+(1-\lambda) x_2)dF(y) \nonumber \\
+	&\leq \int \lambda\short^y(x_1) +(1-\lambda) \short^y(x_2)dF(y) \nonumber \\
+	&=\lambda\Ex_F[\short^Y](x_1) + (1-\lambda)\Ex_F[\short^Y](x_2). \label{eqn:convex-esf}
+\end{align}
+Convexity is also shown by directly exhibiting the the left and right derivatives of $\Ex_F[\short^Y](x)$:
+\begin{align}
+D_{-}\Ex_F [(Y-x)_{+}] &= \lim_{h \searrow 0}\frac{1}{h}\Ex_F [(Y - x)_{+} - (Y - x - h)_{+}] \\
+&= \lim_{h \searrow 0}\frac{1}{h}\int_{[x\mathrlap{-h, x]}} (x - h - y) dF(y) - 
+\lim_{h \searrow 0}\frac{1}{h}\int_{(x\mathrlap{,\infty)}} h dF(y)  \\
+&= \lim_{h \searrow 0}\frac{1}{h}\int_{[x\mathrlap{-h, x]}} - h dF(y) - 1 + F(x) \label{eqn:dsfllim} \\
+&= -(F(x) - F(x-)) - 1 + F(x) \quad \left(\text{where } F(x-) := \lim_{t \nearrow x} F(t)\right)\\
+&= F(x-) - 1  \label{eqn:dsfl} \\
+D_{+}\Ex_F [(Y-x)_{+}] &= \lim_{h \searrow 0}\frac{1}{h}\Ex_F [(Y - x + h)_{+} - (Y - x)_{+}] \\
+&= \lim_{h \searrow 0}\frac{1}{h}\int_{[x\mathrlap{, x+h]}} (x - y) dF(y) - 
+\lim_{h \searrow 0}\frac{1}{h}\int_{(x\mathrlap{+h,\infty)}} h dF(y)  \\
+&= \lim_{h \searrow 0}\frac{1}{h}\int_{[x\mathrlap{, x+h]}} 0 dF(y) - 1 + F(x) \label{eqn:dsfrlim} \\
+&= F(x) - 1 \label{eqn:dsfr}
+\end{align}
+where in \eqref{eqn:dsfllim} and \eqref{eqn:dsfrlim} we are able to replace the integrands with their values at $x$ because 
+they are bounded over the shrinking regions of integration $[x-h,x]$ and $[x,x+h]$. Convexity follows since 
+$D_{-}\Ex_F[\short^Y](x) \leq D_{+}\Ex_F[\short^Y](x)$ by the definition of $F(x)$ and $F(x-)$. This shows that if $F$ does not 
+have a point mass at $x$, we have 
+\begin{align}
+	\frac{d}{dx} \Ex_F [(Y-x)_{+}] = F(x)-1,
+\end{align}
+coinciding with the ``Leibniz rule'' calculation
+\begin{align}
+	\frac{d}{dx} \Ex_F [(Y-x)_{+}] &= \frac{d}{dx} \int_{x}^{\infty} (y-x) f_Y(y)dy \\
+	&= \int_{x}^{\infty} \frac{d}{dx}(y-x) f_Y(y)dy - (x-x) f_Y(x) = -\int_{x}^{\infty} f_Y(y)dy = F(x)-1.
+\end{align}
+which assumes $Y$ has an adequately well-behaved density $f_Y$.
+
+
+\section{Quantiles and Expected Shortage}
+\label{sec:quantiles_shortage}
+
+We recall how quantiles arise as solutions to a probabilistic decision problem. Let $Y$ be a random variable
+representing the future level of an undesirable outcome such as severe COVID incidence. Let $x$ be a decision variable
+representing the possible levels of some costly counter-measure, such as procurement of monoclonal antibody treatments,
+that can be taken at a cost $C$ per unit in preparation for $Y$.  A decision maker must decide on a level $x$ of investment in the
+counter-measure, and wishes to avoid excesses in either the expediture $Cx$ or the shortage $(y-x)_{+}$ when $Y=y$ is
+realized. To formalize the trade-off between these potential excesses we quantify the loss associated with a unit of
+shortage by a constant $L>C$ (which assumes that the counter-measure has some economic value) and combine the total shortage loss with expenditure into a \emph{loss function}\footnote
+{This does involve a confusing use of the word \emph{loss} to refer to two different quantities, but this seems to be
+an ingrained and unavoidable habit in the literature.}
+\[
+l(x,y) = Cx + L(y-x)_{+}.
+\] 
+The decision problem is then to select a random future loss $l(x,Y)$ in a way that aligns with the preference that $l(x,y)$ be
+as low as possible given any realization $Y=y$.
+
+To give the decision problem more structure we assume the decision maker either knows the distribution $F$ of $Y$, or
+wishes to proceed as if a forecast $F$ of $Y$ were true. This gives us what is known in decision theory as a decision
+problem \emph{under risk} (regarding the future value of $Y$) as opposed to one \emph{under uncertainty} where both $Y$
+as well as $F$ are unknown when the decision is to be made. A principle commonly invoked in this situation\footnote
+{Note that this priciple might be inappropriate when the decision maker is \emph{risk averse} in some way such as
+having a preference for random losses with lower variance.} is that the decision maker should or will seek to minimize the expected
+loss
+\begin{align}
+  \mathbb{E}_{F}[l(x,Y)] = Cx + L\mathbb{E}_{F}[(Y-x)_{+}]. \label{eqn:expQloss}
+\end{align}
+
+The expected loss is an affine transformation of the convex expected shortage (c.f. \eqref{eqn:convex-esf}). Therefore
+$\mathbb{E}_{F}[l(x,Y)]$ is also is convex and has right and left derivatives $D_{\pm}\mathbb{E}_{F}[l(x,Y)]$ at every $x$. 
+Because these derivatives exist everywhere, a necessary condition for $x^{\star}$ to
+minimize $\mathbb{E}_{F}[l(x,Y)]$ is that $D_{+}\mathbb{E}_{F}[l(x^{\star},Y)] \geq 0$ and 
+$D_{-}\mathbb{E}_{F}[l(x^{\star},Y)] \leq 0$, and because of convexity, this condition is also sufficient. From \eqref{eqn:dsfl} 
+and \eqref{eqn:dsfr} this means that
+\begin{align}
+D_{+}\mathbb{E}_{F}[l(x^{\star},Y)] = C + L(F(x^{\star}) - 1) \geq 0 \geq 
+D_{-}\mathbb{E}_{F}[l(x^{\star},Y)] = C + L(F(x^{\star}-) - 1) \label{eqn:expQd-ineq}
+\end{align}
+which rearranges with $\alpha = 1-C/L$ to 
+\begin{align}
+F(x^{\star}) \geq \alpha \geq F(x^{\star}-). \label{eqn:F-alpha-ineq}
+\end{align}
+Note that because $F(x)$ and $F(x-)$ are right and left continuous, repectively, the set $\{x \mid F(x) \geq \alpha\}$ is closed
+on the left and the set $\{x \mid \alpha \geq F(x-)\}$ is closed on the right.
+Therefore, \eqref{eqn:F-alpha-ineq} implies that
+\begin{align}
+\min\{x \mid F(x) \geq \alpha\}  \leq x^{\star} \leq \max\{x \mid \alpha \geq F(x-)\}. \label{eqn:set-alpha-ineq}
+\end{align}
+We call $q^{-}_{\alpha, F} := \min\{x \mid F(x) \geq \alpha\}$ and $q^{+}_{\alpha, F} := \max\{x \mid F(x-) \leq \alpha\}$
+the left and right quantiles of $F$ (for probability level $\alpha$) and any element $q_{\alpha, F} \in [q^{-}_{\alpha, F}, q^{+}_{\alpha, F}]$
+a quantile of $F$.  Thus $x^{\star}$ minimizes the expected loss \eqref{eqn:expQloss} and gives an optimal sultion to the decision problem
+if and only if it is a quantile $q_{\alpha, F}$.
+
+Quantiles equivalently arise when the decision problem is defined in terms of the random \emph{oportunity} loss 
+\begin{align}
+l_o(x,Y) := l(x,Y) - l(Y,Y) = Cx + L(Y-x)_{+} - CY \label{eqn:opp-loss}
+\end{align}
+which expresses how much more loss is realized by the decision $x$ than an oracle would have incurred, knowing to invest exactly
+the future value of $Y$. The optimal decision for $\Ex_F[l_o(x,Y)]$ is the same as for $\Ex_F[l(x,Y)]$ since the term $-C\Ex_F[Y]$ is 
+constant in $x$, leading again to the inequalities \eqref{eqn:expQd-ineq}.
+
+Opportunity loss \eqref{eqn:opp-loss} rearranges to 
+\begin{align}
+l_o(x,Y) &= C(x - Y)_{+} + (L-C)(Y-x)_{+} \\
+&= L(1-\alpha)(x - Y)_{+} + L\alpha(Y-x)_{+},
+\end{align}
+a form in which it is often called \emph{pinball} loss, despite its graph being an unlikely pinball trajectory for $\alpha \neq 1/2$.
+
+
+\section{Allocation Bayes acts as vectors of marginal quantiles.}
+
+Here we explain why the Bayes act $x_i^{F,K}$ for the allocation
+problem \eqref{AP} can be represented as a vector of quantiles for the marginal forecast distributions $F_i$ at a
+single probability level $\tau^{F,K}$, that is, $x_i^{F,K} = F_i^{-1}(\tau^{F,K})$. 
+
+For an arbitrary allocation vector $x \in \mathbb{R}^N_{+}$ the expected loss
+\begin{align}
+\mathbb{E}_{F} [s_A(x, Y)] = \sum_{i=1}^{N} L \cdot \mathbb{E}_{F_i}[(Y_i - x_i)_{+}] \label{eqn:AS_formula}
+\end{align} 
+is the sum of expected shortages (scaled by $L$) under the allocations $x_i$ in each location. We therefore
+have the following necessary condition for $x^{\star} \in \mathbb{R}^N_{+}$ to be an optimal allocation for $\mathbb
+{E}_{F} [s_A(x, Y)]$ under the constraint $\sum_{i=1}^{N} x_i = K$: if $\delta > 0$ of the $x_i^{\star}$ units of resource
+allocated to location $i$ are reallocated to location $j$, expected shortage will increase in location
+$i$ by at least as much as it decreases in location $j$. That is,
+\begin{align}
+\mathbb{E}_{F_i}[(Y_i - x^{\star}_i - \delta)_{+}] - \mathbb{E}_{F_i}[(Y_i - x^{\star}_i)_{+}] \geq 
+\mathbb{E}_{F_j}[(Y_j - x^{\star}_j)_{+}] - \mathbb{E}_{F_j}[(Y_j - x^{\star}_j + \delta)_{+}]. \label{eqn:ASoptimal1}
+\end{align}
+Since the expected shortages in $i$ and $j$ have right and left derivatives at any $x_i$ and $x_j$ (see Section \ref{sec:shortage}), we can
+divide \eqref{eqn:ASoptimal1} by $\delta$ and take limits for $\delta \searrow 0$ to get
+\begin{align}
+-D_{-} \mathbb{E}_{F} [(Y_i - x^{\star}_i)_{+}] \geq -D_{+}\mathbb{E}_{F} [(Y_j - x^{\star}_j)_{+}]. \label{eqn:RLineq}
+\end{align}
+Note that the minus signs appear because our optimality condition addresses how a \emph{decrease} in resources will \emph{increase}
+the expected shortage in $i$ and vice versa in $j$.
+Scaling by $L$ to match the right and left partial derivatives of $\mathbb{E}_{F} [s_A(x, Y)]$ and using formulae \eqref{eqn:dsfl} and \eqref{eqn:dsfr}, \eqref{eqn:RLineq} becomes
+\begin{align}
+L(1-F_i(x^{\star}_i-)) \geq L(1-F_j(x^{\star}_j)). \label{eqn:RLineq2}
+\end{align}
+Inequalities \eqref{eqn:RLineq} and \eqref{eqn:RLineq2} remain true with $i$ and $j$ reversed. They hold with $i=j$ as well by the
+definition of $F_i(x^{\star}_i-)$. Therefore, a single number $\lambda$ (a \emph{Lagrange multiplier}) exists such that
+\begin{align}
+L(1-F_i(x^{\star}_i-)) \geq \lambda \geq L(1-F_i(x^{\star}_i)), \quad \text{for all } i \in 1,\ldots,N
+\end{align}
+that is,
+\begin{align}
+F_i(x^{\star}_i) \geq 1 - \lambda/L \geq F_i(x^{\star}_i-),
+\end{align}
+which says (c.f. discussion after \eqref{eqn:F-alpha-ineq} and \eqref{eqn:set-alpha-ineq}) that $x^{\star}_i$ is a quantile $q_{\tau,F_i}$ for
+$\tau = 1 - \lambda/L$.
+
+\section{Properties and Properness}
+
+\begin{quote}
+For a prediction to be useful, it must \textbf{proper}ly describe a \textbf{proper}ty.
+\end{quote}
+
+Expanding on the decision theoretic perspective sketched in Section \ref{sec:quantiles_shortage}, we can view a loss function 
+as a general tool for formalizing a decision problem that assigns numerical value to the \emph{result} of taking an \emph{action} $x$
+in preparation for an \emph{outcome} $y$.  A \emph{scoring rule} $S$ is a loss function where the action 
+is a probabilistic forecast $F$ of the outcome $y$ (or the statement of $F$ by a forecaster). Just as in 
+Section \ref{sec:quantiles_shortage}, given an action $F$, $S$ transforms a random outcome variable $Y$ into a random loss $S(F,Y)$. 
+We refer to the realized loss $S(F,y)$ as the \emph{score} of $F$ at $y$, and the process of evaluating $S(F,y_i)$ for
+a data set $\mathcal{Y}=\{y_i\}$ as \emph{scoring} $F$ against $\mathcal{Y}$.
+
+Decision theoretically, probabilistic forecasts are a unique kind of action in that they can be used to generate their own 
+(simulated) outcome data, against which they can be scored using $S$. $S$ therefore commits a probabilistic forecast $F$
+to the ``self-assessment'' $\Ex [S(F, Y^F)]$, where $Y^F \sim F$ is the random variable defined by sampling from $F$, as well
+to an assessment $\Ex [S(G, Y^F)]$ of any alternative forecast $G$.
+A natural consistency criterion for $S$ is that it does not commit $F$ to assessing any other 
+forecast $G$ as being better than $F$ itself, that is, that
+\begin{align}
+\Ex [S(F, Y^F)] \leq \Ex [S(G, Y^F)]
+\end{align} 
+for any $F,G$. Otherwise, the optimal decision for some forecaster would be to state a forecast $G$ other than the forecast $F$
+which they believe describes the outcome $Y$.
+A scoring rule meeting this criterion is called \emph{proper}.  The inequality can also be written 
+as $\Ex_F [S(F, Y)] \leq \Ex_F [S(G, Y)]$ where the subscript specifies the distribution of $Y$.  
+$S$ is \emph{strictly proper} when this inequality is sharp, in which case the \emph{only} optimal decision for a forecaster is to state
+the forecast they believe to be true.
+
+Another definition of $S$ being proper that is often used is that $\Ex[S(F,Y)]$ is lowest when $F$ is the true distribution of $Y$.  
+Under a flexible reading, this definition is equivalent to ours, but we find it problematic because it invites the mistaken impression that 
+the properness of a score might depend on the true distribution of what is being forecasted. Whether a score is proper is unrelated 
+to any particular forecast being scored or source of the data being used to score it.
+
+The condition of being proper is quite strong, and na\"{i}ve means of reducing a forecast distribution to a single
+number based on an observed outcome $y$ will generally define an improper scoring rule.  For example, the \emph{probability score} 
+$S_{\mathrm{Prob},c}(F,y):= -(F(y+c) - F(y-c))$ and the \emph{linear score} $S_{\mathrm{Lin}}
+(F,y):= \lim_{c\to 0} \frac{1}{2c}S_{\mathrm{Prob},c}(F,y) = -f(y)$ (where we assume $F$ has a density $f$) and are
+both improper because they commit a general $F$ to assessing an alternative forecast $G$ as being better than $F$
+itself whenever $G$ is sufficiently more concentrated than $F$ in the neighborhood $[m_f-c,m_f+c]$ of a mode $m_f$ of
+$f$. The same is true when the outcome is discrete (and ordered for $S_{\mathrm{Prob}}$) with index $y$: for a forecast
+pmf $p(y)$, moving the mass of $p$ onto a neigborhood of a mode $m_p$ to get a new forecast $p_m$ will improve the 
+expected score $\Ex[S_{\mathrm{Prob/Lin}}(p_m,Y^p)]$ according to $p$ itself. This creates the classic pathology
+of probabilistic forecasters having no incentive to express uncertainty. The meteorologist getting paid according to
+$p_{\text{rain}}\text{rain} + (1-p_{\text{rain}})(1-\text{rain})$ (the negative of the linear score) will say rain is 
+inevitable or impossible when the chances of rain appear to be 51\% or 49\%.
+
+Sometimes a scoring rule can be made proper with an added correction that penalizes 
+
+But given an auxiliary decision problem $\mathcal{D}_{\mathrm{Aux}} =\{\mathcal{X}, \mathcal{Y}, l(x,y)\}$, such as the
+allocation problem from the main text or the cost-loss problem from Section \ref{sec:quantiles_shortage}, we can
+produce a scoring rule $S_l$ that is automatically proper using the Bayes act formalism introduced in Section \ref
+{sec:methods.detailed.specific_allocation}. This works by defining $S_l(F, y)$ as the value $l(x^F,y)$ already given by  
+$\mathcal{D}_{\mathrm{Aux}}$ for the Bayes act $x^F$; that is, the action which \emph{by design} will be assessed via
+the forecast $F$ to have an expected loss $\Ex[l(x^F,Y^F)]$ as low as possible.
+
+by mapping a forecast $F$ to an the action $x^F$
+
+
 
 
 

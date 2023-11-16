@@ -43,8 +43,10 @@ mkeep <- c("BPagano-RtDriven",
 
 three_colors <- c("#4A708B", "goldenrod", "#CD2626")
 
-p_VA_JHU_MUNI <- plot_hosp(models = c("JHUAPL-Bucky","COVIDhub-ensemble", "MUNI-ARIMA"),
-                     f_width1 = 3, f_alpha = .4, locations = c("VA", "GA"))
+p_VA_JHU_MUNI <- plot_hosp(start_date = "2021-11-01", 
+                           stop_date = "2022-01-15",
+                           models = c("JHUAPL-Bucky","COVIDhub-ensemble", "MUNI-ARIMA"),
+                           f_width1 = 3, f_alpha = .4, locations = c("VA", "GA"))
 
 p_2Ls_CU_IHME <- plot_hosp(models = c("CU-select","COVIDhub-ensemble", "MUNI-ARIMA"),
                           f_width1 = 3, f_alpha = .4, locations = c("FL", "NY"))
@@ -52,8 +54,8 @@ p_2Ls_CU_IHME <- plot_hosp(models = c("CU-select","COVIDhub-ensemble", "MUNI-ARI
 sc = 1
 ggsave(plot = p_VA_CU_IHME, filename = "p_VA_CU_IHME.png",
        width = 11*sc, height = 6*sc, path = save_dir)
-ggsave(plot = p_VA_CU_IHME, filename = "p_VA_JHU_MUNI.png",
-       width = 11*sc, height = 6*sc, path = save_dir)
+ggsave(plot = p_VA_JHU_MUNI, filename = "p_VA_JHU_MUNI.svg",
+       width = 8*sc, height = 4*sc, path = save_dir, device = "svg")
 
 
 p_VA_CU_IHME
