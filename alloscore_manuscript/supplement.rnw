@@ -235,7 +235,8 @@ constant in $x$, leading again to the inequalities \eqref{eqn:expQd-ineq}.
 Opportunity loss \eqref{eqn:opp-loss} rearranges to 
 \begin{align}
 l_o(x,Y) &= C(x - Y)_{+} + (L-C)(Y-x)_{+} \\
-&= L(1-\alpha)(x - Y)_{+} + L\alpha(Y-x)_{+},
+&= L(1-\alpha)(x - Y)_{+} + L\alpha(Y-x)_{+} \\
+&= L(\alpha - \mathbf{1}\{Y < x\})(Y-x),
 \end{align}
 a form in which it is often called \emph{pinball} loss, despite its graph being an unlikely pinball trajectory for $\alpha \neq 1/2$.
 
@@ -294,23 +295,33 @@ in preparation for an \emph{outcome} $y$.  A \emph{scoring rule} $S$ is a loss f
 is a probabilistic forecast $F$ of the outcome $y$ (or the statement of $F$ by a forecaster). Just as in 
 Section \ref{sec:quantiles_shortage}, given an action $F$, $S$ transforms a random outcome variable $Y$ into a random loss $S(F,Y)$. 
 We refer to the realized loss $S(F,y)$ as the \emph{score} of $F$ at $y$, and the process of evaluating $S(F,y_i)$ for
-a data set $\mathcal{Y}=\{y_i\}$ as \emph{scoring} $F$ against $\mathcal{Y}$.
+a data set $\mathcal{Y}=\{y_i\}$ as \emph{scoring} $F$ against $\mathcal{Y}$. Perhaps the most fundamental example of a scoring rule
+from a statistical perspective is the logarithmic score $S_{\log}(F,y) = -\log f(y)$ (where $f(y)$ is the density or the mass of $F$ at $y$
+if it exists and otherwise the mass), that is, the negative log-likelihood of $F$ interpreted as a parameter for the singleton 
+data set $\{y\}$. This frames a maximum likelihood estimate as the solution to a decision problem following the expected loss
+minimization principle introduced in Section \ref{sec:quantiles_shortage}.
 
-Decision theoretically, probabilistic forecasts are a unique kind of action in that they can be used to generate their own 
-(simulated) outcome data, against which they can be scored using $S$. $S$ therefore commits a probabilistic forecast $F$
-to the ``self-assessment'' $\Ex [S(F, Y^F)]$, where $Y^F \sim F$ is the random variable defined by sampling from $F$, as well
-to an assessment $\Ex [S(G, Y^F)]$ of any alternative forecast $G$.
+Decision theoretically, probabilistic forecasts are a unique kind of action in that they can be used to generate their
+own(simulated) outcome data, against which they can be scored using $S$. $S$ therefore commits a probabilistic forecast
+$F$ to the ``self-assessment'' $\Ex [S(F, Y^F)]$, where $Y^F \sim F$ is the random variable defined by sampling from
+$F$, as well to an assessment $\Ex [S(G, Y^F)]$ of any alternative forecast $G$. For $S_{\log}$ this self-assessment is
+the Shannon entropy $H(F) = -\int \log(f(x))f(x)dx$ of $F$, and adding to $H(F)$ the Kullback-Leibler (KL) divergence $D_
+{KL}(F,G) = -\int \log(g(x)/f(x))f(x)dx$ gives $F$'s assessment $\Ex [S_{\log}(G, Y^F)]$ of $G$. (That is, $\Ex [S_
+{\log}(G, Y^F)] = H(F) + D_{KL}(F,G)$.) The KL divergence is the degree to which $F$ perceives $G$ as divergent from
+being able to minimize expected loss in this particular forecaster decision problem (i.e. maximize expected log-likelihood).
+
 A natural consistency criterion for $S$ is that it does not commit $F$ to assessing any other 
 forecast $G$ as being better than $F$ itself, that is, that
 \begin{align}
-\Ex [S(F, Y^F)] \leq \Ex [S(G, Y^F)]
+\Ex [S(F, Y^F)] \leq \Ex [S(G, Y^F)] \label{eqn:prop_ineq}
 \end{align} 
 for any $F,G$. Otherwise, the optimal decision for some forecaster would be to state a forecast $G$ other than the forecast $F$
 which they believe describes the outcome $Y$.
-A scoring rule meeting this criterion is called \emph{proper}.  The inequality can also be written 
+A scoring rule meeting this criterion is called \emph{proper}.   The inequality can also be written 
 as $\Ex_F [S(F, Y)] \leq \Ex_F [S(G, Y)]$ where the subscript specifies the distribution of $Y$.  
 $S$ is \emph{strictly proper} when this inequality is sharp, in which case the \emph{only} optimal decision for a forecaster is to state
-the forecast they believe to be true.
+the forecast they believe to be true. The logarithmic scoring rule $S_{\log}$, for example, is strictly proper due to the 
+positivity of KL divergence.
 
 Another definition of $S$ being proper that is often used is that $\Ex[S(F,Y)]$ is lowest when $F$ is the true distribution of $Y$.  
 Under a flexible reading, this definition is equivalent to ours, but we find it problematic because it invites the mistaken impression that 
@@ -332,7 +343,7 @@ inevitable or impossible when the chances of rain appear to be 51\% or 49\%.
 
 Sometimes a scoring rule can be made proper with an added correction that penalizes 
 
-But given an auxiliary decision problem $\mathcal{D}_{\mathrm{Aux}} =\{\mathcal{X}, \mathcal{Y}, l(x,y)\}$, such as the
+But given an auxiliary decision problem $\mathcal{D}_{\mathrm{Aux}} = \{\mathcal{X}, \mathcal{Y}, l(x,y)\}$, such as the
 allocation problem from the main text or the cost-loss problem from Section \ref{sec:quantiles_shortage}, we can
 produce a scoring rule $S_l$ that is automatically proper using the Bayes act formalism introduced in Section \ref
 {sec:methods.detailed.specific_allocation}. This works by defining $S_l(F, y)$ as the value $l(x^F,y)$ already given by  
@@ -341,8 +352,15 @@ the forecast $F$ to have an expected loss $\Ex[l(x^F,Y^F)]$ as low as possible.
 
 by mapping a forecast $F$ to an the action $x^F$
 
+The study of \emph{elicitability} also concerns this construction (see, e.g., \cite{gneiting2011making}), but from a
+different vantage point than ours. The question there is whether for a given map (called a \emph{functional} in
+statistics and a \emph{property} in computer science) $T(F)=x \in \mathcal{X}$ of distributions into the auxiliary
+action space, there exists a loss function $l$ such that $T(F) = x^F$ is the Bayes act for $l$ and the associated
+scoring rule $S_l(F,x)$ is strictly proper. Such an $l$ is said to \emph{elicit} $T$.  Our focus is rather on how
+forecast evaluation proceeds via the Bayes act construction for a given loss function of subject matter interest.
 
 
 
+\bibliography{allocation}
 
 \end{document}
