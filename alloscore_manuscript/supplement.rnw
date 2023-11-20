@@ -242,10 +242,14 @@ a form in which it is often called \emph{pinball} loss, despite its graph being 
 
 
 \section{Allocation Bayes acts as vectors of marginal quantiles.}
+\label{sec:bayes-quantiles}
 
-Here we explain why the Bayes act $x_i^{F,K}$ for the allocation
-problem \eqref{AP} can be represented as a vector of quantiles for the marginal forecast distributions $F_i$ at a
-single probability level $\tau^{F,K}$, that is, $x_i^{F,K} = F_i^{-1}(\tau^{F,K})$. 
+Here we show that the Bayes act $x^{F,K} = (x_1^{F,K},\ldots,x_N^{F,K})$ for a forecast $F$, corresponding to the
+allocation problem \eqref{eqn:loss_fn} (in Section \ref{sec:methods.detailed.specific_allocation} in the main text) can
+be represented as a vector of quantiles for the marginal forecast distributions $F_i$ at a single probability level
+$\tau^{F,K}$, that is, $x_i^{F,K} = q_{F_i,\tau^{F,K}}$. An immediate consequence used in the examples in Section \ref
+{sec:methods.overview} in the main text is that if $F_i = \mathrm{Exp}(1/\sigma_i)$ for all $i$, then the Bayes act is
+proportional to $(\sigma_1,\ldots,\sigma_N)$, since $q_{\mathrm{Exp}(1/\sigma),\tau} = -\sigma \log(1-\tau)$.
 
 For an arbitrary allocation vector $x \in \mathbb{R}^N_{+}$ the expected loss
 \begin{align}
