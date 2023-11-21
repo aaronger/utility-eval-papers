@@ -10,10 +10,21 @@
 \usepackage{bm}
 \usepackage{cases}
 \usepackage{caption}
+\usepackage{soul}
 \usepackage{pgfplots}
 \usepackage{xr-hyper}
 \usepackage{hyperref}
 \externaldocument{alloscore-application}
+
+\usepackage{enumitem}
+\newlist{todolist}{itemize}{2}
+\setlist[todolist]{label=$\square$}
+\usepackage{pifont}
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+\newcommand{\done}{\rlap{$\square$}{\raisebox{2pt}{\large\hspace{1pt}\cmark}}%
+\hspace{-2.5pt}}
+\newcommand{\wontfix}{\rlap{$\square$}{\large\hspace{1pt}\xmark}}
 
 \DeclareMathOperator*{\argmin}{argmin}
 \DeclareMathOperator{\short}{sh}
@@ -73,21 +84,27 @@ We briefly address some technical and methodological points in the main text, re
 more thorough discussion.
 \end{abstract}
 
-\begin{itemize}
-	\item From 2.2.1, why are Bayes act scoring rules proper?
+\begin{todolist}
+	\item[\done] From 2.2.1, why are Bayes act scoring rules proper?
 	\item Explain ``All proper scoring rules for probabilistic forecasts have an explicit link to a loss function'' from discussion.
 	\item DGP as optimal for any decision problem, ref Diebold, Gunther, Tay p. 866; and if forecasts are ideal, then forecasts with better information always yield better decisions, ref Holzmann and Eulert, Corr 2.
-	\item For 2.2.2, how to get quantile representation of Bayes act using Lagrange multiplier, assuming smooth, never-zero densities well behaved at $x=0$. Work out exponetial example. Refer to methods paper for general case.
-	\item Derivation of quantile scoring rule with quantile as Bayes act for C/L problem, assuming never-zero densities. 
+	\item[\done] For 2.2.2, how to get quantile representation of Bayes act using Lagrange multiplier, \st{assuming smooth, never-zero densities well behaved at $x=0$.} Work out exponential example. Refer to methods paper for general case.
+	\item[\done] Derivation of quantile scoring rule with quantile as Bayes act for C/L problem, \st{assuming never-zero densities}. 
+	\item algorithmic details
+	\begin{todolist}
+		\item use of \texttt{distfromq} to get from quantiles to distribution functions
+		\item \texttt{alloscore}
+		\item implications for propriety. do quantiles elicited by \texttt{distfromq} $\hookrightarrow$ \texttt{alloscore} process align with ``real'' quantiles? the alloscore is proper if distribution functions F are handed to us; is it still proper given our algorithm situation?
+	\end{todolist}
+
 	\item Descriptions of 
-		\begin{itemize}		
+		\begin{todolist}		
 			\item CRPS as average quantile score across $C \in [0/L]$ decision problems
 			\item IS as average of two quantile scores with a prob-width penalty
 			\item WIS as average quantile score across 23 C/L problems.
-		\end{itemize}
+		\end{todolist}
 	\item Sketch of scoring for decision problems involving both cost and constraint.
-	
-\end{itemize}
+\end{todolist}
 
 \section{Shortages}
 \label{sec:shortage}
@@ -143,13 +160,13 @@ $\short^y(x)$ with respect to the probability measure $dF(y)$:
 \end{align}
 Convexity is also shown by directly exhibiting the the left and right derivatives of $\Ex_F[\short^Y](x)$:
 \begin{align}
-D_{-}\Ex_F [(Y-x)_{+}] &= \lim_{h \searrow 0}\frac{1}{h}\Ex_F [(Y - x)_{+} - (Y - x - h)_{+}] \\
+D_{-}\Ex_F [(Y-x)_{+}] &= \lim_{h \searrow 0}\frac{1}{h}\Ex_F [(Y - x)_{+} - (Y - (x - h))_{+}] \\
 &= \lim_{h \searrow 0}\frac{1}{h}\int_{[x\mathrlap{-h, x]}} (x - h - y) dF(y) - 
 \lim_{h \searrow 0}\frac{1}{h}\int_{(x\mathrlap{,\infty)}} h dF(y)  \\
 &= \lim_{h \searrow 0}\frac{1}{h}\int_{[x\mathrlap{-h, x]}} - h dF(y) - 1 + F(x) \label{eqn:dsfllim} \\
 &= -(F(x) - F(x-)) - 1 + F(x) \quad \left(\text{where } F(x-) := \lim_{t \nearrow x} F(t)\right)\\
 &= F(x-) - 1  \label{eqn:dsfl} \\
-D_{+}\Ex_F [(Y-x)_{+}] &= \lim_{h \searrow 0}\frac{1}{h}\Ex_F [(Y - x + h)_{+} - (Y - x)_{+}] \\
+D_{+}\Ex_F [(Y-x)_{+}] &= \lim_{h \searrow 0}\frac{1}{h}\Ex_F [(Y - (x + h))_{+} - (Y - x)_{+}] \\
 &= \lim_{h \searrow 0}\frac{1}{h}\int_{[x\mathrlap{, x+h]}} (x - y) dF(y) - 
 \lim_{h \searrow 0}\frac{1}{h}\int_{(x\mathrlap{+h,\infty)}} h dF(y)  \\
 &= \lim_{h \searrow 0}\frac{1}{h}\int_{[x\mathrlap{, x+h]}} 0 dF(y) - 1 + F(x) \label{eqn:dsfrlim} \\
