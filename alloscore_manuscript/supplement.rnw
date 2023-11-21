@@ -352,7 +352,12 @@ allocation problem from the main text or the cost-loss problem from Section \ref
 produce a scoring rule $S_l$ that is automatically proper using the Bayes act formalism introduced in Section \ref
 {sec:methods.detailed.specific_allocation}. This works by defining $S_l(F, y)$ as the value $l(x^F,y)$ already given by  
 $\mathcal{D}_{\mathrm{Aux}}$ for the Bayes act $x^F$; that is, the action which \emph{by design} will be assessed via
-the forecast $F$ to have an expected loss $\Ex[l(x^F,Y^F)]$ as low as possible.
+the forecast $F$ to have the lowest possible expected loss $\Ex[l(x^F,Y^F)]$. In statistical decision theory, 
+$\Ex[l(x^F,Y^F)]= \Ex_F[l(x^F,Y)]$ is 
+sometimes\footnote{A clear exposition of basic decision theory using this terminology is Chapter 8 of \cite{degroot2005optimal}.
+Unfortunately other influential sources such as \cite{berger2013statistical} use ``Bayes risk'' to refer to the expected loss
+for a general $x$.} 
+refered to as the \emph{Bayes risk} of $F$ relative to $\mathcal{D}_{\mathrm{Aux}}$.
 
 by mapping a forecast $F$ to an the action $x^F$
 
