@@ -191,9 +191,9 @@ which assumes $Y$ has an adequately well-behaved density $f_Y$.
 \label{sec:quantiles_shortage}
 
 We recall how quantiles arise as solutions to a probabilistic decision problem. Let $Y$ be a random variable
-representing the future level of an undesirable outcome such as severe COVID incidence. Let $x$ be a decision variable
+representing the future level of an undesirable outcome such as severe COVID incidence. Let $x \in \mathbb{R}$ be a decision variable
 representing the possible levels of some costly counter-measure, such as procurement of monoclonal antibody treatments,
-that can be taken at a cost $C$ per unit in preparation for $Y$.  A decision maker must decide on a level $x$ of investment in the
+that can be taken at a cost $C>0$ per unit in preparation for $Y$.  A decision maker must decide on a level $x$ of investment in the
 counter-measure, and wishes to avoid excesses in either the expediture $Cx$ or the shortage $(y-x)_{+}$ when $Y=y$ is
 realized. To formalize the trade-off between these potential excesses we quantify the loss associated with a unit of
 shortage by a constant $L>C$ (which assumes that the counter-measure has some economic value) and combine the total shortage loss with expenditure into a \emph{loss function}\footnote
@@ -230,7 +230,8 @@ which rearranges with $\alpha = 1-C/L$ to
 \begin{align}
 F(x^{\star}) \geq \alpha \geq F(x^{\star}-). \label{eqn:F-alpha-ineq}
 \end{align}
-Note that because $F(x)$ and $F(x-)$ are right and left continuous, repectively, the set $\{x \mid F(x) \geq \alpha\}$ is closed
+Note that because $F(x)$ and $F(x-)$ are right and left continuous, repectively, and $0<\alpha <1$, the set 
+$\{x \mid F(x) \geq \alpha\}$ is closed
 on the left and the set $\{x \mid \alpha \geq F(x-)\}$ is closed on the right.
 Therefore, \eqref{eqn:F-alpha-ineq} implies that
 \begin{align}
@@ -238,10 +239,36 @@ Therefore, \eqref{eqn:F-alpha-ineq} implies that
 \end{align}
 We call $q^{-}_{\alpha, F} := \min\{x \mid F(x) \geq \alpha\}$ and $q^{+}_{\alpha, F} := \max\{x \mid F(x-) \leq \alpha\}$
 the left and right quantiles of $F$ (for probability level $\alpha$) and any element $q_{\alpha, F} \in [q^{-}_{\alpha, F}, q^{+}_{\alpha, F}]$
-a quantile of $F$.  Thus $x^{\star}$ minimizes the expected loss \eqref{eqn:expQloss} and gives an optimal sultion to the decision problem
-if and only if it is a quantile $q_{\alpha, F}$.
+a quantile of $F$.  The \emph{quantile function} for $F$, which we write as either $Q_F(\alpha)$ or $F^{-1}(\alpha)$, is the 
+\emph{set-valued} function that maps $\alpha \in (0,1)$ to to the set $[q^{-}_{\alpha, F}, q^{+}_{\alpha, F}]$. 
+Thus $x^{\star}$ minimizes the expected loss \eqref{eqn:expQloss} and gives an optimal solution to the decision problem
+if and only if $x^{\star} \in Q_F(\alpha)$.
 
-Quantiles equivalently arise when the decision problem is defined in terms of the random \emph{oportunity} loss 
+\subsection{Quantile functions}
+\label{sec:quantile-functions} 
+
+For future reference, we record several key properties of quantile functions. 
+
+The probability levels $\{\alpha_i\}$ for which $\#Q_F(\alpha_i)>1$ form a discrete subset of $(0,1)$ and correspond to
+the non-zero width intervals $[q_{\alpha_i,F}^{-},q_{\alpha_i,F}^{+}]$ where $F$ is constant with values 
+$\{\alpha_i\}$.  Conversely, if $F$ is strictly increasing on a (Borel) set $A\subset \mathbb{R}$, then the restriction
+$Q_{F}\big|_{F(A)}=F^{-1}\big|_{F(A)}$ of $Q_F$ to $F(A)$ is in fact a real-valued function which is left-continuous
+and provides an inverse to $F$ on $F(A)$. If the the support $\mathrm{supp}(F) = \{x \mid 0<F(x)<1\}$ of $F$ is such an
+$A$, then extending $F^{-1}$ by $F^{-1}(0)=\inf(\mathrm{supp}(F))$ and $F^{-1}(1)=\sup(\mathrm{supp}(F))$ provides an
+inverse to $F$ on $F(\mathbb{R})\subset [0,1]$. If $F$ has a point mass at $x\in A$, so that
+$\{\alpha \mid F(x-)< \alpha < F(x)\}$ is a non-empty set disjoint from $F(A)$, then $Q_F$ takes the constant value $x$ 
+on the closure $\{\alpha \mid F(x-)\leq \alpha \leq F(x)\}$. Conversely, if $F$ has no discrete component on $A$, 
+then $Q_{F}\big|_{F(A)}$ is strictly increasing.
+
+Moreover, it can be said that $Q_F$ is increasing as a set-valued function on $\mathbb{R}$ in the generalized sense that 
+$(q_{\alpha, F} - q_{\beta, F})(\alpha-\beta) \geq 0$ whenever
+$q_{\alpha, F} \in Q_F(\alpha)$ and $q_{\beta, F} \in Q_F(\beta)$, that is, the set 
+$\mathrm{graph}(Q_F) = \{(\alpha, q) \mid q \in Q_F(\alpha)\}$ has no downward sloping secants. Conversely, given such an 
+increasing set-valued function $Q$ on $(0,1)$, we can construct a right-continuous function $F_Q$ from $\mathbb{R}$ to $[0,1]$ 
+which will be the cdf of the random variable $Y_Q := \min(Q(U))$ where $U \sim \mathrm{Unif}[0,1]$.
+
+\subsection{Opportunity relative to an oracle}
+Quantiles equivalently arise when the decision problem is defined in terms of the random \emph{opportunity} loss 
 \begin{align}
 l_o(x,Y) := l(x,Y) - l(Y,Y) = Cx + L(Y-x)_{+} - CY \label{eqn:opp-loss}
 \end{align}
@@ -303,6 +330,29 @@ F_i(x^{\star}_i) \geq 1 - \lambda/L \geq F_i(x^{\star}_i-),
 \end{align}
 which says (c.f. discussion after \eqref{eqn:F-alpha-ineq} and \eqref{eqn:set-alpha-ineq}) that $x^{\star}_i$ is a quantile $q_{\tau,F_i}$ for
 $\tau = 1 - \lambda/L$.
+
+The constraint now determines $\tau$ (and hence the Bayes act) through $\sum_{i=1}^{N} q_{\tau,F_i} = K.$
+This equation can be restated as the requirement that 
+\begin{align}
+K \in TQ_F(\tau) \label{eqn:tau-inclusion}
+\end{align}
+where the set-valued function
+\begin{align}
+TQ_F(\tau) := \sum_{i=1}^{N} Q_{F_i}(\tau) = \left[\sum_{i=1}^{N} q^{-}_{\tau,F_i}, \sum_{i=1}^{N} q^{+}_{\tau,F_i}\right]
+\end{align}
+is defined using interval addition $[a,b] + [c,d] = [a+c, b+d]$.
+
+$TQ_F$ satisfies the conditions mentioned in section \ref{sec:quantile-functions} for being a quantile function, and so there
+is a random variable $TY_F$ with cdf $F_{T} := F_{TQ_F}$.  From this perspective, the problem of finding $\tau$ becomes the calculation 
+of $F_{T}(K) = \mathbb{P}(TY_F \leq K)$, making clear the existence of a solution $\tau^{\star}$ to \eqref{eqn:tau-inclusion}.
+
+Two awkward features of the quantile representation of the Bayes act can arise.  First, point masses in the $F_i$ create point masses for $F_T$ which may cause $\tau^{\star}$ to not be the unique solution to \eqref{eqn:tau-inclusion}. Secondly, if more than 
+one $Q_{F_i}(\tau^{\star})$ is a positive-width interval, then the Bayes act will not be unique in these coordinates, and generically
+not all points in the $Q_{F_i}(\tau^{\star})$ will be the coordinate of a Bayes act.
+
+It is important to note that $\lambda$ depends on the forecast $F$ and the constraint level $K$. Thus while $\lambda = L(1-\tau)$ can be
+interpreted as a kind of ``cost'' imposed by the constraint in the allocation problem which is analogous to $C = L(1-\alpha)$ in the  
+the cost-lost problem of section \ref{sec:quantiles_shortage}, it does not serve to define the allocation loss function in the way that $C$ defines \eqref{eqn:expQloss}. $\lambda$ is rather a parameter that must be found, given the pair $F$ and $K$.
 
 \section{Properties and Properness}
 
@@ -372,8 +422,9 @@ $\mathcal{D}_{\mathrm{Aux}}$ for the Bayes act $x^F$; that is, the action which 
 the forecast $F$ to have the lowest possible expected loss $\Ex[l(x^F,Y^F)]$. In statistical decision theory, 
 $\Ex[l(x^F,Y^F)]= \Ex_F[l(x^F,Y)]$ is 
 sometimes\footnote{A clear exposition of basic decision theory using this terminology is Chapter 8 of \cite{degroot2005optimal}.
-Unfortunately other influential sources such as \cite{berger2013statistical} use ``Bayes risk'' to refer to the expected loss
-for a general $x$.} 
+Unfortunately other influential sources use ``Bayes risk'' to refer to a wider variety of quantities. In 
+\cite{berger2013statistical} for example, the Bayes risk can be both the optimal expected loss 
+for $F$ (see p. 17) or the expected loss for a general $x$ with respect to $F$ (see p. 6).} 
 refered to as the \emph{Bayes risk} of $F$ relative to $\mathcal{D}_{\mathrm{Aux}}$.
 
 by mapping a forecast $F$ to an the action $x^F$
