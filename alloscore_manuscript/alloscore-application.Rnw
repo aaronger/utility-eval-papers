@@ -143,7 +143,7 @@ The \textbf{allocation score} of the forecast $F$ is the avoidable unmet need th
 By ``avoidable unmet need'', we mean that the allocation score does not include the amount of unmet need that was inevitable simply because the amount of available resources $K$ was less than the need for resources.
 Rather, the allocation score measures the unmet need that could have been avoided by an oracle that knows exactly how much need will occur in each location and divides the amount $K$ so that nothing is wasted in one location while it could be put to use in another. An allocation score of 0 is optimal, and indicates that no other allocation of resources could have met need better than the allocation suggested by $F$. A larger allocation score indicates that it would have been possible to improve upon the allocation suggested by $F$.
 
-\paragraph{Example 1} Suppose we have a forecast $F$ for need in two locations with $F_1 = \mathrm{Exp}(1 / \sigma_1)$ and $F_2 = \mathrm{Exp}(1 / \sigma_2)$, where $\sigma_1 = 1$ and $\sigma_2 = 4$. When the marginal forecasts are exponential distributions, it can be shown that the optimal allocation divides the available resources among the locations proportionally to the scale parameters $\sigma_i$ (see section 
+\paragraph{Example 1} Suppose we have a forecast $F$ for need in two locations with $F_1 = \mathrm{Exp}(1 / \sigma_1)$ and $F_2 = \mathrm{Exp}(1 / \sigma_2)$, where $\sigma_1 = 1$ and $\sigma_2 = 4$. When the marginal forecasts are exponential distributions, it can be shown that the optimal allocation divides the available resources among the locations proportionally to the scale parameters $\sigma_i$ (see section
 \ref{sec:bayes-quantiles} of the supplemental materials). If we have $K = 5$ units of our resource available, the optimal allocation according to $F$ would be 1 unit of resources in location 1 and 4 units of resources in location 2. If, on the other hand, we have $K = 10$ units available, we will allocate 2 units of resources to location 1 and 8 units to location 2. Figure~\ref{fig:exp_alloc_example} illustrates the situation.
 
 \begin{figure}
@@ -585,7 +585,7 @@ With careful thought and collaboration between modelers and public health offici
 We have demonstrated that forecast evaluation methods that are tied to a specific decision making context can yield model rankings that are substantively different from standard measures of forecast skill.
 
 We often conceive of infectious disease forecasts as being useful for decision making purposes, but it is rare for forecast evaluation to be tied directly to the value of the forecasts for informing those decisions. This work seeks to address that gap.
-However, we do note that the decision-making context presented in this work, while motivated by examples from real-world public health resource allocation problems, has not used to inform an actual real-time decision-making process.
+However, we do note that the decision-making context presented in this work, while motivated by examples from real-world public health resource allocation problems, has not been used to inform an actual real-time decision-making process.
 
 Resource allocation decisions are a realistic example of the kinds of decisions that could motivate more targeted forecasting exercises.
 One real-world example is allocation of ventilators during a respiratory viral pandemic.
@@ -605,7 +605,7 @@ In these settings, where tailored models are not available, it still could be po
 
 In our specific application, we made several key observations that we believe should inform future work in this area.
 First, it is clear that different metrics (in our case allocation score and mean weighted interval score) captured different aspects of forecast performance.
-The MWIS was strongly dependent on the scale of the forecasted quantity (e.g., when hospitalizations were high, so was WIS).
+The mean WIS (MWIS) was strongly dependent on the scale of the forecasted quantity (e.g., when hospitalizations were high, so were MWIS scores).
 The allocation score was not as scale-dependent, as the highest/worst allocation scores were observed when the number of hospitalizations was closest to the allocation constraint.
 We also note that contributed models found it hard to have a better allocation score than a na\"ive baseline model that just predicted a flat line from the last previous observation with wide uncertainty.
 This suggests suggests that contributed models (other than the ensemble, which combined forecasts from all contributed models) were not consistently adding value over just extrapolating from the current levels.
@@ -623,7 +623,7 @@ This area is also largely unexplored in the realm of public health to date, with
 
 In conclusion, we argue that the way modelers and policymakers view and evaluate forecasts should change depending on the specific decision-making context.
 Using standard forecast evaluation metrics can mask the utility of certain forecasts, or lead to forecasts being used to inform a particular decision that are not optimal for that particular set of values that are important for that context.
-Further collaborative work is needed to assess the value and relevance of the initial findings presented here, including real-time pilot studies or simulation exercises that could be used to inform further development of new or alternative scoring metrics.
+New collaborative work between public health officials and modeling teams is needed to assess the value and relevance of the initial findings presented here, including real-time pilot studies or simulation exercises that could be used to inform further development of new or alternative scoring metrics.
 
 
 \bibliography{allocation}
