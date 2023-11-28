@@ -28,14 +28,16 @@ plot_hosp <- function(
     f_alpha = .5,
     f_width1 = 2,
     space = .5,
-    models = "COVIDhub-4_week_ensemble",
+    models = "COVIDhub-ensemble",
     locations = "US",
     geofacet = FALSE,
     key_width = .15,
     allocations = FALSE,
+    one_K = NULL,
     forecast_hosp = forecasts_hosp,
     free_y = FALSE
 ) {
+  loc_abbrevs <- locations
   locations <- locations %>% purrr::map(
     function(loc) {
       if (grepl("^[A-Z]{2}$", loc)) {
@@ -55,7 +57,7 @@ plot_hosp <- function(
     target_end_date <= stop_date) %>%
   dplyr::mutate(
     validation = ifelse(target_end_date > as.Date(f_date), "Validation", "Historical"),
-    code = toupper(geo_value),
+    code = as.factor(toupper(geo_value)),
     xmin = target_end_date - half_width - space,
     xmax = xmin + total_width + 2 * space)
 
@@ -66,17 +68,20 @@ plot_hosp <- function(
   fc_dat <- forecasts_hosp %>%
     dplyr::filter(location %in% locations, model %in% models) %>%
     dplyr::mutate(
-      code = toupper(geo_value),
+      code = as.factor(toupper(geo_value)),
       model = forcats::fct_relevel(model, models),
       xmin = target_end_date - half_width + (match(model, models) - 1)*(f_width1 + space),
       xmax = xmin + f_width1)
-
+  
+  fc_dat <- fc_dat %>% mutate(
+    code = fct_relevel(code, loc_abbrevs))
+  truth <- truth %>% mutate(
+    code = fct_relevel(code, loc_abbrevs))
+  
   if (!is.null(st_colors)) {
     fc_dat <- fc_dat %>% mutate(
-      code = as.factor(code),
       code = fct_relevel(code, names(st_colors)))
     truth <- truth %>% mutate(
-      code = as.factor(code),
       code = fct_relevel(code, names(st_colors)))
   }
 
@@ -161,18 +166,24 @@ plot_hosp <- function(
       fill = guide_legend(override.aes = list(alpha = 1), order = 2),
       color = guide_legend(order = 3))
   if (allocations) {
-    adf <- slim_dfs[models] %>% bind_rows()
-    y_tot <- get_ytot(adf) %>% filter(reference_date == f_date) %>%
-      pull(ytot)
-    K_y_tot <- adf$K[which.min(abs(adf$K - y_tot))]
+    adf <- slim_dfs %>% filter(model %in% models)
+    if (is.null(one_K)) {
+      y_tot <- get_ytot(adf) %>% filter(reference_date == f_date) %>%
+        pull(ytot)
+      K_toplot <- adf$K[which.min(abs(adf$K - y_tot))]
+    } else {
+      K_toplot <- one_K
+    }
     adf <- adf %>% filter(
       reference_date == f_date,
-      K == K_y_tot
-    ) %>% unnest(xdf) %>%
+      K == K_toplot
+    ) %>% 
       mutate(
         reference_date = as.Date(reference_date)) %>%
       rename(code = abbreviation) %>%
-      select(reference_date:y)
+      mutate(
+        code = fct_relevel(code, loc_abbrevs)) %>% 
+      select(model:y)
     adf_x <- fc_dat %>%
       left_join(adf, by = c("reference_date", "model", "code")) %>%
       mutate(
@@ -219,7 +230,7 @@ get_ytot <- function(df) {
     df %>% group_by(reference_date) %>% slice(1) %>%
       transmute(map_vec(xdf, ~ summarise(., ytot = sum(y))))
   } else {
-    df %>% group_by(reference_date) %>%
+    df %>% group_by(model, reference_date, K) %>%
       summarise(ytot = sum(y))
   }
 }
