@@ -1,4 +1,4 @@
-## noting that these functions have been adapted from talks/ISF_talk/plotting_code/plot_functions.R
+
 
 
 get_intervals <- function(df) {
@@ -19,8 +19,6 @@ pal1 = c("mediumblue", "goldenrod", "#CD2626")
 
 
 plot_hosp <- function(
-    forecast_data,
-    truth_data,
     start_date = "2021-09-01",
     stop_date = "2022-01-31",
     f_date = "2021-12-27",
@@ -30,13 +28,18 @@ plot_hosp <- function(
     f_alpha = .5,
     f_width1 = 2,
     space = .5,
-    models = "COVIDhub-4_week_ensemble",
+    models = "COVIDhub-ensemble",
     locations = "US",
     geofacet = FALSE,
     key_width = .15,
     allocations = FALSE,
+    one_K = NULL,
+    forecasts_hosp = forecasts_hosp,
+    alloscores,
+    truth,
     free_y = FALSE
 ) {
+  loc_abbrevs <- locations
   locations <- locations %>% purrr::map(
     function(loc) {
       if (grepl("^[A-Z]{2}$", loc)) {
@@ -50,13 +53,13 @@ plot_hosp <- function(
   total_width <- (length(models) - 1)*(f_width1 + space) + f_width1
   half_width <- total_width/2
 
-  truth <- truth_data %>%
+  truth <- truth %>%
   dplyr::filter(location %in% locations,
     target_end_date >= start_date,
     target_end_date <= stop_date) %>%
   dplyr::mutate(
     validation = ifelse(target_end_date > as.Date(f_date), "Validation", "Historical"),
-    code = toupper(geo_value),
+    code = as.factor(toupper(geo_value)),
     xmin = target_end_date - half_width - space,
     xmax = xmin + total_width + 2 * space)
 
@@ -64,20 +67,23 @@ plot_hosp <- function(
     Date = as.Date(c(f_date, te_date)),
     Date_name = c("Forecast Date, 2021-12-27", "Target Date, 2022-01-10"))
 
-  fc_dat <- forecast_data %>%
-    dplyr::filter(location %in% locations, model %in% models, target_end_date == te_date) %>%
+  fc_dat <- forecasts_hosp %>%
+    dplyr::filter(location %in% locations, model %in% models) %>%
     dplyr::mutate(
-      code = toupper(geo_value),
+      code = as.factor(toupper(geo_value)),
       model = forcats::fct_relevel(model, models),
       xmin = target_end_date - half_width + (match(model, models) - 1)*(f_width1 + space),
       xmax = xmin + f_width1)
-
+  
+  fc_dat <- fc_dat %>% mutate(
+    code = fct_relevel(code, loc_abbrevs))
+  truth <- truth %>% mutate(
+    code = fct_relevel(code, loc_abbrevs))
+  
   if (!is.null(st_colors)) {
     fc_dat <- fc_dat %>% mutate(
-      code = as.factor(code),
       code = fct_relevel(code, names(st_colors)))
-    truth <- truth_data %>% mutate(
-      code = as.factor(code),
+    truth <- truth %>% mutate(
       code = fct_relevel(code, names(st_colors)))
   }
 
@@ -162,18 +168,24 @@ plot_hosp <- function(
       fill = guide_legend(override.aes = list(alpha = 1), order = 2),
       color = guide_legend(order = 3))
   if (allocations) {
-    adf <- slim_dfs[models] %>% bind_rows()
-    y_tot <- get_ytot(adf) %>% filter(reference_date == f_date) %>%
-      pull(ytot)
-    K_y_tot <- adf$K[which.min(abs(adf$K - y_tot))]
+    adf <- alloscores %>% filter(model %in% models)
+    if (is.null(one_K)) {
+      y_tot <- get_ytot(adf) %>% filter(reference_date == f_date) %>%
+        pull(ytot)
+      K_toplot <- adf$K[which.min(abs(adf$K - y_tot))]
+    } else {
+      K_toplot <- one_K
+    }
     adf <- adf %>% filter(
       reference_date == f_date,
-      K == K_y_tot
-    ) %>% unnest(xdf) %>%
+      K == K_toplot
+    ) %>% 
       mutate(
         reference_date = as.Date(reference_date)) %>%
       rename(code = abbreviation) %>%
-      select(reference_date:y)
+      mutate(
+        code = fct_relevel(code, loc_abbrevs)) %>% 
+      select(model:y)
     adf_x <- fc_dat %>%
       left_join(adf, by = c("reference_date", "model", "code")) %>%
       mutate(
@@ -199,7 +211,7 @@ plot_hosp <- function(
   if (geofacet) {
     p <- p + facet_geo(~ code, grid = geofacet::us_state_grid2) +
     scale_x_date(breaks = as.Date(c("2021-12-01", "2022-01-01")),
-                 date_labels = "%b '%y") +
+                 date_labels = "%b %y") +
     theme(axis.title = element_blank())
   } else if (length(locations) > 1) {
     if (free_y) {
@@ -212,9 +224,7 @@ plot_hosp <- function(
       legend.key.width = unit(f_width1*key_width, "cm"),
       panel.spacing = unit(0.1, "lines"),
       axis.text.x = element_text(hjust = -0.1))
-  pdf('figures/allocation-forecasts-v2.pdf', width=8, height=5)
-  print(p)
-  dev.off()
+  p
 }
 
 get_ytot <- function(df) {
@@ -222,7 +232,7 @@ get_ytot <- function(df) {
     df %>% group_by(reference_date) %>% slice(1) %>%
       transmute(map_vec(xdf, ~ summarise(., ytot = sum(y))))
   } else {
-    df %>% group_by(reference_date) %>%
+    df %>% group_by(model, reference_date, K) %>%
       summarise(ytot = sum(y))
   }
 }
