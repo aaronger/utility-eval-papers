@@ -64,8 +64,8 @@ plot_hosp <- function(
     xmax = xmin + total_width + 2 * space)
 
   target_dates <- data.frame(
-    Date = as.Date(c(f_date, te_date)),
-    Date_name = c("Forecast Date, 2021-12-27", "Target Date, 2022-01-10"))
+    Date = as.Date(c(f_date, te_date))) %>% 
+    dplyr::mutate(Date_name = paste0(c("Forecast Date, ", "Target Date, "), Date))
 
   fc_dat <- forecasts_hosp %>%
     dplyr::filter(location %in% locations, model %in% models) %>%
@@ -157,7 +157,8 @@ plot_hosp <- function(
     scale_alpha_manual(
       values = c("95%" = .3, "80%" = .6, "50%" = .9),
       name = "Predictive Interval") +
-    scale_x_date(date_labels = "%b %y") +
+    scale_x_date(date_labels = "%b %m '%y", 
+                 breaks = as.Date(lubridate::floor_date(as.Date(te_date), unit = "month"))) +
     coord_cartesian(xlim = as.Date(c(start_date, stop_date)),
                     ylim = c(0, 1.3*max(truth$value))) +
     xlab("Date") +
@@ -223,7 +224,7 @@ plot_hosp <- function(
   p <- p + theme(
       legend.key.width = unit(f_width1*key_width, "cm"),
       panel.spacing = unit(0.1, "lines"),
-      axis.text.x = element_text(hjust = -0.1))
+      axis.text.x = element_text(hjust = -0.05))
   p
 }
 
