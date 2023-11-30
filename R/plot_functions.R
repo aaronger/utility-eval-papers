@@ -39,22 +39,23 @@ plot_hosp <- function(
     truth,
     free_y = FALSE
 ) {
-  loc_abbrevs <- locations
-  locations <- locations %>% purrr::map(
-    function(loc) {
-      if (grepl("^[A-Z]{2}$", loc)) {
-        hub_locations %>%
-          dplyr::filter(abbreviation == loc, nchar(fips) == 2) %>% pull(fips)
-      } else {
-        sprintf("%02d", as.integer(loc))
-      }
-    })
+  ## removing below as it adds a dependency on hub_locations and I don't think is necessary if we use the abbreviations
+  # loc_abbrevs <- locations
+  # locations <- locations %>% purrr::map(
+  #   function(loc) {
+  #     if (grepl("^[A-Z]{2}$", loc)) {
+  #       hub_locations %>%
+  #         dplyr::filter(abbreviation == loc, nchar(fips) == 2) %>% pull(fips)
+  #     } else {
+  #       sprintf("%02d", as.integer(loc))
+  #     }
+  #   })
   # compute aggregate rect and segment widths.
   total_width <- (length(models) - 1)*(f_width1 + space) + f_width1
   half_width <- total_width/2
 
   truth <- truth %>%
-  dplyr::filter(location %in% locations,
+  dplyr::filter(abbreviation %in% locations,
     target_end_date >= start_date,
     target_end_date <= stop_date) %>%
   dplyr::mutate(
@@ -65,21 +66,21 @@ plot_hosp <- function(
 
   target_dates <- data.frame(
     Date = as.Date(c(f_date, te_date)),
-    Date_name = c("Forecast Date, 2021-12-27", "Target Date, 2022-01-10"))
+    Date_name = c(paste("Forecast Date,", f_date), paste("Target Date,", te_date)))
 
   fc_dat <- forecasts_hosp %>%
-    dplyr::filter(location %in% locations, model %in% models) %>%
+    dplyr::filter(abbreviation %in% locations, model %in% models) %>%
     dplyr::mutate(
       code = as.factor(toupper(geo_value)),
       model = forcats::fct_relevel(model, models),
       xmin = target_end_date - half_width + (match(model, models) - 1)*(f_width1 + space),
       xmax = xmin + f_width1)
-  
-  fc_dat <- fc_dat %>% mutate(
-    code = fct_relevel(code, loc_abbrevs))
-  truth <- truth %>% mutate(
-    code = fct_relevel(code, loc_abbrevs))
-  
+
+  # fc_dat <- fc_dat %>% mutate(
+  #   code = fct_relevel(code, loc_abbrevs))
+  # truth <- truth %>% mutate(
+  #   code = fct_relevel(code, loc_abbrevs))
+
   if (!is.null(st_colors)) {
     fc_dat <- fc_dat %>% mutate(
       code = fct_relevel(code, names(st_colors)))
@@ -157,7 +158,7 @@ plot_hosp <- function(
     scale_alpha_manual(
       values = c("95%" = .3, "80%" = .6, "50%" = .9),
       name = "Predictive Interval") +
-    scale_x_date(date_labels = "%b %y") +
+    scale_x_date(date_labels = "%b %d '%y") +
     coord_cartesian(xlim = as.Date(c(start_date, stop_date)),
                     ylim = c(0, 1.3*max(truth$value))) +
     xlab("Date") +
@@ -168,7 +169,7 @@ plot_hosp <- function(
       fill = guide_legend(override.aes = list(alpha = 1), order = 2),
       color = guide_legend(order = 3))
   if (allocations) {
-    adf <- alloscores %>% filter(model %in% models)
+    adf <- alloscores %>% filter(reference_date == f_date, model %in% models, abbreviation %in% locations)
     if (is.null(one_K)) {
       y_tot <- get_ytot(adf) %>% filter(reference_date == f_date) %>%
         pull(ytot)
@@ -179,12 +180,11 @@ plot_hosp <- function(
     adf <- adf %>% filter(
       reference_date == f_date,
       K == K_toplot
-    ) %>% 
+    ) %>%
       mutate(
         reference_date = as.Date(reference_date)) %>%
       rename(code = abbreviation) %>%
-      mutate(
-        code = fct_relevel(code, loc_abbrevs)) %>% 
+      # mutate(code = fct_relevel(code, loc_abbrevs)) %>%
       select(model:y)
     adf_x <- fc_dat %>%
       left_join(adf, by = c("reference_date", "model", "code")) %>%
@@ -211,7 +211,7 @@ plot_hosp <- function(
   if (geofacet) {
     p <- p + facet_geo(~ code, grid = geofacet::us_state_grid2) +
     scale_x_date(breaks = as.Date(c("2021-12-01", "2022-01-01")),
-                 date_labels = "%b %y") +
+                 date_labels = "%b %d '%y") +
     theme(axis.title = element_blank())
   } else if (length(locations) > 1) {
     if (free_y) {
