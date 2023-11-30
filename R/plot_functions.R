@@ -223,7 +223,7 @@ plot_hosp <- function(
   p <- p + theme(
       legend.key.width = unit(f_width1*key_width, "cm"),
       panel.spacing = unit(0.1, "lines"),
-      axis.text.x = element_text(hjust = -0.1))
+      axis.text.x = element_text(hjust = -0.05))
   p
 }
 
