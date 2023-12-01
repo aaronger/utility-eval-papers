@@ -487,6 +487,7 @@ In Florida, the forecast from JHUAPL-Bucky missed by a wide margin (as did the f
 <<thermometer-plot, fig.height=3.5, fig.width=7.5, fig.cap="Probabilistic forecasts for new hospital admissions and the inferred resource allocations for COVID-19 on January 3, 2022 for the states with the nine highest hospitalization counts. For each state, the dark black line shows the data observed when the forecast was made and the grey line shows eventually observed counts. The side-by-side shaded regions show the median (solid horizontal line) and 50%, 80% and 95% prediction intervals for the two selected models. The forecasts were made for new hospitalizations on January 3, 2022 (vertical dashed line, with number of hospitalizations indicated by red horizontal line segment at the intersection of the dashed line and the grey line of data). The vertical bars with red and yellow shading show the allocations: the red bar goes from zero to the level of the observed number of hospitalizations while the yellow bar shows how many resources were suggested by the model to be allocated to that location. The allocations (yellow bar) may be more or less than the observed number, therefore exposed red bar indicates unmet need, while the yellow bar extending above the observed number of hospitalizations means that excess resources were suggested for that given location.">>=
 source("R/plot_functions.R")
 tar_load(alloscore_2021.12.20)
+slim_alloscore_2021.12.20 <- alloscore::slim(alloscore_2021.12.20, id_cols = c("model", "reference_date"))
 plot_hosp(models = c("JHUAPL-Bucky", "CU-select"),
           start_date = "2021-12-01",
           stop_date = "2022-01-25",
@@ -497,7 +498,7 @@ plot_hosp(models = c("JHUAPL-Bucky", "CU-select"),
           f_width1 = 4, f_alpha = .4,
           allocations = TRUE,
           forecasts_hosp = forecast_data %>%  filter(reference_date == "2021-12-20"),
-          alloscores = alloscore::slim(alloscore_2021.12.20, id_cols = c("model", "reference_date")),
+          alloscores = slim_alloscore_2021.12.20,
           truth = truth_data,
           f_colors = c("#4A708B", "#CD2626"),
           one_K = 15000) + labs(x = NULL)
@@ -625,7 +626,7 @@ cowplot::plot_grid(p1, p2, p4,
 
 Allocation scores varied substantially by date and by model (Figure \ref{fig:metrics-over-time}).
 For predictions made for the first three Mondays in December 2021 and the last three Mondays in February 2022 all models had allocation scores under 500 (and the mean across all models was less than 100), indicating that the unnecessary unmet need was fairly low relative to the total number of hospital admissions on those days.
-The allocation scores are on the whole highest when the observed number of new hospital admissions is closest to the resource threshold of 15,000, as this is the time when any mistakes in allocation are costly in terms of wasting resources in one location that could have been used in another.
+The allocation scores were on the whole highest when the observed number of new hospital admissions was closest to the resource threshold of 15,000, as those are the times when any mistakes in allocation are costly in terms of wasting resources in one location that could have been used in another.
 Predictions made during the peak week and just after showed the highest variation in allocation scores, with some models having allocation scores under 1000 and others having values over 3500.
 
 <<eval=FALSE>>=
@@ -663,7 +664,7 @@ score_data_summaries |>
             range = maxWIS-minWIS)
 @
 
-\subsubsection{Model rankings for different scores did not reliably correlate}
+\subsubsection{Metrics were not consistently correlated over time}
 
 <<metrics-correlation, fig.width=10, fig.height=7.5, fig.cap="Association of standardized ranks for MWIS and allocation score by model and week. Each facet of the plot corresponds to one model. Within each facet, each point corresponds to a week. The x- and y-values correspond to the MWIS standardized rank and the allocation score standardized rank for that week. Points corresponding to earlier dates have darker shading. The size of the point corresponds to the observed value on the date for which the prediction was made. Models show different degrees of association between the two metrics.">>=
 all_scores |>
@@ -692,9 +693,6 @@ alloscore_data_summaries |>
   summarize(top_rank = sum(allo_rank_std==1))
 @
 
-Models that were able to provide more accurate relative rankings of locations according to the hospitalization counts at the future horizon in general showed better performance according to the allocation score (Figure \ref{fig:multi-loc-ranks}.
-
-
 
 \subsubsection{Integrated allocation score across values of K}
 
@@ -702,6 +700,38 @@ Using the integrated allocation score summarizes allocation scores across a rang
 This could be useful in situations where the actual constraint may not be known, or could only be specified as a probability distribution.
 
  - something here from Ben's analysis?
+
+<<ias-comparison, results='asis'>>=
+ias <- slim_alloscore_2021.12.20 |>
+  group_by(model, K) |>
+  summarize(`Allocation score` = sum(components)) |>
+  group_by(model) |>
+  summarize(IAS = mean(`Allocation score`)) |>
+  arrange(IAS)
+
+as <- slim_alloscore_2021.12.20 |>
+  filter(K == 15000) |>
+  group_by(model) |>
+  summarize(AS = sum(components)) |>
+  arrange(AS)
+
+left_join(ias, as) |>
+  xtable::xtable() |>
+  print(include.rownames = FALSE)
+@
+
+
+<<multi-k, fig.height=4>>=
+slim_alloscore_2021.12.20 |>
+  group_by(model, K) |>
+  summarize(`Allocation score` = sum(components)) |>
+  mutate(model = factor(model, levels = ias$model)) |>
+  ggplot(aes(x=K, y=`Allocation score`, color=model, linetype=model)) +
+  geom_line()
+@
+
+
+
 
 
 
