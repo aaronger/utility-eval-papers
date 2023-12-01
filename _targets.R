@@ -96,9 +96,5 @@ combined <- tar_combine(
 #   format = "file"
 # )
 
-plots <- tar_target(
-  name = mvbucky_dist_alloc,
-  command = plot_thermo(all_alloscore_data, forecast_data, truth_data)
-)
 
-list(setup, mapped, combined, plots)
+list(setup, mapped, combined)
