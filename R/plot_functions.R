@@ -158,7 +158,7 @@ plot_hosp <- function(
     scale_alpha_manual(
       values = c("95%" = .3, "80%" = .6, "50%" = .9),
       name = "Predictive Interval") +
-    scale_x_date(date_labels = "%b %d '%y") +
+    scale_x_date(date_labels = "%b %d") +
     coord_cartesian(xlim = as.Date(c(start_date, stop_date)),
                     ylim = c(0, 1.3*max(truth$value))) +
     xlab("Date") +
@@ -209,9 +209,10 @@ plot_hosp <- function(
       scale_y_continuous(expand = c(0,0))
   }
   if (geofacet) {
+    require(geofacet)
     p <- p + facet_geo(~ code, grid = geofacet::us_state_grid2) +
     scale_x_date(breaks = as.Date(c("2021-12-01", "2022-01-01")),
-                 date_labels = "%b %d '%y") +
+                 date_labels = "%b %d") +
     theme(axis.title = element_blank())
   } else if (length(locations) > 1) {
     if (free_y) {
@@ -223,7 +224,8 @@ plot_hosp <- function(
   p <- p + theme(
       legend.key.width = unit(f_width1*key_width, "cm"),
       panel.spacing = unit(0.1, "lines"),
-      axis.text.x = element_text(hjust = -0.05))
+      #axis.text.x = element_text(hjust = -0.05)
+      )
   p
 }
 
