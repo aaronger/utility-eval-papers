@@ -344,7 +344,18 @@ is defined using interval addition $[a,b] + [c,d] = [a+c, b+d]$.
 
 $TQ_F$ satisfies the conditions mentioned in section \ref{sec:quantile-functions} for being a quantile function, and so there
 is a random variable $TY_F$ with cdf $F_{T} := F_{TQ_F}$.  From this perspective, the problem of finding $\tau$ becomes the calculation 
-of $F_{T}(K) = \mathbb{P}(TY_F \leq K)$, making clear the existence of a solution $\tau^{\star}$ to \eqref{eqn:tau-inclusion}.
+of $F_{T}(K) = \mathbb{P}(TY_F \leq K)$, making clear the existence of a solution $\tau^{\star}$ to \eqref{eqn:tau-inclusion}. This also
+yields the interesting formal expression of the Bayes act
+\begin{align}
+x^{F,K} = (F_1,\ldots,F_N)^{-1}(\mathbf{1}_N F_{T}(K)),
+\end{align}
+where $\mathbf{1}_N: \mathbb{R} \to \mathbb{R}^N$ is the linear map that takes $a$ to the $N$-vector $(a,\ldots,a)^T$ and 
+$(F_1,\ldots,F_N)^{-1}$ is a map from $\mathbb{R}^N$ to $\mathbb{R}^N$. We can also arrange this as
+\begin{align}
+TQ_F\left(\frac{1}{N} \mathbf{1}^T (F_1,\ldots,F_N)(x^{F,K})\right) = K,
+\end{align}
+which leads conceptually to the iterative numerical method of solving for $x^{F,K}$ discussed next in section \ref{sec:numeric}. 
+
 
 Two awkward features of the quantile representation of the Bayes act can arise.  First, point masses in the $F_i$ create point masses for $F_T$ which may cause $\tau^{\star}$ to not be the unique solution to \eqref{eqn:tau-inclusion}. Secondly, if more than 
 one $Q_{F_i}(\tau^{\star})$ is a positive-width interval, then the Bayes act will not be unique in these coordinates, and generically
@@ -353,6 +364,10 @@ not all points in the $Q_{F_i}(\tau^{\star})$ will be the coordinate of a Bayes 
 It is important to note that $\lambda$ depends on the forecast $F$ and the constraint level $K$. Thus while $\lambda = L(1-\tau)$ can be
 interpreted as a kind of ``cost'' imposed by the constraint in the allocation problem which is analogous to $C = L(1-\alpha)$ in the  
 the cost-lost problem of section \ref{sec:quantiles_shortage}, it does not serve to define the allocation loss function in the way that $C$ defines \eqref{eqn:expQloss}. $\lambda$ is rather a parameter that must be found, given the pair $F$ and $K$.
+
+\section{Numerical computation of allocation scores}
+\label{sec:numeric}
+
 
 \section{Properties and Properness}
 
