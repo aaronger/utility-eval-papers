@@ -203,18 +203,17 @@ which assumes $Y$ has an adequately well-behaved density $f_Y$.
 
 We recall how quantiles arise as solutions to a probabilistic decision problem. Let $Y$ be a random variable
 representing the future level of an undesirable outcome such as severe COVID incidence. Let $x \in \mathbb{R}$ be a decision variable
-representing the possible levels of some costly counter-measure, such as procurement of monoclonal antibody treatments,
+representing the level of some costly counter-measure, such as procurement of monoclonal antibody treatments,
 that can be taken at a cost $C>0$ per unit in preparation for $Y$.  A decision maker must decide on a level $x$ of investment in the
 counter-measure, and wishes to avoid excesses in either the expediture $Cx$ or the shortage $(y-x)_{+}$ when $Y=y$ is
 realized. To formalize the trade-off between these potential excesses we quantify the loss associated with a unit of
-shortage by a constant $L>C$ (which assumes that the counter-measure has some economic value) and combine the total shortage loss with expenditure into a \emph{loss function}\footnote
+shortage by a constant $L>C$ (which assumes that it is possible to quantify costs $C$ per unit of resource and losses $L$ per unit of shortfall on the same scale). We then combine the total shortage loss with expenditure into a \emph{loss function}\footnote
 {This does involve a confusing use of the word \emph{loss} to refer to two different quantities, but this seems to be
 an ingrained and unavoidable habit in the literature.}
 \[
 l(x,y) = Cx + L(y-x)_{+}.
 \] 
-The decision problem is then to select a random future loss $l(x,Y)$ in a way that aligns with the preference that $l(x,y)$ be
-as low as possible given any realization $Y=y$.
+The decision problem is then to select an action $x$ in a way that aligns with the preference that the random future loss $l(x,Y)$ be as low as possible.
 
 To give the decision problem more structure we assume the decision maker either knows the distribution $F$ of $Y$, or
 wishes to proceed as if a forecast $F$ of $Y$ were true. This gives us what is known in decision theory as a decision
