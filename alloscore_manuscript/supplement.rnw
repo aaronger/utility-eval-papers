@@ -106,11 +106,18 @@ more thorough discussion.
 	\item Sketch of scoring for decision problems involving both cost and constraint.
 \end{todolist}
 
+\section{Introduction}
+\label{sec:intro}
+
+We briefly address some technical and methodological points in the main text. We begin in section \ref{sec:shortage} by formalizing the concept of a \emph{shortage} of resources and giving some key results about expected resource shortages under a distribution characterizing uncertainty about (future) levels of resource need. Resource shortages play a central role in the decision-making problems that give rise to the quantile loss and the allocation score, which we discuss in sections \ref{sec:quantiles_shortage} and \ref{sec:bayes-quantiles} respectively. Section \ref{sec:numeric} gives details on the numerical methods that we use to calculate allocation scores, including some special considerations for settings where forecasts are represented by a finite collection of predictive quantiles, such as the application to forecasts of hospitalizations due to COVID-19 in section 3 of the article.
+
 \section{Shortages}
 \label{sec:shortage}
 
-For convenience, we write $u_{+} = \max\{0,u\}$, and refer to $(y - x)_{+}$ as a \emph{shortage} in accordance with our
-typical use of $y$ for a demand or need and $x$ for an available supply. To regard shortage as a function depending on only one 
+We use $y$ to denote the demand or need for resources and $x$ to denote the level of available resources.
+The resource shortage is the amount by which resource demand exceeds supply. 
+For convenience, we write $u_{+} = \max\{0,u\}$, i.e., ``the positive part'' of $u$.
+With this notation, the shortage is written as $(y - x)_{+}$. To regard shortage as a function of only one 
 variable $x$ or $y$, with the other being a parameter describing the dependence we can write 
 $(y - x)_{+} = \short^{y}(x) = \short_{x}(y)$.  Note that 
 $\short^{y}(x)$ and $\short_{x}(y)$ are both convex functions and ``mirror'' each other:
@@ -118,6 +125,7 @@ $\short^{y}(x)$ and $\short_{x}(y)$ are both convex functions and ``mirror'' eac
 
 \pgfplotsset{compat=1.16} % Set the compatibility of pgfplots
 
+\begin{figure}
 \begin{tikzpicture}
 \begin{axis}[
     axis lines=middle, % Center the axis
@@ -144,14 +152,17 @@ node[pos=.7,anchor=north west] {$\short_{x_0}(y) = (y - x_0)_{+}$};
 
 \end{axis}
 \end{tikzpicture}
+\caption{Shortage functions. $\short^{y_0}(x)$, shown in blue, gives the resource shortage as a function of the level of available resources, $x$, for a fixed value of resource demand $y_0$. $\short_{x_0}(y)$, shown in red, gives the resource shortage as a function of resource demand, $y$, for a fixed value of resource supply $x_0$.}
+\end{figure}
 
-Let $Y$ be a random variable with distribution $F$. The random shortage $(Y-x)_{+}$ can be thought of as either a 
+Let $Y$ be a random variable with distribution $F$ representing the unknown level of resource demand. The random shortage $(Y-x)_{+}$ can be thought of as either a 
 real-valued random variable $\short_x(Y)$ for every $x$, or a function-valued random variable $\short^Y$ whose value
-for any realization $Y=y$ is a convex function $\short^y(x)$ of $x$.  We see then that the 
+for any realization $Y=y$ is a convex function $\short^y(x)$ of $x$.  In the sections below, we will work with the 
 \emph{expected shortage}\footnote{A more natural sounding term for $(y-x)_{+}$ might have been \emph{shortfall}. Unfortunately 
 \emph{expected shortfall} has long been used in finance to refer to quantities more 
 closely related to the \emph{conditional} expectation $\Ex_F [Y-x \mid Y - x \geq 0] = \Ex_F [(Y-x)_{+}]/\mathbb{P}_F\{Y \geq x\}$.}
-$\Ex_F [(Y-x)_{+}] = \Ex_F[\short^Y](x)$ (assuming it exists) is also convex (and therefore continuous) in $x$ by integrating the convexity inequality for
+$\Ex_F [(Y-x)_{+}] = \Ex_F[\short^Y](x)$.
+Assuming that this expected value exists, which is the case as long as the distribution $F$ is well behaved, we can see that $\Ex_F[\short^Y](x)$ is also convex (and therefore continuous) in $x$ by integrating the convexity inequality for
 $\short^y(x)$ with respect to the probability measure $dF(y)$:
 \begin{align}
 	\Ex_F[\short^Y](\lambda x_1+(1-\lambda) x_2) &= \int \short^y(\lambda x_1+(1-\lambda) x_2)dF(y) \nonumber \\
@@ -174,7 +185,7 @@ D_{+}\Ex_F [(Y-x)_{+}] &= \lim_{h \searrow 0}\frac{1}{h}\Ex_F [(Y - (x + h))_{+}
 \end{align}
 where in \eqref{eqn:dsfllim} and \eqref{eqn:dsfrlim} we are able to replace the integrands with their values at $x$ because 
 they are bounded over the shrinking regions of integration $[x-h,x]$ and $[x,x+h]$. Convexity follows since 
-$D_{-}\Ex_F[\short^Y](x) \leq D_{+}\Ex_F[\short^Y](x)$ by the definition of $F(x)$ and $F(x-)$. This shows that if $F$ does not 
+$D_{-}\Ex_F[\short^Y](x) \leq D_{+}\Ex_F[\short^Y](x)$ by the definition of $F(x)$ and $F(x-)$. This also shows that if $F$ does not 
 have a point mass at $x$, we have 
 \begin{align}
 	\frac{d}{dx} \Ex_F [(Y-x)_{+}] = F(x)-1,
