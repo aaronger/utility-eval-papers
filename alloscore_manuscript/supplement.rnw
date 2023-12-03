@@ -3,6 +3,7 @@
 \usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
 
 \usepackage{amsmath, amsfonts, amssymb, mathtools}
+\usepackage{accents}
 \usepackage{graphicx}
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
@@ -104,6 +105,7 @@ more thorough discussion.
 			\item WIS as average quantile score across 23 C/L problems.
 		\end{todolist}
 	\item Sketch of scoring for decision problems involving both cost and constraint.
+	\item  Derivation of case 2 in formula for Oracle adjustment
 \end{todolist}
 
 \section{Shortages}
@@ -345,16 +347,17 @@ is defined using interval addition $[a,b] + [c,d] = [a+c, b+d]$.
 $TQ_F$ satisfies the conditions mentioned in section \ref{sec:quantile-functions} for being a quantile function, and so there
 is a random variable $TY_F$ with cdf $F_{T} := F_{TQ_F}$.  From this perspective, the problem of finding $\tau$ becomes the calculation 
 of $F_{T}(K) = \mathbb{P}(TY_F \leq K)$, making clear the existence of a solution $\tau^{\star}$ to \eqref{eqn:tau-inclusion}. This also
-yields the interesting formal expression of the Bayes act
+yields the interesting formal equation for the Bayes act
 \begin{align}
-x^{F,K} = (F_1,\ldots,F_N)^{-1}(\mathbf{1}_N F_{T}(K)),
+\undertilde{\bm{F}}(x^{F,K}) = \mathbf{1}_N F_{T}(K),
 \end{align}
-where $\mathbf{1}_N: \mathbb{R} \to \mathbb{R}^N$ is the linear map that takes $a$ to the $N$-vector $(a,\ldots,a)^T$ and 
-$(F_1,\ldots,F_N)^{-1}$ is a map from $\mathbb{R}^N$ to $\mathbb{R}^N$. We can also arrange this as
+where $\mathbf{1}_N: \mathbb{R} \to \mathbb{R}^N$ is the linear map that takes $a$ to the $N$-vector $(a,\ldots,a)^T$ and the vector of marginal 
+cdfs $\undertilde{\bm{F}} := (F_1,\ldots,F_N)$ is a map from $\mathbb{R}^N$ to $\mathbb{R}^N$. 
+With this notation we can write \eqref{eqn:tau-inclusion} as
 \begin{align}
-TQ_F\left(\frac{1}{N} \mathbf{1}^T (F_1,\ldots,F_N)(x^{F,K})\right) = K,
+K \in TQ_F\left(\frac{1}{N} \mathbf{1}^T \undertilde{\bm{F}}(x^{F,K})\right),
 \end{align}
-which leads conceptually to the iterative numerical method of solving for $x^{F,K}$ discussed next in section \ref{sec:numeric}. 
+which leads conceptually to the iterative numerical method of solving for $\tau$ and $x^{F,K}$ discussed next in section \ref{sec:numeric}. 
 
 
 Two awkward features of the quantile representation of the Bayes act can arise.  First, point masses in the $F_i$ create point masses for $F_T$ which may cause $\tau^{\star}$ to not be the unique solution to \eqref{eqn:tau-inclusion}. Secondly, if more than 
@@ -367,6 +370,37 @@ the cost-lost problem of section \ref{sec:quantiles_shortage}, it does not serve
 
 \section{Numerical computation of allocation scores}
 \label{sec:numeric}
+
+Suppose we have established that $\tau^{\star} = F_T(K)$ lies in the interval $I_1 = [\tau_L, \tau_U]$ with $\tau_L < \tau_U$,
+that is, $K \in [q^{-}_{F_T,\tau_L}, q^{+}_{F_T,\tau_U}]$.
+From section \ref{sec:quantile-functions}, we know that the set 
+$TQ_F(\tau_L) \cup TQ_F(\tau_U) \subset [q^{-}_{F_T,\tau_L}, q^{+}_{F_T,\tau_U}]$
+is arranged in exactly one of the following ways: 
+\begin{itemize}
+\item[($\bullet \bullet$)] $TQ_F(\tau_L) \cap TQ_F(\tau_U) = \varnothing$ (and $q^{+}_{F_T,\tau_L} < q^{-}_{F_T,\tau_U}$)
+\item[($\bullet$)] $TQ_F(\tau_L) = \{K\} = TQ_F(\tau_U)$ (a point mass at $K$)
+\item[($\bullet\!-$)] $TQ_F(\tau_L) = \{q^{-}_{F_T,\tau_U}\} \subsetneq TQ_F(\tau_U)$ (a point mass at $q^{-}_{F_T,\tau_U}$)
+\item[($-\!\bullet$)] $TQ_F(\tau_L) \supsetneq \{q^{+}_{F_T,\tau_L}\} = TQ_F(\tau_U)$ (a point mass at $q^{+}_{F_T,\tau_U}$)
+\end{itemize}
+ 
+In the case ($\bullet$), we can immediately take 
+$\tau^{\star}=\tau_U$ as the probability level defining the allocation Bayes act.
+In the cases
+($\bullet\!-$), and ($-\!\bullet$), which imply the presence of a point mass in one or more of the 
+component forecasts adjacent to a region of zero density in all components, we can take $\tau^{\star}=\tau_U$ or $\tau_L$, 
+respectively, as the representing probability level and find Bayes acts within the set 
+$\undertilde{\bm{F}}^{-1}(\tau^{\star})$ (by solving the linear equation 
+$\sum_{x \in \undertilde{\bm{F}}^{-1}(\tau^{\star})}x_i = K$).
+
+Otherwise, by evaluating $TQ_F$ at $\tau_M = \frac{1}{2}\left(\tau_L + \tau_U\right)$ we can replace $I_1$ with the interval
+\begin{align}
+I_2 = 
+\begin{cases}
+[\tau_L, \tau_M] & \text{ if } K \leq q^{+}_{F_T,\tau_M} \\
+[\tau_M, \tau_U] & \text{ if } K > q^{-}_{F_T,\tau_M}.
+\end{cases}
+\end{align}
+
 
 
 \section{Properties and Properness}
