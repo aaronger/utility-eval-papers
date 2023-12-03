@@ -108,11 +108,18 @@ more thorough discussion.
 	\item  Derivation of case 2 in formula for Oracle adjustment
 \end{todolist}
 
+\section{Introduction}
+\label{sec:intro}
+
+We briefly address some technical and methodological points in the main text. We begin in section \ref{sec:shortage} by formalizing the concept of a \emph{shortage} of resources and giving some key results about expected resource shortages under a distribution characterizing uncertainty about (future) levels of resource need. Resource shortages play a central role in the decision-making problems that give rise to the quantile loss and the allocation score, which we discuss in sections \ref{sec:quantiles_shortage} and \ref{sec:bayes-quantiles} respectively. Section \ref{sec:numeric} gives details on the numerical methods that we use to calculate allocation scores, including some special considerations for settings where forecasts are represented by a finite collection of predictive quantiles, such as the application to forecasts of hospitalizations due to COVID-19 in section 3 of the article.
+
 \section{Shortages}
 \label{sec:shortage}
 
-For convenience, we write $u_{+} = \max\{0,u\}$, and refer to $(y - x)_{+}$ as a \emph{shortage} in accordance with our
-typical use of $y$ for a demand or need and $x$ for an available supply. To regard shortage as a function depending on only one 
+We use $y$ to denote the demand or need for resources and $x$ to denote the level of available resources.
+The resource shortage is the amount by which resource demand exceeds supply. 
+For convenience, we write $u_{+} = \max\{0,u\}$, i.e., ``the positive part'' of $u$.
+With this notation, the shortage is written as $(y - x)_{+}$. To regard shortage as a function of only one 
 variable $x$ or $y$, with the other being a parameter describing the dependence we can write 
 $(y - x)_{+} = \short^{y}(x) = \short_{x}(y)$.  Note that 
 $\short^{y}(x)$ and $\short_{x}(y)$ are both convex functions and ``mirror'' each other:
@@ -120,6 +127,7 @@ $\short^{y}(x)$ and $\short_{x}(y)$ are both convex functions and ``mirror'' eac
 
 \pgfplotsset{compat=1.16} % Set the compatibility of pgfplots
 
+\begin{figure}
 \begin{tikzpicture}
 \begin{axis}[
     axis lines=middle, % Center the axis
@@ -146,14 +154,17 @@ node[pos=.7,anchor=north west] {$\short_{x_0}(y) = (y - x_0)_{+}$};
 
 \end{axis}
 \end{tikzpicture}
+\caption{Shortage functions. $\short^{y_0}(x)$, shown in blue, gives the resource shortage as a function of the level of available resources, $x$, for a fixed value of resource demand $y_0$. $\short_{x_0}(y)$, shown in red, gives the resource shortage as a function of resource demand, $y$, for a fixed value of resource supply $x_0$.}
+\end{figure}
 
-Let $Y$ be a random variable with distribution $F$. The random shortage $(Y-x)_{+}$ can be thought of as either a 
+Let $Y$ be a random variable with distribution $F$ representing the unknown level of resource demand. The random shortage $(Y-x)_{+}$ can be thought of as either a 
 real-valued random variable $\short_x(Y)$ for every $x$, or a function-valued random variable $\short^Y$ whose value
-for any realization $Y=y$ is a convex function $\short^y(x)$ of $x$.  We see then that the 
+for any realization $Y=y$ is a convex function $\short^y(x)$ of $x$.  In the sections below, we will work with the 
 \emph{expected shortage}\footnote{A more natural sounding term for $(y-x)_{+}$ might have been \emph{shortfall}. Unfortunately 
 \emph{expected shortfall} has long been used in finance to refer to quantities more 
 closely related to the \emph{conditional} expectation $\Ex_F [Y-x \mid Y - x \geq 0] = \Ex_F [(Y-x)_{+}]/\mathbb{P}_F\{Y \geq x\}$.}
-$\Ex_F [(Y-x)_{+}] = \Ex_F[\short^Y](x)$ (assuming it exists) is also convex (and therefore continuous) in $x$ by integrating the convexity inequality for
+$\Ex_F [(Y-x)_{+}] = \Ex_F[\short^Y](x)$.
+Assuming that this expected value exists, which is the case as long as the distribution $F$ is well behaved, we can see that $\Ex_F[\short^Y](x)$ is also convex (and therefore continuous) in $x$ by integrating the convexity inequality for
 $\short^y(x)$ with respect to the probability measure $dF(y)$:
 \begin{align}
 	\Ex_F[\short^Y](\lambda x_1+(1-\lambda) x_2) &= \int \short^y(\lambda x_1+(1-\lambda) x_2)dF(y) \nonumber \\
@@ -176,7 +187,7 @@ D_{+}\Ex_F [(Y-x)_{+}] &= \lim_{h \searrow 0}\frac{1}{h}\Ex_F [(Y - (x + h))_{+}
 \end{align}
 where in \eqref{eqn:dsfllim} and \eqref{eqn:dsfrlim} we are able to replace the integrands with their values at $x$ because 
 they are bounded over the shrinking regions of integration $[x-h,x]$ and $[x,x+h]$. Convexity follows since 
-$D_{-}\Ex_F[\short^Y](x) \leq D_{+}\Ex_F[\short^Y](x)$ by the definition of $F(x)$ and $F(x-)$. This shows that if $F$ does not 
+$D_{-}\Ex_F[\short^Y](x) \leq D_{+}\Ex_F[\short^Y](x)$ by the definition of $F(x)$ and $F(x-)$. This also shows that if $F$ does not 
 have a point mass at $x$, we have 
 \begin{align}
 	\frac{d}{dx} \Ex_F [(Y-x)_{+}] = F(x)-1,
@@ -194,18 +205,17 @@ which assumes $Y$ has an adequately well-behaved density $f_Y$.
 
 We recall how quantiles arise as solutions to a probabilistic decision problem. Let $Y$ be a random variable
 representing the future level of an undesirable outcome such as severe COVID incidence. Let $x \in \mathbb{R}$ be a decision variable
-representing the possible levels of some costly counter-measure, such as procurement of monoclonal antibody treatments,
+representing the level of some costly counter-measure, such as procurement of monoclonal antibody treatments,
 that can be taken at a cost $C>0$ per unit in preparation for $Y$.  A decision maker must decide on a level $x$ of investment in the
 counter-measure, and wishes to avoid excesses in either the expediture $Cx$ or the shortage $(y-x)_{+}$ when $Y=y$ is
 realized. To formalize the trade-off between these potential excesses we quantify the loss associated with a unit of
-shortage by a constant $L>C$ (which assumes that the counter-measure has some economic value) and combine the total shortage loss with expenditure into a \emph{loss function}\footnote
+shortage by a constant $L>C$ (which assumes that it is possible to quantify costs $C$ per unit of resource and losses $L$ per unit of shortfall on the same scale). We then combine the total shortage loss with expenditure into a \emph{loss function}\footnote
 {This does involve a confusing use of the word \emph{loss} to refer to two different quantities, but this seems to be
 an ingrained and unavoidable habit in the literature.}
 \[
 l(x,y) = Cx + L(y-x)_{+}.
 \] 
-The decision problem is then to select a random future loss $l(x,Y)$ in a way that aligns with the preference that $l(x,y)$ be
-as low as possible given any realization $Y=y$.
+The decision problem is then to select an action $x$ in a way that aligns with the preference that the random future loss $l(x,Y)$ be as low as possible.
 
 To give the decision problem more structure we assume the decision maker either knows the distribution $F$ of $Y$, or
 wishes to proceed as if a forecast $F$ of $Y$ were true. This gives us what is known in decision theory as a decision
@@ -389,15 +399,15 @@ In the cases
 ($\bullet\!-$), and ($-\!\bullet$), which imply the presence of a point mass in one or more of the 
 component forecasts adjacent to a region of zero density in all components, we can take $\tau^{\star}=\tau_U$ or $\tau_L$, 
 respectively, as the representing probability level and find Bayes acts within the set 
-$\undertilde{\bm{F}}^{-1}(\tau^{\star})$ (by solving the linear equation 
+$\undertilde{\bm{F}}^{-1}(\tau^{\star})$ (by solving the linear program 
 $\sum_{x \in \undertilde{\bm{F}}^{-1}(\tau^{\star})}x_i = K$).
 
 Otherwise, by evaluating $TQ_F$ at $\tau_M = \frac{1}{2}\left(\tau_L + \tau_U\right)$ we can replace $I_1$ with the interval
 \begin{align}
 I_2 = 
 \begin{cases}
-[\tau_L, \tau_M] & \text{ if } K \leq q^{+}_{F_T,\tau_M} \\
-[\tau_M, \tau_U] & \text{ if } K > q^{-}_{F_T,\tau_M}.
+[\tau_L, \tau_M] & \text{ if } K < q^{-}_{F_T,\tau_M} \\
+[\tau_M, \tau_U] & \text{ if } K \geq q^{-}_{F_T,\tau_M}.
 \end{cases}
 \end{align}
 
