@@ -702,11 +702,20 @@ This could be useful in situations where the actual constraint may not be known,
  - something here from Ben's analysis?
 
 <<ias-comparison, results='asis'>>=
+## for visual context
+## curve(dnorm(x, mean=15000, sd=3000), from=0, to=30000)
+ks <- seq(5000, 25000, by=200)
+kprobs <- data.frame(K = ks,
+                     weight = dnorm(ks, mean=15000, sd=3000)/sum(dnorm(ks, mean=15000, sd=3000)))
+
+
 ias <- slim_alloscore_2021.12.20 |>
   group_by(model, K) |>
   summarize(`Allocation score` = sum(components)) |>
+  left_join(kprobs) |>
   group_by(model) |>
-  summarize(IAS = mean(`Allocation score`)) |>
+  summarize(IAS_wt = sum(`Allocation score`*weight, na.rm=TRUE),
+            IAS = mean(`Allocation score`)) |>
   arrange(IAS)
 
 as <- slim_alloscore_2021.12.20 |>
@@ -714,6 +723,24 @@ as <- slim_alloscore_2021.12.20 |>
   group_by(model) |>
   summarize(AS = sum(components)) |>
   arrange(AS)
+
+p1 <- ggplot(left_join(ias, as), aes(x=AS, y=IAS)) + geom_point(color="blue")
+p2 <- ggplot(left_join(ias, as), aes(x=AS, y=IAS_wt)) + geom_point(color="red")
+
+p3 <- slim_alloscore_2021.12.20 |>
+  group_by(model, K) |>
+  summarize(`Allocation score` = sum(components)) |>
+  left_join(kprobs) |>
+  ggplot(aes(x=K)) +
+  geom_point(aes(y=weight), color = "red") +
+  geom_point(y=1/length(unique(slim_alloscore_2021.12.20$K)), color="blue") +
+  geom_vline(xintercept = 15000, color="black")
+
+cowplot::plot_grid(p2, p3, p1,
+                   nrow=2,
+                   align="v",
+                   labels = "AUTO")
+
 
 left_join(ias, as) |>
   xtable::xtable() |>
