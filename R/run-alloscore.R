@@ -23,7 +23,8 @@ run_alloscore <- function(
     truth_data,
     one_reference_date,
     one_model,
-    one_K = NULL){
+    one_K = NULL,
+    slim = TRUE){
   require(tidyverse)
   require(alloscore)
   require(distfromq)
@@ -63,7 +64,7 @@ run_alloscore <- function(
     K = Ks,
     y = .[["value"]],
     target_names = "abbreviation",
-    slim = TRUE
+    slim = slim
   )
   ascores <- ascores %>% dplyr::mutate(
     reference_date = one_reference_date,
