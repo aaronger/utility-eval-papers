@@ -317,8 +317,8 @@ have the following necessary condition for $x^{\star} \in \mathbb{R}^N_{+}$ to b
 allocated to location $i$ are reallocated to location $j$, expected shortage will increase in location
 $i$ by at least as much as it decreases in location $j$. That is,
 \begin{align}
-\mathbb{E}_{F_i}[(Y_i - x^{\star}_i - \delta)_{+}] - \mathbb{E}_{F_i}[(Y_i - x^{\star}_i)_{+}] \geq 
-\mathbb{E}_{F_j}[(Y_j - x^{\star}_j)_{+}] - \mathbb{E}_{F_j}[(Y_j - x^{\star}_j + \delta)_{+}]. \label{eqn:ASoptimal1}
+\mathbb{E}_{F_i}[(Y_i - (x^{\star}_i - \delta))_{+}] - \mathbb{E}_{F_i}[(Y_i - x^{\star}_i)_{+}] \geq 
+\mathbb{E}_{F_j}[(Y_j - x^{\star}_j)_{+}] - \mathbb{E}_{F_j}[(Y_j - (x^{\star}_j + \delta))_{+}]. \label{eqn:ASoptimal1}
 \end{align}
 Since the expected shortages in $i$ and $j$ have right and left derivatives at any $x_i$ and $x_j$ (see Section \ref{sec:shortage}), we can
 divide \eqref{eqn:ASoptimal1} by $\delta$ and take limits for $\delta \searrow 0$ to get
@@ -332,11 +332,12 @@ Scaling by $L$ to match the right and left partial derivatives of $\mathbb{E}_{F
 L(1-F_i(x^{\star}_i-)) \geq L(1-F_j(x^{\star}_j)). \label{eqn:RLineq2}
 \end{align}
 Inequalities \eqref{eqn:RLineq} and \eqref{eqn:RLineq2} remain true with $i$ and $j$ reversed. They hold with $i=j$ as well by the
-definition of $F_i(x^{\star}_i-)$. Therefore, a single number $\lambda$ (a \emph{Lagrange multiplier}) exists such that
+definition of $F_i(x^{\star}_i-)$. Therefore, a number $\lambda$ (a \emph{Lagrange multiplier}) exists, which is independent of $i$,
+such that
 \begin{align}
-L(1-F_i(x^{\star}_i-)) \geq \lambda \geq L(1-F_i(x^{\star}_i)), \quad \text{for all } i \in 1,\ldots,N
+L(1-F_i(x^{\star}_i-)) \geq \lambda \geq L(1-F_i(x^{\star}_i)), \quad \text{for all } i \in 1,\ldots,N.
 \end{align}
-that is,
+That is,
 \begin{align}
 F_i(x^{\star}_i) \geq 1 - \lambda/L \geq F_i(x^{\star}_i-),
 \end{align}
@@ -352,7 +353,8 @@ where the set-valued function
 \begin{align}
 TQ_F(\tau) := \sum_{i=1}^{N} Q_{F_i}(\tau) = \left[\sum_{i=1}^{N} q^{-}_{\tau,F_i}, \sum_{i=1}^{N} q^{+}_{\tau,F_i}\right]
 \end{align}
-is defined using interval addition $[a,b] + [c,d] = [a+c, b+d]$.
+is defined using interval addition $[a,b] + [c,d] = [a+c, b+d]$. (Note that the letter $T$ is being used to connote a ``totalling'' 
+operation, as it often is in survey sampling literature.)
 
 $TQ_F$ satisfies the conditions mentioned in section \ref{sec:quantile-functions} for being a quantile function, and so there
 is a random variable $TY_F$ with cdf $F_{T} := F_{TQ_F}$.  From this perspective, the problem of finding $\tau$ becomes the calculation 
