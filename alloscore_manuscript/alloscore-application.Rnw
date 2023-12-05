@@ -483,7 +483,7 @@ A direct comparison between the forecasts from the JHUAPL-Bucky and CU-select mo
 <<detailedASinfo>>=
 source("R/run-alloscore.R")
 as_Buck <- run_alloscore(
-  forecast_data = forecast_data, 
+  forecast_data = forecast_data,
   truth_data = truth_data,
   one_reference_date = "2021-12-20",
   one_model = "JHUAPL-Bucky",
@@ -491,7 +491,7 @@ as_Buck <- run_alloscore(
   slim = FALSE)
 
 as_CU <- run_alloscore(
-  forecast_data = forecast_data, 
+  forecast_data = forecast_data,
   truth_data = truth_data,
   one_reference_date = "2021-12-20",
   one_model = "CU-select",
@@ -501,20 +501,20 @@ as_CU <- run_alloscore(
 Buck_quantile <- round(1 - as_Buck$lam,2)*100
 CU_quantile <- round(1 - as_CU$lam,2)*100
 
-FL_allocs <- Kat15k_alloscores |> 
+FL_allocs <- Kat15k_alloscores |>
    dplyr::filter(
-     model %in% c("JHUAPL-Bucky", "CU-select"), 
-     reference_date == "2021-12-20", 
+     model %in% c("JHUAPL-Bucky", "CU-select"),
+     reference_date == "2021-12-20",
      abbreviation == "FL") |>
   dplyr::select(model, x) |>
   tibble::deframe()
 FL_diff <- round(FL_allocs["CU-select"] - FL_allocs["JHUAPL-Bucky"])
 @
 
-For JHUAPL-Bucky, the allocations were assigned at the \Sexpr{Buck_quantile}th quantile of the predictive distribution and for CU-select it was at the \Sexpr{CU_quantile}th percentile. 
+For JHUAPL-Bucky, the allocations were assigned at the \Sexpr{Buck_quantile}th quantile of the predictive distribution and for CU-select it was at the \Sexpr{CU_quantile}th percentile.
 This reflects that in general the JHUAPL-Bucky forecasts assigned more probabilities to higher values and thus a low quantile value across all locations reached the allocation limit of 15,000.
 In California, New York and Texas, the eventually observed number of hospital admissions was closer to the predicted median from JHUAPL-Bucky and was contained in JHUAPL-Bucky's 80\% PI. However for each of these three states, the resource allocation was lower and therefore resulted in more hypothetical unmet need than CU-select allocations.
-In Florida, the forecast from JHUAPL-Bucky missed by a wide margin (as did the forecast from CU-select) and the allocation was \Sexpr{FL_diff} units lower than what was allocated according to the CU-select model. 
+In Florida, the forecast from JHUAPL-Bucky missed by a wide margin (as did the forecast from CU-select) and the allocation was \Sexpr{FL_diff} units lower than what was allocated according to the CU-select model.
 
 <<thermometer-plot, fig.height=3.5, fig.width=7.5, fig.cap="Probabilistic forecasts for new hospital admissions and the inferred resource allocations for COVID-19 on January 3, 2022 for the states with the nine highest hospitalization counts. For each state, the dark black line shows the data observed when the forecast was made and the grey line shows eventually observed counts. The side-by-side shaded regions show the median (solid horizontal line) and 50%, 80% and 95% prediction intervals for the two selected models. The forecasts were made for new hospitalizations on January 3, 2022 (vertical dashed line, with number of hospitalizations indicated by red horizontal line segment at the intersection of the dashed line and the grey line of data). The vertical bars with red and yellow shading show the allocations: the red bar goes from zero to the level of the observed number of hospitalizations while the yellow bar shows how many resources were suggested by the model to be allocated to that location. The allocations (yellow bar) may be more or less than the observed number, therefore exposed red bar indicates unmet need, while the yellow bar extending above the observed number of hospitalizations means that excess resources were suggested for that given location.">>=
 source("R/plot_functions.R")
@@ -536,9 +536,9 @@ plot_hosp(models = c("JHUAPL-Bucky", "CU-select"),
           one_K = 15000) + labs(x = NULL)
 @
 
-In the example of this one week, JHUAPL-Bucky had a worse allocation score than CU-select because its forecasts led to allocations that sent excess resources to several states, such as Ohio, Pennsylvania, and Michigan, that would have been more effectively allocated to states that did receive enough resources to meet their needs, such as Florida and California (Figure \ref{multi-loc-ranks}A). These allocation errors resulted because that model’s forecasts did not consistently capture the relative resource needs across different states. (Figure \ref{fig:thermometer-plot} \& \ref{multi-loc-ranks}A). The CU-select model made some similar errors — most prominently, over-allocating resources to Ohio — but overall, it did a better job of forecasting the relative resource demands across different locations.
+In the example of this one week, JHUAPL-Bucky had a worse allocation score than CU-select because its forecasts led to allocations that sent excess resources to several states, such as Ohio, Pennsylvania, and Michigan, that would have been more effectively allocated to states that did receive enough resources to meet their needs, such as Florida and California (Figure \ref{fig:multi-loc-ranks}A). These allocation errors resulted because that model’s forecasts did not consistently capture the relative resource needs across different states. (Figure \ref{fig:thermometer-plot} \& \ref{fig:multi-loc-ranks}A). The CU-select model made some similar errors — most prominently, over-allocating resources to Ohio — but overall, it did a better job of forecasting the relative resource demands across different locations.
 
-On the other hand, CU-select had worse performance as measured by WIS. Its forecasts were biased downwards, and it consistently incurred a large penalty for underprediction (Figure \ref{fig:multi-loc-rank}B). Predictions from the JHUAPL-Bucky model were wider, and included the observed level of daily hospital admissions more often. Therefore, WIS did not as often assign that model severe penalties for forecasts that underpredicted or overpredicted the actual hospitalization count.
+On the other hand, CU-select had worse performance as measured by WIS. Its forecasts were biased downwards, and it consistently incurred a large penalty for underprediction (Figure \ref{fig:multi-loc-ranks}B). Predictions from the JHUAPL-Bucky model were wider, and included the observed level of daily hospital admissions more often. Therefore, WIS did not as often assign that model severe penalties for forecasts that underpredicted or overpredicted the actual hospitalization count.
 
 Together, these results corroborate the understanding that the allocation score and weighted interval score measure different aspects of forecast performance. The allocation score penalizes models that mischaracterize the relative magnitude of resource need across different locations, while WIS penalizes forecasts that do not capture the absolute magnitude of the target quantity in each location.
 
@@ -728,12 +728,17 @@ alloscore_data_summaries |>
 
 \subsubsection{Integrated allocation score across values of K}
 
-Using the integrated allocation score summarizes allocation scores across a range of possible values of the constraint ($K$) (Section \ref{sec:methods.detailed.integrated_allocation}).
+The integrated allocation score summarizes allocation scores across a range of possible values of the constraint ($K$), possibly taking weights into account for different values of $K$ that might be more or less likely (Section \ref{sec:methods.detailed.integrated_allocation}).
 This could be useful in situations where the actual constraint may not be known, or could only be specified as a probability distribution.
 
- - something here from Ben's analysis?
+This also underscores the points above that allocation scores are highest where the observed value is hear the allocation constraint, but here we are holding the date/models fixed and varying K.
 
-<<ias-comparison, results='asis'>>=
+Allocation scores are fairly stable across a range of values for K, and therefore IAS is not very sensitive to the choice of distribution on K, and does not differ much from the regular old allocation score as long as that allocation score was computed at a reasonable choice of K.
+
+Interpretation of Figure \ref{fig:multi-k} needed.
+
+
+<<ias-comparison>>=
 ## for visual context
 ## curve(dnorm(x, mean=15000, sd=3000), from=0, to=30000)
 ks <- seq(5000, 25000, by=200)
@@ -756,37 +761,54 @@ as <- slim_alloscore_2021.12.20 |>
   summarize(AS = sum(components)) |>
   arrange(AS)
 
-p1 <- ggplot(left_join(ias, as), aes(x=AS, y=IAS)) + geom_point(color="blue")
-p2 <- ggplot(left_join(ias, as), aes(x=AS, y=IAS_wt)) + geom_point(color="red")
+ias_to_plot <- left_join(ias, as) |>
+  pivot_longer(cols = c(IAS, IAS_wt), names_to = "IAS_type", values_to = "IAS") |>
+  mutate(IAS_type = ifelse(IAS_type=="IAS", "uniform", "centered at 15,000"))
 
-p3 <- slim_alloscore_2021.12.20 |>
+p1 <- ggplot(ias_to_plot, aes(x=AS, y=IAS, color=IAS_type, shape=IAS_type)) +
+  geom_point() +
+  geom_smooth(method="lm", se=FALSE, linetype=2) +
+  scale_color_manual(name = "Integrated Allocation Score", values = c("#386cb0", "#fdc086")) +
+  scale_shape_manual(name = "Integrated Allocation Score", values = c(1, 2)) +
+  geom_abline(slope=1, intercept=0, color="gray") +
+  theme(legend.position = c(0.05,.9), legend.justification = c(0,1),
+        legend.background=element_rect(fill = alpha("white", 0.2)))
+
+p2 <- slim_alloscore_2021.12.20 |>
   group_by(model, K) |>
   summarize(`Allocation score` = sum(components)) |>
   left_join(kprobs) |>
   ggplot(aes(x=K)) +
-  geom_point(aes(y=weight), color = "red") +
-  geom_point(y=1/length(unique(slim_alloscore_2021.12.20$K)), color="blue") +
-  geom_vline(xintercept = 15000, color="black")
+  geom_point(aes(y=weight), color = "#386cb0") +
+  geom_point(y=1/length(unique(slim_alloscore_2021.12.20$K)), color="#fdc086", shape = 2) +
+  geom_vline(xintercept = 15000, color="gray")
+@
 
-cowplot::plot_grid(p2, p3, p1,
-                   nrow=2,
-                   align="v",
-                   labels = "AUTO")
-
-
+<<multi-k-scores, results='asis'>>=
 left_join(ias, as) |>
-  xtable::xtable() |>
-  print(include.rownames = FALSE)
+  rename(`IAS centered at 15k` = IAS_wt,
+         `IAS uniform` = IAS) |>
+  xtable::xtable(caption = "Allocation scores shown in Figure \\ref{fig:multi-k}C, sorted by Integrated Allocation Scores (IAS) centered at 15,000.", digits = 0) |>
+  print(include.rownames = FALSE, )
 @
 
 
-<<multi-k, fig.height=4>>=
-slim_alloscore_2021.12.20 |>
+
+<<multi-k, fig.height=10, fig.width = 8, fig.cap = "Allocation scores across different resource constraints (K) for the 10 models that made forecasts on December 20, 2021. Panel A shows, for each model, the allocation score assigned for values of K between 200 and 60,000 at increments of 200. The allocation scores show a sharp peak just under 20,000 which was the eventually observed number of hospitalizations. It is hardest to get allocations exactly right, with no excess unmet need, when the resource constraint is exactly equal to the number of resources needed. Panel B shows two possible weighting functions for the Integrated Allocation Score (IAS). The first (dark blue circles) computes weights proportional to a normal distribution centered at 15,000 (solid vertical gray line) with a standard deviation of 3,000, and truncated to be between 5,000 and 25,000. The second (light orange triangles) uses a uniform weight for all possible values of K. Note that the Allocation Score (AS), used in earlier sections of the application, only uses the allocation scores at the `pre-defined' value of K=15,000. the  Panel C shows how either method of computing the IAS (y-axis, again in blue circles and orange squares) is correlated with AS (x-axis, computed at K=15,000). Every point represents the AS and IAS for one model. Note that the IAS centered at 15,000 are much more closely correlated  with the AS values, which makes sense as this version of the IAS assigns higher weights to values of the IAS that are closer to the single K at which the AS scores were computed.">>=
+p3 <- slim_alloscore_2021.12.20 |>
   group_by(model, K) |>
   summarize(`Allocation score` = sum(components)) |>
-  mutate(model = factor(model, levels = ias$model)) |>
+  mutate(model = factor(model, levels = rev(ias$model))) |>
   ggplot(aes(x=K, y=`Allocation score`, color=model, linetype=model)) +
-  geom_line()
+  geom_line() +
+  theme(legend.position = c(0.01,.99), legend.justification = c(0,1),
+        legend.background=element_rect(fill = alpha("white", 0.2)),
+        legend.title = element_blank(), legend.text = element_text(size=7))
+
+cowplot::plot_grid(p3, p2, p1,
+                   nrow=3,
+                   align = "h",
+                   labels = "AUTO")
 @
 
 
