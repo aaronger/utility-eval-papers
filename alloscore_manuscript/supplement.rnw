@@ -448,8 +448,9 @@ so that $K \in (q^{-}_{F_T,\tau^{\star}}, q^{+}_{F_T,\tau^{\star}})$ and all com
 zero density at points $x_i \in (q^{-}_{F_i,\tau^{\star}}, q^{+}_{F_i,\tau^{\star}})$ and $\sum x_i = K$.
 \end{itemize}
 
-We also want to be able to decribes what further ``post-processing'' steps are required to find an approximate Bayes act in the set
-$\undertilde{\bm{F}}^{-1}(I_{\overline{k}})$ where $\overline{k}$ is the final iteration step index.
+We also want to be able to decribe what further ``post-processing'' steps are required to find a sufficiently good approximation
+to a Bayes act within the set
+$\undertilde{\bm{F}}^{-1}(I_{\overline{k}})$ where $I_{\overline{k}}$ is the terminal search interval for $\tau^{\star}$.
 
 \section{Properties and Properness}
 
