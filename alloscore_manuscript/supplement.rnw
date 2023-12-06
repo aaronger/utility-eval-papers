@@ -12,6 +12,7 @@
 \usepackage{cases}
 \usepackage{caption}
 \usepackage{soul}
+\usepackage{tikz}
 \usepackage{pgfplots}
 \usepackage{xr-hyper}
 \usepackage{hyperref}
@@ -209,7 +210,7 @@ representing levels of some costly counter-measure, such as procurement of monoc
 that can be taken at a cost $C>0$ per unit in preparation for $Y$.\footnote{
 Quantiles could also be derived for a problem in which $x$ and $Y$ take negative values, corresponding, for instance, to a decision
 maker that operates in a resource market and a that $Y$ takes negative values when ``recoveries'' outnumber incidence.  But we do not consider
-such scenarios in this work. 
+such scenarios in this work.	 
 }  A decision maker must decide on a level $x$ of investment in the
 counter-measure, and wishes to avoid excesses in either the expediture $Cx$ or the shortage $(y-x)_{+}$ when $Y=y$ is
 realized. To formalize the trade-off between these potential excesses we quantify the loss associated with a unit of
@@ -409,32 +410,46 @@ respectively, as the representing probability level and find Bayes acts within t
 $\undertilde{\bm{F}}^{-1}(\tau^{\star})$ (by solving the linear program 
 $\sum_{x \in \undertilde{\bm{F}}^{-1}(\tau^{\star})}x_i = K$).
 
-Otherwise, by evaluating $TQ_F$ at $\tau_M = \frac{1}{2}\left(\tau_L + \tau_U\right)$ we can replace $I_1$ with the interval
+Otherwise, by evaluating $TQ_F$ at $\tau_M = \frac{1}{2}\left(\tau_L + \tau_U\right)$ we can replace $I_1$ with one of its 
+halves
 \begin{align}
 I_2 = 
 \begin{cases}
 [\tau_L, \tau_M] & \text{ if } K < q^{-}_{F_T,\tau_M} \\
-[\tau_M, \tau_U] & \text{ if } K \geq q^{-}_{F_T,\tau_M}.
+[\tau_M, \tau_U] & \text{ if } K \geq q^{-}_{F_T,\tau_M}
+\end{cases}
+\end{align}
+which also contains $\tau^{\star} = F_T(K)$. This follows from the definition $q^{-}_{F_T,\tau_M} := \min\{x \mid F_T(x) \geq \tau_M\}$, 
+according to which
+\begin{align}
+\begin{cases}
+K < q^{-}_{F_T,\tau_M} \text{ implies } \tau^{\star} = F_T(K) < \tau_M  \\
+K \geq q^{-}_{F_T,\tau_M} \text{ implies } \tau^{\star} = F_T(K) \geq \tau_M.
 \end{cases}
 \end{align}
 
 Iterating this process we obtain a sequence $\{I_k\}, k=1,2,\ldots$ of intervals of widths 
 $\left|I_k \right| = 2^{1-k}\left|I_1 \right|$ which either terminates at one of the scenarios 
 ($\bullet$), ($\bullet\!-$), or ($-\!\bullet$), or provides infinite sequences $\{\tau_{L,k}\}$ and $\{\tau_{U,k}\}$ converging
-to $\tau^{\star}$ from below and above. 
+to $\tau^{\star}$ from below and above. Note that this algorithm is somewhat more delicate than the usual ``bisection'' algorithm which
+would involve bisecting intervals in the domain of $F_T$ to find a root.
 
-In the generic case of an infinite $\{I_k\}$, we need to define practical stopping criteria for each of three possible behaviours of 
-$F_T$ at $K$:
-\begin{samepage}
+In the generic case of an infinite $\{I_k\}$, we need to define practical stopping criteria for the possible limit behaviours of 
+$F_T(K \pm \varepsilon)$ as $\varepsilon \searrow 0$:
 \begin{itemize}
-\item[($\,\mathrlap{\,\bullet}{\diagup}\,$)] $\tau^{\star} = F_T(K-)$ and $TQ_F(\tau^{\star}) = \{K\}$ (that is, if $F_T$ is continuous and strictly increasing at $K$)
-\item[(\raisebox{-.5ex}{$-$}\!\!\raisebox{.5ex}{$\bullet\!-$})] $F_T$ has a point mass at $K$
-\item[($-\!\!\!\bullet\!\!\!-$)] $K \in (q^{-}_{F_T,\tau^{\star}}, q^{+}_{F_T,\tau^{\star}})$ (that is, all component forecasts $F_i$ have zero density at points $x_i \in (q^{-}_{F_i,\tau^{\star}}, q^{+}_{F_i,\tau^{\star}})$ and $\sum x_i = K$).
+\item[($\mathrlap{\,\bullet}{\,/}\,$)] $F_T(K - \varepsilon) < F_T(K-) = F_T(K) < F_T(K + \varepsilon)$
+(so that $\tau^{\star} = F_T(K-)$ and $TQ_F(\tau^{\star}) = \{K\}$)
+\item[($/\!\!\raisebox{.9ex}{$\bullet$\!-}$)] $F_T(K - \varepsilon) < F_T(K-) = F_T(K) = F_T(K + \varepsilon)$
+\item[($\raisebox{-.9ex}{-\!$\bullet$}\!\!/$)] $F_T(K - \varepsilon) = F_T(K) < F_T(K + \varepsilon)$
+\item[($\raisebox{-.9ex}{\phantom{-}\!$\bullet$}\!\!/$)] $F_T(K - \varepsilon) \leq F_T(K-) < F_T(K) < F_T(K + \varepsilon)$
+\item[($\,\bullet\!\text{-}$)] $F_T(K - \varepsilon) \leq F_T(K-) < F_T(K) = F_T(K + \varepsilon)$
+\item[($\text{-}\!\!\bullet\!\!\text{-}$)]  $F_T(K - \varepsilon) = F_T(K) = F_T(K + \varepsilon)$
+so that $K \in (q^{-}_{F_T,\tau^{\star}}, q^{+}_{F_T,\tau^{\star}})$ and all component forecasts $F_i$ have 
+zero density at points $x_i \in (q^{-}_{F_i,\tau^{\star}}, q^{+}_{F_i,\tau^{\star}})$ and $\sum x_i = K$.
 \end{itemize}
-\end{samepage}
 
-
-
+We also want to be able to decribes what further ``post-processing'' steps are required to find an approximate Bayes act in the set
+$\undertilde{\bm{F}}^{-1}(I_{\overline{k}})$ where $\overline{k}$ is the final iteration step index.
 
 \section{Properties and Properness}
 
