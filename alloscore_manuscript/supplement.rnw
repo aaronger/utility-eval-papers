@@ -427,12 +427,13 @@ K < q^{-}_{F_T,\tau_M} \text{ implies } \tau^{\star} = F_T(K) < \tau_M  \\
 K \geq q^{-}_{F_T,\tau_M} \text{ implies } \tau^{\star} = F_T(K) \geq \tau_M.
 \end{cases}
 \end{align}
+Note that $K \leq q^{-}_{F_T,\tau_M}$ would not imply $F_T(K) \leq \tau_M$ due to the possibility of a point mass at $K$.
 
 Iterating this process we obtain a sequence $\{I_k\}, k=1,2,\ldots$ of intervals of widths 
 $\left|I_k \right| = 2^{1-k}\left|I_1 \right|$ which either terminates at one of the scenarios 
 ($\bullet$), ($\bullet\!-$), or ($-\!\bullet$), or provides infinite sequences $\{\tau_{L,k}\}$ and $\{\tau_{U,k}\}$ converging
-to $\tau^{\star}$ from below and above. Note that this algorithm is somewhat more delicate than the usual ``bisection'' algorithm which
-would involve bisecting intervals in the domain of $F_T$ to find a root.
+to $\tau^{\star}$ from below and above. Note that this algorithm is somewhat more delicate than the corrsponding ``bisection'' algorithm 
+for finding a root of $F_T(x) - \tau$ for a given $\tau$.
 
 In the generic case of an infinite $\{I_k\}$, we need to define practical stopping criteria for the possible limit behaviours of 
 $F_T(K \pm \varepsilon)$ as $\varepsilon \searrow 0$:
