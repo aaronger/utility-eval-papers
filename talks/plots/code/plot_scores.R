@@ -1,12 +1,4 @@
-library(covidHubUtils)
-library(alloscore)
-library(tidyverse)
-library(geofacet)
-library(latex2exp)
-library(here)
-
-source("_targets.R")
-save_dir <- file.path("output/")
+source(here(codepath,"setup.R"))
 
 score_viz <- tribble(
   ~palette,  ~linetypes, ~model,

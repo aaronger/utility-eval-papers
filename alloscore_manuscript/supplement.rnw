@@ -3,6 +3,7 @@
 \usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
 
 \usepackage{amsmath, amsfonts, amssymb, mathtools}
+\usepackage{accents}
 \usepackage{graphicx}
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
@@ -10,10 +11,22 @@
 \usepackage{bm}
 \usepackage{cases}
 \usepackage{caption}
+\usepackage{soul}
+\usepackage{tikz}
 \usepackage{pgfplots}
 \usepackage{xr-hyper}
 \usepackage{hyperref}
 \externaldocument{alloscore-application}
+
+\usepackage{enumitem}
+\newlist{todolist}{itemize}{2}
+\setlist[todolist]{label=$\square$}
+\usepackage{pifont}
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+\newcommand{\done}{\rlap{$\square$}{\raisebox{2pt}{\large\hspace{1pt}\cmark}}%
+\hspace{-2.5pt}}
+\newcommand{\wontfix}{\rlap{$\square$}{\large\hspace{1pt}\xmark}}
 
 \DeclareMathOperator*{\argmin}{argmin}
 \DeclareMathOperator{\short}{sh}
@@ -73,27 +86,41 @@ We briefly address some technical and methodological points in the main text, re
 more thorough discussion.
 \end{abstract}
 
-\begin{itemize}
-	\item From 2.2.1, why are Bayes act scoring rules proper?
+\begin{todolist}
+	\item[\done] From 2.2.1, why are Bayes act scoring rules proper?
 	\item Explain ``All proper scoring rules for probabilistic forecasts have an explicit link to a loss function'' from discussion.
 	\item DGP as optimal for any decision problem, ref Diebold, Gunther, Tay p. 866; and if forecasts are ideal, then forecasts with better information always yield better decisions, ref Holzmann and Eulert, Corr 2.
-	\item For 2.2.2, how to get quantile representation of Bayes act using Lagrange multiplier, assuming smooth, never-zero densities well behaved at $x=0$. Work out exponetial example. Refer to methods paper for general case.
-	\item Derivation of quantile scoring rule with quantile as Bayes act for C/L problem, assuming never-zero densities. 
+	\item[\done] For 2.2.2, how to get quantile representation of Bayes act using Lagrange multiplier, \st{assuming smooth, never-zero densities well behaved at $x=0$.} Work out exponential example. Refer to methods paper for general case.
+	\item[\done] Derivation of quantile scoring rule with quantile as Bayes act for C/L problem, \st{assuming never-zero densities}. 
+	\item algorithmic details
+	\begin{todolist}
+		\item use of \texttt{distfromq} to get from quantiles to distribution functions
+		\item \texttt{alloscore}
+		\item implications for propriety. do quantiles elicited by \texttt{distfromq} $\hookrightarrow$ \texttt{alloscore} process align with ``real'' quantiles? the alloscore is proper if distribution functions F are handed to us; is it still proper given our algorithm situation?
+	\end{todolist}
+
 	\item Descriptions of 
-		\begin{itemize}		
+		\begin{todolist}		
 			\item CRPS as average quantile score across $C \in [0/L]$ decision problems
 			\item IS as average of two quantile scores with a prob-width penalty
 			\item WIS as average quantile score across 23 C/L problems.
-		\end{itemize}
+		\end{todolist}
 	\item Sketch of scoring for decision problems involving both cost and constraint.
-	
-\end{itemize}
+	\item  Derivation of case 2 in formula for Oracle adjustment
+\end{todolist}
+
+\section{Introduction}
+\label{sec:intro}
+
+We briefly address some technical and methodological points in the main text. We begin in section \ref{sec:shortage} by formalizing the concept of a \emph{shortage} of resources and giving some key results about expected resource shortages under a distribution characterizing uncertainty about (future) levels of resource need. Resource shortages play a central role in the decision-making problems that give rise to the quantile loss and the allocation score, which we discuss in sections \ref{sec:quantiles_shortage} and \ref{sec:bayes-quantiles} respectively. Section \ref{sec:numeric} gives details on the numerical methods that we use to calculate allocation scores, including some special considerations for settings where forecasts are represented by a finite collection of predictive quantiles, such as the application to forecasts of hospitalizations due to COVID-19 in section 3 of the article.
 
 \section{Shortages}
 \label{sec:shortage}
 
-For convenience, we write $u_{+} = \max\{0,u\}$, and refer to $(y - x)_{+}$ as a \emph{shortage} in accordance with our
-typical use of $y$ for a demand or need and $x$ for an available supply. To regard shortage as a function depending on only one 
+We use $y$ to denote the demand or need for resources and $x$ to denote the level of available resources.
+The resource shortage is the amount by which resource demand exceeds supply. 
+For convenience, we write $u_{+} = \max\{0,u\}$, i.e., ``the positive part'' of $u$.
+With this notation, the shortage is written as $(y - x)_{+}$. To regard shortage as a function of only one 
 variable $x$ or $y$, with the other being a parameter describing the dependence we can write 
 $(y - x)_{+} = \short^{y}(x) = \short_{x}(y)$.  Note that 
 $\short^{y}(x)$ and $\short_{x}(y)$ are both convex functions and ``mirror'' each other:
@@ -101,6 +128,7 @@ $\short^{y}(x)$ and $\short_{x}(y)$ are both convex functions and ``mirror'' eac
 
 \pgfplotsset{compat=1.16} % Set the compatibility of pgfplots
 
+\begin{figure}
 \begin{tikzpicture}
 \begin{axis}[
     axis lines=middle, % Center the axis
@@ -127,14 +155,17 @@ node[pos=.7,anchor=north west] {$\short_{x_0}(y) = (y - x_0)_{+}$};
 
 \end{axis}
 \end{tikzpicture}
+\caption{Shortage functions. $\short^{y_0}(x)$, shown in blue, gives the resource shortage as a function of the level of available resources, $x$, for a fixed value of resource demand $y_0$. $\short_{x_0}(y)$, shown in red, gives the resource shortage as a function of resource demand, $y$, for a fixed value of resource supply $x_0$.}
+\end{figure}
 
-Let $Y$ be a random variable with distribution $F$. The random shortage $(Y-x)_{+}$ can be thought of as either a 
+Let $Y$ be a random variable with distribution $F$ representing the unknown level of resource demand. The random shortage $(Y-x)_{+}$ can be thought of as either a 
 real-valued random variable $\short_x(Y)$ for every $x$, or a function-valued random variable $\short^Y$ whose value
-for any realization $Y=y$ is a convex function $\short^y(x)$ of $x$.  We see then that the 
+for any realization $Y=y$ is a convex function $\short^y(x)$ of $x$.  In the sections below, we will work with the 
 \emph{expected shortage}\footnote{A more natural sounding term for $(y-x)_{+}$ might have been \emph{shortfall}. Unfortunately 
 \emph{expected shortfall} has long been used in finance to refer to quantities more 
 closely related to the \emph{conditional} expectation $\Ex_F [Y-x \mid Y - x \geq 0] = \Ex_F [(Y-x)_{+}]/\mathbb{P}_F\{Y \geq x\}$.}
-$\Ex_F [(Y-x)_{+}] = \Ex_F[\short^Y](x)$ (assuming it exists) is also convex (and therefore continuous) in $x$ by integrating the convexity inequality for
+$\Ex_F [(Y-x)_{+}] = \Ex_F[\short^Y](x)$.
+Assuming that this expected value exists, which is the case as long as the distribution $F$ is well behaved, we can see that $\Ex_F[\short^Y](x)$ is also convex (and therefore continuous) in $x$ by integrating the convexity inequality for
 $\short^y(x)$ with respect to the probability measure $dF(y)$:
 \begin{align}
 	\Ex_F[\short^Y](\lambda x_1+(1-\lambda) x_2) &= \int \short^y(\lambda x_1+(1-\lambda) x_2)dF(y) \nonumber \\
@@ -143,13 +174,13 @@ $\short^y(x)$ with respect to the probability measure $dF(y)$:
 \end{align}
 Convexity is also shown by directly exhibiting the the left and right derivatives of $\Ex_F[\short^Y](x)$:
 \begin{align}
-D_{-}\Ex_F [(Y-x)_{+}] &= \lim_{h \searrow 0}\frac{1}{h}\Ex_F [(Y - x)_{+} - (Y - x - h)_{+}] \\
+D_{-}\Ex_F [(Y-x)_{+}] &= \lim_{h \searrow 0}\frac{1}{h}\Ex_F [(Y - x)_{+} - (Y - (x - h))_{+}] \\
 &= \lim_{h \searrow 0}\frac{1}{h}\int_{[x\mathrlap{-h, x]}} (x - h - y) dF(y) - 
 \lim_{h \searrow 0}\frac{1}{h}\int_{(x\mathrlap{,\infty)}} h dF(y)  \\
 &= \lim_{h \searrow 0}\frac{1}{h}\int_{[x\mathrlap{-h, x]}} - h dF(y) - 1 + F(x) \label{eqn:dsfllim} \\
 &= -(F(x) - F(x-)) - 1 + F(x) \quad \left(\text{where } F(x-) := \lim_{t \nearrow x} F(t)\right)\\
 &= F(x-) - 1  \label{eqn:dsfl} \\
-D_{+}\Ex_F [(Y-x)_{+}] &= \lim_{h \searrow 0}\frac{1}{h}\Ex_F [(Y - x + h)_{+} - (Y - x)_{+}] \\
+D_{+}\Ex_F [(Y-x)_{+}] &= \lim_{h \searrow 0}\frac{1}{h}\Ex_F [(Y - (x + h))_{+} - (Y - x)_{+}] \\
 &= \lim_{h \searrow 0}\frac{1}{h}\int_{[x\mathrlap{, x+h]}} (x - y) dF(y) - 
 \lim_{h \searrow 0}\frac{1}{h}\int_{(x\mathrlap{+h,\infty)}} h dF(y)  \\
 &= \lim_{h \searrow 0}\frac{1}{h}\int_{[x\mathrlap{, x+h]}} 0 dF(y) - 1 + F(x) \label{eqn:dsfrlim} \\
@@ -157,7 +188,7 @@ D_{+}\Ex_F [(Y-x)_{+}] &= \lim_{h \searrow 0}\frac{1}{h}\Ex_F [(Y - x + h)_{+} -
 \end{align}
 where in \eqref{eqn:dsfllim} and \eqref{eqn:dsfrlim} we are able to replace the integrands with their values at $x$ because 
 they are bounded over the shrinking regions of integration $[x-h,x]$ and $[x,x+h]$. Convexity follows since 
-$D_{-}\Ex_F[\short^Y](x) \leq D_{+}\Ex_F[\short^Y](x)$ by the definition of $F(x)$ and $F(x-)$. This shows that if $F$ does not 
+$D_{-}\Ex_F[\short^Y](x) \leq D_{+}\Ex_F[\short^Y](x)$ by the definition of $F(x)$ and $F(x-)$. This also shows that if $F$ does not 
 have a point mass at $x$, we have 
 \begin{align}
 	\frac{d}{dx} \Ex_F [(Y-x)_{+}] = F(x)-1,
@@ -174,12 +205,16 @@ which assumes $Y$ has an adequately well-behaved density $f_Y$.
 \label{sec:quantiles_shortage}
 
 We recall how quantiles arise as solutions to a probabilistic decision problem. Let $Y$ be a random variable
-representing the future level of an undesirable outcome such as severe COVID incidence. Let $x$ be a decision variable
-representing the possible levels of some costly counter-measure, such as procurement of monoclonal antibody treatments,
-that can be taken at a cost $C$ per unit in preparation for $Y$.  A decision maker must decide on a level $x$ of investment in the
+representing the future level of an undesirable outcome such as severe COVID incidence. Let $x \in \mathbb{R}_+$ be a decision variable
+representing levels of some costly counter-measure, such as procurement of monoclonal antibody treatments,
+that can be taken at a cost $C>0$ per unit in preparation for $Y$.\footnote{
+Quantiles could also be derived for a problem in which $x$ and $Y$ take negative values, corresponding, for instance, to a decision
+maker that operates in a resource market and a that $Y$ takes negative values when ``recoveries'' outnumber incidence.  But we do not consider
+such scenarios in this work.	 
+}  A decision maker must decide on a level $x$ of investment in the
 counter-measure, and wishes to avoid excesses in either the expediture $Cx$ or the shortage $(y-x)_{+}$ when $Y=y$ is
 realized. To formalize the trade-off between these potential excesses we quantify the loss associated with a unit of
-shortage by a constant $L>C$ (which assumes that the counter-measure has some economic value) and combine the total shortage loss with expenditure into a \emph{loss function}\footnote
+shortage by a constant $L>C$ (which assumes that the counter-measure has some practical value) and combine the total shortage loss with expenditure into a \emph{loss function}\footnote
 {This does involve a confusing use of the word \emph{loss} to refer to two different quantities, but this seems to be
 an ingrained and unavoidable habit in the literature.}
 \[
@@ -213,7 +248,8 @@ which rearranges with $\alpha = 1-C/L$ to
 \begin{align}
 F(x^{\star}) \geq \alpha \geq F(x^{\star}-). \label{eqn:F-alpha-ineq}
 \end{align}
-Note that because $F(x)$ and $F(x-)$ are right and left continuous, repectively, the set $\{x \mid F(x) \geq \alpha\}$ is closed
+Note that because $F(x)$ and $F(x-)$ are right and left continuous, repectively, and $0<\alpha <1$, the set 
+$\{x \mid F(x) \geq \alpha\}$ is closed
 on the left and the set $\{x \mid \alpha \geq F(x-)\}$ is closed on the right.
 Therefore, \eqref{eqn:F-alpha-ineq} implies that
 \begin{align}
@@ -221,10 +257,36 @@ Therefore, \eqref{eqn:F-alpha-ineq} implies that
 \end{align}
 We call $q^{-}_{\alpha, F} := \min\{x \mid F(x) \geq \alpha\}$ and $q^{+}_{\alpha, F} := \max\{x \mid F(x-) \leq \alpha\}$
 the left and right quantiles of $F$ (for probability level $\alpha$) and any element $q_{\alpha, F} \in [q^{-}_{\alpha, F}, q^{+}_{\alpha, F}]$
-a quantile of $F$.  Thus $x^{\star}$ minimizes the expected loss \eqref{eqn:expQloss} and gives an optimal sultion to the decision problem
-if and only if it is a quantile $q_{\alpha, F}$.
+a quantile of $F$.  The \emph{quantile function} for $F$, which we write as either $Q_F(\alpha)$ or $F^{-1}(\alpha)$, is the 
+\emph{set-valued} function that maps $\alpha \in (0,1)$ to to the set $[q^{-}_{\alpha, F}, q^{+}_{\alpha, F}]$. 
+Thus $x^{\star}$ minimizes the expected loss \eqref{eqn:expQloss} and gives an optimal solution to the decision problem
+if and only if $x^{\star} \in Q_F(\alpha)$.
 
-Quantiles equivalently arise when the decision problem is defined in terms of the random \emph{oportunity} loss 
+\subsection{Quantile functions}
+\label{sec:quantile-functions} 
+
+For future reference, we record several key properties of quantile functions. 
+
+The probability levels $\{\alpha_i\}$ for which $\#Q_F(\alpha_i)>1$ form a discrete subset of $(0,1)$ and correspond to
+the non-zero width intervals $[q_{\alpha_i,F}^{-},q_{\alpha_i,F}^{+}]$ where $F$ is constant with values 
+$\{\alpha_i\}$.  Conversely, if $F$ is strictly increasing on a (Borel) set $A\subset \mathbb{R}$, then the restriction
+$Q_{F}\big|_{F(A)}=F^{-1}\big|_{F(A)}$ of $Q_F$ to $F(A)$ is in fact a real-valued function which is left-continuous
+and provides an inverse to $F$ on $F(A)$. If the the support $\mathrm{supp}(F) = \{x \mid 0<F(x)<1\}$ of $F$ is such an
+$A$, then extending $F^{-1}$ by $F^{-1}(0)=\inf(\mathrm{supp}(F))$ and $F^{-1}(1)=\sup(\mathrm{supp}(F))$ provides an
+inverse to $F$ on $F(\mathbb{R})\subset [0,1]$. If $F$ has a point mass at $x\in A$, so that
+$\{\alpha \mid F(x-)< \alpha < F(x)\}$ is a non-empty set disjoint from $F(A)$, then $Q_F$ takes the constant value $x$ 
+on the closure $\{\alpha \mid F(x-)\leq \alpha \leq F(x)\}$. Conversely, if $F$ has no discrete component on $A$, 
+then $Q_{F}\big|_{F(A)}$ is strictly increasing.
+
+Moreover, it can be said that $Q_F$ is increasing as a set-valued function on $\mathbb{R}$ in the generalized sense that 
+$(q_{\alpha, F} - q_{\beta, F})(\alpha-\beta) \geq 0$ whenever
+$q_{\alpha, F} \in Q_F(\alpha)$ and $q_{\beta, F} \in Q_F(\beta)$, that is, the set 
+$\mathrm{graph}(Q_F) = \{(\alpha, q) \mid q \in Q_F(\alpha)\}$ has no downward sloping secants. Conversely, given such an 
+increasing set-valued function $Q$ on $(0,1)$, we can construct a right-continuous function $F_Q$ from $\mathbb{R}$ to $[0,1]$ 
+which will be the cdf of the random variable $Y_Q := \min(Q(U))$ where $U \sim \mathrm{Unif}[0,1]$.
+
+\subsection{Opportunity relative to an oracle}
+Quantiles equivalently arise when the decision problem is defined in terms of the random \emph{opportunity} loss 
 \begin{align}
 l_o(x,Y) := l(x,Y) - l(Y,Y) = Cx + L(Y-x)_{+} - CY \label{eqn:opp-loss}
 \end{align}
@@ -235,16 +297,21 @@ constant in $x$, leading again to the inequalities \eqref{eqn:expQd-ineq}.
 Opportunity loss \eqref{eqn:opp-loss} rearranges to 
 \begin{align}
 l_o(x,Y) &= C(x - Y)_{+} + (L-C)(Y-x)_{+} \\
-&= L(1-\alpha)(x - Y)_{+} + L\alpha(Y-x)_{+},
+&= L(1-\alpha)(x - Y)_{+} + L\alpha(Y-x)_{+} \\
+&= L(\alpha - \mathbf{1}\{Y < x\})(Y-x),
 \end{align}
 a form in which it is often called \emph{pinball} loss, despite its graph being an unlikely pinball trajectory for $\alpha \neq 1/2$.
 
 
 \section{Allocation Bayes acts as vectors of marginal quantiles.}
+\label{sec:bayes-quantiles}
 
-Here we explain why the Bayes act $x_i^{F,K}$ for the allocation
-problem \eqref{AP} can be represented as a vector of quantiles for the marginal forecast distributions $F_i$ at a
-single probability level $\tau^{F,K}$, that is, $x_i^{F,K} = F_i^{-1}(\tau^{F,K})$. 
+Here we show that the Bayes act $x^{F,K} = (x_1^{F,K},\ldots,x_N^{F,K})$ for a forecast $F$, corresponding to the
+allocation problem \eqref{eqn:loss_fn} (in Section \ref{sec:methods.detailed.specific_allocation} in the main text) can
+be represented as a vector of quantiles for the marginal forecast distributions $F_i$ at a single probability level
+$\tau^{F,K}$, that is, $x_i^{F,K} = q_{F_i,\tau^{F,K}}$. An immediate consequence used in the examples in Section \ref
+{sec:methods.overview} in the main text is that if $F_i = \mathrm{Exp}(1/\sigma_i)$ for all $i$, then the Bayes act is
+proportional to $(\sigma_1,\ldots,\sigma_N)$, since $q_{\mathrm{Exp}(1/\sigma),\tau} = -\sigma \log(1-\tau)$.
 
 For an arbitrary allocation vector $x \in \mathbb{R}^N_{+}$ the expected loss
 \begin{align}
@@ -256,8 +323,8 @@ have the following necessary condition for $x^{\star} \in \mathbb{R}^N_{+}$ to b
 allocated to location $i$ are reallocated to location $j$, expected shortage will increase in location
 $i$ by at least as much as it decreases in location $j$. That is,
 \begin{align}
-\mathbb{E}_{F_i}[(Y_i - x^{\star}_i - \delta)_{+}] - \mathbb{E}_{F_i}[(Y_i - x^{\star}_i)_{+}] \geq 
-\mathbb{E}_{F_j}[(Y_j - x^{\star}_j)_{+}] - \mathbb{E}_{F_j}[(Y_j - x^{\star}_j + \delta)_{+}]. \label{eqn:ASoptimal1}
+\mathbb{E}_{F_i}[(Y_i - (x^{\star}_i - \delta))_{+}] - \mathbb{E}_{F_i}[(Y_i - x^{\star}_i)_{+}] \geq 
+\mathbb{E}_{F_j}[(Y_j - x^{\star}_j)_{+}] - \mathbb{E}_{F_j}[(Y_j - (x^{\star}_j + \delta))_{+}]. \label{eqn:ASoptimal1}
 \end{align}
 Since the expected shortages in $i$ and $j$ have right and left derivatives at any $x_i$ and $x_j$ (see Section \ref{sec:shortage}), we can
 divide \eqref{eqn:ASoptimal1} by $\delta$ and take limits for $\delta \searrow 0$ to get
@@ -271,16 +338,120 @@ Scaling by $L$ to match the right and left partial derivatives of $\mathbb{E}_{F
 L(1-F_i(x^{\star}_i-)) \geq L(1-F_j(x^{\star}_j)). \label{eqn:RLineq2}
 \end{align}
 Inequalities \eqref{eqn:RLineq} and \eqref{eqn:RLineq2} remain true with $i$ and $j$ reversed. They hold with $i=j$ as well by the
-definition of $F_i(x^{\star}_i-)$. Therefore, a single number $\lambda$ (a \emph{Lagrange multiplier}) exists such that
+definition of $F_i(x^{\star}_i-)$. Therefore, a number $\lambda$ (a \emph{Lagrange multiplier}) exists, which is independent of $i$,
+such that
 \begin{align}
-L(1-F_i(x^{\star}_i-)) \geq \lambda \geq L(1-F_i(x^{\star}_i)), \quad \text{for all } i \in 1,\ldots,N
+L(1-F_i(x^{\star}_i-)) \geq \lambda \geq L(1-F_i(x^{\star}_i)), \quad \text{for all } i \in 1,\ldots,N.
 \end{align}
-that is,
+That is,
 \begin{align}
 F_i(x^{\star}_i) \geq 1 - \lambda/L \geq F_i(x^{\star}_i-),
 \end{align}
 which says (c.f. discussion after \eqref{eqn:F-alpha-ineq} and \eqref{eqn:set-alpha-ineq}) that $x^{\star}_i$ is a quantile $q_{\tau,F_i}$ for
 $\tau = 1 - \lambda/L$.
+
+The constraint now determines $\tau$ (and hence the Bayes act) through $\sum_{i=1}^{N} q_{\tau,F_i} = K.$
+This equation can be restated as the requirement that 
+\begin{align}
+K \in TQ_F(\tau) \label{eqn:tau-inclusion}
+\end{align}
+where the set-valued function
+\begin{align}
+TQ_F(\tau) := \sum_{i=1}^{N} Q_{F_i}(\tau) = \left[\sum_{i=1}^{N} q^{-}_{\tau,F_i}, \sum_{i=1}^{N} q^{+}_{\tau,F_i}\right]
+\end{align}
+is defined using interval addition $[a,b] + [c,d] = [a+c, b+d]$. (Note that the letter $T$ is being used to connote a ``totalling'' 
+operation, as it often is in survey sampling literature.)
+
+$TQ_F$ satisfies the conditions mentioned in section \ref{sec:quantile-functions} for being a quantile function, and so there
+is a random variable $TY_F$ with cdf $F_{T} := F_{TQ_F}$.  From this perspective, the problem of finding $\tau$ becomes the calculation 
+of $F_{T}(K) = \mathbb{P}(TY_F \leq K)$, making clear the existence of a solution $\tau^{\star}$ to \eqref{eqn:tau-inclusion}. This also
+yields the interesting formal equation for the Bayes act
+\begin{align}
+\undertilde{\bm{F}}(x^{F,K}) = \mathbf{1}_N F_{T}(K),
+\end{align}
+where $\mathbf{1}_N: \mathbb{R} \to \mathbb{R}^N$ is the linear map that takes $a$ to the $N$-vector $(a,\ldots,a)^T$ and the vector of marginal 
+cdfs $\undertilde{\bm{F}} := (F_1,\ldots,F_N)$ is a map from $\mathbb{R}^N$ to $\mathbb{R}^N$. 
+With this notation we can write \eqref{eqn:tau-inclusion} as
+\begin{align}
+K \in TQ_F\left(\frac{1}{N} \mathbf{1}^T \undertilde{\bm{F}}(x^{F,K})\right),
+\end{align}
+which leads conceptually to the iterative numerical method of solving for $\tau$ and $x^{F,K}$ discussed next in section \ref{sec:numeric}. 
+
+
+Two awkward features of the quantile representation of the Bayes act can arise.  First, point masses in the $F_i$ create point masses for $F_T$ which may cause $\tau^{\star}$ to not be the unique solution to \eqref{eqn:tau-inclusion}. Secondly, if more than 
+one $Q_{F_i}(\tau^{\star})$ is a positive-width interval, then the Bayes act will not be unique in these coordinates, and generically
+not all points in the $Q_{F_i}(\tau^{\star})$ will be the coordinate of a Bayes act.
+
+It is important to note that $\lambda$ depends on the forecast $F$ and the constraint level $K$. Thus while $\lambda = L(1-\tau)$ can be
+interpreted as a kind of ``cost'' imposed by the constraint in the allocation problem which is analogous to $C = L(1-\alpha)$ in the  
+the cost-lost problem of section \ref{sec:quantiles_shortage}, it does not serve to define the allocation loss function in the way that $C$ defines \eqref{eqn:expQloss}. $\lambda$ is rather a parameter that must be found, given the pair $F$ and $K$.
+
+\section{Numerical computation of allocation scores}
+\label{sec:numeric}
+
+Suppose we have established that $\tau^{\star} = F_T(K)$ lies in the interval $I_1 = [\tau_L, \tau_U]$ with $\tau_L < \tau_U$,
+that is, $K \in [q^{-}_{F_T,\tau_L}, q^{+}_{F_T,\tau_U}]$.
+From section \ref{sec:quantile-functions}, we know that the set 
+$TQ_F(\tau_L) \cup TQ_F(\tau_U) \subset [q^{-}_{F_T,\tau_L}, q^{+}_{F_T,\tau_U}]$
+is arranged in exactly one of the following ways: 
+\begin{itemize}
+\item[($\bullet \bullet$)] $TQ_F(\tau_L) \cap TQ_F(\tau_U) = \varnothing$ (and $q^{+}_{F_T,\tau_L} < q^{-}_{F_T,\tau_U}$)
+\item[($\bullet$)] $TQ_F(\tau_L) = \{K\} = TQ_F(\tau_U)$ (a point mass at $K$)
+\item[($\bullet\!-$)] $TQ_F(\tau_L) = \{q^{-}_{F_T,\tau_U}\} \subsetneq TQ_F(\tau_U)$ (a point mass at $q^{-}_{F_T,\tau_U}$)
+\item[($-\!\bullet$)] $TQ_F(\tau_L) \supsetneq \{q^{+}_{F_T,\tau_L}\} = TQ_F(\tau_U)$ (a point mass at $q^{+}_{F_T,\tau_U}$)
+\end{itemize}
+ 
+In the case ($\bullet$), we can immediately take 
+$\tau^{\star}=\tau_U$ as the probability level defining the allocation Bayes act.
+In the cases
+($\bullet\!-$), and ($-\!\bullet$), which imply the presence of a point mass in one or more of the 
+component forecasts adjacent to a region of zero density in all components, we can take $\tau^{\star}=\tau_U$ or $\tau_L$, 
+respectively, as the representing probability level and find Bayes acts within the set 
+$\undertilde{\bm{F}}^{-1}(\tau^{\star})$ (by solving the linear program 
+$\sum_{x \in \undertilde{\bm{F}}^{-1}(\tau^{\star})}x_i = K$).
+
+Otherwise, by evaluating $TQ_F$ at $\tau_M = \frac{1}{2}\left(\tau_L + \tau_U\right)$ we can replace $I_1$ with one of its 
+halves
+\begin{align}
+I_2 = 
+\begin{cases}
+[\tau_L, \tau_M] & \text{ if } K < q^{-}_{F_T,\tau_M} \\
+[\tau_M, \tau_U] & \text{ if } K \geq q^{-}_{F_T,\tau_M}
+\end{cases}
+\end{align}
+which also contains $\tau^{\star} = F_T(K)$. This follows from the definition $q^{-}_{F_T,\tau_M} := \min\{x \mid F_T(x) \geq \tau_M\}$, 
+according to which
+\begin{align}
+\begin{cases}
+K < q^{-}_{F_T,\tau_M} \text{ implies } \tau^{\star} = F_T(K) < \tau_M  \\
+K \geq q^{-}_{F_T,\tau_M} \text{ implies } \tau^{\star} = F_T(K) \geq \tau_M.
+\end{cases}
+\end{align}
+Note that $K \leq q^{-}_{F_T,\tau_M}$ would not imply $F_T(K) \leq \tau_M$ due to the possibility of a point mass at $K$.
+
+Iterating this process we obtain a sequence $\{I_k\}, k=1,2,\ldots$ of intervals of widths 
+$\left|I_k \right| = 2^{1-k}\left|I_1 \right|$ which either terminates at one of the scenarios 
+($\bullet$), ($\bullet\!-$), or ($-\!\bullet$), or provides infinite sequences $\{\tau_{L,k}\}$ and $\{\tau_{U,k}\}$ converging
+to $\tau^{\star}$ from below and above. Note that this algorithm is somewhat more delicate than the corrsponding ``bisection'' algorithm 
+for finding a root of $F_T(x) - \tau$ for a given $\tau$.
+
+In the generic case of an infinite $\{I_k\}$, we need to define practical stopping criteria for the possible limit behaviours of 
+$F_T(K \pm \varepsilon)$ as $\varepsilon \searrow 0$:
+\begin{itemize}
+\item[($\mathrlap{\,\bullet}{\,/}\,$)] $F_T(K - \varepsilon) < F_T(K-) = F_T(K) < F_T(K + \varepsilon)$
+(so that $\tau^{\star} = F_T(K-)$ and $TQ_F(\tau^{\star}) = \{K\}$)
+\item[($/\!\!\raisebox{.9ex}{$\bullet$\!-}$)] $F_T(K - \varepsilon) < F_T(K-) = F_T(K) = F_T(K + \varepsilon)$
+\item[($\raisebox{-.9ex}{-\!$\bullet$}\!\!/$)] $F_T(K - \varepsilon) = F_T(K) < F_T(K + \varepsilon)$
+\item[($\raisebox{-.9ex}{\phantom{-}\!$\bullet$}\!\!/$)] $F_T(K - \varepsilon) \leq F_T(K-) < F_T(K) < F_T(K + \varepsilon)$
+\item[($\,\bullet\!\text{-}$)] $F_T(K - \varepsilon) \leq F_T(K-) < F_T(K) = F_T(K + \varepsilon)$
+\item[($\text{-}\!\!\bullet\!\!\text{-}$)]  $F_T(K - \varepsilon) = F_T(K) = F_T(K + \varepsilon)$
+so that $K \in (q^{-}_{F_T,\tau^{\star}}, q^{+}_{F_T,\tau^{\star}})$ and all component forecasts $F_i$ have 
+zero density at points $x_i \in (q^{-}_{F_i,\tau^{\star}}, q^{+}_{F_i,\tau^{\star}})$ and $\sum x_i = K$.
+\end{itemize}
+
+We also want to be able to decribe what further ``post-processing'' steps are required to find a sufficiently good approximation
+to a Bayes act within the set
+$\undertilde{\bm{F}}^{-1}(I_{\overline{k}})$ where $I_{\overline{k}}$ is the terminal search interval for $\tau^{\star}$.
 
 \section{Properties and Properness}
 
@@ -294,23 +465,33 @@ in preparation for an \emph{outcome} $y$.  A \emph{scoring rule} $S$ is a loss f
 is a probabilistic forecast $F$ of the outcome $y$ (or the statement of $F$ by a forecaster). Just as in 
 Section \ref{sec:quantiles_shortage}, given an action $F$, $S$ transforms a random outcome variable $Y$ into a random loss $S(F,Y)$. 
 We refer to the realized loss $S(F,y)$ as the \emph{score} of $F$ at $y$, and the process of evaluating $S(F,y_i)$ for
-a data set $\mathcal{Y}=\{y_i\}$ as \emph{scoring} $F$ against $\mathcal{Y}$.
+a data set $\mathcal{Y}=\{y_i\}$ as \emph{scoring} $F$ against $\mathcal{Y}$. Perhaps the most fundamental example of a scoring rule
+from a statistical perspective is the logarithmic score $S_{\log}(F,y) = -\log f(y)$ (where $f(y)$ is the density or the mass of $F$ at $y$
+if it exists and otherwise the mass), that is, the negative log-likelihood of $F$ interpreted as a parameter for the singleton 
+data set $\{y\}$. This frames a maximum likelihood estimate as the solution to a decision problem following the expected loss
+minimization principle introduced in Section \ref{sec:quantiles_shortage}.
 
-Decision theoretically, probabilistic forecasts are a unique kind of action in that they can be used to generate their own 
-(simulated) outcome data, against which they can be scored using $S$. $S$ therefore commits a probabilistic forecast $F$
-to the ``self-assessment'' $\Ex [S(F, Y^F)]$, where $Y^F \sim F$ is the random variable defined by sampling from $F$, as well
-to an assessment $\Ex [S(G, Y^F)]$ of any alternative forecast $G$.
+Decision theoretically, probabilistic forecasts are a unique kind of action in that they can be used to generate their
+own(simulated) outcome data, against which they can be scored using $S$. $S$ therefore commits a probabilistic forecast
+$F$ to the ``self-assessment'' $\Ex [S(F, Y^F)]$, where $Y^F \sim F$ is the random variable defined by sampling from
+$F$, as well to an assessment $\Ex [S(G, Y^F)]$ of any alternative forecast $G$. For $S_{\log}$ this self-assessment is
+the Shannon entropy $H(F) = -\int \log(f(x))f(x)dx$ of $F$, and adding to $H(F)$ the Kullback-Leibler (KL) divergence $D_
+{KL}(F,G) = -\int \log(g(x)/f(x))f(x)dx$ gives $F$'s assessment $\Ex [S_{\log}(G, Y^F)]$ of $G$. (That is, $\Ex [S_
+{\log}(G, Y^F)] = H(F) + D_{KL}(F,G)$.) The KL divergence is the degree to which $F$ perceives $G$ as divergent from
+being able to minimize expected loss in this particular forecaster decision problem (i.e. maximize expected log-likelihood).
+
 A natural consistency criterion for $S$ is that it does not commit $F$ to assessing any other 
 forecast $G$ as being better than $F$ itself, that is, that
 \begin{align}
-\Ex [S(F, Y^F)] \leq \Ex [S(G, Y^F)]
+\Ex [S(F, Y^F)] \leq \Ex [S(G, Y^F)] \label{eqn:prop_ineq}
 \end{align} 
 for any $F,G$. Otherwise, the optimal decision for some forecaster would be to state a forecast $G$ other than the forecast $F$
 which they believe describes the outcome $Y$.
-A scoring rule meeting this criterion is called \emph{proper}.  The inequality can also be written 
+A scoring rule meeting this criterion is called \emph{proper}.   The inequality can also be written 
 as $\Ex_F [S(F, Y)] \leq \Ex_F [S(G, Y)]$ where the subscript specifies the distribution of $Y$.  
 $S$ is \emph{strictly proper} when this inequality is sharp, in which case the \emph{only} optimal decision for a forecaster is to state
-the forecast they believe to be true.
+the forecast they believe to be true. The logarithmic scoring rule $S_{\log}$, for example, is strictly proper due to the 
+positivity of KL divergence.
 
 Another definition of $S$ being proper that is often used is that $\Ex[S(F,Y)]$ is lowest when $F$ is the true distribution of $Y$.  
 Under a flexible reading, this definition is equivalent to ours, but we find it problematic because it invites the mistaken impression that 
@@ -332,17 +513,30 @@ inevitable or impossible when the chances of rain appear to be 51\% or 49\%.
 
 Sometimes a scoring rule can be made proper with an added correction that penalizes 
 
-But given an auxiliary decision problem $\mathcal{D}_{\mathrm{Aux}} =\{\mathcal{X}, \mathcal{Y}, l(x,y)\}$, such as the
+But given an auxiliary decision problem $\mathcal{D}_{\mathrm{Aux}} = \{\mathcal{X}, \mathcal{Y}, l(x,y)\}$, such as the
 allocation problem from the main text or the cost-loss problem from Section \ref{sec:quantiles_shortage}, we can
 produce a scoring rule $S_l$ that is automatically proper using the Bayes act formalism introduced in Section \ref
 {sec:methods.detailed.specific_allocation}. This works by defining $S_l(F, y)$ as the value $l(x^F,y)$ already given by  
 $\mathcal{D}_{\mathrm{Aux}}$ for the Bayes act $x^F$; that is, the action which \emph{by design} will be assessed via
-the forecast $F$ to have an expected loss $\Ex[l(x^F,Y^F)]$ as low as possible.
+the forecast $F$ to have the lowest possible expected loss $\Ex[l(x^F,Y^F)]$. In statistical decision theory, 
+$\Ex[l(x^F,Y^F)]= \Ex_F[l(x^F,Y)]$ is 
+sometimes\footnote{A clear exposition of basic decision theory using this terminology is Chapter 8 of \cite{degroot2005optimal}.
+Unfortunately other influential sources use ``Bayes risk'' to refer to a wider variety of quantities. In 
+\cite{berger2013statistical} for example, the Bayes risk can be both the optimal expected loss 
+for $F$ (see p. 17) or the expected loss for a general $x$ with respect to $F$ (see p. 6).} 
+refered to as the \emph{Bayes risk} of $F$ relative to $\mathcal{D}_{\mathrm{Aux}}$.
 
 by mapping a forecast $F$ to an the action $x^F$
 
+The study of \emph{elicitability} also concerns this construction (see, e.g., \cite{gneiting2011making}), but from a
+different vantage point than ours. The question there is whether for a given map (called a \emph{functional} in
+statistics and a \emph{property} in computer science) $T(F)=x \in \mathcal{X}$ of distributions into the auxiliary
+action space, there exists a loss function $l$ such that $T(F) = x^F$ is the Bayes act for $l$ and the associated
+scoring rule $S_l(F,x)$ is strictly proper. Such an $l$ is said to \emph{elicit} $T$.  Our focus is rather on how
+forecast evaluation proceeds via the Bayes act construction for a given loss function of subject matter interest.
 
 
 
+\bibliography{allocation}
 
 \end{document}

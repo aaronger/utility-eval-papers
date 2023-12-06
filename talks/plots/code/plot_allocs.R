@@ -1,20 +1,4 @@
-library(covidHubUtils)
-library(alloscore)
-library(tidyverse)
-library(geofacet)
-
-source("_targets.R")
-
-file_names <- paste0("data/slim_", mkeep)
-# create an empty list to store the loaded objects
-if (!exists("slim_dfs")) {
-  slim_dfs <- list()
-  for (i in seq_along(file_names)) {
-    slim_dfs[[mkeep[i]]] <- readRDS(file_names[i])
-  }
-}
-
-slim_dfs$`COVIDhub-4_week_ensemble`$model <- "COVIDhub-ensemble"
+source(here(codepath,"setup.R"))
 
 plot_components <- function(...) {
   alloscore::plot_components_slim(

@@ -1,15 +1,4 @@
-library(scales)
-library(targets)
-
-source("_targets.R")
-tar_load(truth_data)
-tar_load(forecast_data)
-
-# copying from run_alloscore.R
-
-require(tidyverse)
-require(alloscore)
-require(distfromq)
+source(here(codepath,"setup.R"))
 
 one_model <- mkeep[1]
 one_reference_date <- "2021-12-27"

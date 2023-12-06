@@ -1,49 +1,6 @@
-library(covidHubUtils)
-library(dplyr)
-library(tidyr)
-library(ggplot2)
-library(geofacet)
+source(here(codepath,"setup.R"))
 
-source("plot_functions.R")
-save_dir <- file.path("talks/plots/output/")
-
-#hub_repo_path <- "~/research/epi/covid/covid19-forecast-hub/"
-hub_repo_path <- "~/covid/covid19-forecast-hub/"
-
-forecasts_hosp <- targets::tar_read(forecast_data) %>%
-  bind_rows(
-    load_forecasts(
-      dates = "2021-12-27",
-      date_window_size = 6,
-      locations = "US",
-      types = c("quantile"),
-      targets = paste(0:30, "day ahead inc hosp"),
-      source = "local_hub_repo",
-      hub_repo_path = hub_repo_path,
-      verbose = FALSE,
-      as_of = NULL,
-      hub = c("US")) |>
-      align_forecasts() |>
-      dplyr::filter(
-        relative_horizon == 14)
-  ) %>%
-  filter(reference_date == "2021-12-27")
-truth <- targets::tar_read(truth_data)
-
-mkeep <- c("BPagano-RtDriven",
-           "COVIDhub-ensemble",
-           "COVIDhub-baseline",
-           "CU-select",
-           "IHME-CurveFit",
-           "JHUAPL-Bucky",
-           "JHUAPL-Gecko",
-           "MUNI-ARIMA",
-           "USC-SI_kJalpha",
-           "UVA-Ensemble")
-
-three_colors <- c("#4A708B", "goldenrod", "#CD2626")
-
-p_VA_JHU_MUNI <- plot_hosp(start_date = "2021-11-01", 
+p_VA_JHU_MUNI <- plot_hosp(start_date = "2021-11-01",
                            stop_date = "2022-01-15",
                            models = c("JHUAPL-Bucky","COVIDhub-ensemble", "MUNI-ARIMA"),
                            f_width1 = 3, f_alpha = .4, locations = c("VA", "GA"))
@@ -147,7 +104,7 @@ ggsave(plot = p_state, filename = "state_hosps.pdf",
 
 mvbucky_dist_alloc <- plot_hosp(models = c("JHUAPL-Bucky", "MUNI-ARIMA"),
           start_date = "2021-12-20",
-          locations = c("FL", "CA", "TX", "GA", "NJ", "NC", "PA", "VA", "IL"),
+          locations = c("FL", "CA", "TX", "NY", "PA", "OH", "NJ", "IL", "GA"),
           f_width1 = 4, f_alpha = .4,
           allocations = TRUE, f_colors = c("#4A708B", "#CD2626")) + labs(x = NULL)
 
