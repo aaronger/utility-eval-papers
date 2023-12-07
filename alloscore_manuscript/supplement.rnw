@@ -354,8 +354,11 @@ F_i(x^{\star}_i) \geq 1 - \lambda/L \geq F_i(x^{\star}_i-),
 which says (c.f. discussion after \eqref{eqn:F-alpha-ineq} and \eqref{eqn:set-alpha-ineq}) that $x^{\star}_i$ is a quantile $q_{\tau,F_i}$ for
 $\tau = 1 - \lambda/L$.
 
-The constraint now determines $\tau$ (and hence the Bayes act) through $\sum_{i=1}^{N} q_{\tau,F_i} = K.$
-This equation can be restated as the requirement that 
+The constraint now determines $\tau$ (and hence the Bayes act) through 
+\begin{align}
+\sum_{i=1}^{N} q_{\tau,F_i} = K. \label{eqn:quantiles-sum-to-K}
+\end{align}
+This equation implies that 
 \begin{align}
 K \in TQ_F(\tau) \label{eqn:tau-inclusion}
 \end{align}
@@ -364,7 +367,11 @@ where the set-valued function
 TQ_F(\tau) := \sum_{i=1}^{N} Q_{F_i}(\tau) = \left[\sum_{i=1}^{N} q^{-}_{\tau,F_i}, \sum_{i=1}^{N} q^{+}_{\tau,F_i}\right]
 \end{align}
 is defined using interval addition $[a,b] + [c,d] = [a+c, b+d]$. (Note that the letter $T$ is being used to connote a ``totalling'' 
-operation, as it often is in survey sampling literature.)
+operation, as it often is in survey sampling literature.) Conversely, if $\tau^{\star}$ satisfies \eqref{eqn:tau-inclusion}, then
+we can find a solution $\bm{q}_{\tau^{\star},F} := (q_{\tau^{\star},F_1},\ldots,q_{\tau^{\star},F_N})$ to 
+\eqref{eqn:quantiles-sum-to-K} within the set 
+$\undertilde{\bm{F}}^{-1}(\tau^{\star}) \subset \mathbb{R}_{+}^N$ where $\undertilde{\bm{F}}^{-1}(\tau)$  is the 
+Cartesian product $(F_1^{-1}(\tau),\ldots,F_N^{-1}(\tau))$.
 
 $TQ_F$ satisfies the conditions mentioned in section \ref{sec:quantile-functions} for being a quantile function, and so there
 is a random variable $TY_F$ with cdf $F_{T} := F_{TQ_F}$.  From this perspective, the problem of finding $\tau$ becomes the calculation 
@@ -392,6 +399,16 @@ the cost-lost problem of section \ref{sec:quantiles_shortage}, it does not serve
 
 \section{Numerical computation of allocation scores}
 \label{sec:numeric}
+
+Exact computation of the allocation score $S_A(F, y; K)$ of a forecast $F$ requires an explicit choice of and expression for a 
+solution $\bm{q}_{\tau^{\star},F} \in \undertilde{\bm{F}}^{-1}(\tau^{\star})$ to \eqref{eqn:quantiles-sum-to-K} where
+$\tau^{\star}$ solves \eqref{eqn:tau-inclusion}. For practical scenarios in which the forecast $F$ has a form preventing 
+analytical solutions to \eqref{eqn:quantiles-sum-to-K}, we must develop a method to approximate solutions to \eqref{eqn:tau-inclusion}
+which lead to adequate approximations of the linear program
+\begin{align}
+\sum_{x \in \undertilde{\bm{F}}^{-1}(\tau^{\star})}x_i = K.
+\end{align}
+
 
 Suppose we have established that $\tau^{\star} = F_T(K)$ lies in the interval $I_1 = [\tau_L, \tau_U]$ with $\tau_L < \tau_U$,
 that is, $K \in [q^{-}_{F_T,\tau_L}, q^{+}_{F_T,\tau_U}]$.
@@ -436,8 +453,8 @@ Note that $K \leq q^{-}_{F_T,\tau_M}$ would not imply $F_T(K) \leq \tau_M$ due t
 Iterating this process we obtain a sequence $\{I_k\}, k=1,2,\ldots$ of intervals of widths 
 $\left|I_k \right| = 2^{1-k}\left|I_1 \right|$ which either terminates at one of the scenarios 
 ($\bullet$), ($\bullet\!-$), or ($-\!\bullet$), or provides infinite sequences $\{\tau_{L,k}\}$ and $\{\tau_{U,k}\}$ converging
-to $\tau^{\star}$ from below and above. Note that this algorithm is somewhat more delicate than the corrsponding ``bisection'' algorithm 
-for finding a root of $F_T(x) - \tau$ for a given $\tau$.
+to $\tau^{\star}$ from below and above. Such a sequence provides the basis of a ``bisection'' algorithm for finding
+the ``root'' $\tau^{\star}$ of the set condition $0 \in TQ_F(\tau) - K$.
 
 In the generic case of an infinite $\{I_k\}$, we need to define practical stopping criteria for the possible limit behaviours of 
 $F_T(K \pm \varepsilon)$ as $\varepsilon \searrow 0$:
