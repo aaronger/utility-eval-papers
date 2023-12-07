@@ -204,13 +204,17 @@ which assumes $Y$ has an adequately well-behaved density $f_Y$.
 \section{Quantiles and Expected Shortage}
 \label{sec:quantiles_shortage}
 
-We recall how quantiles arise as solutions to a probabilistic decision problem. Let $Y$ be a random variable
+We recall how quantiles arise as solutions to a probabilistic decision problem, drawing on perspectives developed in the fields of
+both forecasting (see e.g., \cite{gneiting2011quantiles} and \cite{jose2009evaluating}) and stochastic optimization 
+(se e.g., \cite{royset2022optimization}, sections 1.C and 3.C).
+
+Let $Y$ be a random variable
 representing the future level of an undesirable outcome such as severe COVID incidence. Let $x \in \mathbb{R}_+$ be a decision variable
 representing levels of some costly counter-measure, such as procurement of monoclonal antibody treatments,
 that can be taken at a cost $C>0$ per unit in preparation for $Y$.\footnote{
 Quantiles could also be derived for a problem in which $x$ and $Y$ take negative values, corresponding, for instance, to a decision
-maker that operates in a resource market and a that $Y$ takes negative values when ``recoveries'' outnumber incidence.  But we do not consider
-such scenarios in this work.	 
+maker that both buys and sells in a resource market and a $Y$ that takes negative values when ``recoveries'' outnumber incidence.  
+But we do not consider such scenarios in this work.	 
 }  A decision maker must decide on a level $x$ of investment in the
 counter-measure, and wishes to avoid excesses in either the expediture $Cx$ or the shortage $(y-x)_{+}$ when $Y=y$ is
 realized. To formalize the trade-off between these potential excesses we quantify the loss associated with a unit of
