@@ -401,13 +401,15 @@ the cost-lost problem of section \ref{sec:quantiles_shortage}, it does not serve
 \label{sec:numeric}
 
 Exact computation of the allocation score $S_A(F, y; K)$ of a forecast $F$ requires an explicit choice of and expression for a 
-solution $\bm{q}_{\tau^{\star},F} \in \undertilde{\bm{F}}^{-1}(\tau^{\star})$ to \eqref{eqn:quantiles-sum-to-K} where
+solution $x^{F,K} = \bm{q}_{\tau^{\star},F} \in \undertilde{\bm{F}}^{-1}(\tau^{\star})$ to \eqref{eqn:quantiles-sum-to-K} where
 $\tau^{\star}$ solves \eqref{eqn:tau-inclusion}. For practical scenarios in which the forecast $F$ has a form preventing 
-analytical solutions to \eqref{eqn:quantiles-sum-to-K}, we must develop a method to approximate solutions to \eqref{eqn:tau-inclusion}
-which lead to adequate approximations of the linear program
+analytical solutions to \eqref{eqn:quantiles-sum-to-K}, we seek a method of generating an approximation $\tilde{\tau}$ to 
+a solution $\tau^{\star}$ which offers control (at least in principle) of the Bayes risk error
 \begin{align}
-\sum_{x \in \undertilde{\bm{F}}^{-1}(\tau^{\star})}x_i = K.
+\left|\mathbb{E}_F[s_A(\bm{q}_{\tilde{\tau},F}, Y)] - \mathbb{E}_F[s_A(x^{F,K}, Y)]\right|
 \end{align}
+where $\bm{q}_{\tilde{\tau},F}$ solves the linear program
+$\sum_{x \in \undertilde{\bm{F}}^{-1}(\tilde{\tau})}x_i = K$.
 
 
 Suppose we have established that $\tau^{\star} = F_T(K)$ lies in the interval $I_1 = [\tau_L, \tau_U]$ with $\tau_L < \tau_U$,
