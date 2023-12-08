@@ -404,9 +404,10 @@ Exact computation of the allocation score $S_A(F, y; K)$ of a forecast $F$ requi
 solution $x^{F,K} = \bm{q}_{\tau^{\star},F} \in \undertilde{\bm{F}}^{-1}(\tau^{\star})$ to \eqref{eqn:quantiles-sum-to-K} where
 $\tau^{\star}$ solves \eqref{eqn:tau-inclusion}. For practical scenarios in which the forecast $F$ has a form preventing 
 analytical solutions to \eqref{eqn:quantiles-sum-to-K}, we seek a method of generating an approximation $\tilde{\tau}$ to 
-a solution $\tau^{\star}$ which offers control (at least in principle) of the Bayes risk error
+a solution $\tau^{\star}$ which offers control (at least in principle) of the Bayes risk error or ``optimality gap''
 \begin{align}
-\left|\mathbb{E}_F[s_A(\bm{q}_{\tilde{\tau},F}, Y)] - \mathbb{E}_F[s_A(x^{F,K}, Y)]\right|
+\left|\mathbb{E}_F\left[s_A(\bm{q}_{\tilde{\tau},F}, Y)\right] - \mathbb{E}_F[s_A(x^{F,K}, Y)]\right| = 
+L\left| \sum_{i=1}^{N}\mathbb{E}_{F_i}\left[(Y_i-q_{\tilde{\tau},F_i})_+ - (Y_i-x_i^{F,K})_+\right]\right|
 \end{align}
 where $\bm{q}_{\tilde{\tau},F}$ solves the linear program
 $\sum_{x \in \undertilde{\bm{F}}^{-1}(\tilde{\tau})}x_i = K$.
