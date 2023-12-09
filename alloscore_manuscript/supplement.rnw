@@ -88,7 +88,7 @@ more thorough discussion.
 
 \begin{todolist}
 	\item[\done] From 2.2.1, why are Bayes act scoring rules proper?
-	\item Explain ``All proper scoring rules for probabilistic forecasts have an explicit link to a loss function'' from discussion.
+	%\item Explain ``All proper scoring rules for probabilistic forecasts have an explicit link to a loss function'' from discussion.
 	\item DGP as optimal for any decision problem, ref Diebold, Gunther, Tay p. 866; and if forecasts are ideal, then forecasts with better information always yield better decisions, ref Holzmann and Eulert, Corr 2.
 	\item[\done] For 2.2.2, how to get quantile representation of Bayes act using Lagrange multiplier, \st{assuming smooth, never-zero densities well behaved at $x=0$.} Work out exponential example. Refer to methods paper for general case.
 	\item[\done] Derivation of quantile scoring rule with quantile as Bayes act for C/L problem, \st{assuming never-zero densities}. 
@@ -105,7 +105,7 @@ more thorough discussion.
 			\item IS as average of two quantile scores with a prob-width penalty
 			\item WIS as average quantile score across 23 C/L problems.
 		\end{todolist}
-	\item Sketch of scoring for decision problems involving both cost and constraint.
+	%item Sketch of scoring for decision problems involving both cost and constraint.
 	\item  Derivation of case 2 in formula for Oracle adjustment
 \end{todolist}
 
