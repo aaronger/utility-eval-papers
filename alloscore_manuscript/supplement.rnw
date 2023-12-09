@@ -388,7 +388,6 @@ K \in TQ_F\left(\frac{1}{N} \mathbf{1}^T \undertilde{\bm{F}}(x^{F,K})\right),
 \end{align}
 which leads conceptually to the iterative numerical method of solving for $\tau$ and $x^{F,K}$ discussed next in section \ref{sec:numeric}. 
 
-
 Two awkward features of the quantile representation of the Bayes act can arise.  First, point masses in the $F_i$ create point masses for $F_T$ which may cause $\tau^{\star}$ to not be the unique solution to \eqref{eqn:tau-inclusion}. Secondly, if more than 
 one $Q_{F_i}(\tau^{\star})$ is a positive-width interval, then the Bayes act will not be unique in these coordinates, and generically
 not all points in the $Q_{F_i}(\tau^{\star})$ will be the coordinate of a Bayes act.
@@ -477,88 +476,126 @@ We also want to be able to decribe what further ``post-processing'' steps are re
 to a Bayes act within the set
 $\undertilde{\bm{F}}^{-1}(I_{\overline{k}})$ where $I_{\overline{k}}$ is the terminal search interval for $\tau^{\star}$.
 
-\section{Properties and Properness}
+\section{Computing allocations from finite quantile forecast representations}
 
-\begin{quote}
-For a prediction to be useful, it must \textbf{proper}ly describe a \textbf{proper}ty.
-\end{quote}
+In section 3 of the manuscript, we used the allocation score to evaluate forecasts of COVID-19 hospitalizations that have been submitted to the COVID-19 Forecast Hub. These forecasts are submitted to the Hub using a set of 23 quantiles of the forecast distribution at the 23 probability levels in the set $\mathcal{T} = \{0.01, 0.025, 0.05, 0.1, 0.15, \ldots, 0.9, 0.95, 0.975, 0.99\}$, which specify a predictive median and the endpoints of central $(1 - \alpha) \times 100\%$ prediction intervals at levels $\alpha = 0.02, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9$. For a given week and target date, we use $q_{i,k}$ to denote the submitted quantiles for location $i$ and probability level $\tau_k \in \mathcal{T}$, $k = 1, \ldots, 23$.
+
+In the event that there is some $k \in \{1, \ldots, 23\}$ for which $\sum_i q_{i,k} = K$, i.e., the provided predictive quantiles at level $\tau_k$ sum across locations to the resource constraint $K$, the solution to the allocation problem is given by those quantiles. However, generally this will not be the case; the optimal allocation will typically be at some probability level $\tau^\star \notin \mathcal{T}$.
+
+To address this situation and support the numerical allocation algorithm outlined in section \ref{sec:numeric}, we need a mechanism to approximate the full cumulative distribution functions $F_i$, $i = 1, \ldots, N$ based on the provided quantiles. We have developed functionality for this purpose in the \verb`distfromq` package for R (cite). This functionality represents a distribution as a mixture of discrete and continuous parts, and it works in two steps:
+\begin{enumerate}
+  \item Identify a discrete component of the distribution consisting of zero or more point masses, and create an adjusted set of predictive quantiles for the continuous part of the distribution by subtracting the point mass probabilities and rescaling.
+  \item For the continuous part of the distribution, different approaches are used on the interior and exterior of the provided quantiles:
+  \begin{enumerate}
+    \item On the interior, a monotonic cubic spline interpolates the adjusted quantiles representing the continuous part of the distribution.
+    \item A location-scale parametric family is used to extrapolate beyond the provided quantiles. The location and scale parameters are estimated separately for the lower and upper tails so as to obtain a tail distribution that matches the two most extreme quantiles in each tail.
+  \end{enumerate}
+\end{enumerate}
+The resulting distributional estimate exactly matches all of the predictive quantiles provided by the forecaster. We use the cumulative distribution function resulting from this procedure as an input to the allocation score algorithm.
+
+We refer the reader to the \verb`distfromq` documentation for further detail.
+
+% \begin{enumerate}
+%   \item First, we handle settings where the provided quantiles imply the existence of one or more point masses. Specifically, if there are distinct probability levels $\tau_k < \tau_{k^\prime}$ that have the same quantiles, $q_{l,k} = q_{l, k^\prime}$, the distribution contains a point mass at $q_{l,k}$. We split into three cases depending on the number of distinct provided quantiles:
+%   \begin{enumerate}
+%     \item If all provided quantiles are equal to each other, we infer that the distribution consists of a single point mass at that quantile value.
+%     \item If there are two distinct quantiles across all of the probability levels $\tau_k \in \mathcal{T}$, our estimated distribution consists of a mixture of two point masses. The probability assigned to the point mass at $q$ is proportional to $\tau_q^\max - \tau_q^\min$, where
+%     $$\tau_q^\max = \begin{cases}
+%       \max_{\{\}} \tau_k
+%     \end{cases}$$ is the largest probability level $\tau_k$ for which $q_{l,k} = q$, and $\tau_q^\min$ is defined similarly.
+%     \item Otherwise, our final estimate will consist of a mixture of a discrete distribution with point masses at the duplicated quantiles and a continuous distribution elsewhere. In this step, we  In this case, the discrete distribution has point mass probabilities calculated as $d_q = \tau_q^\max - \tau_q^\min$, where $\tau_q^\max$ and $\tau_q^\min$ are defined as in the previous point.
+%   \end{enumerate}
+% \end{enumerate}
+
+\section{Propriety of the allocation score}
+\label{sec:proper}
+
+A desirable feature of a scoring rule is that it is \emph{proper}, which roughly means that it rewards a forecaster for stating their true beliefs about the events being forecasted. We give a more formal definition of propriety in section \ref{sec:proper_def} before addressing the propriety of the allocation score in three stages:
+\begin{itemize}
+  \item Section \ref{sec:alloscore_proper} shows that the allocation score is proper when the forecaster's actual forecast distribution $F$ is available (as is any score derived using the decision theoretic procedures outlined in section 2 of the manuscript)
+  \item Section \ref{sec:distfromq_alloscore_proper_prospective} shows that the allocation score is still proper if the forecast is represented as a member of a parametric family of distributions, so long as this representation and scoring procedure was specified prospectively by the hub. This includes the use of methods such as \verb`distfromq` for constructing forecast distributions as a special case.
+  \item Section \ref{sec:distfromq_alloscore_improper_post_hoc} shows that \emph{post hoc} application of this scoring procedure to quantile forecasts is improper, and makes some suggestions for organized forecasting efforts who are considering using the allocation score.
+\end{itemize}
+
+\subsection{Proper scores}
+\label{sec:proper_def}
 
 Expanding on the decision theoretic perspective sketched in Section \ref{sec:quantiles_shortage}, we can view a loss function 
 as a general tool for formalizing a decision problem that assigns numerical value to the \emph{result} of taking an \emph{action} $x$
-in preparation for an \emph{outcome} $y$.  A \emph{scoring rule} $S$ is a loss function where the action 
+in preparation for an \emph{outcome} $y$. Here, we consider a setting where the individual making the decision is the forecaster, and the action is to report a particular forecast.
+
+A \emph{scoring rule} $S$ is a loss function where the action 
 is a probabilistic forecast $F$ of the outcome $y$ (or the statement of $F$ by a forecaster). Just as in 
 Section \ref{sec:quantiles_shortage}, given an action $F$, $S$ transforms a random outcome variable $Y$ into a random loss $S(F,Y)$. 
-We refer to the realized loss $S(F,y)$ as the \emph{score} of $F$ at $y$, and the process of evaluating $S(F,y_i)$ for
-a data set $\mathcal{Y}=\{y_i\}$ as \emph{scoring} $F$ against $\mathcal{Y}$. Perhaps the most fundamental example of a scoring rule
-from a statistical perspective is the logarithmic score $S_{\log}(F,y) = -\log f(y)$ (where $f(y)$ is the density or the mass of $F$ at $y$
-if it exists and otherwise the mass), that is, the negative log-likelihood of $F$ interpreted as a parameter for the singleton 
-data set $\{y\}$. This frames a maximum likelihood estimate as the solution to a decision problem following the expected loss
-minimization principle introduced in Section \ref{sec:quantiles_shortage}.
+We refer to the realized loss $S(F,y)$ as the \emph{score} of $F$ at $y$.
 
 Decision theoretically, probabilistic forecasts are a unique kind of action in that they can be used to generate their
-own(simulated) outcome data, against which they can be scored using $S$. $S$ therefore commits a probabilistic forecast
+own (simulated) outcome data, against which they can be scored using $S$. $S$ therefore commits a probabilistic forecast
 $F$ to the ``self-assessment'' $\Ex [S(F, Y^F)]$, where $Y^F \sim F$ is the random variable defined by sampling from
-$F$, as well to an assessment $\Ex [S(G, Y^F)]$ of any alternative forecast $G$. For $S_{\log}$ this self-assessment is
-the Shannon entropy $H(F) = -\int \log(f(x))f(x)dx$ of $F$, and adding to $H(F)$ the Kullback-Leibler (KL) divergence $D_
-{KL}(F,G) = -\int \log(g(x)/f(x))f(x)dx$ gives $F$'s assessment $\Ex [S_{\log}(G, Y^F)]$ of $G$. (That is, $\Ex [S_
-{\log}(G, Y^F)] = H(F) + D_{KL}(F,G)$.) The KL divergence is the degree to which $F$ perceives $G$ as divergent from
-being able to minimize expected loss in this particular forecaster decision problem (i.e. maximize expected log-likelihood).
+$F$, as well to an assessment $\Ex [S(G, Y^F)]$ of any alternative forecast $G$.
 
-A natural consistency criterion for $S$ is that it does not commit $F$ to assessing any other 
-forecast $G$ as being better than $F$ itself, that is, that
+A natural consistency criterion for $S$ is that it does not commit $F$ to assessing any other forecast $G$ as being better than $F$ itself, that is, that
 \begin{align}
 \Ex [S(F, Y^F)] \leq \Ex [S(G, Y^F)] \label{eqn:prop_ineq}
 \end{align} 
 for any $F,G$. Otherwise, the optimal decision for some forecaster would be to state a forecast $G$ other than the forecast $F$
 which they believe describes the outcome $Y$.
-A scoring rule meeting this criterion is called \emph{proper}.   The inequality can also be written 
+A scoring rule meeting this criterion is called \emph{proper}.  The inequality can also be written 
 as $\Ex_F [S(F, Y)] \leq \Ex_F [S(G, Y)]$ where the subscript specifies the distribution of $Y$.  
 $S$ is \emph{strictly proper} when this inequality is sharp, in which case the \emph{only} optimal decision for a forecaster is to state
-the forecast they believe to be true. The logarithmic scoring rule $S_{\log}$, for example, is strictly proper due to the 
-positivity of KL divergence.
+the forecast they believe to be true.
 
-Another definition of $S$ being proper that is often used is that $\Ex[S(F,Y)]$ is lowest when $F$ is the true distribution of $Y$.  
-Under a flexible reading, this definition is equivalent to ours, but we find it problematic because it invites the mistaken impression that 
-the properness of a score might depend on the true distribution of what is being forecasted. Whether a score is proper is unrelated 
-to any particular forecast being scored or source of the data being used to score it.
+\subsection{The allocation score is proper}
+\label{sec:alloscore_proper}
 
-The condition of being proper is quite strong, and na\"{i}ve means of reducing a forecast distribution to a single
-number based on an observed outcome $y$ will generally define an improper scoring rule.  For example, the \emph{probability score} 
-$S_{\mathrm{Prob},c}(F,y):= -(F(y+c) - F(y-c))$ and the \emph{linear score} $S_{\mathrm{Lin}}
-(F,y):= \lim_{c\to 0} \frac{1}{2c}S_{\mathrm{Prob},c}(F,y) = -f(y)$ (where we assume $F$ has a density $f$) and are
-both improper because they commit a general $F$ to assessing an alternative forecast $G$ as being better than $F$
-itself whenever $G$ is sufficiently more concentrated than $F$ in the neighborhood $[m_f-c,m_f+c]$ of a mode $m_f$ of
-$f$. The same is true when the outcome is discrete (and ordered for $S_{\mathrm{Prob}}$) with index $y$: for a forecast
-pmf $p(y)$, moving the mass of $p$ onto a neigborhood of a mode $m_p$ to get a new forecast $p_m$ will improve the 
-expected score $\Ex[S_{\mathrm{Prob/Lin}}(p_m,Y^p)]$ according to $p$ itself. This creates the classic pathology
-of probabilistic forecasters having no incentive to express uncertainty. The meteorologist getting paid according to
-$p_{\text{rain}}\text{rain} + (1-p_{\text{rain}})(1-\text{rain})$ (the negative of the linear score) will say rain is 
-inevitable or impossible when the chances of rain appear to be 51\% or 49\%.
+We recall the three-step decision theoretic procedure for deriving proper scoring rules that we outlined in section \ref{sec:methods.detailed.decisiontheory} of the main text:
+\begin{enumerate}
+  \item Specify a \emph{loss function} $s(x, y)$ that measures the loss associated with taking action $x$ when outcome $y$ eventually occurs.
+  \item Given a probabilistic forecast $F$, determine the \emph{Bayes act} $x^F$ that minimizes the expected loss under the distribution $F$.
+  \item The \emph{scoring rule} for $F$ calculates the score as the loss incurred when the Bayes act was used: $S(F, y) = s(x^F, y)$.
+\end{enumerate}
 
-Sometimes a scoring rule can be made proper with an added correction that penalizes 
+By construction, this procedure yields a proper score since
+\begin{align}
+\Ex_F [S(F, Y)] &= \Ex_F [ s(x^F, Y) ] \nonumber \\
+ &\leq \Ex_F [ s(x^G, Y) ] \label{eqn:dt_proper_key} \\
+ &= \Ex_F [ S(G, Y)]. \nonumber
+\end{align}
+Here, step~\eqref{eqn:dt_proper_key} holds because the Bayes act $x^F$ was selected so that the expected loss $\Ex_F [ s(x^F, Y) ]$ for that action is less than or equal to the expected loss $\Ex_F [ s(x, Y) ]$ for any other action $x$ (and for the action $x^G$ in particular).
 
-But given an auxiliary decision problem $\mathcal{D}_{\mathrm{Aux}} = \{\mathcal{X}, \mathcal{Y}, l(x,y)\}$, such as the
-allocation problem from the main text or the cost-loss problem from Section \ref{sec:quantiles_shortage}, we can
-produce a scoring rule $S_l$ that is automatically proper using the Bayes act formalism introduced in Section \ref
-{sec:methods.detailed.specific_allocation}. This works by defining $S_l(F, y)$ as the value $l(x^F,y)$ already given by  
-$\mathcal{D}_{\mathrm{Aux}}$ for the Bayes act $x^F$; that is, the action which \emph{by design} will be assessed via
-the forecast $F$ to have the lowest possible expected loss $\Ex[l(x^F,Y^F)]$. In statistical decision theory, 
-$\Ex[l(x^F,Y^F)]= \Ex_F[l(x^F,Y)]$ is 
-sometimes\footnote{A clear exposition of basic decision theory using this terminology is Chapter 8 of \cite{degroot2005optimal}.
-Unfortunately other influential sources use ``Bayes risk'' to refer to a wider variety of quantities. In 
-\cite{berger2013statistical} for example, the Bayes risk can be both the optimal expected loss 
-for $F$ (see p. 17) or the expected loss for a general $x$ with respect to $F$ (see p. 6).} 
-refered to as the \emph{Bayes risk} of $F$ relative to $\mathcal{D}_{\mathrm{Aux}}$.
+Because the alloscore was developed using this procedure, it is a proper score.
 
-by mapping a forecast $F$ to an the action $x^F$
+\subsection{Prospectively-specified use of the allocation score to evaluate forecasts approximately represented as members of a parametric family is proper}
+\label{sec:distfromq_alloscore_proper_prospective}
 
-The study of \emph{elicitability} also concerns this construction (see, e.g., \cite{gneiting2011making}), but from a
-different vantage point than ours. The question there is whether for a given map (called a \emph{functional} in
-statistics and a \emph{property} in computer science) $T(F)=x \in \mathcal{X}$ of distributions into the auxiliary
-action space, there exists a loss function $l$ such that $T(F) = x^F$ is the Bayes act for $l$ and the associated
-scoring rule $S_l(F,x)$ is strictly proper. Such an $l$ is said to \emph{elicit} $T$.  Our focus is rather on how
-forecast evaluation proceeds via the Bayes act construction for a given loss function of subject matter interest.
+In practice, open forecasting exercises are generally not able to collect an exact representation of the forecast distribution $F$ other than in simple settings such as for a categorical variable with a relatively small number of categories. In settings where the outcome being forecasted is a continuous quantity (such as rates of influenza-like illness among outpatient doctor visits) or a count (such as influenza hospitalizations), forecasting exercises have therefore resorted to collecting summaries of a forecast distribution such as bin probabilities or predictive quantiles. This raises the question of whether the allocation score is still proper if the forecast distribution $F$ is not itself directly recorded. The answer we provide in this section is that it is, so long as the fact that the allocation score will be used for forecast evaluation and the method that will be used to obtain a distributional estimate of $F$ from the provided forecast representation are communicated to participating forecasters prospectively.
 
+We consider a setting where a forecasting exercise (such as a forecast hub) pre-specifies that forecasts will be represented using a parametric family of forecast distributions $F_\theta(y)$, and forecasts will be specified by providing the value of the parameters $\theta$. We use $\mathcal{P}$ to denote the collection of all distributions $F_\theta$ in the given parametric family. For instance, it has recently been proposed that mixture distributions could be used to represent forecast distributions \cite{wadsworth2023mixture}. Additionally, we note that the functionality in \verb`distfromq` can be viewed as specifying a parametric family of distributions where the parameters $\theta$ are given the interpretation of being the quantiles of $F_\theta$ at pre-specified probability levels, but more generally control the shape of $F_\theta$ over the full range of its support.
+
+We find it helpful now to formally distinguish between two decision making problems. The first is the public health decision maker's allocation problem where the task is to select an allocation $x$, with the allocation loss $s_A(x, y) = \sum_{i=1}^N L \cdot \max(0, y_i - x_i)$ as described in section \ref{sec:methods.detailed.specific_allocation} of the main text.
+The second is the forecaster's reporting problem where the task is to select parameter values $\theta$ to report. The forecaster's loss is given by $s_R(\theta, y) = s_A(x^{F_\theta}, y)$, where $x^{F_\theta}$ is the Bayes act for the allocation problem under the distribution $F_\theta$. In words, the loss associated with reporting $\theta$ is equal to the loss associated with taking the Bayes allocation corresponding to the distribution $F_\theta$.
+
+Following our usual construction, the Bayes act for the forecast reporting problem is the parameter set that minimizes the forecaster's expected loss:
+\begin{align*}
+\theta^F &= \text{argmin}_\theta \Ex_F [s_R(\theta, Y)] \\
+&= \text{argmin}_\theta \Ex_F [s_A(x^{F_\theta}, Y)]
+\end{align*}
+This leads the forecaster to choose values of the parameters $\theta$ such that the allocation $x^{F_\theta}$ is as close as possible to the allocation $x^F$ under the forecaster's true forecast distribution $F$.
+
+We then arrive at the scoring rule
+$$S_R(F, y) = s_R(\theta^F, y) = s_A(x^{F_{\theta^F}}, y).$$
+\elr{Notation got pretty bad here... borderline about whether it's worth searching for a better notation for "the bayes allocation for the distribution with the bayes parameters"}
+It follows from the discussion in section \ref{sec:alloscore_proper} that this is a proper scoring rule for $F$. Additionally, we note that the score can be calculated from the reported parameter values $\theta^F$.
+
+We emphasize that the forecaster's true predictive distribution $F$ does not need to be a member of the specified parametric family $\mathcal{P}$ for this construction to yield a proper score.
+It is, however, necessary to specify the parametric family to use and the foundational scoring rule $s_A$ (including any relevant problem parameters such as the resource constraint $K$) in advance, so that forecasters can identify the Bayes act parameter set $theta^F$ to report.
+
+As an alternative, a forecast hub could ask forecasters to provide the Bayes allocations associated with their forecasts for one or more fixed resource constraints $K$, allowing for direct calculation of scores and narrowing the gap between model outputs and public health end users.
+
+\subsection{Post hoc evaluation of quantile forecasts using distfromq and the allocation score is improper}
+\label{sec:distfromq_alloscore_improper_post_hoc}
+
+In this section, we illustrate that a post hoc evaluation of quantile forecasts using \verb`distfromq` and the allocation score is not proper. In brief, this is because the Bayes parameters $\theta^F$ for the forecaster to report may not align with quantiles of the distribution $F$ at the specified probability levels. We illustrate this with examples (borrow from elicitation.R...)
 
 
 \bibliography{allocation}
