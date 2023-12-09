@@ -510,7 +510,9 @@ We refer the reader to the \verb`distfromq` documentation for further detail.
 \section{Propriety of the allocation score}
 \label{sec:proper}
 
-A desirable feature of a scoring rule is that it is \emph{proper}, which roughly means that it rewards a forecaster for stating their true beliefs about the events being forecasted. We give a more formal definition of propriety in section \ref{sec:proper_def} before addressing the propriety of the allocation score in three stages:
+In order for a scoring rule to be guaranteed to yield logically consistent forecast evaluations, it must be \emph{proper}, which means,
+in essence, that a forecaster cannot perceive any forecast at odds with their beliefs about the events being forecasted as having an optimal expected score.
+We formalize this in terms of forecaster ``self-assessment'' in section \ref{sec:proper_def} and then address the propriety of the allocation score in three stages:
 \begin{itemize}
   \item Section \ref{sec:alloscore_proper} shows that the allocation score is proper when the forecaster's actual forecast distribution $F$ is available (as is any score derived using the decision theoretic procedures outlined in section 2 of the manuscript)
   \item Section \ref{sec:distfromq_alloscore_proper_prospective} shows that the allocation score is still proper if the forecast is represented as a member of a parametric family of distributions, so long as this representation and scoring procedure was specified prospectively by the hub. This includes the use of methods such as \verb`distfromq` for constructing forecast distributions as a special case.
@@ -552,18 +554,30 @@ We recall the three-step decision theoretic procedure for deriving proper scorin
 \begin{enumerate}
   \item Specify a \emph{loss function} $s(x, y)$ that measures the loss associated with taking action $x$ when outcome $y$ eventually occurs.
   \item Given a probabilistic forecast $F$, determine the \emph{Bayes act} $x^F$ that minimizes the expected loss under the distribution $F$.
-  \item The \emph{scoring rule} for $F$ calculates the score as the loss incurred when the Bayes act was used: $S(F, y) = s(x^F, y)$.
+  \item Define a \emph{scoring rule} which assigns the loss realized by the Bayes act $x^F$ against outcome $y$ as the score of $F$ at $y$:
+  \begin{align}
+    S(F, y) = s(x^F, y). \label{eqn:bayes_sr}
+  \end{align}
 \end{enumerate}
 
-By construction, this procedure yields a proper score since
+Such scoring rules, which we call \emph{Bayes scoring rules}, are proper by construction since
 \begin{align}
 \Ex_F [S(F, Y)] &= \Ex_F [ s(x^F, Y) ] \nonumber \\
+ &= \min_{x} \Ex_F [ s(x, Y) ] \quad \text{ (by definition of $x^F$)} \\
  &\leq \Ex_F [ s(x^G, Y) ] \label{eqn:dt_proper_key} \\
  &= \Ex_F [ S(G, Y)]. \nonumber
 \end{align}
-Here, step~\eqref{eqn:dt_proper_key} holds because the Bayes act $x^F$ was selected so that the expected loss $\Ex_F [ s(x^F, Y) ]$ for that action is less than or equal to the expected loss $\Ex_F [ s(x, Y) ]$ for any other action $x$ (and for the action $x^G$ in particular).
 
-Because the alloscore was developed using this procedure, it is a proper score.
+The allocation scoring rule is Bayes and therefore proper.
+
+We note that in the probabilistic forecasting literature (see e.g., \cite{gneiting2011making}, Theorem 3) what we have 
+termed Bayes scoring rules typically appear via \eqref{eqn:bayes_sr} where $x^F$ is some given functional of $F$ which 
+can be shown to be \emph{elicitable}, that is, to be the Bayes act for some loss function $s$.
+Such a loss function is said to be a \emph{consistent loss (or scoring) function} for the functional $F \mapsto x^F$, and many important
+recent results in the literature (e.g., \cite{fisslerziegel2016consistency}) address whether there \emph{exists} any loss 
+function for $x^F$ which is consistent. Our orientation
+is different from this insofar as we \emph{begin} by specifying a decision problem and a loss function of subject matter relevance
+and use the Bayes act only as a bridge to a proper scoring rule.  Consistency is never in doubt.
 
 \subsection{Prospectively-specified use of the allocation score to evaluate forecasts approximately represented as members of a parametric family is proper}
 \label{sec:distfromq_alloscore_proper_prospective}
@@ -581,6 +595,8 @@ Following our usual construction, the Bayes act for the forecast reporting probl
 &= \text{argmin}_\theta \Ex_F [s_A(x^{F_\theta}, Y)]
 \end{align*}
 This leads the forecaster to choose values of the parameters $\theta$ such that the allocation $x^{F_\theta}$ is as close as possible to the allocation $x^F$ under the forecaster's true forecast distribution $F$.
+\apg{I think we need to say something about what we mean by ``close''.  The score divergence is what we are confronting here and I appreciate that 
+others may not want to broach the topic.  But I think we have to say something about ``score expectation defined distance''. This also relates directly to the notation crunch below.}
 
 We then arrive at the scoring rule
 $$S_R(F, y) = s_R(\theta^F, y) = s_A(x^{F_{\theta^F}}, y).$$
