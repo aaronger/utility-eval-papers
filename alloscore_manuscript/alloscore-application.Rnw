@@ -728,7 +728,7 @@ alloscore_data_summaries |>
 
 \subsubsection{Integrated allocation score across values of K}
 
-The integrated allocation score summarizes allocation scores across a range of possible values of the constraint ($K$), possibly taking weights into account for different values of $K$ that might be more or less likely (Section \ref{sec:methods.detailed.integrated_allocation}).
+The integrated allocation score (IAS) summarizes allocation scores (AS) across a range of possible values of the constraint ($K$), possibly taking weights into account for different values of $K$ that might be more or less likely (Section \ref{sec:methods.detailed.integrated_allocation}).
 This could be useful in situations where the actual constraint may not be known, or could only be specified as a probability distribution.
 Unlike in the above analyses where we conducted analyses assuming that $K$ was known to be 15,000, the analyses in this subsection are conducted assuming different distributions of $K$.
 
@@ -740,14 +740,13 @@ tot_y <- slim_alloscore_2021.12.20 |>
 @
 
 
-Allocation scores (AS) were computed for a range of $K$ from 200 to 60,000 for forecasts made on 2020-12-20 predicting levels of hospitalizations on 2021-01-03 (Figure \ref{fig:multi-k}A).
-These calculations highlight that allocation scores were highest at the $K$ nearest to the observed value of \Sexpr{format(tot_y, big.mark = ",")}.
-Rankings of allocation scores from all models were fairly stable across a range of values for K, with some crossings, especially at $K$ values further away from the observed value.
+AS was computed for a range of $K$ from 200 to 60,000 for forecasts made on 2020-12-20 predicting levels of hospitalizations on 2021-01-03 (Figure \ref{fig:multi-k}A).
+These calculations highlight that AS was highest at the $K$ nearest to the observed value of \Sexpr{format(tot_y, big.mark = ",")}.
+Rankings of AS from all models were fairly stable across a range of values for K, with some crossings, especially at $K$ values further away from the observed value.
 
-Integrated allocation scores (IAS) were computed for two distributions of $K$, one uniform across the entire range and the other a symmetric distribution around 15,000 (Figure \ref{fig:multi-k}B).
+IAS was computed for two distributions of $K$, one uniform across the entire range and the other a symmetric distribution around 15,000 (Figure \ref{fig:multi-k}B).
 Both versions of the IAS were correlated with the original AS conducted at $K=15,000$, with the higher correlation coming from the distribution that was centered at $K=15,000$ (Figure \ref{fig:multi-k}C).
-
-Interpretation of Figure \ref{fig:multi-k} needed.
+Model rankings based on the AC and the centered IAS were roughly similar, with the top and bottom two models being the same for both scores (Table \ref{tab:multi-k-scores}).
 
 
 <<ias-comparison>>=
@@ -800,7 +799,10 @@ p2 <- slim_alloscore_2021.12.20 |>
 left_join(ias, as) |>
   rename(`IAS centered at 15k` = IAS_wt,
          `IAS uniform` = IAS) |>
-  xtable::xtable(caption = "Allocation scores shown in Figure \\ref{fig:multi-k}C, sorted by Integrated Allocation Scores (IAS) centered at 15,000.", digits = 0) |>
+  arrange(-`IAS centered at 15k`) |>
+  xtable::xtable(caption = "Allocation scores shown in Figure \\ref{fig:multi-k}C, sorted by Integrated Allocation Scores (IAS) centered at 15,000.",
+                 digits = 0,
+                 label = "tab:multi-k-scores") |>
   print(include.rownames = FALSE, )
 @
 
