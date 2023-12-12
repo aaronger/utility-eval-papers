@@ -30,7 +30,8 @@
 \def\ngr#1{{\color{blue}\textbf{NGR:[#1]}}}
 
 \usepackage{natbib}
-\bibliographystyle{unsrtnat}
+\bibliographystyle{unsrtnat-abbr}
+
 
 \title{Evaluating infectious disease forecasts with allocation scoring rules}
 \author{Aaron Gerding, Nicholas G. Reich, Benjamin Rogers, Evan L. Ray}
@@ -799,7 +800,7 @@ p2 <- slim_alloscore_2021.12.20 |>
 left_join(ias, as) |>
   rename(`IAS centered at 15k` = IAS_wt,
          `IAS uniform` = IAS) |>
-  arrange(-`IAS centered at 15k`) |>
+  arrange(`IAS centered at 15k`) |>
   xtable::xtable(caption = "Allocation scores shown in Figure \\ref{fig:multi-k}C, sorted by Integrated Allocation Scores (IAS) centered at 15,000.",
                  digits = 0,
                  label = "tab:multi-k-scores") |>
