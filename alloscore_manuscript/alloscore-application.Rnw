@@ -462,17 +462,71 @@ To illustrate the mechanics of allocation scoring, we start by focusing on how f
 This week was around the Omicon wave peak nationally, with individual states typically observing a peak at or after January 3, 2022.
 
 For many locations, forecasts predicted lower values than were eventually observed, as this was during the period of steep increase of viral transmission across many states.
-Of the 10 models evaluated, the CU-select model had the most accurate forecasts according to the allocation score while the USC-SI\_kJalpha model had the most accurate forecasts based on MWIS (Table \ref{tab:one-week-results}).
+Of the 10 models evaluated, the CU-select model had the most accurate forecasts according to the allocation score while the USC-SI\_kJalpha model had the most accurate forecasts based on MWIS (Table \ref{tab:multi-k-scores}).
 The JHUAPL-Bucky model had the second best MWIS but the third worst allocation score.
 
-<<metrics-rankings, results = "asis">>=
+<<ias-comparison>>=
+tar_load(alloscore_2021.12.20)
+slim_alloscore_2021.12.20 <- alloscore::slim(alloscore_2021.12.20, id_cols = c("model", "reference_date"))
+
+## for visual context
+## curve(dnorm(x, mean=15000, sd=3000), from=0, to=30000)
+ks <- seq(5000, 25000, by=200)
+kprobs <- data.frame(K = ks,
+                     weight = dnorm(ks, mean=15000, sd=3000)/sum(dnorm(ks, mean=15000, sd=3000)))
+
+
+ias <- slim_alloscore_2021.12.20 |>
+  group_by(model, K) |>
+  summarize(`Allocation score` = sum(components)) |>
+  left_join(kprobs) |>
+  group_by(model) |>
+  summarize(IAS_wt = sum(`Allocation score`*weight, na.rm=TRUE),
+            IAS = mean(`Allocation score`)) |>
+  arrange(IAS)
+
+as <- slim_alloscore_2021.12.20 |>
+  filter(K == 15000) |>
+  group_by(model) |>
+  summarize(AS = sum(components)) |>
+  arrange(AS)
+@
+
+<<multi-k-scores, results='asis'>>=
+wis_vals <- all_scores |>
+  filter(target_end_date == "2022-01-03", !is.na(mwis)) |>
+  select(model,
+# can uncomment the two lines below to check they match
+#         AS = alloscore,
+#         `AS rank` = allo_rank,
+         MWIS = mwis)
+
+left_join(ias, as) |>
+  left_join(wis_vals, by="model") |>
+  rename(`IAS centered at 15k` = IAS_wt,
+         `IAS uniform` = IAS) |>
+  select(model, AS, MWIS, `IAS centered at 15k`, `IAS uniform`) |>
+  arrange(AS) |>
+  xtable::xtable(caption = "Comparison of allocation scores (AS), mean weighted interval scores (MWIS), and two varieties of Integrated Allocation Scores (IAS). All metrics are shown for 10 models that made forecasts of hospital admissions for 2022-01-03. Results are sorted by AS. For all metrics, lower scores indicate better accuracy.",
+                 digits = 0,
+                 label = "tab:multi-k-scores") |>
+  print(include.rownames = FALSE, )
+@
+
+
+<<metrics-rankings, results = "asis", eval=FALSE>>=
+## NOTE: this content now shown in multi-k-scores chunk
 ## for highlighting cells, if we want that https://stackoverflow.com/questions/37448348/color-code-cells-of-xtable
 all_scores |>
   filter(target_end_date == "2022-01-03", !is.na(mwis)) |>
-  select(model, alloscore, allo_rank, mwis, mwis_rank) |>
-  arrange(allo_rank) |>
+  select(model,
+         AS = alloscore,
+         `AS rank` = allo_rank,
+         MWIS = mwis,
+         `MWIS rank` = mwis_rank) |>
+  arrange(`AS rank`) |>
   xtable::xtable(label = "tab:one-week-results",
-                 caption = "caption TBD") |>
+                 caption = "Allocation scores (AS) and mean weighted interval scores (MWIS) for each model' as forecasted's forecasts for ") |>
   print(include.rownames = FALSE)
 @
 
@@ -520,8 +574,6 @@ In Florida, the forecast from JHUAPL-Bucky missed by a wide margin (as did the f
 
 <<thermometer-plot, fig.height=3.5, fig.width=7.5, fig.cap="Probabilistic forecasts for new hospital admissions and the inferred resource allocations for COVID-19 on January 3, 2022 for the states with the nine highest hospitalization counts. For each state, the dark black line shows the data observed when the forecast was made and the grey line shows eventually observed counts. The side-by-side shaded regions show the median (solid horizontal line) and 50%, 80% and 95% prediction intervals for the two selected models. The forecasts were made for new hospitalizations on January 3, 2022 (vertical dashed line, with number of hospitalizations indicated by red horizontal line segment at the intersection of the dashed line and the grey line of data). The vertical bars with red and yellow shading show the allocations: the red bar goes from zero to the level of the observed number of hospitalizations while the yellow bar shows how many resources were suggested by the model to be allocated to that location. The allocations (yellow bar) may be more or less than the observed number, therefore exposed red bar indicates unmet need, while the yellow bar extending above the observed number of hospitalizations means that excess resources were suggested for that given location.">>=
 source("R/plot_functions.R")
-tar_load(alloscore_2021.12.20)
-slim_alloscore_2021.12.20 <- alloscore::slim(alloscore_2021.12.20, id_cols = c("model", "reference_date"))
 plot_hosp(models = c("JHUAPL-Bucky", "CU-select"),
           start_date = "2021-12-01",
           stop_date = "2022-01-25",
@@ -751,28 +803,7 @@ Both versions of the IAS were correlated with the original AS conducted at $K=15
 Model rankings based on the AC and the centered IAS were roughly similar, with the top and bottom two models being the same for both scores (Table \ref{tab:multi-k-scores}).
 
 
-<<ias-comparison>>=
-## for visual context
-## curve(dnorm(x, mean=15000, sd=3000), from=0, to=30000)
-ks <- seq(5000, 25000, by=200)
-kprobs <- data.frame(K = ks,
-                     weight = dnorm(ks, mean=15000, sd=3000)/sum(dnorm(ks, mean=15000, sd=3000)))
-
-
-ias <- slim_alloscore_2021.12.20 |>
-  group_by(model, K) |>
-  summarize(`Allocation score` = sum(components)) |>
-  left_join(kprobs) |>
-  group_by(model) |>
-  summarize(IAS_wt = sum(`Allocation score`*weight, na.rm=TRUE),
-            IAS = mean(`Allocation score`)) |>
-  arrange(IAS)
-
-as <- slim_alloscore_2021.12.20 |>
-  filter(K == 15000) |>
-  group_by(model) |>
-  summarize(AS = sum(components)) |>
-  arrange(AS)
+<<multi-k, fig.height=10, fig.width = 8, fig.cap = "Allocation scores (AS) across different resource constraints (K) for 10 models that made forecasts on 2021-12-20. Panel A shows, for each model, the AS for values of K between 200 and 60,000 at increments of 200. The AS show a sharp peak just under 20,000, near the eventually observed number of hospitalizations. Panel B shows two possible weighting functions for the Integrated Allocation Score (IAS). The first (dark blue circles) computes weights proportional to a normal distribution centered at 15,000 (solid vertical gray line) with a standard deviation of 3,000, and truncated to be between 5,000 and 25,000. The second (light orange triangles) uses a uniform weight for all possible values of K. Note that the AS used in earlier sections of the application uses the single fixed value of K=15,000.  Panel C shows how either method of computing the IAS (y-axis) is correlated with AS at K=15,000 (x-axis). Every point represents the AS and IAS for one model. The IAS centered at 15,000 are more closely correlated with the AS values.">>=
 
 ias_to_plot <- left_join(ias, as) |>
   pivot_longer(cols = c(IAS, IAS_wt), names_to = "IAS_type", values_to = "IAS") |>
@@ -795,22 +826,7 @@ p2 <- slim_alloscore_2021.12.20 |>
   geom_point(aes(y=weight), color = "#386cb0") +
   geom_point(y=1/length(unique(slim_alloscore_2021.12.20$K)), color="#fdc086", shape = 2) +
   geom_vline(xintercept = 15000, color="gray")
-@
 
-<<multi-k-scores, results='asis'>>=
-left_join(ias, as) |>
-  rename(`IAS centered at 15k` = IAS_wt,
-         `IAS uniform` = IAS) |>
-  arrange(`IAS centered at 15k`) |>
-  xtable::xtable(caption = "Allocation scores shown in Figure \\ref{fig:multi-k}C, sorted by Integrated Allocation Scores (IAS) centered at 15,000.",
-                 digits = 0,
-                 label = "tab:multi-k-scores") |>
-  print(include.rownames = FALSE, )
-@
-
-
-
-<<multi-k, fig.height=10, fig.width = 8, fig.cap = "Allocation scores (AS) across different resource constraints (K) for 10 models that made forecasts on 2021-12-20. Panel A shows, for each model, the AS for values of K between 200 and 60,000 at increments of 200. The AS show a sharp peak just under 20,000, near the eventually observed number of hospitalizations. Panel B shows two possible weighting functions for the Integrated Allocation Score (IAS). The first (dark blue circles) computes weights proportional to a normal distribution centered at 15,000 (solid vertical gray line) with a standard deviation of 3,000, and truncated to be between 5,000 and 25,000. The second (light orange triangles) uses a uniform weight for all possible values of K. Note that the AS used in earlier sections of the application uses the single fixed value of K=15,000.  Panel C shows how either method of computing the IAS (y-axis) is correlated with AS at K=15,000 (x-axis). Every point represents the AS and IAS for one model. The IAS centered at 15,000 are more closely correlated with the AS values.">>=
 p3 <- slim_alloscore_2021.12.20 |>
   group_by(model, K) |>
   summarize(`Allocation score` = sum(components)) |>
