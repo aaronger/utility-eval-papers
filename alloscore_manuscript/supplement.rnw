@@ -14,6 +14,7 @@
 \usepackage{soul}
 \usepackage{tikz}
 \usepackage{pgfplots}
+\usepackage{float}
 \usepackage{xr-hyper}
 \usepackage{hyperref}
 \externaldocument{alloscore-application}
@@ -123,12 +124,10 @@ For convenience, we write $u_{+} = \max\{0,u\}$, i.e., ``the positive part'' of 
 With this notation, the shortage is written as $(y - x)_{+}$. To regard shortage as a function of only one 
 variable $x$ or $y$, with the other being a parameter describing the dependence we can write 
 $(y - x)_{+} = \short^{y}(x) = \short_{x}(y)$.  Note that 
-$\short^{y}(x)$ and $\short_{x}(y)$ are both convex functions and ``mirror'' each other:
-
+$\short^{y}(x)$ and $\short_{x}(y)$ are both convex functions and ``mirror'' each other (see figure \ref{fig:shortages}).
 
 \pgfplotsset{compat=1.16} % Set the compatibility of pgfplots
-
-\begin{figure}
+\begin{figure}[H]
 \begin{tikzpicture}
 \begin{axis}[
     axis lines=middle, % Center the axis
@@ -156,6 +155,7 @@ node[pos=.7,anchor=north west] {$\short_{x_0}(y) = (y - x_0)_{+}$};
 \end{axis}
 \end{tikzpicture}
 \caption{Shortage functions. $\short^{y_0}(x)$, shown in blue, gives the resource shortage as a function of the level of available resources, $x$, for a fixed value of resource demand $y_0$. $\short_{x_0}(y)$, shown in red, gives the resource shortage as a function of resource demand, $y$, for a fixed value of resource supply $x_0$.}
+\label{fig:shortages}
 \end{figure}
 
 Let $Y$ be a random variable with distribution $F$ representing the unknown level of resource demand. The random shortage $(Y-x)_{+}$ can be thought of as either a 
@@ -272,18 +272,19 @@ if and only if $x^{\star} \in Q_F(\alpha)$.
 For future reference, we record several key properties of quantile functions. An illuminating source for these
 facts is \cite{rockafellar2014random}, from which figure \ref{fig:FQ} is adapted.
 
-The probability levels $\{\alpha_i\}$ for which $\#Q_F(\alpha_i)>1$ ($\{\alpha_3\}$ in the example of figure \ref{fig:FQ}) form a 
+The probability levels $\{\alpha_i\}$ for which $\#Q_F(\alpha_i)>1$ ($\{\alpha_1, \alpha_5\}$ in the example of figure \ref{fig:FQ}) form a 
 discrete subset of $(0,1)$ and correspond to
 the non-zero width intervals $[q_{\alpha_i,F}^{-},q_{\alpha_i,F}^{+}]$ where $F$ is constant with values 
 $\{\alpha_i\}$.  Conversely, if $F$ is strictly increasing on a (Borel) set $A\subset \mathbb{R}$, then the restriction
 $Q_{F}\big|_{F(A)}=F^{-1}\big|_{F(A)}$ of $Q_F$ to $F(A)$ is in fact a real-valued function which is left-continuous
 and provides an inverse to $F$ on $F(A)$. If the the support $\mathrm{supp}(F) = \{x \mid 0<F(x)<1\}$ of $F$ is such an
 $A$, then extending $F^{-1}$ by $F^{-1}(0)=\inf(\mathrm{supp}(F))$ and $F^{-1}(1)=\sup(\mathrm{supp}(F))$ provides an
-inverse to $F$ on $F(\mathbb{R})\subset [0,1]$. If $F$ has a point mass at $x\in A$ (e.g., $x_1 \in [0,\infty)$ in figure \ref{fig:FQ}),
-so that $\{\alpha \mid F(x-)< \alpha < F(x)\}$ (e.g., $(\alpha_1, \alpha_2)$ in figure \ref{fig:FQ}) is a non-empty set disjoint from $F(A)$,
+inverse to $F$ on $F(\mathbb{R})\subset [0,1]$. If $F$ has a point mass at $x\in A$ (e.g., $x_3 \in [0,\infty)$ in figure \ref{fig:FQ}),
+so that $\{\alpha \mid F(x-)< \alpha < F(x)\}$ (e.g., $(\alpha_3, \alpha_5)$ in figure \ref{fig:FQ}) is a 
+non-empty set disjoint from $F(A)$,
 then $Q_F$ takes the constant value $x$ 
 on the closure $\{\alpha \mid F(x-)\leq \alpha \leq F(x)\}$. Conversely, if $F$ has no discrete component on $A$, 
-then $Q_{F}\big|_{F(A)}$ is strictly increasing (e.g., on $[\alpha_2, \infty)$ in figure \ref{fig:FQ}).
+then $Q_{F}\big|_{F(A)}$ is strictly increasing (e.g., on $[\alpha_4, \infty)$ in figure \ref{fig:FQ}).
 
 Moreover, it can be said that $Q_F$ is increasing as a set-valued function on $\mathbb{R}$ in the generalized sense that 
 $(q_{\alpha, F} - q_{\beta, F})(\alpha-\beta) \geq 0$ whenever
@@ -292,11 +293,12 @@ $\mathrm{graph}(Q_F) = \{(\alpha, q) \mid q \in Q_F(\alpha)\}$ has no downward s
 increasing set-valued function $Q$ on $(0,1)$, we can construct a right-continuous function $F_Q$ from $\mathbb{R}$ to $[0,1]$ 
 which will be the cdf of the random variable $Y_Q := \min(Q(U))$ where $U \sim \mathrm{Unif}[0,1]$.
 \begin{figure}
-\vspace{-4cm}
-\includegraphics[width=.9\textwidth]{../figures/FQ.pdf}
+\vspace{-1cm}
+\includegraphics[width=\textwidth]{../figures/FQ.pdf}
 \vspace{-15mm}
 \caption{Example of a cdf $F$ (with graph including solid line and filled points) superimposed on its 
-quantile function $Q_F$ (with graph including dashed and solid lines as well as both filled and empty points).}
+quantile function $Q_F$ (with graph including dashed and solid lines as well as both filled and empty points).
+The notation $F(A)$ should be read as $F(x)$ for any $x\in A$.}
 \label{fig:FQ}
 \end{figure}
 
@@ -432,12 +434,16 @@ Suppose we have established that $\tau^{\star} = F_T(K)$ lies in the interval $I
 that is, $K \in [q^{-}_{F_T,\tau_L}, q^{+}_{F_T,\tau_U}]$.
 From section \ref{sec:quantile-functions}, we know that the set 
 $TQ_F(\tau_L) \cup TQ_F(\tau_U) \subset [q^{-}_{F_T,\tau_L}, q^{+}_{F_T,\tau_U}]$
-is arranged in exactly one of the following ways: 
+is arranged in exactly one of the following ways (where e.g. refers to figure \ref{fig:FQ}): 
 \begin{itemize}
-\item[($\bullet \bullet$)] $TQ_F(\tau_L) \cap TQ_F(\tau_U) = \varnothing$ (and $q^{+}_{F_T,\tau_L} < q^{-}_{F_T,\tau_U}$)
-\item[($\bullet$)] $TQ_F(\tau_L) = \{K\} = TQ_F(\tau_U)$ (a point mass at $K$)
-\item[($\bullet\!-$)] $TQ_F(\tau_L) = \{q^{-}_{F_T,\tau_U}\} \subsetneq TQ_F(\tau_U)$ (a point mass at $q^{-}_{F_T,\tau_U}$)
-\item[($-\!\bullet$)] $TQ_F(\tau_L) \supsetneq \{q^{+}_{F_T,\tau_L}\} = TQ_F(\tau_U)$ (a point mass at $q^{+}_{F_T,\tau_U}$)
+\item[($\bullet \bullet$)] $TQ_F(\tau_L) \cap TQ_F(\tau_U) = \varnothing$ 
+(and $q^{+}_{F_T,\tau_L} < q^{-}_{F_T,\tau_U}$, e.g., $\tau_L=\alpha_1, \tau_U=\alpha_5$)
+\item[($\bullet$)] $TQ_F(\tau_L) = \{K\} = TQ_F(\tau_U)$ 
+(a point mass at $K$, e.g., $\alpha_3 \leq \tau_L \leq \tau_U \leq \alpha_5$)
+\item[($\bullet\!-$)] $TQ_F(\tau_L) = \{q^{-}_{F_T,\tau_U}\} \subsetneq TQ_F(\tau_U)$ 
+(a point mass at $q^{-}_{F_T,\tau_U}$, e.g., $\tau_L = \alpha_3, \tau_U = \alpha_5$)
+\item[($-\!\bullet$)] $TQ_F(\tau_L) \supsetneq \{q^{+}_{F_T,\tau_L}\} = TQ_F(\tau_U)$ 
+(a point mass at $q^{+}_{F_T,\tau_U}$, e.g., e.g., $\tau_L = \alpha_5, \tau_U = \alpha_4$).
 \end{itemize}
  
 In the case ($\bullet$), we can immediately take 
