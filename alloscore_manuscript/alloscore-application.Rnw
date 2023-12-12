@@ -835,7 +835,6 @@ cowplot::plot_grid(p3, p2, p1,
 \section{Discussion}
 \label{sec:discussion}
 
-All proper scoring rules for probabilistic forecasts have an explicit link to a loss function, thereby placing numerical value on different kinds of errors in specifying forecasts.
 In epidemiological forecasting, well-known proper scoring rules such as the log score or variations on the continuous rank probability score (such as the weighted interval score, or WIS) have been frequently utilized to evaluate probabilistic forecasts.
 Often, these scores are used to rank models according to accuracy with that particular score, but without reference to the underlying decision-making process for which that score was designed.
 With careful thought and collaboration between modelers and public health officials, we argue that scores that are more aligned with public health decisions could be developed to inform specific problems.
