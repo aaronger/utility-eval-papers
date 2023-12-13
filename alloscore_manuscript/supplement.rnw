@@ -447,15 +447,16 @@ is arranged in exactly one of the following ways (where e.g. refers to figure \r
 \end{itemize}
  
 In the case ($\bullet$), we can immediately take 
-$\tau^{\star}=\tau_U$ as the probability level defining the allocation Bayes act.
+$\tau^{\star}=\tau_U$ as the probability level representing the allocation Bayes act.
 In the cases
 ($\bullet\!-$), and ($-\!\bullet$), which imply the presence of a point mass in one or more of the 
 component forecasts adjacent to a region of zero density in all components, we can take $\tau^{\star}=\tau_U$ or $\tau_L$, 
-respectively, as the representing probability level and find Bayes acts within the set 
-$\undertilde{\bm{F}}^{-1}(\tau^{\star})$ (by solving the linear program 
-$\sum_{x \in \undertilde{\bm{F}}^{-1}(\tau^{\star})}x_i = K$).
+respectively, as the representing probability level.  
+Having found our $\tau^{\star}$ we then arrive at a Bayes act $x^{F,K}$ by by solving the
+linear program $\sum_{x \in \undertilde{\bm{F}}^{-1}(\tau^{\star})}x_i = K$.
 
-Otherwise, by evaluating $TQ_F$ at $\tau_M = \frac{1}{2}\left(\tau_L + \tau_U\right)$ we can replace $I_1$ with one of its 
+In the remaining and typical case of ($\bullet \bullet$), further search is generally necessary. We can proceed 
+by evaluating $TQ_F$ at $\tau_M = \frac{1}{2}\left(\tau_L + \tau_U\right)$ and replacing $I_1$ with one of its 
 halves
 \begin{align}
 I_2 = 
@@ -481,22 +482,22 @@ to $\tau^{\star}$ from below and above. Such a sequence provides the basis of a 
 the ``root'' $\tau^{\star}$ of the set condition $0 \in TQ_F(\tau) - K$.
 
 In the generic case of an infinite $\{I_k\}$, we need to define practical stopping criteria for the possible limit behaviours of 
-$F_T(K \pm \varepsilon)$ as $\varepsilon \searrow 0$:
-\begin{itemize}
-\item[($\mathrlap{\,\bullet}{\,/}\,$)] $F_T(K - \varepsilon) < F_T(K-) = F_T(K) < F_T(K + \varepsilon)$
-(so that $\tau^{\star} = F_T(K-)$ and $TQ_F(\tau^{\star}) = \{K\}$)
-\item[($/\!\!\raisebox{.9ex}{$\bullet$\!-}$)] $F_T(K - \varepsilon) < F_T(K-) = F_T(K) = F_T(K + \varepsilon)$
-\item[($\raisebox{-.9ex}{-\!$\bullet$}\!\!/$)] $F_T(K - \varepsilon) = F_T(K) < F_T(K + \varepsilon)$
-\item[($\raisebox{-.9ex}{\phantom{-}\!$\bullet$}\!\!/$)] $F_T(K - \varepsilon) \leq F_T(K-) < F_T(K) < F_T(K + \varepsilon)$
-\item[($\,\bullet\!\text{-}$)] $F_T(K - \varepsilon) \leq F_T(K-) < F_T(K) = F_T(K + \varepsilon)$
-\item[($\text{-}\!\!\bullet\!\!\text{-}$)]  $F_T(K - \varepsilon) = F_T(K) = F_T(K + \varepsilon)$
-so that $K \in (q^{-}_{F_T,\tau^{\star}}, q^{+}_{F_T,\tau^{\star}})$ and all component forecasts $F_i$ have 
-zero density at points $x_i \in (q^{-}_{F_i,\tau^{\star}}, q^{+}_{F_i,\tau^{\star}})$ and $\sum x_i = K$.
-\end{itemize}
+$F_T(K \pm \varepsilon)$ as $\varepsilon \searrow 0$ which are exemplified in figure \ref{fig:FQ} at $0, x_1, x_2, x_3, (x_3 +x_4)/2$ and 
+$x_5$.
+% \begin{itemize}
+% \item[($\mathrlap{\,\bullet}{\,/}\,$)] $F_T(K - \varepsilon) < F_T(K-) = F_T(K) < F_T(K + \varepsilon)$
+% (so that $\tau^{\star} = F_T(K-)$ and $TQ_F(\tau^{\star}) = \{K\}$)
+% \item[($/\!\!\raisebox{.9ex}{$\bullet$\!-}$)] $F_T(K - \varepsilon) < F_T(K-) = F_T(K) = F_T(K + \varepsilon)$
+% \item[($\raisebox{-.9ex}{-\!$\bullet$}\!\!/$)] $F_T(K - \varepsilon) = F_T(K) < F_T(K + \varepsilon)$
+% \item[($\raisebox{-.9ex}{\phantom{-}\!$\bullet$}\!\!/$)] $F_T(K - \varepsilon) \leq F_T(K-) < F_T(K) < F_T(K + \varepsilon)$
+% \item[($\,\bullet\!\text{-}$)] $F_T(K - \varepsilon) \leq F_T(K-) < F_T(K) = F_T(K + \varepsilon)$
+% \item[($\text{-}\!\!\bullet\!\!\text{-}$)]  $F_T(K - \varepsilon) = F_T(K) = F_T(K + \varepsilon)$
+% so that $K \in (q^{-}_{F_T,\tau^{\star}}, q^{+}_{F_T,\tau^{\star}})$ and all component forecasts $F_i$ have 
+% zero density at points $x_i \in (q^{-}_{F_i,\tau^{\star}}, q^{+}_{F_i,\tau^{\star}})$ and $\sum x_i = K$.
+% \end{itemize}
 
-We also want to be able to decribe what further ``post-processing'' steps are required to find a sufficiently good approximation
-to a Bayes act within the set
-$\undertilde{\bm{F}}^{-1}(I_{\overline{k}})$ where $I_{\overline{k}}$ is the terminal search interval for $\tau^{\star}$.
+And after having obtained sufficiently a sufficient narrow terminal $I_K = [\tau_{L,K}, \tau_{U,K}]$ we need a protocol for 
+how to select a solution to the linear program $\sum_{x \in \undertilde{\bm{F}}^{-1}(I_K)}x_i = K$ as an approximate Bayes act.
 
 \section{Computing allocations from finite quantile forecast representations}
 
