@@ -352,35 +352,33 @@ metadata <- tar_meta()
 
 
 \subsubsection{Hospitalization data}
-Starting in the summer of 2020, the US Health and Human Services began reporting counts of daily new admissions to hospitals for individuals with COVID-19.\citep{healthdatagov_covid-19_nodate}
-These data served as the source of ``ground truth'' data for the US COVID-19 Forecast Hub which, starting in December 2020, collected short-term forecasts of new hospital admissions at the daily scale.
+Starting in the summer of 2020, the US Health and Human Services (HHS) began reporting counts of daily new admissions to hospitals for individuals with COVID-19 \citep{healthdatagov_covid-19_nodate}.
 These daily counts were available for the US as a whole, and all states and several additional jurisdictions such as Puerto Rico and Washington DC.
 The data were updated daily and were available for download by the public through the HHS HealthData.gov website.
-For this analysis, we downloaded the hospitalizations data through the covidHubUtils R package, which connects users to the most recent version of the data.\cite{wang-covidhubutils}
-The hospitalization data were downloaded for analysis on \Sexpr{as.Date(metadata$time[which(metadata$name == "truth_data")])}.
+For this analysis, we downloaded the hospitalizations data through the covidHubUtils R package, which connects users to the most recent version of the data \cite{wang-covidhubutils}.
+The hospitalization data were downloaded for analysis on \Sexpr{format(as.Date(metadata$time[which(metadata$name == "truth_data")]), "%B %d, %Y")}.
 
 \subsubsection{Forecast data}
-The US COVID-19 Forecast Hub, a consortium funded by the US CDC and led by a research group at UMass-Amherst, collected short-term forecasts of hospitalizations starting in December 2020.\citep{cramer_united_2022}
-Any team that with appropriately formatted forecasts could submit them to the Forecast Hub data repository on GitHub.(cite repo site)
+The US COVID-19 Forecast Hub, a consortium funded by the US CDC and led by a research group at the University of Massachusetts-Amherst, collected short-term forecasts of new hospital admissions at the daily scale starting in December 2020, using the HHS data as a source of ``ground truth'' \citep{cramer_united_2022}.
+Any team that with appropriately formatted forecasts could submit them to the Forecast Hub data repository on GitHub (cite repo site).
 Forecasts were time-stamped by GitHub upon submission and passed validation checks that ensured correct formatting and that the forecasts were being submitted only for dates in the future, not for data that had already been observed.
 
 Forecast submission followed a weekly cycle and culminated in the creation of an ensemble forecast.
 Forecasts could be submitted on any day during the week.
-However once a week on Mondays, the Forecast Hub would collect the most recent forecasts submitted by all teams that met certain inclusion criteria and create an ensemble forecast using quantile averaging.\citep{ray_comparing_2023}
+However once a week on Mondays, the Forecast Hub would collect the most recent forecasts submitted by all teams that met certain inclusion criteria and create an ensemble forecast using quantile averaging \citep{ray_comparing_2023}.
 An ensemble that treated all models equally was created (COVIDhub-ensemble) as was a model that created weights of submitted models based on performance in the past 12 weeks (COVIDhub-trained\_ensemble).
 One other model that combined multiple forecasts from different teams but used a different ensembling algorithm, a linear pooling method with tail extrapolation, was also included in our analyses (JHUAPL-SLPHospEns).
 Several other models have ``ensemble'' in their name, but this refers to combinations of different variations of models that the specific team created, not to a multi-model ensemble combining different submitted forecasts to the Forecast Hub.
 
 All forecasts, including the ensemble, were submitted as probabilistic predictions about the number of new hospital admissions on a particular day in the future, in a specific jurisdiction of the US (national level, state, or territory).
-Probability distributions were specified, per the requirements established by the Forecast Hub, as a set of 23 quantiles for each individual prediction.
-The submitted quantiles included a median (treated as a ``point'' prediction) and defined 11 central prediction intervals, from a 99\% to a 10\% prediction interval.
+Probability distributions were represented using a set of 23 quantiles for each individual prediction.
+The submitted quantiles included a median and the lower and upper limits of 11 central prediction intervals, from a 99\% to a 10\% prediction interval.
 
 The analysis in this work focuses on forecasts made before and during the first wave of the Omicron SARS-CoV-2 variant in the US.
-As such, we downloaded forecasts for the 15 weeks starting with Monday 2021-11-22 through Monday 2022-02-28.
-Forecast data were downloaded on for analysis on \Sexpr{as.Date(metadata$time[which(metadata$name == "forecast_data")])}.
+As such, we analyzed forecasts for the 15 weeks starting with Monday November 22, 2021 through Monday February 28, 2022.
+%Forecast data were downloaded on for analysis on \Sexpr{format(as.Date(metadata$time[which(metadata$name == "forecast_data")]), "%B %d, %Y")}.
 
-
-We established a set of inclusion criteria to determine which forecasts and models to include in our analysis.
+We established a set of criteria to determine which forecasts and models to include in our analysis.
 Models were eligible to be included in the analysis if they were considered a ``primary'' model from a team. (If a team submitted multiple versions of similar models, they were required to designate one as ``primary''.)
 For a model to have a complete, eligible submission in a given week, it had to have a 14 day-ahead forecast for all 50 states plus Washington DC.
 Models had to have a complete forecast for at least 4 of the 15 weeks in the analysis to be considered eligible for inclusion.
@@ -391,8 +389,8 @@ This manuscript focuses on two proper forecast scores, the allocation score and 
 
 \subsubsection{Allocation Score}
 
-For this analysis, we fixed a resource constraint $K$ to be 15,000, based roughly on a reported number of ventilators available for reallocation in the US.\citep{ajao_assessing_2015}
-For each week, we computed a the allocation score for each 14 day-ahead forecast based on $K=15,000$.
+For this analysis, we fixed the resource constraint $K$ to be 15,000, based roughly on a reported number of ventilators available for reallocation in the US \citep{ajao_assessing_2015}.
+For each week, we computed the allocation score for the 14 day-ahead forecast.
 
 We also computed a standardized rank for the allocation score for each model $m$ and week $w$.
 First, we computed the number of models that forecasted that week ($n_w$) and the rank of model $m$ among the $n_w$ models ($r_{m,w}^{AS}$).
@@ -416,6 +414,8 @@ where $F_{l,m,w}$ is the probabilistic forecast from model $m$ for location $l$ 
 Using the same procedure as for allocation scores described above, we computed standardized ranks for MWIS ($sr_{m,w}^{MWIS}$).
 
 \subsection{Data and code availability}
+
+All forecast data used in this evaluation are available through the COVID-19 Forecast Hub (cite repository). Code for our analyses is available on GitHub (cite repository).
 
 \subsection{Application results}
 
@@ -567,10 +567,10 @@ FL_allocs <- Kat15k_alloscores |>
 FL_diff <- round(FL_allocs["CU-select"] - FL_allocs["JHUAPL-Bucky"])
 @
 
-For JHUAPL-Bucky, the allocations were assigned at the \Sexpr{Buck_quantile}th quantile of the predictive distribution and for CU-select it was at the \Sexpr{CU_quantile}th percentile.
-This reflects that in general the JHUAPL-Bucky forecasts assigned more probabilities to higher values and thus a low quantile value across all locations reached the allocation limit of 15,000.
-In California, New York and Texas, the eventually observed number of hospital admissions was closer to the predicted median from JHUAPL-Bucky and was contained in JHUAPL-Bucky's 80\% PI. However for each of these three states, the resource allocation was lower and therefore resulted in more hypothetical unmet need than CU-select allocations.
-In Florida, the forecast from JHUAPL-Bucky missed by a wide margin (as did the forecast from CU-select) and the allocation was \Sexpr{FL_diff} units lower than what was allocated according to the CU-select model.
+For JHUAPL-Bucky, the allocations were assigned at the \Sexpr{Buck_quantile}th percentile of the predictive distribution and for CU-select they were at the \Sexpr{CU_quantile}th percentile.
+This reflects that in general the JHUAPL-Bucky forecasts assigned more probability to higher values and thus a low quantile value across all locations reached the allocation limit of 15,000.
+In California, New York and Texas, the eventually observed number of hospital admissions was closer to the predicted median from JHUAPL-Bucky than the median from CU-select, and was contained in JHUAPL-Bucky's 80\% PI but not in the 80\% PI from CU-select. However for each of these three states, the resource allocation was lower for JHUAPL-Bucky than for CU-select and therefore resulted in more hypothetical unmet need.
+In Florida, which was the state that saw the largest number of reported hospitalizations on this target date, the forecast from JHUAPL-Bucky missed by a wide margin (as did the forecast from CU-select) and the allocation was \Sexpr{FL_diff} units lower than the allocation derived from the CU-select model.
 
 <<thermometer-plot, fig.height=3.5, fig.width=7.5, fig.cap="Probabilistic forecasts for new hospital admissions and the inferred resource allocations for COVID-19 on January 3, 2022 for the states with the nine highest hospitalization counts. For each state, the dark black line shows the data observed when the forecast was made and the grey line shows eventually observed counts. The side-by-side shaded regions show the median (solid horizontal line) and 50%, 80% and 95% prediction intervals for the two selected models. The forecasts were made for new hospitalizations on January 3, 2022 (vertical dashed line, with number of hospitalizations indicated by red horizontal line segment at the intersection of the dashed line and the grey line of data). The vertical bars with red and yellow shading show the allocations: the red bar goes from zero to the level of the observed number of hospitalizations while the yellow bar shows how many resources were suggested by the model to be allocated to that location. The allocations (yellow bar) may be more or less than the observed number, therefore exposed red bar indicates unmet need, while the yellow bar extending above the observed number of hospitalizations means that excess resources were suggested for that given location.">>=
 source("R/plot_functions.R")
@@ -598,7 +598,7 @@ Together, these results corroborate the understanding that the allocation score 
 
 
 
-<<multi-loc-ranks, fig.cap="Component-wise breakdowns of the allocation score (Panel A) and weighted interval score (Panel B), by location for forecasts of hospitalization admissions on January 3, 2022, for two selected models (JHUAPL-Bucky and CU-select). Panel A shows the observed resource need, in this case the observed number of hospitalizations, for each state, along with the hypothetical number of resources allocated to the given location based on the forecasts from each model. The number of available resources was fixed at 15,000 and forecasts from each model were used to determine an optimal allocation strategy before the resource need was known. For most locations the resource need exceeded the resources allocated, indicated by the 'observed resource need' bar being larger than the 'allocation' bar. Panel B shows the breakdown of the weighted interval score (WIS) into components of underprediction, overprediction and dispersion. Larger values of WIS indicate more error, and the full WIS score for each location can be decomposed into the three components shown here.">>=
+<<multi-loc-ranks, fig.cap="Component-wise breakdowns of the allocation score (Panel A) and weighted interval score (Panel B), by location for forecasts of hospitalization admissions on January 3, 2022, for two selected models (JHUAPL-Bucky and CU-select). Panel A shows the observed resource need, in this case the observed number of hospitalizations, for each state, along with the hypothetical number of resources allocated to the given location based on the forecasts from each model. The number of available resources was fixed at 15,000 and forecasts from each model were used to determine an optimal allocation strategy before the resource need was known. For most locations the resource need exceeded the resources allocated, indicated by the `observed resource need' bar being larger than the `allocation' bar. Panel B shows the breakdown of the weighted interval score (WIS) into components of underprediction, overprediction and dispersion. Larger values of WIS indicate more error, and the full WIS score for each location can be decomposed into the three components shown here.">>=
 ## date points to target_end_date of 2022-01-10 to highlight
 ref_date_for_plot <- "2021-12-20"
 models_to_plot <- c("JHUAPL-Bucky", "CU-select")
@@ -711,7 +711,7 @@ cowplot::plot_grid(p1, p2, p4,
 @
 
 Allocation scores varied substantially by date and by model (Figure \ref{fig:metrics-over-time}).
-For predictions made for the first three Mondays in December 2021 and the last three Mondays in February 2022 all models had allocation scores under 500 (and the mean across all models was less than 100), indicating that the unnecessary unmet need was fairly low relative to the total number of hospital admissions on those days.
+For predictions made for the first three Mondays in December 2021 and the last three Mondays in February 2022 all models had allocation scores under 500 (and the mean across all models was less than 100), indicating that the unnecessary unmet need was fairly low on those days.
 The allocation scores were on the whole highest when the observed number of new hospital admissions was closest to the resource threshold of 15,000, as those are the times when any mistakes in allocation are costly in terms of wasting resources in one location that could have been used in another.
 Predictions made during the peak week and just after showed the highest variation in allocation scores, with some models having allocation scores under 1000 and others having values over 3500.
 
@@ -783,8 +783,8 @@ alloscore_data_summaries |>
 \subsubsection{Integrated allocation score across values of K}
 
 The integrated allocation score (IAS) summarizes allocation scores (AS) across a range of possible values of the constraint ($K$), possibly taking weights into account for different values of $K$ that might be more or less likely (Section \ref{sec:methods.detailed.integrated_allocation}).
-This could be useful in situations where the actual constraint may not be known, or could only be specified as a probability distribution.
-Unlike in the above analyses where we conducted analyses assuming that $K$ was known to be 15,000, the analyses in this subsection are conducted assuming different distributions of $K$.
+This could be useful in situations where the actual constraint may not be known precisely, or where we wish to consider results across a range of decision making settings with different constraints.
+Unlike in the above analyses where we conducted analyses assuming that $K$ was known to be 15,000, the analyses in this subsection are conducted assuming different distributions on $K$.
 
 <<calc-tot-y>>=
 tot_y <- slim_alloscore_2021.12.20 |>
@@ -794,11 +794,11 @@ tot_y <- slim_alloscore_2021.12.20 |>
 @
 
 
-AS was computed for a range of $K$ from 200 to 60,000 for forecasts made on 2020-12-20 predicting levels of hospitalizations on 2021-01-03 (Figure \ref{fig:multi-k}A).
+AS was computed for a range of $K$ from 200 to 60,000 for forecasts made on December 20, 2020 predicting levels of hospitalizations on January 3, 2021 (Figure \ref{fig:multi-k}A).
 These calculations highlight that AS was highest at the $K$ nearest to the observed value of \Sexpr{format(tot_y, big.mark = ",")}.
 Rankings of AS from all models were fairly stable across a range of values for K, with some crossings, especially at $K$ values further away from the observed value.
 
-IAS was computed for two distributions of $K$, one uniform across the entire range and the other a symmetric distribution around 15,000 (Figure \ref{fig:multi-k}B).
+IAS was computed for two distributions on $K$, one uniform across the entire range and the other a symmetric distribution around 15,000 (Figure \ref{fig:multi-k}B).
 Both versions of the IAS were correlated with the original AS conducted at $K=15,000$, with the higher correlation coming from the distribution that was centered at $K=15,000$ (Figure \ref{fig:multi-k}C).
 Model rankings based on the AC and the centered IAS were roughly similar, with the top and bottom two models being the same for both scores (Table \ref{tab:multi-k-scores}).
 
@@ -867,10 +867,10 @@ However, other examples where allocation is a central concern exist as well, suc
 In practice, there are many potential users of forecasts with many different decision making problems.
 Not all can be easily quantified.
 Those that can be easily quantified may differ enough that it seems likely that no single score would be appropriate for all users.
-In an ideal setting, a forecasting tool could be developed through close collaboration between modelers and public health officials.
-However, this setting may only be possible in settings with enough resources to support both an analytics and public heatlh team.
+Ideally, a forecasting tool could be developed through close collaboration between modelers and public health officials.
+However, this may only be possible in settings with both an analytics and a public health team.
 Increasingly, collaborative modeling hubs are being used to generate ``one-size-fits-all'' forecasts for many locations at once.
-In these settings, where tailored models are not available, it still could be possible to evaluate contributed models against a set of multiple scores.
+In these settings, where tailored models are not available, it still could be possible to evaluate contributed models using a set of multiple scores to support public health end users in understanding the value of forecasts as an input to their particular decision making contexts.
 % NGR: leaving this out for now as it feels like too much detail?
 % This may be tricky to operationalize in the setting of a general forecast hub. It matters how you elicit and represent probabilistic forecasts (quantiles? samples? cdfs?).
 
@@ -879,29 +879,29 @@ In our specific application, we made several key observations that we believe sh
 First, it is clear that different metrics (in our case allocation score and mean weighted interval score) captured different aspects of forecast performance.
 The mean WIS (MWIS) was strongly dependent on the scale of the forecasted quantity (e.g., when hospitalizations were high, so were MWIS scores).
 The allocation score was not as scale-dependent, as the highest/worst allocation scores were observed when the number of hospitalizations was closest to the allocation constraint.
-We also note that contributed models found it hard to have a better allocation score than a na\"ive baseline model that just predicted a flat line from the last previous observation with wide uncertainty.
+We also note that contributed models found it hard to achieve a better allocation score than a na\"ive baseline model that just predicted a flat line from the last previous observation with wide uncertainty.
 This suggests suggests that contributed models (other than the ensemble, which combined forecasts from all contributed models) were not consistently adding value over just extrapolating from the current levels.
 
 
 There are several important limitations to the current work.
 The allocation score we developed here does not directly account for important considerations such as fairness or equity of allocations.
 Nor does the proposed framework attempt to capture the broader context of decision making. For example, in practice it may be possible to increase the resource constraint $K$ by shifting funding from other disease mitigation measures.
-We also note that in some settings, a ``successful'' epidemiological forecast may lead to policy decisions that change the distribution of the predicted outcome $Y$. Our framework cannot be used to evaluate a forecast at a horizon that may have been impacted by such a decision.
+We also note that in some settings, a ``successful'' epidemiological forecast may lead to policy decisions that change the distribution of the predicted outcome $Y$. Our framework cannot be used to evaluate a forecast at a horizon where the outcome may have been impacted by such a decision.
 
-An additional limitation of the current work and opportunity for further investigation is to more carefully evaluate whether a forecast adds value to existing decision-making processes.
-In the context of allocation-based decisions, standard procedures might involve simply extrapolating need based on a current observed data (similar to the `baseline' model presented above), with or without adjustments based on other political or real-world considerations.
+An additional limitation of the current work and opportunity for further investigation is to more carefully evaluate whether a forecast adds value to existing decision making processes.
+In the context of allocation-based decisions, standard procedures might involve extrapolating need based on a current observed data (similar to the `baseline' model presented above), with or without adjustments based on other political or real-world considerations.
 For example, in many settings public health stakeholders will synthesize multiple sources of information, e.g. real-time data from a wide variety of quantitative and qualitative sources coupled with expert judgment based on a situational understanding of past and current experience.
-The allocation score presented in this work assesses the optimality of the allocation based on an omniscient view of the future.
+The allocation score presented in this work assesses the optimality of the allocation with reference an omniscient view of the future captured by the oracle.
 However, what we care about is whether a given forecast adds useful information to an existing decision-making process.
 While the scoring procedures as presented do not directly address this question, they could be modified (say, by comparison to a `baseline` model) to quantify the benefit -if any- of using a forecast to inform a specific decision.
 
-We see this work as an initial overture for what we hope will grow to be a large, collaborative body of work in more closely coupling applied epidemiological forecasting with public health decision-making.
+We see this work as an initial overture for what we hope will grow to be a large, collaborative body of work more closely coupling applied epidemiological forecasting with public health decision making.
 We note that a few papers have begun exploring similar linkages as described in the literature review \textendash but we see much room for additional work in this area.
-In some situations, individual or ensemble models could be developed to optimize scores that are attunend to a particular decision making setting.
+In some situations, individual or ensemble models could be developed to optimize scores that are attuned to a particular decision making setting.
 This area is also largely unexplored in the realm of public health to date, with some initial methodological development in econometrics \citep{loaiza-maya_focused_2021}.
 
 In conclusion, we argue that the way modelers and policymakers view and evaluate forecasts should change depending on the specific decision-making context.
-Using standard forecast evaluation metrics can mask the utility of certain forecasts, or lead to forecasts being used to inform a particular decision that are not optimal for that particular set of values that are important for that context.
+Using standard forecast evaluation metrics can mask the utility of certain forecasts, or lead to forecasts being used to inform a particular decision that are not well matched to that decision making context.
 New collaborative work between public health officials and modeling teams is needed to assess the value and relevance of the initial findings presented here, including real-time pilot studies or simulation exercises that could be used to inform further development of new or alternative scoring metrics.
 
 
