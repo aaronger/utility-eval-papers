@@ -154,7 +154,7 @@ node[pos=.7,anchor=north west] {$\short_{x_0}(y) = (y - x_0)_{+}$};
 
 \end{axis}
 \end{tikzpicture}
-\caption{Shortage functions. $\short^{y_0}(x)$, shown in blue, gives the resource shortage as a function of the level of available resources, $x$, for a fixed value of resource demand $y_0$. $\short_{x_0}(y)$, shown in red, gives the resource shortage as a function of resource demand, $y$, for a fixed value of resource supply $x_0$.}
+\caption{Shortage functions. $\mathrm{sh}^{y_0}(x)$, shown in blue, gives the resource shortage as a function of the level of available resources, $x$, for a fixed value of resource demand $y_0$. $\mathrm{sh}_{x_0}(y)$, shown in red, gives the resource shortage as a function of resource demand, $y$, for a fixed value of resource supply $x_0$.}
 \label{fig:shortages}
 \end{figure}
 
@@ -501,7 +501,7 @@ how to select a solution to the linear program $\sum_{x \in \undertilde{\bm{F}}^
 
 \section{Computing allocations from finite quantile forecast representations}
 
-In section 3 of the manuscript, we used the allocation score to evaluate forecasts of COVID-19 hospitalizations that have been submitted to the COVID-19 Forecast Hub. These forecasts are submitted to the Hub using a set of 23 quantiles of the forecast distribution at the 23 probability levels in the set $\mathcal{T} = \{0.01, 0.025, 0.05, 0.1, 0.15, \ldots, 0.9, 0.95, 0.975, 0.99\}$, which specify a predictive median and the endpoints of central $(1 - \alpha) \times 100\%$ prediction intervals at levels $\alpha = 0.02, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9$. For a given week and target date, we use $q_{i,k}$ to denote the submitted quantiles for location $i$ and probability level $\tau_k \in \mathcal{T}$, $k = 1, \ldots, 23$.
+In section 3 of the manuscript, we used the allocation score to evaluate forecasts of COVID-19 hospitalizations that have been submitted to the COVID-19 Forecast Hub. These forecasts are submitted to the Hub using a set of 23 quantiles of the forecast distribution at the 23 probability levels in the set $\mathcal{T} = \{0.01, 0.025, 0.05, 0.1, 0.15, \ldots, \allowbreak 0.9, 0.95, 0.975, 0.99\}$, which specify a predictive median and the endpoints of central $(1 - \alpha) \times 100\%$ prediction intervals at levels $\alpha = 0.02, 0.05, 0.1, 0.2, \allowbreak 0.3, 0.4, 0.5, 0.6, \allowbreak 0.7, 0.8, 0.9$. For a given week and target date, we use $q_{i,k}$ to denote the submitted quantiles for location $i$ and probability level $\tau_k \in \mathcal{T}$, $k = 1, \ldots, 23$.
 
 In the event that there is some $k \in \{1, \ldots, 23\}$ for which $\sum_i q_{i,k} = K$, i.e., the provided predictive quantiles at level $\tau_k$ sum across locations to the resource constraint $K$, the solution to the allocation problem is given by those quantiles. However, generally this will not be the case; the optimal allocation will typically be at some probability level $\tau^\star \notin \mathcal{T}$.
 

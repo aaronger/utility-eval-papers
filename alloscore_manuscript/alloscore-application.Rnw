@@ -12,9 +12,12 @@
 \usepackage{caption}
 \usepackage{xr-hyper}
 \usepackage{hyperref}
+\usepackage{xurl}
 \externaldocument{supplement}
 
 \DeclareMathOperator*{\argmin}{argmin}
+\DeclareMathOperator{\short}{sh}
+\DeclareMathOperator{\Ex}{\mathbb{E}}
 
 
 \usepackage{setspace}
@@ -893,10 +896,10 @@ In the context of allocation-based decisions, standard procedures might involve 
 For example, in many settings public health stakeholders will synthesize multiple sources of information, e.g. real-time data from a wide variety of quantitative and qualitative sources coupled with expert judgment based on a situational understanding of past and current experience.
 The allocation score presented in this work assesses the optimality of the allocation with reference an omniscient view of the future captured by the oracle.
 However, what we care about is whether a given forecast adds useful information to an existing decision-making process.
-While the scoring procedures as presented do not directly address this question, they could be modified (say, by comparison to a `baseline` model) to quantify the benefit -if any- of using a forecast to inform a specific decision.
+While the scoring procedures as presented do not directly address this question, they could be modified (say, by comparison to a `baseline' model) to quantify the benefit---if any---of using a forecast to inform a specific decision.
 
 We see this work as an initial overture for what we hope will grow to be a large, collaborative body of work more closely coupling applied epidemiological forecasting with public health decision making.
-We note that a few papers have begun exploring similar linkages as described in the literature review \textendash but we see much room for additional work in this area.
+We note that a few papers have begun exploring similar linkages as described in the literature review{\textendash}but we see much room for additional work in this area.
 In some situations, individual or ensemble models could be developed to optimize scores that are attuned to a particular decision making setting.
 This area is also largely unexplored in the realm of public health to date, with some initial methodological development in econometrics \citep{loaiza-maya_focused_2021}.
 
