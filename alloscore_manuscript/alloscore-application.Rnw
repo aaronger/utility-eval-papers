@@ -30,7 +30,8 @@
 \def\ngr#1{{\color{blue}\textbf{NGR:[#1]}}}
 
 \usepackage{natbib}
-\bibliographystyle{unsrtnat}
+\bibliographystyle{unsrtnat-abbr}
+
 
 \title{Evaluating infectious disease forecasts with allocation scoring rules}
 \author{Aaron Gerding, Nicholas G. Reich, Benjamin Rogers, Evan L. Ray}
@@ -74,7 +75,8 @@ Here we pursue one possible tether between multivariate forecasts and policy: th
 
 \section{Introduction}
 
-Infectious disease forecasting models have emerged as important tools in public health. Predictions of disease dynamics have been used to inform decision making about a wide variety of measures to reduce disease spread and/or mitigate the severity of disease outcomes. For example, estimates of expected onset of flu season have been used to aid national vaccination strategies \citep{igboh2023timing}, and forecasts of Ebola dynamics have been used to allocate surveillance resources \citep{meltzer2014estimating, rainisch2015regional}. \cite{bertsimas2021predictionsCOVID} developed tools to inform decision making from infectious disease forecasts, which have been used to inform allocation of limited medical supplies such as ventilators, ICU capacity planning, and vaccine distribution strategy. Models developed by \cite{fox_real-time_2022} have been used to inform resource and care site planning, as well as community guidelines for masking, traveling, dining and shopping (University of Texas, 2022)\nocite{utnews2022}. In April of 2022, the Centers for Disease Control and Prevention (CDC) announced the launch of the Center for Forecasting and Outbreak Analytics (CFA) to translate disease forecasts into decision making (CDC, 2022)\nocite{cdc2022cfa}, indicating that this has been identified as an important direction at the highest levels of government public health response. The value of infectious disease forecasts has typically been measured by how closely they predict disease outcomes such as cases, hospitalizations or deaths using, for example, root mean square error (RMSE) \citep{papastefanopoulos2020covid} or weighted interval score (WIS) \citep{bracher2021evaluating}.  However, recently authors have been calling for evaluating forecasts through their impact on policy \citep{marshall2023predictions, bilinski_adaptive_2023}.
+Infectious disease forecasting models have emerged as important tools in public health. Predictions of disease dynamics have been used to inform decision making about a wide variety of measures to reduce disease spread and/or mitigate the severity of disease outcomes. For example, estimates of expected onset of flu season have been used to aid national vaccination strategies \citep{igboh2023timing}, and forecasts of Ebola dynamics have been used to allocate surveillance resources \citep{meltzer2014estimating, rainisch2015regional}. \cite{bertsimas2021predictionsCOVID} developed tools to guide decision making from infectious disease forecasts, which have been used to inform allocation of limited medical supplies such as ventilators, ICU capacity planning, and vaccine distribution strategy. Models developed by \cite{fox_real-time_2022} have been used to inform resource and care site planning, as well as community guidelines for masking, traveling, dining and shopping (University of Texas, 2022)\nocite{utnews2022}.
+In April of 2022, the Centers for Disease Control and Prevention (CDC) announced the launch of the Center for Forecasting and Outbreak Analytics (CFA) to translate disease forecasts into decision making (CDC, 2022)\nocite{cdc2022cfa}, indicating that this has been identified as an important direction at the highest levels of government public health response. The value of infectious disease forecasts has typically been measured by how closely they predict disease outcomes such as cases, hospitalizations or deaths using, for example, root mean square error (RMSE) \citep{papastefanopoulos2020covid} or weighted interval score (WIS) \citep{bracher2021evaluating}.  However, recently authors have been calling for evaluating forecasts through their impact on policy \citep{marshall2023predictions, bilinski_adaptive_2023}.
 
 In decision making settings where it is possible to quantify the utility or loss associated with a particular action, standard tools of decision theory provide a procedure for developing forecast scoring rules that measure the value of forecasts through the quality of the decisions that they lead to. We give an overview of these procedures in Section \ref{sec:methods.detailed.decisiontheory}.
 There is a large history of literature applying these ideas to obtain measures of the value of forecasts that are tied to a decision making context, primarily in fields such as economics and finance, supply chain management, and meteorology. We review this work only briefly here, and we refer the reader to \cite{yardley2021utility_cost_forecasts} for a general overview, and to \cite{pesaran2002decision_based_eval} and \cite{murphy1993whatisagoodforecast} for discussions focused on applications to economics and meteorology, respectively. In finance, the value of forecasts can often be measured by the profits generated by trading decisions informed by the forecasts, perhaps adjusted for risk levels \cite[e.g.,][]{leitch1991economicForecastEval, cenesizoglu2012returnPredictionEconValue}. In applications to supply chain management and meteorology, the value of forecasts has typically been operationalized by considering the costs associated with decisions regarding the amount of inventory to hold or the level of protection against the impacts of extreme weather events to enact \cite[e.g.,][]{catt2007assessingcostofforecasterror, petropoulos2019inventoryperformanceforecasting, palmer2002economic, pappenberger2015monetarybenefitfloodwarnings}. For example, in supply chain management these decisions may incur costs related to holding inventory, labor, or providing poor service, while in meteorology we may need to balance the costs of implementing protective measures with the costs of potentially preventable weather damages. In this framework, a forecast has value if it leads to decisions with low total costs. In all of these fields, analyses have consistently found that common measures of statistical forecast accuracy do not necessarily correspond directly to measures of the value of forecasts as an input to decision making \cite[e.g.,][]{leitch1991economicForecastEval, murphy1993whatisagoodforecast, cenesizoglu2012returnPredictionEconValue}.
@@ -419,6 +421,9 @@ Using the same procedure as for allocation scores described above, we computed s
 
 <<score-computation>>=
 tar_load("Kat15k_alloscores")
+tar_load("score_data")
+tar_load("truth_data")
+tar_load("forecast_data")
 
 alloscore_data_summaries <- Kat15k_alloscores |>
   group_by(model, reference_date) |>
@@ -430,8 +435,6 @@ alloscore_data_summaries <- Kat15k_alloscores |>
   ungroup() |>
   complete(model, reference_date) |>
   mutate(target_end_date = as.Date(reference_date) + 14)
-
-tar_load("score_data")
 
 alloscore_models <- unique(alloscore_data_summaries$model)
 score_data_summaries <- score_data |>
@@ -447,12 +450,227 @@ score_data_summaries <- score_data |>
   ungroup() |>
   complete(model, reference_date) |>
   mutate(target_end_date = as.Date(reference_date) + 14)
+
+all_scores <- left_join(alloscore_data_summaries, score_data_summaries,
+                      by=c("model", "target_end_date"))
 @
 
 
+\subsubsection{Anatomy of forecast scores for one week}
+
+To illustrate the mechanics of allocation scoring, we start by focusing on how forecasts generated on or before December 20, 2021, with predictions for January 03, 2022, were scored by different metrics.
+This week was around the Omicon wave peak nationally, with individual states typically observing a peak at or after January 3, 2022.
+
+For many locations, forecasts predicted lower values than were eventually observed, as this was during the period of steep increase of viral transmission across many states.
+Of the 10 models evaluated, the CU-select model had the most accurate forecasts according to the allocation score while the USC-SI\_kJalpha model had the most accurate forecasts based on MWIS (Table \ref{tab:multi-k-scores}).
+The JHUAPL-Bucky model had the second best MWIS but the third worst allocation score.
+
+<<ias-comparison>>=
+tar_load(alloscore_2021.12.20)
+slim_alloscore_2021.12.20 <- alloscore::slim(alloscore_2021.12.20, id_cols = c("model", "reference_date"))
+
+## for visual context
+## curve(dnorm(x, mean=15000, sd=3000), from=0, to=30000)
+ks <- seq(5000, 25000, by=200)
+kprobs <- data.frame(K = ks,
+                     weight = dnorm(ks, mean=15000, sd=3000)/sum(dnorm(ks, mean=15000, sd=3000)))
+
+
+ias <- slim_alloscore_2021.12.20 |>
+  group_by(model, K) |>
+  summarize(`Allocation score` = sum(components)) |>
+  left_join(kprobs) |>
+  group_by(model) |>
+  summarize(IAS_wt = sum(`Allocation score`*weight, na.rm=TRUE),
+            IAS = mean(`Allocation score`)) |>
+  arrange(IAS)
+
+as <- slim_alloscore_2021.12.20 |>
+  filter(K == 15000) |>
+  group_by(model) |>
+  summarize(AS = sum(components)) |>
+  arrange(AS)
+@
+
+<<multi-k-scores, results='asis'>>=
+wis_vals <- all_scores |>
+  filter(target_end_date == "2022-01-03", !is.na(mwis)) |>
+  select(model,
+# can uncomment the two lines below to check they match
+#         AS = alloscore,
+#         `AS rank` = allo_rank,
+         MWIS = mwis)
+
+left_join(ias, as) |>
+  left_join(wis_vals, by="model") |>
+  rename(`IAS centered at 15k` = IAS_wt,
+         `IAS uniform` = IAS) |>
+  select(model, AS, MWIS, `IAS centered at 15k`, `IAS uniform`) |>
+  arrange(AS) |>
+  xtable::xtable(caption = "Comparison of allocation scores (AS), mean weighted interval scores (MWIS), and two varieties of Integrated Allocation Scores (IAS). All metrics are shown for 10 models that made forecasts of hospital admissions for 2022-01-03. Results are sorted by AS. For all metrics, lower scores indicate better accuracy.",
+                 digits = 0,
+                 label = "tab:multi-k-scores") |>
+  print(include.rownames = FALSE, )
+@
+
+
+<<metrics-rankings, results = "asis", eval=FALSE>>=
+## NOTE: this content now shown in multi-k-scores chunk
+## for highlighting cells, if we want that https://stackoverflow.com/questions/37448348/color-code-cells-of-xtable
+all_scores |>
+  filter(target_end_date == "2022-01-03", !is.na(mwis)) |>
+  select(model,
+         AS = alloscore,
+         `AS rank` = allo_rank,
+         MWIS = mwis,
+         `MWIS rank` = mwis_rank) |>
+  arrange(`AS rank`) |>
+  xtable::xtable(label = "tab:one-week-results",
+                 caption = "Allocation scores (AS) and mean weighted interval scores (MWIS) for each model' as forecasted's forecasts for ") |>
+  print(include.rownames = FALSE)
+@
+
+
+
+Forecasts and allocations for a selection of states with high numbers of hospitalizations on January 3, 2022 reveal mechanics about how allocations are made (Figure \ref{fig:thermometer-plot}).
+As described in the methods above, allocations for a given location from a specific model are generated by finding the single quantile of the probabilistic forecast across all locations that reaches the resource allocation limit (in this case, assumed to be 15,000).
+A direct comparison between the forecasts from the JHUAPL-Bucky and CU-select models show that while the JHUAPL-Bucky forecast distributions were closer to the eventual observations in many states, the allocations suggested by those forecasts often were more inefficient than those from the CU-select model (Figure \ref{fig:thermometer-plot}).
+
+<<detailedASinfo>>=
+source("R/run-alloscore.R")
+as_Buck <- run_alloscore(
+  forecast_data = forecast_data,
+  truth_data = truth_data,
+  one_reference_date = "2021-12-20",
+  one_model = "JHUAPL-Bucky",
+  one_K = 15000,
+  slim = FALSE)
+
+as_CU <- run_alloscore(
+  forecast_data = forecast_data,
+  truth_data = truth_data,
+  one_reference_date = "2021-12-20",
+  one_model = "CU-select",
+  one_K = 15000,
+  slim = FALSE)
+
+Buck_quantile <- round(1 - as_Buck$lam,2)*100
+CU_quantile <- round(1 - as_CU$lam,2)*100
+
+FL_allocs <- Kat15k_alloscores |>
+   dplyr::filter(
+     model %in% c("JHUAPL-Bucky", "CU-select"),
+     reference_date == "2021-12-20",
+     abbreviation == "FL") |>
+  dplyr::select(model, x) |>
+  tibble::deframe()
+FL_diff <- round(FL_allocs["CU-select"] - FL_allocs["JHUAPL-Bucky"])
+@
+
+For JHUAPL-Bucky, the allocations were assigned at the \Sexpr{Buck_quantile}th quantile of the predictive distribution and for CU-select it was at the \Sexpr{CU_quantile}th percentile.
+This reflects that in general the JHUAPL-Bucky forecasts assigned more probabilities to higher values and thus a low quantile value across all locations reached the allocation limit of 15,000.
+In California, New York and Texas, the eventually observed number of hospital admissions was closer to the predicted median from JHUAPL-Bucky and was contained in JHUAPL-Bucky's 80\% PI. However for each of these three states, the resource allocation was lower and therefore resulted in more hypothetical unmet need than CU-select allocations.
+In Florida, the forecast from JHUAPL-Bucky missed by a wide margin (as did the forecast from CU-select) and the allocation was \Sexpr{FL_diff} units lower than what was allocated according to the CU-select model.
+
+<<thermometer-plot, fig.height=3.5, fig.width=7.5, fig.cap="Probabilistic forecasts for new hospital admissions and the inferred resource allocations for COVID-19 on January 3, 2022 for the states with the nine highest hospitalization counts. For each state, the dark black line shows the data observed when the forecast was made and the grey line shows eventually observed counts. The side-by-side shaded regions show the median (solid horizontal line) and 50%, 80% and 95% prediction intervals for the two selected models. The forecasts were made for new hospitalizations on January 3, 2022 (vertical dashed line, with number of hospitalizations indicated by red horizontal line segment at the intersection of the dashed line and the grey line of data). The vertical bars with red and yellow shading show the allocations: the red bar goes from zero to the level of the observed number of hospitalizations while the yellow bar shows how many resources were suggested by the model to be allocated to that location. The allocations (yellow bar) may be more or less than the observed number, therefore exposed red bar indicates unmet need, while the yellow bar extending above the observed number of hospitalizations means that excess resources were suggested for that given location.">>=
+source("R/plot_functions.R")
+plot_hosp(models = c("JHUAPL-Bucky", "CU-select"),
+          start_date = "2021-12-01",
+          stop_date = "2022-01-25",
+          f_date = "2021-12-20",
+          te_date = "2022-01-03",
+          ## highest locations in terms of hospitalizations
+          locations = c("FL", "NY", "TX", "CA"),
+          f_width1 = 4, f_alpha = .4,
+          allocations = TRUE,
+          forecasts_hosp = forecast_data %>%  filter(reference_date == "2021-12-20"),
+          alloscores = slim_alloscore_2021.12.20,
+          truth = truth_data,
+          f_colors = c("#4A708B", "#CD2626"),
+          one_K = 15000) + labs(x = NULL)
+@
+
+In the example of this one week, JHUAPL-Bucky had a worse allocation score than CU-select because its forecasts led to allocations that sent excess resources to several states, such as Ohio, Pennsylvania, and Michigan, that would have been more effectively allocated to states that did receive enough resources to meet their needs, such as Florida and California (Figure \ref{fig:multi-loc-ranks}A). These allocation errors resulted because that model’s forecasts did not consistently capture the relative resource needs across different states. (Figure \ref{fig:thermometer-plot} \& \ref{fig:multi-loc-ranks}A). The CU-select model made some similar errors — most prominently, over-allocating resources to Ohio — but overall, it did a better job of forecasting the relative resource demands across different locations.
+
+On the other hand, CU-select had worse performance as measured by WIS. Its forecasts were biased downwards, and it consistently incurred a large penalty for underprediction (Figure \ref{fig:multi-loc-ranks}B). Predictions from the JHUAPL-Bucky model were wider, and included the observed level of daily hospital admissions more often. Therefore, WIS did not as often assign that model severe penalties for forecasts that underpredicted or overpredicted the actual hospitalization count.
+
+Together, these results corroborate the understanding that the allocation score and weighted interval score measure different aspects of forecast performance. The allocation score penalizes models that mischaracterize the relative magnitude of resource need across different locations, while WIS penalizes forecasts that do not capture the absolute magnitude of the target quantity in each location.
+
+
+
+<<multi-loc-ranks, fig.cap="Component-wise breakdowns of the allocation score (Panel A) and weighted interval score (Panel B), by location for forecasts of hospitalization admissions on January 3, 2022, for two selected models (JHUAPL-Bucky and CU-select). Panel A shows the observed resource need, in this case the observed number of hospitalizations, for each state, along with the hypothetical number of resources allocated to the given location based on the forecasts from each model. The number of available resources was fixed at 15,000 and forecasts from each model were used to determine an optimal allocation strategy before the resource need was known. For most locations the resource need exceeded the resources allocated, indicated by the 'observed resource need' bar being larger than the 'allocation' bar. Panel B shows the breakdown of the weighted interval score (WIS) into components of underprediction, overprediction and dispersion. Larger values of WIS indicate more error, and the full WIS score for each location can be decomposed into the three components shown here.">>=
+## date points to target_end_date of 2022-01-10 to highlight
+ref_date_for_plot <- "2021-12-20"
+models_to_plot <- c("JHUAPL-Bucky", "CU-select")
+
+multiloc_dat <- Kat15k_alloscores |>
+  filter(reference_date == ref_date_for_plot,
+         ## the above date points to target_end_date of 2022-01-03 where things were really wrong
+         model %in% models_to_plot) |>
+  rename(allocation = x, `observed resource need` = y, state = abbreviation) |>
+  select(model, reference_date, state, allocation, `observed resource need`) |>
+  pivot_longer(cols = c("allocation", "observed resource need"))
+
+## plot all locations observations and allocations
+
+## line plot below here
+# multiloc_plot <- ggplot(multiloc_dat, aes(x=name, y=value, group=state)) +
+#   geom_line() +
+#   geom_line(data=dplyr::filter(multiloc_dat, state=="FL"), color="orange") +
+#   ylab("Daily hospital admissions") +
+#   scale_x_discrete(name=NULL, limits=rev, expand = c(.1,.1)) +
+#   facet_grid(.~model)
+
+ordered_levels <- truth_data |>
+  filter(target_end_date == as.Date(ref_date_for_plot)+14, location != "US") |>
+  select(location, abbreviation, value) |>
+  arrange(-value)
+
+alloc_plot <- multiloc_dat |>
+  mutate(state = factor(state, levels = ordered_levels$abbreviation),
+         name = factor(name, levels = c("observed resource need", "allocation"))) |>
+  arrange(name) |>
+  ggplot(aes(x=state, y=value, fill=name)) +
+  scale_fill_manual(name=NULL, values = c("#CD2626", "goldenrod")) +
+  theme(axis.text.x=element_text(angle=90,vjust=.5), legend.position = c(.9,.95), legend.justification = c(1,1)) +
+  ylab("Resource need and allocation") +
+  xlab(NULL) +
+  geom_col(position="identity", alpha=.7) +
+  facet_grid(model~.)
+
+wis <- covidHubUtils::score_forecasts(
+  forecast_data |> filter(reference_date == "2021-12-20", str_detect(model,"Buck|CU-select")),
+  truth_data,
+  use_median_as_point = TRUE,
+  metrics = "wis_components",
+  return_format="long") |>
+  filter(location != "US", score_name != "true_value") |>
+  left_join(select(ordered_levels, location, abbreviation)) |>
+  mutate(abbreviation = factor(abbreviation, levels=ordered_levels$abbreviation),
+         `WIS component` = factor(score_name, levels = c("overprediction", "dispersion", "underprediction")))
+
+
+## palette from
+## colorspace::divergingx_hcl(palette = "Blue-Yellow 3", n=3)
+
+wis_plot <- ggplot(data = wis, aes(x=abbreviation)) +
+  geom_col(aes(y=score_value, fill=`WIS component`)) +
+  scale_fill_manual(values = c("#9FA2FF", "gray77", "#BAAE00")) +
+  facet_grid(model~.) +
+  theme(axis.text.x=element_text(angle=90,vjust=.5), legend.position = c(.9,.95), legend.justification = c(1,1)) +
+  xlab(NULL) +
+  ylab("WIS")
+
+cowplot::plot_grid(alloc_plot, wis_plot,
+                   nrow=2,
+                   align="v",
+                   rel_heights = c(1, 1),
+                   labels = "AUTO")
+
+@
+
 \subsubsection{Forecast scores showed differences over time}
 <<grob-hosps-over-time>>=
-tar_load("truth_data")
 dat_to_plot <- truth_data |>
   filter(location == "US",
          target_end_date %in% score_data_summaries$target_end_date)
@@ -467,7 +685,7 @@ p1 <- ggplot(dat_to_plot,
 @
 
 
-<<metrics-over-time, fig.height=9, fig.width=7, fig.cap="Hospital admissions and evaluation metrics over time. Panel A shows the number of hospital admissions in the US as a whole due to COVID-19 on a sequence of 15 Mondays from December 2021 through March 2022. These are the days for which forecasts were made and evaluated. A horizontal dashed line at 15,000 shows the assumed resource constraint $K$. Panel B shows allocation scores for each model's 14-day ahead forecast, across all US states. The x-axis corresponds to the date for which the prediction was made. Allocation scores typically are high when the observed value is near to the constraint, which occurs during the last Monday in December (on the way up) and the last Monday in January (on the way down). Panel C shows the MWIS metric across weeks, averaged across all states. Similarly to panel B, the x-axis corresponds to the date for which the prediction was made. MWIS values tend to scale with the observed and predicted values, and the peak MWIS values happen around and just after the pean of the Omicron wave.">>=
+<<metrics-over-time, fig.height=9, fig.width=7, fig.cap="Hospital admissions and evaluation metrics over time. Panel A shows the number of hospital admissions in the US as a whole due to COVID-19 on a sequence of 15 Mondays from December 2021 through March 2022. These are the dates for which forecasts were made and evaluated. A horizontal dashed line at 15,000 shows the assumed resource constraint $K$. Panel B shows allocation scores (AS) for each model's 14 day-ahead forecast, across all US states. The x-axis corresponds to the date for which the prediction was made. AS typically are high when the observed value is near to the constraint, which occurs during the last Monday in December (on the way up) and the last Monday in January (on the way down). Panel C shows the MWIS metric across weeks, averaged across all states. MWIS values tend to scale with the observed and predicted values, and the peak MWIS values happen around and just after the peak of the Omicron wave.">>=
 p2 <- ggplot(alloscore_data_summaries,
              aes(x=target_end_date, y=alloscore, color=model, shape=model)) +
   scale_x_date(limits=range(score_data_summaries$target_end_date)) +
@@ -494,7 +712,7 @@ cowplot::plot_grid(p1, p2, p4,
 
 Allocation scores varied substantially by date and by model (Figure \ref{fig:metrics-over-time}).
 For predictions made for the first three Mondays in December 2021 and the last three Mondays in February 2022 all models had allocation scores under 500 (and the mean across all models was less than 100), indicating that the unnecessary unmet need was fairly low relative to the total number of hospital admissions on those days.
-The allocation scores are on the whole highest when the observed number of new hospital admissions is closest to the resource threshold of 15,000, as this is the time when any mistakes in allocation are costly in terms of wasting resources in one location that could have been used in another.
+The allocation scores were on the whole highest when the observed number of new hospital admissions was closest to the resource threshold of 15,000, as those are the times when any mistakes in allocation are costly in terms of wasting resources in one location that could have been used in another.
 Predictions made during the peak week and just after showed the highest variation in allocation scores, with some models having allocation scores under 1000 and others having values over 3500.
 
 <<eval=FALSE>>=
@@ -532,13 +750,10 @@ score_data_summaries |>
             range = maxWIS-minWIS)
 @
 
-\subsubsection{Model rankings for different scores did not reliably correlate}
+\subsubsection{Metrics were not consistently correlated over time}
 
 <<metrics-correlation, fig.width=10, fig.height=7.5, fig.cap="Association of standardized ranks for MWIS and allocation score by model and week. Each facet of the plot corresponds to one model. Within each facet, each point corresponds to a week. The x- and y-values correspond to the MWIS standardized rank and the allocation score standardized rank for that week. Points corresponding to earlier dates have darker shading. The size of the point corresponds to the observed value on the date for which the prediction was made. Models show different degrees of association between the two metrics.">>=
-all_data <- left_join(alloscore_data_summaries, score_data_summaries,
-                      by=c("model", "target_end_date"))
-
-all_data |>
+all_scores |>
   filter(as.Date(reference_date.x) < as.Date("2022-02-01") ) |>
   ggplot(aes(x=mwis_rank_std, y=allo_rank_std, color=target_end_date, size=yobs)) +
   geom_point(alpha=.7) +
@@ -567,18 +782,75 @@ alloscore_data_summaries |>
 
 \subsubsection{Integrated allocation score across values of K}
 
-Using the integrated allocation score summarizes allocation scores across a range of possible values of the constraint ($K$) (Section \ref{sec:methods.detailed.integrated_allocation}).
+The integrated allocation score (IAS) summarizes allocation scores (AS) across a range of possible values of the constraint ($K$), possibly taking weights into account for different values of $K$ that might be more or less likely (Section \ref{sec:methods.detailed.integrated_allocation}).
 This could be useful in situations where the actual constraint may not be known, or could only be specified as a probability distribution.
+Unlike in the above analyses where we conducted analyses assuming that $K$ was known to be 15,000, the analyses in this subsection are conducted assuming different distributions of $K$.
 
- - something here from Ben's analysis?
+<<calc-tot-y>>=
+tot_y <- slim_alloscore_2021.12.20 |>
+  filter(model == "COVIDhub-ensemble", K==200) |>
+  pull(y) |>
+  sum()
+@
 
 
-\ngr{include figure here that shows relative rankings of locations?}
+AS was computed for a range of $K$ from 200 to 60,000 for forecasts made on 2020-12-20 predicting levels of hospitalizations on 2021-01-03 (Figure \ref{fig:multi-k}A).
+These calculations highlight that AS was highest at the $K$ nearest to the observed value of \Sexpr{format(tot_y, big.mark = ",")}.
+Rankings of AS from all models were fairly stable across a range of values for K, with some crossings, especially at $K$ values further away from the observed value.
+
+IAS was computed for two distributions of $K$, one uniform across the entire range and the other a symmetric distribution around 15,000 (Figure \ref{fig:multi-k}B).
+Both versions of the IAS were correlated with the original AS conducted at $K=15,000$, with the higher correlation coming from the distribution that was centered at $K=15,000$ (Figure \ref{fig:multi-k}C).
+Model rankings based on the AC and the centered IAS were roughly similar, with the top and bottom two models being the same for both scores (Table \ref{tab:multi-k-scores}).
+
+
+<<multi-k, fig.height=10, fig.width = 8, fig.cap = "Allocation scores (AS) across different resource constraints (K) for 10 models that made forecasts on 2021-12-20. Panel A shows, for each model, the AS for values of K between 200 and 60,000 at increments of 200. The AS show a sharp peak just under 20,000, near the eventually observed number of hospitalizations. Panel B shows two possible weighting functions for the Integrated Allocation Score (IAS). The first (dark blue circles) computes weights proportional to a normal distribution centered at 15,000 (solid vertical gray line) with a standard deviation of 3,000, and truncated to be between 5,000 and 25,000. The second (light orange triangles) uses a uniform weight for all possible values of K. Note that the AS used in earlier sections of the application uses the single fixed value of K=15,000.  Panel C shows how either method of computing the IAS (y-axis) is correlated with AS at K=15,000 (x-axis). Every point represents the AS and IAS for one model. The IAS centered at 15,000 are more closely correlated with the AS values.">>=
+
+ias_to_plot <- left_join(ias, as) |>
+  pivot_longer(cols = c(IAS, IAS_wt), names_to = "IAS_type", values_to = "IAS") |>
+  mutate(IAS_type = ifelse(IAS_type=="IAS", "uniform", "centered at 15,000"))
+
+p1 <- ggplot(ias_to_plot, aes(x=AS, y=IAS, color=IAS_type, shape=IAS_type)) +
+  geom_point() +
+  geom_smooth(method="lm", se=FALSE, linetype=2) +
+  scale_color_manual(name = "Integrated Allocation Score", values = c("#386cb0", "#fdc086")) +
+  scale_shape_manual(name = "Integrated Allocation Score", values = c(1, 2)) +
+  geom_abline(slope=1, intercept=0, color="gray") +
+  theme(legend.position = c(0.05,.9), legend.justification = c(0,1),
+        legend.background=element_rect(fill = alpha("white", 0.2)))
+
+p2 <- slim_alloscore_2021.12.20 |>
+  group_by(model, K) |>
+  summarize(`Allocation score` = sum(components)) |>
+  left_join(kprobs) |>
+  ggplot(aes(x=K)) +
+  geom_point(aes(y=weight), color = "#386cb0") +
+  geom_point(y=1/length(unique(slim_alloscore_2021.12.20$K)), color="#fdc086", shape = 2) +
+  geom_vline(xintercept = 15000, color="gray")
+
+p3 <- slim_alloscore_2021.12.20 |>
+  group_by(model, K) |>
+  summarize(`Allocation score` = sum(components)) |>
+  mutate(model = factor(model, levels = rev(ias$model))) |>
+  ggplot(aes(x=K, y=`Allocation score`, color=model, linetype=model)) +
+  geom_line() +
+  theme(legend.position = c(0.01,.99), legend.justification = c(0,1),
+        legend.background=element_rect(fill = alpha("white", 0.2)),
+        legend.title = element_blank(), legend.text = element_text(size=7))
+
+cowplot::plot_grid(p3, p2, p1,
+                   nrow=3,
+                   align = "h",
+                   labels = "AUTO")
+@
+
+
+
+
+
 
 \section{Discussion}
 \label{sec:discussion}
 
-All proper scoring rules for probabilistic forecasts have an explicit link to a loss function, thereby placing numerical value on different kinds of errors in specifying forecasts.
 In epidemiological forecasting, well-known proper scoring rules such as the log score or variations on the continuous rank probability score (such as the weighted interval score, or WIS) have been frequently utilized to evaluate probabilistic forecasts.
 Often, these scores are used to rank models according to accuracy with that particular score, but without reference to the underlying decision-making process for which that score was designed.
 With careful thought and collaboration between modelers and public health officials, we argue that scores that are more aligned with public health decisions could be developed to inform specific problems.
@@ -588,9 +860,9 @@ We often conceive of infectious disease forecasts as being useful for decision m
 However, we do note that the decision-making context presented in this work, while motivated by examples from real-world public health resource allocation problems, has not been used to inform an actual real-time decision-making process.
 
 Resource allocation decisions are a realistic example of the kinds of decisions that could motivate more targeted forecasting exercises.
-One real-world example is allocation of ventilators during a respiratory viral pandemic.
+One real-world example is allocation of ventilators during a respiratory viral pandemic\citep{huang_stockpiling_2017}.
 This was the motivating example for the examples presented in the work above.
-However, other examples where allocation is a central concern exist as well, such as the allocation of a limited stockpile of vaccinations\citep{persad_fair_2023} or diagnostic tests\citep{du_optimal_2022}.
+However, other examples where allocation is a central concern exist as well, such as the allocation of a limited stockpile of vaccinations\citep{araz_geographic_2012,persad_fair_2023} or diagnostic tests\citep{du_optimal_2022,pasco_covid-19_2023}.
 
 In practice, there are many potential users of forecasts with many different decision making problems.
 Not all can be easily quantified.
@@ -615,6 +887,13 @@ There are several important limitations to the current work.
 The allocation score we developed here does not directly account for important considerations such as fairness or equity of allocations.
 Nor does the proposed framework attempt to capture the broader context of decision making. For example, in practice it may be possible to increase the resource constraint $K$ by shifting funding from other disease mitigation measures.
 We also note that in some settings, a ``successful'' epidemiological forecast may lead to policy decisions that change the distribution of the predicted outcome $Y$. Our framework cannot be used to evaluate a forecast at a horizon that may have been impacted by such a decision.
+
+An additional limitation of the current work and opportunity for further investigation is to more carefully evaluate whether a forecast adds value to existing decision-making processes.
+In the context of allocation-based decisions, standard procedures might involve simply extrapolating need based on a current observed data (similar to the `baseline' model presented above), with or without adjustments based on other political or real-world considerations.
+For example, in many settings public health stakeholders will synthesize multiple sources of information, e.g. real-time data from a wide variety of quantitative and qualitative sources coupled with expert judgment based on a situational understanding of past and current experience.
+The allocation score presented in this work assesses the optimality of the allocation based on an omniscient view of the future.
+However, what we care about is whether a given forecast adds useful information to an existing decision-making process.
+While the scoring procedures as presented do not directly address this question, they could be modified (say, by comparison to a `baseline` model) to quantify the benefit -if any- of using a forecast to inform a specific decision.
 
 We see this work as an initial overture for what we hope will grow to be a large, collaborative body of work in more closely coupling applied epidemiological forecasting with public health decision-making.
 We note that a few papers have begun exploring similar linkages as described in the literature review \textendash but we see much room for additional work in this area.
