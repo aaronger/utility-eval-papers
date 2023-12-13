@@ -618,13 +618,28 @@ It follows from the discussion in section \ref{sec:alloscore_proper} that this i
 We emphasize that the forecaster's true predictive distribution $F$ does not need to be a member of the specified parametric family $\mathcal{P}$ for this construction to yield a proper score.
 It is, however, necessary to specify the parametric family to use and the foundational scoring rule $s_A$ (including any relevant problem parameters such as the resource constraint $K$) in advance, so that forecasters can identify the Bayes act parameter set $\theta^\star(F)$ to report.
 
-For a given resource constraint $K$, if it is possible to find a member of the specified parametric family $\mathcal{P}$ with the same allocation as $F$ for all possible forecast distributions $F$ (i.e., for any $F$ there is a $G_\theta \in \mathcal{P}$ such that $x^F = x^{G_\theta}$), the scoring rule $S_R$ will yield the same score as the allocation score $S_A$.
-For the particular choice of the parametric family $\mathcal{P}_{dfq}$ (i.e., using the \verb`distfromq` package), this is the case. For instance, the forecaster could pick one required quantile level (such as 0.5, for which the corresponding predictions are predictive medians), and set the submitted quantiles of their forecast distribution at that level to be the desired allocations.
+If the parametric family used to represent forecast distributions is flexible enough, the reporting scoring rule $S_R$ and the allocation score are equivalent in the sense that they will yield the same score for any distribution $F$.
+Suppose that for a given resource constraint $K$, for any forecast distribution $F$ it is possible to find a member $G_{\theta^\star}$ of the specified parametric family $\mathcal{P}$ with the same allocation as $F$ (i.e., $x^F = x^{G_{\theta^\star}}$). Then $\theta^\star$ is a Bayes act for the reporting problem since for any other parameter value $\theta$,
+\begin{align*}
+\Ex_F[s_R(\theta^\star, Y)] &= \Ex_F[ s_A(x^{G_{\theta^\star}}, Y) ] \\
+&= \Ex_F[s_A(x^F, Y)]  \quad \text{ (since $x^F = x^{G_{\theta^\star}}$)} \\
+&\leq \Ex_F[ s_A(x^{G_\theta}, Y) ]  \quad \text{ (by definition of $x^F$)} \\
+&= \Ex_F[ s_R(\theta, Y)].
+\end{align*}
+It therefore follows that
+\begin{align*}
+S_R(F, y) &= s_R(\theta^\star, y) \\
+&= s_A(x^{G_{\theta^\star}}, y) \\
+&= s_A(x^F, y) \\
+&= S_A(F, y).
+\end{align*}
+
+For the particular choice of the parametric family $\mathcal{P}_{\text{dfq}}$ (i.e., using the \verb`distfromq` package), this flexibility requirement is satisfied. For instance, the forecaster could pick one required quantile level (such as 0.5, for which the corresponding predictions are predictive medians), and set the submitted quantiles of their forecast distribution at that level to be the desired allocations.
 However, this representation of the forecast may be quite different from the actual forecast distribution $F$.
 
-A key observation is that a \emph{post hoc} analysis combining \verb`distfromq` with the allocation score does not in general yield a proper evaluation method. This is because the forecast distribution $F$ and the distribution $G_\theta \in \mathcal{P}_{dfq}$ with the same quantiles as $F$ may determine quite different resource allocations, particularly if the tail extrapolations performed by \verb`distfromq` do not match the tail behavior of $F$.
+A key observation is that a \emph{post hoc} analysis combining \verb`distfromq` with the allocation score does not in general yield a proper evaluation method. This is because the forecast distribution $F$ and the distribution $G_\theta \in \mathcal{P}_{\text{dfq}}$ with the same quantiles as $F$ may determine quite different resource allocations, particularly if the tail extrapolations performed by \verb`distfromq` do not match the tail behavior of $F$.
 
-As another alternative for practical forecasting exercises, a forecast hub could ask forecasters to provide the Bayes allocations associated with their forecasts for one or more fixed resource constraints $K$. This would allow for direct calculation of scores and narrowing the gap between model outputs and public health end users. For this to be feasible, implementations of the allocation algorithm would have to be provided to participating forecasters.
+As another alternative for practical forecasting exercises, a forecast hub could ask forecasters to directly provide the Bayes allocations associated with their forecasts for one or more specified resource constraints $K$. At the cost of increasing the number of quantities solicited by the forecast hub, this would have several advantages: it would prevent any artificial distortion of the forecast distributions, allow for direct calculation of scores, and narrow the gap between model outputs and public health end users. For this to be feasible, implementations of the allocation algorithm would have to be provided to participating forecasters in the computational languages being used for modeling.
 
 \bibliography{allocation}
 
