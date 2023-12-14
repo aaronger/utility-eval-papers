@@ -273,23 +273,25 @@ S_A^{\text{raw}}(F, y; K) = s_A(x^{F,K}, y) = \sum_{i=1}^N L \cdot \max(0, y_i -
 This measures the total unmet need across all locations that results from using the Bayes allocation associated with the forecast $F$ when the actual level of need in each location is observed to be $y_i$.
 
 To make this a more easily interpreted measure of forecast performance, we will adjust the raw score by subtracting the minimum loss $l_{\text{oracle}}(y;K)$ achievable by an \emph{oracle} allocator which has precise foreknowledge of the outcomes $y_i$.
-This minimum loss is given by $l_{\text{oracle}}(y;K) = L \cdot \max(0, \sum_{i=1}^{N}y_i - K)$: if there are enough resources to meet the total resource need ($\sum_{i=1}^{N}y_i \leq K$), the oracle can achieve a loss of 0, but if the resource constraint is less than the total needed resources ($\sum_{i=1}^{N}y_i > K$), it is not possible to do better than a loss of $L \cdot (\sum_{i=1}^{N}y_i - K)$.
-
-Our scoring rule is then given by
+When the oracle has sufficient resources to meet the total need, i.e., when $\sum_{i=1}^{N}y_i \leq K$, the oracle's loss
+$L \cdot \max(0, \sum_{i=1}^{N}y_i - K) = 0$ and there is no adjustment.  Thus the allocation score coincides with
+the raw score,
 \begin{align}
-S_A(F, y; K) &= S_A^{\text{raw}}(F, y; K) - l_{\text{oracle}}(y;K) \\
-& =
-\begin{cases}
-\sum_{i=1}^n L  \cdot  \max(0, y_i - x_i^{F,K}), &  \sum_{i=1}^{N}y_i \leq K \\
-L \cdot K - L \cdot \sum_{i=1}^{N} \min(x_i^{F,K}, y_i), &  \sum_{i=1}^{N}y_i > K.
-\end{cases}
+S_A(F, y; K) = S_A^{\text{raw}}(F, y; K)=\sum_{i=1}^N L \cdot \max(0, y_i - x_i^{F,K}) \quad \text{if } \sum_{i=1}^{N}y_i \leq K.
 \end{align}
-In the first case, the oracle incurs no loss so that the raw and adjusted scores coincide. The second case can be read as taking the $K$ resource units perfectly allocated by the oracle as a base penalty on
+On the other hand, when the oracle cannot cover all need and incurs a loss of $L \cdot \sum_{i=1}^{N}y_i - L\cdot K > 0$, we adjust
+the raw score by this loss to get
+\begin{align}
+S_A(F, y; K)  &= S_A^{\text{raw}}(F, y; K) - L \cdot \sum_{i=1}^{N}y_i + L\cdot K  \nonumber\\
+&= L \cdot \sum_{i=1}^{N} \left\{\max(0, y_i - x_i^{F,K}) - y_i\right\}  + L\cdot K \nonumber \\
+&= L \cdot K - L \cdot \sum_{i=1}^{N} \min(x_i^{F,K}, y_i) \quad \text{if } \sum_{i=1}^{N}y_i > K.
+\end{align}
+This can be read as taking the $K$ resource units perfectly allocated by the oracle as a base penalty on
 the imperfect forecast $F$ and then, for each location $i$, reducing this penalty by however much of the need $y_i$
 is met with the Bayes act component $x_i^{F,K}$.
-The oracle adjustment aligns with the idea that \emph{opportunity loss} (often known as \emph{regret} or (negative) \emph{relative utility}) is often a more important quantity than absolute loss \elr{needs citation}.
+The oracle adjustment aligns with a common theme in economic decision theory that \emph{opportunity loss} (often known as \emph{regret} or (negative) \emph{relative utility}) is often a more important quantity than absolute loss (see e.g., \cite{DIECIDUE201788}).
 
-\subsubsection{Integrating the allocation score across resource constraint levels}
+\subsubsection{Integrating the allocation score across resource constraint levels}{}
 \label{sec:methods.detailed.integrated_allocation}
 
 The allocation score $S_A$ that we developed in the previous section measures the skill of the forecast distributions $F$ based on a single probability level $\tau^{F,K}$. This is appropriate if the resource constraint $K$ is a known constant. However, if $K$ is not precisely known at the time of decision making or there is interest in measuring the value of forecasts across a range of decision making scenarios with different resource constraints, we can use an \emph{integrated allocation score} (IAS) that integrates the allocation score across values of $K$, weighting by a distribution $p$:
@@ -332,9 +334,12 @@ From this point, the WIS or CRPS can be obtained by averaging across a range of 
 We have described in previous sections how both the allocation score and the weighted interval score (WIS) arise from a single standard procedure for developing proper scoring rules.
 The allocation score arises when the decision relates to how a fixed quantity of resources should be allocated to multiple locations.
 The WIS and CRPS arise when the decision relates to how much of a resource to order in the context of the cost of the resource and wanting to minimize unmet need in one or more locations.
-In both settings, the optimal solution sets the resource level in each location to a quantile of the respective forecast distributions.
+In both settings, the score can be defined in terms of the shortage or excess of resource procurement levels against realized need where
+these levels are expressable as quantiles of the respective forecast distributions by virtue of minimizing expected shortages or excesses.
 
-These decision making problems differ according to the challenge faced by the decision maker: a fixed constraint on the available resources for the allocation problem, or a cost per unit of resources in the resource purchasing problem. In fact, it is possible to combine these into a more general problem where the decision maker must decide on both the total level of resources to purchase and an allocation of those resources across multiple locations, subject to a cost per unit of resources and a constraint on the total quantity of resources that can be purchased. The quantile loss and the allocation score presented in this work are both special cases of the score that emerges from that more general decision making problem that integrates across resource cost and constraint parameters together. We pursue this direction further in other work that is in progress.
+These decision making problems differ according to the challenge faced by the decision maker: a fixed constraint on the available resources for the allocation problem, or a cost per unit of resources in the resource purchasing problem. In fact, it is possible to combine these into a more general problem where the decision maker must decide on both the total level of resources to purchase and an allocation of those resources across multiple locations, subject to a cost per unit of resources and a constraint on the total quantity of resources that can be purchased. When 
+constraints are likely to be large, and therefore of less importance, a composite score for this general scenario would converge to the WIS or CRPS.  And if the constraints are likely to be tight, and therefore to be a determining factor, this composite score would converge to the IAS.  
+We pursue this direction further in other work that is in progress.
 
 \section{Evaluating forecasts of COVID hospitalizations using the allocation score}
 \label{sec:application}

@@ -107,7 +107,7 @@ more thorough discussion.
 			\item WIS as average quantile score across 23 C/L problems.
 		\end{todolist}
 	%item Sketch of scoring for decision problems involving both cost and constraint.
-	\item  Derivation of case 2 in formula for Oracle adjustment
+	\item[\xmark]  Derivation of case 2 in formula for Oracle adjustment (done in manuscript?)
 \end{todolist}
 
 \section{Introduction}
@@ -224,9 +224,12 @@ an ingrained and unavoidable habit in the literature.}
 \[
 l(x,y) = Cx + L(y-x)_{+}.
 \] 
-The decision problem is then to select a random future loss $l(x,Y)$ in a way that aligns with the preference that $l(x,y)$ be
-as low as possible given any realization $Y=y$.
+The decision problem is then to select an action $x$ that aligns with the preference that $l(x,y)$ be
+as low as possible given any realization $Y=y$.  Equivalently, the problem is to choose a random future loss $l(x,Y)$ which
+is \emph{admissible}, meaning that there is no alternative action $\tilde{x}$ producing a random future loss $l(\tilde{x},Y)$
+which is never greater than $l(x,Y)$ and strictly lower for some realization $Y=y_0$.
 
+Admissibility with respect to the loss $l$ is not, however, by itself a very strong decision criterion.
 To give the decision problem more structure we assume the decision maker either knows the distribution $F$ of $Y$, or
 wishes to proceed as if a forecast $F$ of $Y$ were true. This gives us what is known in decision theory as a decision
 problem \emph{under risk} (regarding the future value of $Y$) as opposed to one \emph{under uncertainty} where both $Y$
@@ -409,15 +412,14 @@ It is important to note that $\lambda$ depends on the forecast $F$ and the const
 interpreted as a kind of ``cost'' imposed by the constraint in the allocation problem which is analogous to $C = L(1-\alpha)$ in the  
 the cost-lost problem of section \ref{sec:quantiles_shortage}, it does not serve to define the allocation loss function in the way that $C$ defines \eqref{eqn:expQloss}. $\lambda$ is rather a parameter that must be found, given the pair $F$ and $K$.
 
-\section{Numerical computation of allocation scores}
+\section{Numerical computation of allocation Bayes acts}
 \label{sec:numeric}
 
-Exact computation of the allocation score $S_A(F, y; K)$ of a forecast $F$ requires an explicit choice of and expression for a 
-solution $x^{F,K} = \bm{q}_{\tau^{\star},F} \in \undertilde{\bm{F}}^{-1}(\tau^{\star})$ to \eqref{eqn:quantiles-sum-to-K} where
-$\tau^{\star}$ solves \eqref{eqn:tau-inclusion}. For practical scenarios in which the forecast $F$ has a form preventing 
-analytical solutions to \eqref{eqn:quantiles-sum-to-K}, we seek a method of generating an approximation $\tilde{\tau}$ to 
-a solution $\tau^{\star}$ which offers control (at least in principle) over a robust measure of scoring rule error such as
-the sum of absolute coordinate errors
+In practice, \eqref{eqn:quantiles-sum-to-K} is rarely amenable to closed form solution.
+Using the Bayes act in explicit computations therefore requires a method of generating an approximation $\tilde{\tau}$ to 
+a solution $\tau^{\star}$ of \eqref{eqn:tau-inclusion}.  One would also strive to have some control over a robust measure of 
+of the approximation error of the random shortages which we aim to compute using the Bayes act. One possible measure is the sum
+of absolute coordinate errors
 \begin{align}
 \mathrm{SAE}(Y,\tilde{\tau}) = \sum_{i=1}^{N} \left| (Y_i-q_{\tilde{\tau},F_i})_+ - (Y_i-x_i^{F,K})_+ \right|
 \end{align}
@@ -427,8 +429,9 @@ the sum of absolute coordinate errors
 % L\left| \sum_{i=1}^{N}\mathbb{E}_{F_i}\left[(Y_i-q_{\tilde{\tau},F_i})_+ - (Y_i-x_i^{F,K})_+\right]\right|
 % \end{align}
 where $\bm{q}_{\tilde{\tau},F}$ solves the linear program
-$\sum_{x \in \undertilde{\bm{F}}^{-1}(\tilde{\tau})}x_i = K$.
-
+$\sum_{x \in \undertilde{\bm{F}}^{-1}(\tilde{\tau})}x_i = K$ approximating the true Bayes act defining linear program
+$\sum_{x \in \undertilde{\bm{F}}^{-1}(\tau^{\star})}x_i = K$. In this section we outline such a method we have implemented 
+in the \verb`R` package \verb`alloscore`.
 
 Suppose we have established that $\tau^{\star} = F_T(K)$ lies in the interval $I_1 = [\tau_L, \tau_U]$ with $\tau_L < \tau_U$,
 that is, $K \in [q^{-}_{F_T,\tau_L}, q^{+}_{F_T,\tau_U}]$.
