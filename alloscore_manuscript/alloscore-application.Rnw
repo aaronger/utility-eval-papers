@@ -423,7 +423,7 @@ Using the same procedure as for allocation scores described above, we computed s
 
 \subsection{Data and code availability}
 
-All forecast data used in this evaluation are available through the COVID-19 Forecast Hub (cite repository). Code for our analyses is available on GitHub (cite repository).
+All forecast data used in this evaluation are available through the COVID-19 Forecast Hub \citep{cramer_reichlabcovid19-forecast-hub_2021}. An R package implementing the allocation score is available at \url{https://github.com/aaronger/alloscore} and all code for the analyses presented in this manuscript is available at \url{https://github.com/aaronger/utility-eval-papers}.
 
 \subsection{Application results}
 
