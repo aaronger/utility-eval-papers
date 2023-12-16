@@ -315,7 +315,8 @@ Opportunity loss \eqref{eqn:opp-loss} rearranges to
 \begin{align}
 l_o(x,Y) &= C(x - Y)_{+} + (L-C)(Y-x)_{+} \\
 &= L(1-\alpha)(x - Y)_{+} + L\alpha(Y-x)_{+} \\
-&= L(\alpha - \mathbf{1}\{Y < x\})(Y-x),
+&= L(\alpha - \mathbf{1}\{Y < x\})(Y-x) \\
+&= L \max \left\{(\alpha-1)(Y-x), \alpha(Y-x)\right\}
 \end{align}
 a form in which it is often called \emph{pinball} loss, despite its graph being an unlikely pinball trajectory for $\alpha \neq 1/2$.
 
