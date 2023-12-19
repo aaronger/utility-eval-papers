@@ -26,7 +26,8 @@ tar_source(files = c("R/data-ingestion.R",
                      "R/plot-alloscores.R",
                      "R/run-alloscore.R",
                      "R/determine-model-eligibility.R",
-                     "R/exponential-examples.R"))
+                     "R/exponential-examples.R",
+                     "R/plot_functions.R"))
 
 values <- tibble(forecast_dates = as.character(seq.Date(as.Date("2021-11-22"), as.Date("2022-02-28"), by = "7 days")))
 
@@ -94,5 +95,6 @@ combined <- tar_combine(
 #   command = plot_K_v_alloscore(alloscore_df),
 #   format = "file"
 # )
+
 
 list(setup, mapped, combined)

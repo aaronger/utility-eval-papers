@@ -22,6 +22,12 @@ make_iter_pic(K = 20,
                 list(dist = "unif", min = 7, max = 15)
               ))
 
+make_iter_pic(K = 2,
+              dists_and_params = list(
+                list(dist = "exp", rate = 1),
+                list(dist = "exp", rate = 1/4)
+              ))
+
 dat <- make_param_df(dists_and_params = list(
   list(dist = "unif", min = 0, max = 7),
   list(dist = "unif", min = 7, max = 15)

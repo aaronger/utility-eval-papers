@@ -47,3 +47,30 @@ plot_K_v_alloscore <- function(alloscores) {
 
   "figures/allo_scores_wide.pdf"
 }
+
+### thermometer plot for muni-vs-bucky
+
+plot_thermo <- function(all_alloscore_data, forecast_data, truth_data) {
+
+mvbucky_dist_alloc <- plot_hosp(models = c("JHUAPL-Bucky", "MUNI-ARIMA"),
+          start_date = "2021-12-20",
+          locations = c("FL", "CA", "TX", "NY", "PA", "OH", "NJ", "IL", "GA"),
+          f_width1 = 4, f_alpha = .4,
+          allocations = TRUE, 
+          forecasts_hosp = forecast_data %>%  filter(reference_date == "2021-12-27"),
+          alloscores = all_alloscore_data %>% filter(reference_date == "2021-12-27"),
+          truth = truth_data,
+          f_colors = c("#4A708B", "#CD2626")) + labs(x = NULL)
+
+pdf("figures/mvbucky_dist_alloc.pdf", width = 10, height = 6)
+print(mvbucky_dist_alloc)
+dev.off()
+
+"figures/mvbucky_dist_alloc.pdf"
+}
+
+
+
+
+
+

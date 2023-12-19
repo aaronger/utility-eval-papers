@@ -103,7 +103,7 @@ plot_hosp <- function(
       mapping = aes(
         x = xmin,
         xend = xmax,
-        y = value, yend = value, color = "Observed Value"), size = .5) +
+        y = value, yend = value, color = "Observed Value"), linewidth = .5) +
     # Dummy layer for legend
     geom_blank(data = data.frame(validation = "Observed Value"), aes(color = validation)) +
     scale_color_manual(
@@ -112,14 +112,14 @@ plot_hosp <- function(
                  "Validation" = "darkgrey"),
       name = NULL,
       breaks = "Observed Value",
-      guide = guide_legend(override.aes = list(size = 1.5))) +
+      guide = guide_legend(override.aes = list(linewidth = 1.5))) +
     # mark the predictive median
     geom_segment(
       data = fc_dat %>% filter(quantile == 0.5),
       mapping = aes(
         x = xmin,
         xend = xmax,
-        y = value, yend = value), size = 1.5)
+        y = value, yend = value), linewidth = 1.5)
     # predictive interval rects
     if (!is.null(st_colors)) {
       p <- p + geom_rect(
@@ -196,7 +196,7 @@ plot_hosp <- function(
         xmin = xmin,
         xmax = xmax,
         ymin = 0,
-        ymax = x), fill = "gold", color = "black", size = .2) +
+        ymax = x), fill = "gold", color = "black", linewidth = .2) +
       geom_rect(
         data = adf_x,
         mapping = aes(
