@@ -31,6 +31,7 @@ plot_hosp <- function(
     models = "COVIDhub-ensemble",
     locations = "US",
     geofacet = FALSE,
+    facet_ncol=3,
     key_width = .15,
     allocations = FALSE,
     one_K = NULL,
@@ -60,7 +61,8 @@ plot_hosp <- function(
     target_end_date <= stop_date) %>%
   dplyr::mutate(
     validation = ifelse(target_end_date > as.Date(f_date), "Validation", "Historical"),
-    code = as.factor(toupper(geo_value)),
+    code = geo_value,
+    # code = as.factor(toupper(geo_value)),
     xmin = target_end_date - half_width - space,
     xmax = xmin + total_width + 2 * space)
 
@@ -71,7 +73,8 @@ plot_hosp <- function(
   fc_dat <- forecasts_hosp %>%
     dplyr::filter(abbreviation %in% locations, model %in% models) %>%
     dplyr::mutate(
-      code = as.factor(toupper(geo_value)),
+      code = geo_value,
+      # code = as.factor(toupper(geo_value)),
       model = forcats::fct_relevel(model, models),
       xmin = target_end_date - half_width + (match(model, models) - 1)*(f_width1 + space),
       xmax = xmin + f_width1)
@@ -81,12 +84,12 @@ plot_hosp <- function(
   # truth <- truth %>% mutate(
   #   code = fct_relevel(code, loc_abbrevs))
 
-  if (!is.null(st_colors)) {
-    fc_dat <- fc_dat %>% mutate(
-      code = fct_relevel(code, names(st_colors)))
-    truth <- truth %>% mutate(
-      code = fct_relevel(code, names(st_colors)))
-  }
+  # if (!is.null(st_colors)) {
+  #   fc_dat <- fc_dat %>% mutate(
+  #     code = fct_relevel(code, names(st_colors)))
+  #   truth <- truth %>% mutate(
+  #     code = fct_relevel(code, names(st_colors)))
+  # }
 
   p <- ggplot(data = truth) +
     # truth data
@@ -216,9 +219,9 @@ plot_hosp <- function(
     theme(axis.title = element_blank())
   } else if (length(locations) > 1) {
     if (free_y) {
-      p <- p + facet_wrap(~ code, scales = "free_y")
+      p <- p + facet_wrap(~ code, scales = "free_y", ncol=facet_ncol)
     } else {
-      p <- p + facet_wrap(~ code)
+      p <- p + facet_wrap(~ code, ncol=facet_ncol)
     }
   }
   p <- p + theme(

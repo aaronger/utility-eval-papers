@@ -495,20 +495,36 @@ FL_diff <- round(FL_allocs["CU-select"] - FL_allocs["JHUAPL-Bucky"])
 %In California, New York and Texas, the eventually observed number of hospital admissions was closer to the predicted median from JHUAPL-Bucky than the median from CU-select, and was contained in JHUAPL-Bucky's 80\% PI but not in the 80\% PI from CU-select. However for each of these three states, the resource allocation was lower for JHUAPL-Bucky than for CU-select and therefore resulted in more hypothetical unmet need.
 %In Florida, which was the state that saw the largest number of reported hospitalizations on this target date, the forecast from JHUAPL-Bucky missed by a wide margin (as did the forecast from CU-select) and the allocation was \Sexpr{FL_diff} units lower than the allocation derived from the CU-select model.
 
-<<thermometer-plot, fig.height=3.5, fig.width=7.5, fig.cap="Probabilistic forecasts for new hospital admissions and the inferred resource allocations for COVID-19 on January 3, 2022 for the states with the nine highest hospitalization counts. For each state, the dark black line shows the data observed when the forecast was made and the grey line shows eventually observed counts. The side-by-side shaded regions show the median (solid horizontal line) and 50%, 80% and 95% prediction intervals for the two selected models. The forecasts were made for new hospitalizations on January 3, 2022 (vertical dashed line, with number of hospitalizations indicated by red horizontal line segment at the intersection of the dashed line and the grey line of data). The vertical bars with red and yellow shading show the allocations: the red bar goes from zero to the level of the observed number of hospitalizations while the yellow bar shows how many resources were suggested by the model to be allocated to that location. The allocations (yellow bar) may be more or less than the observed number, therefore exposed red bar indicates unmet need, while the yellow bar extending above the observed number of hospitalizations means that excess resources were suggested for that given location.">>=
+<<thermometer-plot, fig.height=7, fig.width=7.5, fig.cap="Probabilistic forecasts for new hospital admissions and the inferred resource allocations for COVID-19 on January 3, 2022 for the states with the ten highest hospitalization counts. For each state, the dark black line shows the data observed when the forecast was made and the grey line shows eventually observed counts. The side-by-side shaded regions show the median (solid horizontal line) and 50%, 80% and 95% prediction intervals for the two selected models. The forecasts were made for new hospitalizations on January 3, 2022 (vertical dashed line, with number of hospitalizations indicated by red horizontal line segment at the intersection of the dashed line and the grey line of data). The vertical bars with red and yellow shading show the allocations: the red bar goes from zero to the level of the observed number of hospitalizations while the yellow bar shows how many resources were suggested by the model to be allocated to that location. The allocations (yellow bar) may be more or less than the observed number, therefore exposed red bar indicates unmet need, while the yellow bar extending above the observed number of hospitalizations means that excess resources were suggested for that given location.">>=
 source("R/plot_functions.R")
+
+locs_to_plot <- truth_data |>
+  dplyr::filter(target_end_date == "2022-01-03", location != "US") |>
+  dplyr::arrange(desc(value)) |>
+  head(10) |>
+  dplyr::pull(abbreviation)
+
 plot_hosp(models = c("JHUAPL-Bucky", "CU-select"),
           start_date = "2021-12-01",
           stop_date = "2022-01-25",
           f_date = "2021-12-20",
           te_date = "2022-01-03",
           ## highest locations in terms of hospitalizations
-          locations = c("FL", "NY", "TX", "CA"),
+          locations = locs_to_plot,
           f_width1 = 4, f_alpha = .4,
+          facet_ncol=2,
           allocations = TRUE,
-          forecasts_hosp = forecast_data %>%  filter(reference_date == "2021-12-20"),
-          alloscores = slim_alloscore_2021.12.20,
-          truth = truth_data,
+          forecasts_hosp = forecast_data %>% filter(reference_date == "2021-12-20") %>%
+            dplyr::mutate(
+              abbreviation = factor(abbreviation, levels=locs_to_plot, ordered=TRUE),
+              geo_value = abbreviation),
+          alloscores = slim_alloscore_2021.12.20 %>%
+            dplyr::mutate(
+              abbreviation = factor(abbreviation, levels=locs_to_plot, ordered=TRUE)),
+          truth = truth_data %>%
+            dplyr::mutate(
+              abbreviation = factor(abbreviation, levels=locs_to_plot, ordered=TRUE),
+              geo_value = abbreviation),
           f_colors = c("#4A708B", "#CD2626"),
           one_K = 15000) + labs(x = NULL)
 @
