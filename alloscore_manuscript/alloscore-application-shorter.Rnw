@@ -307,13 +307,15 @@ The hospitalization data used for scoring forecasts were downloaded on \Sexpr{fo
 
 \subsection{Evaluation metrics}
 
-We measured forecast skill using two forecast scores, the allocation score and the weighted interval score (WIS), both defined above.
+We measured forecast skill using two forecast scores, the allocation score (AS) and the weighted interval score (WIS), both defined above.
 We computed these scores for the 14 day ahead forecasts made each week.
-For this analysis, we fixed the resource constraint used for the allocation score to be $K=15,000$, based roughly on a reported number of ventilators available for reallocation in the US \citep{ajao_assessing_2015}.
+For this analysis, we fixed the resource constraint used for the AS to be $K=15,000$, based roughly on a reported number of ventilators available for reallocation in the US \citep{ajao_assessing_2015}.
 We computed the mean WIS (MWIS) across all of the forecasted state-level locations.
 %For each week, we computed the allocation score for the 14 day-ahead forecast.
 
 For both scores, we also computed models' standardized rank among all models that submitted forecasts each week. The standardized rank is between 0 and 1, where 0 corresponds to the worst rank and 1 to the best. In the case of a tie between one or more models, all models received the better rank.
+
+As described above, predictions were submitted to the Forecast Hub in the form of a set of 23 quantiles of the predictive distribution. The WIS can be directly calculated from these quantiles. However, calculation of the AS requires that the full cumulative distribution functions of the forecast distribution are available for each location. For the purpose of this analysis, to calculate the allocation score we approximated the full cumulative distribution functions based on the provided quantiles. On the interior of the provided quantiles we used a monotonic cubic spline to interpolate the quantiles, and in the lower and upper tails we used normal distributions with parameters selected so as to match the two lowest and two highest quantiles (see the supplement for further details). In the supplement, we show that if this evaluation procedure had been specified prospectively, the resulting score would be proper \textemdash but a post hoc application of this procedure is improper. We use the procedure here to illustrate the properties of the score, and note that a forecaster or collaborative forecasting exercise interested in using the allocation score for evaluation could circumvent issues with propriety through thoughtful elicitation of representations of forecast distributions or by collecting the allocations at specified resource levels as part of forecast submissions.
 
 %We also computed a standardized rank for the allocation score for each model $m$ and week $w$.
 %First, we computed the number of models that forecasted that week ($n_w$) and the rank of model $m$ among the $n_w$ models ($r_{m,w}^{AS}$).
