@@ -63,7 +63,7 @@
 \usepackage{xr-hyper}
 \usepackage{hyperref}
 \usepackage{xurl}
-\externaldocument{supplement}
+\externaldocument{supplement_short}
 
 \DeclareMathOperator*{\argmin}{argmin}
 \DeclareMathOperator{\short}{sh}
@@ -160,14 +160,15 @@ However, we emphasize again that these studies did not take the step of evaluati
 \section{The Allocation Score}
 \label{sec:methods}
 
-We begin with an informal description of the allocation score and some examples illustrating its key characteristics in section \ref{sec:methods.overview}. In section \ref{sec:methods.detailed} we develop the allocation score more carefully, building on decision theoretic procedures for deriving proper scoring rules. In section \ref{sec:methods.related}, we note that another group of common scores including the quantile score, WIS, and CRPS, can also be derived from decision theoretic foundations \textemdash starting from a different decision making context.
+We begin with an informal description of the allocation score and some examples illustrating its key characteristics in section \ref{sec:methods.overview}. In section \ref{sec:methods.detailed} we develop the allocation score more carefully, using a basic decision theoretic procedure for deriving proper scoring rules. (See section \ref{sec:proper} of the supplement for a definition of a proper scoring rule
+and a more technical discussion of the procedure). In section \ref{sec:methods.related}, we note that another group of common scores including the quantile score, WIS, and CRPS, can also be derived from decision theoretic foundations \textemdash starting from a different decision making context.
 
 \subsection{Overview of Allocation Scoring}
 \label{sec:methods.overview}
 
 Suppose that a decision maker is tasked with determining how to allocate $K$ available units of a resource across $N$ locations.
 If the decision maker is provided with a multivariate forecast $F$ where each marginal forecast distribution $F_i$ predicts resource need in a particular location, one option is to choose the resource allocation that minimizes the expected total unmet need according to the forecast.
-We will give a more precise mathematical statement in section \ref{sec:methods.detailed}, but informally, the total expected unmet need according to the forecast is
+We will give a more precise mathematical statement in section \ref{sec:methods.detailed}, but informally, the total expected unmet need according to the forecast is{}
 \begin{align}
 \sum_{i=1}^N \mathbb{E}_{F_i}[\text{unmet need in location $i$}], \label{eqn:informal_objective}
 \end{align}
@@ -186,7 +187,7 @@ The \textbf{allocation score} of the forecast $F$ is the avoidable unmet need th
 By ``avoidable unmet need'', we mean that the allocation score does not include the amount of unmet need that was inevitable simply because the amount of available resources $K$ was less than the need for resources.
 Rather, the allocation score measures the unmet need that could have been avoided by an oracle that knows exactly how much need will occur in each location and divides the amount $K$ so that nothing is wasted in one location while it could be put to use in another. An allocation score of 0 is optimal, and indicates that no other allocation of resources could have met need better than the allocation suggested by $F$. A larger allocation score indicates that it would have been possible to improve upon the allocation suggested by $F$.
 
-\paragraph{Example 1} Suppose we have a forecast $F$ for need in two locations with $F_1 = \mathrm{Exp}(1 / \sigma_1)$ and $F_2 = \mathrm{Exp}(1 / \sigma_2)$, where $\sigma_1 = 1$ and $\sigma_2 = 4$. When the marginal forecasts are exponential distributions, it can be shown that the optimal allocation divides the available resources among the locations proportionally to the scale parameters $\sigma_i$ (see section
+\paragraph{Example 1} Suppose we have a forecast $F$ for need in two locations with $F_1 = \mathrm{Exp}(1 / \sigma_1)$ and $F_2 = \mathrm{Exp}(1 / \sigma_2)$, where $\sigma_1 = 1$ and $\sigma_2 = 4$. The means of these distributions are given by the scale parameters $\sigma_i$. When the marginal forecasts are exponential distributions, it can be shown that the optimal allocation divides the available resources among the locations proportionally to the scale parameters $\sigma_i$ (see section
 \ref{sec:bayes-quantiles} of the supplemental materials). If $K = 5$ units of the resource are available, the optimal allocation according to $F$ would be 1 unit of resources in location 1 and 4 units of resources in location 2. If, on the other hand, $K = 10$ units are available, we will allocate 2 units of resources to location 1 and 8 units to location 2. Figure~\ref{fig:exp_alloc_example} illustrates the situation.
 
 \begin{figure}
@@ -233,7 +234,8 @@ We can formalize the preceding discussion with the following three-step procedur
 \item Given a probabilistic forecast $F$, determine the \emph{Bayes act} $x^F$ that minimizes the expected loss under the distribution $F$.
 \item The \emph{scoring rule} for $F$ calculates the score as the loss incurred when the Bayes act was used: $S(F, y) = s(x^F, y)$.
 \end{enumerate}
-This is a general procedure that may be applied in settings where it is possible to specify a quantitative loss function. Subject to certain technical conditions, scoring rules obtained from this procedure are proper. We refer the reader to the supplement for a more technically precise discussion.
+This is a general procedure that may be applied in settings where it is possible to specify a quantitative loss function. We call a scoring rule obtained from this procedure a \emph{Bayes scoring rule} and in section \ref{sec:proper} of the 
+supplement we show that they are proper by construction.
 
 \subsubsection{The allocation score for a fixed resource constraint}
 \label{sec:methods.detailed.specific_allocation}
@@ -269,18 +271,16 @@ S_A^{\text{raw}}(F, y; K) = s_A(x^{F,K}, y) = \sum_{i=1}^N L \cdot \max(0, y_i -
 \end{align}
 This measures the total unmet need across all locations that results from using the Bayes allocation associated with the forecast $F$ when the actual level of need in each location is observed to be $y_i$.
 
-To make this a more easily interpreted measure of forecast performance, we will adjust the raw score by subtracting the minimum loss $l_{\text{oracle}}(y;K)$ achievable by an \emph{oracle} allocator which has precise foreknowledge of the outcomes $y_i$.
-When the oracle has sufficient resources to meet the total need, i.e., when $\sum_{i=1}^{N}y_i \leq K$, the oracle's loss is zero and there is no adjustment.  Thus the allocation score coincides with
-the raw score in that case.
+To make this a more easily interpreted measure of forecast performance, we will adjust the raw score by subtracting the minimum loss
+achievable by an \emph{oracle} allocator which has precise foreknowledge of the outcomes $y_i$.
+When the oracle has sufficient resources to meet the total need, i.e., when $\sum_{i=1}^{N}y_i \leq K$, the oracle's loss is zero 
+and allocation score coincides with the raw score.
 On the other hand, when the oracle cannot cover all need and incurs a loss of $L \cdot \left(\sum_{i=1}^{N}y_i - K \right) > 0$, we adjust
 the raw score by this loss.
-The oracle-adjusted score is
+The oracle-adjusted score can therefore be written as
 \begin{align}
-S_A(F, y; K)  &= S_A^{\text{raw}}(F, y; K) - l_{\text{oracle}}(y;K) \\
-&= \begin{cases}
-S_A^{\text{raw}}(F, y; K), &  \sum_{i=1}^{N}y_i \leq K \\
-S_A^{\text{raw}}(F, y; K) - L \cdot \left( \sum_{i=1}^{N}y_i - K\right), &  \sum_{i=1}^{N}y_i > K.
-\end{cases}
+S_A(F, y; K)  &= S_A^{\text{raw}}(F, y; K) - L \cdot \max\left(0,\sum_{i=1}^{N}y_i - K\right) \\
+&= L\left\{\sum_{i=1}^N \max(0, y_i - x_i^{F,K}) -  \max\left(0,\sum_{i=1}^{N}y_i - K\right)\right\}
 \end{align}
 The oracle adjustment aligns with a common theme in economic decision theory that \emph{opportunity loss} (often known as \emph{regret} or (negative) \emph{relative utility}) is often a more important quantity than absolute loss (see e.g., \cite{DIECIDUE201788}).
 
@@ -344,13 +344,15 @@ The hospitalization data used for scoring forecasts were downloaded on December 
 
 \subsection{Evaluation metrics}
 
-We measured forecast skill using two forecast scores, the allocation score and the weighted interval score (WIS), both defined above.
+We measured forecast skill using two forecast scores, the allocation score (AS) and the weighted interval score (WIS), both defined above.
 We computed these scores for the 14 day ahead forecasts made each week.
-For this analysis, we fixed the resource constraint used for the allocation score to be $K=15,000$, based roughly on a reported number of ventilators available for reallocation in the US \citep{ajao_assessing_2015}.
+For this analysis, we fixed the resource constraint used for the AS to be $K=15,000$, based roughly on a reported number of ventilators available for reallocation in the US \citep{ajao_assessing_2015}.
 We computed the mean WIS (MWIS) across all of the forecasted state-level locations.
 %For each week, we computed the allocation score for the 14 day-ahead forecast.
 
 For both scores, we also computed models' standardized rank among all models that submitted forecasts each week. The standardized rank is between 0 and 1, where 0 corresponds to the worst rank and 1 to the best. In the case of a tie between one or more models, all models received the better rank.
+
+As described above, predictions were submitted to the Forecast Hub in the form of a set of 23 quantiles of the predictive distribution. The WIS can be directly calculated from these quantiles. However, calculation of the AS requires that the full cumulative distribution functions of the forecast distribution are available for each location. For the purpose of this analysis, to calculate the allocation score we approximated the full cumulative distribution functions based on the provided quantiles. On the interior of the provided quantiles we used a monotonic cubic spline to interpolate the quantiles, and in the lower and upper tails we used normal distributions with parameters selected so as to match the two lowest and two highest quantiles (see the supplement for further details). In the supplement, we show that if this evaluation procedure had been specified prospectively, the resulting score would be proper \textemdash but a post hoc application of this procedure is improper. We use the procedure here to illustrate the properties of the score, and note that a forecaster or collaborative forecasting exercise interested in using the allocation score for evaluation could circumvent issues with propriety through thoughtful elicitation of representations of forecast distributions or by collecting the allocations at specified resource levels as part of forecast submissions.
 
 %We also computed a standardized rank for the allocation score for each model $m$ and week $w$.
 %First, we computed the number of models that forecasted that week ($n_w$) and the rank of model $m$ among the $n_w$ models ($r_{m,w}^{AS}$).
@@ -393,12 +395,12 @@ The JHUAPL-Bucky model had the second best MWIS but the third worst allocation s
 
 
 % latex table generated in R 4.3.1 by xtable 1.8-4 package
-% Tue Dec 19 17:26:53 2023
+% Wed Dec 20 04:09:40 2023
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrrr}
   \hline
-model & AS & MWIS & IAS centered at 15k & IAS uniform \\ 
+Model & AS & MWIS & IAS centered at 15k & IAS uniform \\ 
   \hline
 CU-select & 669 & 133 & 774 & 326 \\ 
   COVIDhub-ensemble & 873 & 159 & 1067 & 438 \\ 
@@ -435,7 +437,7 @@ CU-select & 669 & 133 & 774 & 326 \\
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}
-\includegraphics[width=\maxwidth]{figure/thermometer-plot-1} \caption[Probabilistic forecasts for new hospital admissions and the inferred resource allocations for COVID-19 on January 3, 2022 for the states with the nine highest hospitalization counts]{Probabilistic forecasts for new hospital admissions and the inferred resource allocations for COVID-19 on January 3, 2022 for the states with the nine highest hospitalization counts. For each state, the dark black line shows the data observed when the forecast was made and the grey line shows eventually observed counts. The side-by-side shaded regions show the median (solid horizontal line) and 50\%, 80\% and 95\% prediction intervals for the two selected models. The forecasts were made for new hospitalizations on January 3, 2022 (vertical dashed line, with number of hospitalizations indicated by red horizontal line segment at the intersection of the dashed line and the grey line of data). The vertical bars with red and yellow shading show the allocations: the red bar goes from zero to the level of the observed number of hospitalizations while the yellow bar shows how many resources were suggested by the model to be allocated to that location. The allocations (yellow bar) may be more or less than the observed number, therefore exposed red bar indicates unmet need, while the yellow bar extending above the observed number of hospitalizations means that excess resources were suggested for that given location.}\label{fig:thermometer-plot}
+\includegraphics[width=\maxwidth]{figure/thermometer-plot-1} \caption[Probabilistic forecasts for new hospital admissions and the inferred resource allocations for COVID-19 on January 3, 2022 for the states with the ten highest hospitalization counts]{Probabilistic forecasts for new hospital admissions and the inferred resource allocations for COVID-19 on January 3, 2022 for the states with the ten highest hospitalization counts. For each state, the dark black line shows the data observed when the forecast was made and the grey line shows eventually observed counts. The side-by-side shaded regions show the median (solid horizontal line) and 50\%, 80\% and 95\% prediction intervals for the two selected models. The forecasts were made for new hospitalizations on January 3, 2022 (vertical dashed line, with number of hospitalizations indicated by red horizontal line segment at the intersection of the dashed line and the grey line of data). The vertical bars with red and yellow shading show the allocations: the red bar goes from zero to the level of the observed number of hospitalizations while the yellow bar shows how many resources were suggested by the model to be allocated to that location. The allocations (yellow bar) may be more or less than the observed number, therefore exposed red bar indicates unmet need, while the yellow bar extending above the observed number of hospitalizations means that excess resources were suggested for that given location.}\label{fig:thermometer-plot}
 \end{figure}
 
 \end{knitrout}
@@ -541,9 +543,9 @@ Model rankings based on the AC and the centered IAS were roughly similar, with t
 \label{sec:discussion}
 
 In epidemiological forecasting, well-known proper scoring rules such as the log score or variations on the continuous ranked probability score (such as the weighted interval score, or WIS) have been frequently utilized to evaluate probabilistic forecasts.
-Often, these scores are used to rank models by accuracy according to that particular score, but without reference to the underlying decision-making process for which that score was designed.
+Often models are ranked with respect to accuracy according to a particular score, but without reference to any underlying decision-making process for which that score was designed or from which it might be derivable as a Bayes scoring rule.
 With careful thought and collaboration between modelers and public health officials, we argue that scores that are more aligned with public health decisions could be developed to inform specific problems.
-We have demonstrated that forecast evaluation methods that are tied to a specific decision making context can yield model rankings that are substantively different from standard measures of forecast skill.
+We have demonstrated that forecast evaluation methods that are tied to a specific decision making context can yield model rankings that differ substantively from those based on standard measures of forecast skill.
 
 %We often conceive of infectious disease forecasts as being useful for decision making purposes, but it is rare for forecast evaluation to be tied directly to the value of the forecasts for informing those decisions. This work seeks to address that gap.
 %However, we do note that the decision-making context presented in this work, while motivated by examples from real-world public health resource allocation problems, has not been used to inform an actual real-time decision-making process.
@@ -553,8 +555,9 @@ One real-world example, which was the motivating example presented in the work a
 Other examples include the allocation of a limited stockpile of vaccinations\citep{araz_geographic_2012,persad_fair_2023} or diagnostic tests\citep{du_optimal_2022,pasco_covid-19_2023}.
 
 In practice, there are many potential users of forecasts with many different decision making problems.
-Not all can be easily quantified.
-Those that can be easily quantified may differ enough that no single score would be appropriate for all users.
+Not all can be easily modeled as an effort to minimize the expectation of a transparent loss function.
+And even those that are easily framed as expected loss minimization may differ enough that no single score would be 
+appropriate for all users.
 Ideally, targeted forecasting tools could be developed through close collaboration between modelers and public health officials.
 However, this may only be possible in settings with sufficient staffing on both an analytics and a public health team.
 Increasingly, collaborative modeling hubs are being used to generate ``one-size-fits-all'' forecasts for many locations at once.
@@ -576,7 +579,8 @@ This suggests suggests that contributed models (other than the ensemble, which c
 There are several important limitations to the current work.
 The allocation score we developed here does not directly account for important considerations such as fairness or equity of allocations.
 Nor does the proposed framework attempt to capture the broader context of decision making. For example, in practice it may be possible to increase the resource constraint $K$ by shifting funding from other disease mitigation measures.
-We also note that in some settings, a ``successful'' epidemiological forecast may lead to policy decisions that change the distribution of the predicted outcome $Y$. Our framework cannot be used to evaluate a forecast at a horizon where the outcome may have been impacted by such a decision.
+We also note that in some settings, a ``successful'' epidemiological forecast may lead to policy decisions that change the distribution of the predicted outcome $Y$. Our framework would need considerable enhancements before being applicable to forecast evaluation beyond horizons
+for which causal feedback can be neglected. 
 
 An opportunity for further investigation is to more carefully evaluate whether a forecast adds value to existing decision making processes.
 In the context of decisions about allocations, standard procedures might involve extrapolating need based on a current observed data (similar to the `baseline' model presented above), with or without adjustments based on other political or real-world considerations.
@@ -590,7 +594,7 @@ While the scoring procedures as presented do not directly address this question,
 %This area is also largely unexplored in the realm of public health to date, with some initial methodological development in econometrics \citep{loaiza-maya_focused_2021}.
 
 In conclusion, we argue that the way modelers and policymakers view and evaluate forecasts should change depending on the specific decision-making context.
-Using standard forecast evaluation metrics can mask the utility of certain forecasts, or lead to forecasts being used to inform a particular decision that are not well matched to that decision making context.
+Defaulting to standard forecast evaluation metrics can mask the utility (or disutility) of certain forecasts, or lead to forecasts being used in decision making contexts very different from those for which they were intended.
 New collaborative work between public health officials and modeling teams is needed to assess the value and relevance of the initial findings presented here, including real-time pilot studies or simulation exercises that could be used to inform further development of new or alternative scoring metrics.
 We see this work as an initial overture for what we hope will grow to be a large, collaborative body of work more closely coupling applied epidemiological forecasting with public health decision making.
 

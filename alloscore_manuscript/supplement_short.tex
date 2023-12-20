@@ -83,6 +83,8 @@ more thorough discussion.
 We briefly address some technical and methodological points in the main text. We begin in section \ref{sec:shortage} by formalizing the concept of a \emph{shortage} of resources and giving some key results about expected resource shortages under a distribution characterizing uncertainty about (future) levels of resource need. Resource shortages play a central role in the decision-making problems that give rise to the quantile loss and the allocation score, which we discuss in sections \ref{sec:quantiles_shortage} and \ref{sec:bayes-quantiles} respectively. Section \ref{sec:numeric} gives details on the numerical methods that we use to calculate allocation scores, including some special considerations for settings where forecasts are represented by a finite collection of predictive quantiles, such as the application to forecasts of hospitalizations due to COVID-19 in section 3 of the article.
 
 \section{Proper scoring rules}
+\label{sec:proper}
+
 In decision theory, a loss function $l$ is used to formalize a decision problem by assigning numerical value $l(x,y)$ to the 
 \emph{result} of taking an \emph{action} $x$ in preparation for an \emph{outcome} $y$. A \emph{scoring rule} $S$ is a 
 loss function for a decision problem where the action is a probabilistic forecast $F$ of the outcome $y$ (or the statement of $F$ by a forecaster). 
