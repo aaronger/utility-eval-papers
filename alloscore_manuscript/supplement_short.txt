@@ -217,8 +217,125 @@ It is important to note that $\tau$ depends on $F$ and $K$ and is \emph{not} a f
 of the allocation scoring rule.
 \newpage
 
+\section{Numerical computation of allocation Bayes acts}
+\label{sec:numeric}
+
+In practice, \eqref{eqn:quantiles-sum-to-K} is rarely amenable to closed form solution.
+Using the Bayes act in explicit computations therefore requires a method of generating an approximation $\tilde{\tau}$ to 
+a solution $\tau^{\star}$ of \eqref{eqn:tau-inclusion}.  One would also strive to have some control over a robust measure of 
+of the approximation error of the random shortages which we aim to compute using the Bayes act. One possible measure is the sum
+of absolute coordinate errors
+\begin{align}
+\mathrm{SAE}(Y,\tilde{\tau}) = \sum_{i=1}^{N} \left| (Y_i-q_{\tilde{\tau},F_i})_+ - (Y_i-x_i^{F,K})_+ \right|
+\end{align}
+% of the Bayes risk error or ``optimality gap''
+% \begin{align}
+% \left|\mathbb{E}_F\left[s_A(\bm{q}_{\tilde{\tau},F}, Y)\right] - \mathbb{E}_F[s_A(x^{F,K}, Y)]\right| = 
+% L\left| \sum_{i=1}^{N}\mathbb{E}_{F_i}\left[(Y_i-q_{\tilde{\tau},F_i})_+ - (Y_i-x_i^{F,K})_+\right]\right|
+% \end{align}
+where $\bm{q}_{\tilde{\tau},F}$ solves the linear program
+$\sum_{x \in \undertilde{\bm{F}}^{-1}(\tilde{\tau})}x_i = K$ approximating the true Bayes act defining linear program
+$\sum_{x \in \undertilde{\bm{F}}^{-1}(\tau^{\star})}x_i = K$. In this section we outline such a method we have implemented 
+in the \verb`R` package \verb`alloscore`.
+
+Suppose we have established that $\tau^{\star} = F_T(K)$ lies in the interval $I_1 = [\tau_L, \tau_U]$ with $\tau_L < \tau_U$,
+that is, $K \in [q^{-}_{F_T,\tau_L}, q^{+}_{F_T,\tau_U}]$.
+From section \ref{sec:quantile-functions}, we know that the set 
+$TQ_F(\tau_L) \cup TQ_F(\tau_U) \subset [q^{-}_{F_T,\tau_L}, q^{+}_{F_T,\tau_U}]$
+is arranged in exactly one of the following ways (where e.g. refers to figure \ref{fig:FQ}): 
+\begin{itemize}
+\item[($\bullet \bullet$)] $TQ_F(\tau_L) \cap TQ_F(\tau_U) = \varnothing$ 
+(and $q^{+}_{F_T,\tau_L} < q^{-}_{F_T,\tau_U}$, e.g., $\tau_L=\alpha_1, \tau_U=\alpha_5$)
+\item[($\bullet$)] $TQ_F(\tau_L) = \{K\} = TQ_F(\tau_U)$ 
+(a point mass at $K$, e.g., $\alpha_3 \leq \tau_L \leq \tau_U \leq \alpha_5$)
+\item[($\bullet\!-$)] $TQ_F(\tau_L) = \{q^{-}_{F_T,\tau_U}\} \subsetneq TQ_F(\tau_U)$ 
+(a point mass at $q^{-}_{F_T,\tau_U}$, e.g., $\tau_L = \alpha_3, \tau_U = \alpha_5$)
+\item[($-\!\bullet$)] $TQ_F(\tau_L) \supsetneq \{q^{+}_{F_T,\tau_L}\} = TQ_F(\tau_U)$ 
+(a point mass at $q^{+}_{F_T,\tau_U}$, e.g., e.g., $\tau_L = \alpha_5, \tau_U = \alpha_4$).
+\end{itemize}
+ 
+In the case ($\bullet$), we can immediately take 
+$\tau^{\star}=\tau_U$ as the probability level representing the allocation Bayes act.
+In the cases
+($\bullet\!-$), and ($-\!\bullet$), which imply the presence of a point mass in one or more of the 
+component forecasts adjacent to a region of zero density in all components, we can take $\tau^{\star}=\tau_U$ or $\tau_L$, 
+respectively, as the representing probability level.  
+Having found our $\tau^{\star}$ we then arrive at a Bayes act $x^{F,K}$ by by solving the
+linear program $\sum_{x \in \undertilde{\bm{F}}^{-1}(\tau^{\star})}x_i = K$.
+
+In the remaining and typical case of ($\bullet \bullet$), further search is generally necessary. We can proceed 
+by evaluating $TQ_F$ at $\tau_M = \frac{1}{2}\left(\tau_L + \tau_U\right)$ and replacing $I_1$ with one of its 
+halves
+\begin{align}
+I_2 = 
+\begin{cases}
+[\tau_L, \tau_M] & \text{ if } K < q^{-}_{F_T,\tau_M} \\
+[\tau_M, \tau_U] & \text{ if } K \geq q^{-}_{F_T,\tau_M}
+\end{cases}
+\end{align}
+which also contains $\tau^{\star} = F_T(K)$. This follows from the definition $q^{-}_{F_T,\tau_M} := \min\{x \mid F_T(x) \geq \tau_M\}$, 
+according to which
+\begin{align}
+\begin{cases}
+K < q^{-}_{F_T,\tau_M} \text{ implies } \tau^{\star} = F_T(K) < \tau_M  \\
+K \geq q^{-}_{F_T,\tau_M} \text{ implies } \tau^{\star} = F_T(K) \geq \tau_M.
+\end{cases}
+\end{align}
+Note that $K \leq q^{-}_{F_T,\tau_M}$ would not imply $F_T(K) \leq \tau_M$ due to the possibility of a point mass at $K$.
+
+Iterating this process we obtain a sequence $\{I_k\}, k=1,2,\ldots$ of intervals of widths 
+$\left|I_k \right| = 2^{1-k}\left|I_1 \right|$ which either terminates at one of the scenarios 
+($\bullet$), ($\bullet\!-$), or ($-\!\bullet$), or provides infinite sequences $\{\tau_{L,k}\}$ and $\{\tau_{U,k}\}$ converging
+to $\tau^{\star}$ from below and above. Such a sequence provides the basis of a ``bisection'' algorithm for finding
+the ``root'' $\tau^{\star}$ of the set condition $0 \in TQ_F(\tau) - K$.
+
+In the generic case of an infinite $\{I_k\}$, we need to define practical stopping criteria for the possible limit behaviours of 
+$F_T(K \pm \varepsilon)$ as $\varepsilon \searrow 0$ which are exemplified in figure \ref{fig:FQ} at $0, x_1, x_2, x_3, (x_3 +x_4)/2$ and 
+$x_5$.
+% \begin{itemize}
+% \item[($\mathrlap{\,\bullet}{\,/}\,$)] $F_T(K - \varepsilon) < F_T(K-) = F_T(K) < F_T(K + \varepsilon)$
+% (so that $\tau^{\star} = F_T(K-)$ and $TQ_F(\tau^{\star}) = \{K\}$)
+% \item[($/\!\!\raisebox{.9ex}{$\bullet$\!-}$)] $F_T(K - \varepsilon) < F_T(K-) = F_T(K) = F_T(K + \varepsilon)$
+% \item[($\raisebox{-.9ex}{-\!$\bullet$}\!\!/$)] $F_T(K - \varepsilon) = F_T(K) < F_T(K + \varepsilon)$
+% \item[($\raisebox{-.9ex}{\phantom{-}\!$\bullet$}\!\!/$)] $F_T(K - \varepsilon) \leq F_T(K-) < F_T(K) < F_T(K + \varepsilon)$
+% \item[($\,\bullet\!\text{-}$)] $F_T(K - \varepsilon) \leq F_T(K-) < F_T(K) = F_T(K + \varepsilon)$
+% \item[($\text{-}\!\!\bullet\!\!\text{-}$)]  $F_T(K - \varepsilon) = F_T(K) = F_T(K + \varepsilon)$
+% so that $K \in (q^{-}_{F_T,\tau^{\star}}, q^{+}_{F_T,\tau^{\star}})$ and all component forecasts $F_i$ have 
+% zero density at points $x_i \in (q^{-}_{F_i,\tau^{\star}}, q^{+}_{F_i,\tau^{\star}})$ and $\sum x_i = K$.
+% \end{itemize}
+
+And after having obtained sufficiently a sufficient narrow terminal $I_K = [\tau_{L,K}, \tau_{U,K}]$ we need a protocol for 
+how to select a solution to the linear program $\sum_{x \in \undertilde{\bm{F}}^{-1}(I_K)}x_i = K$ as an approximate Bayes act.
+
+
+
+\section{Computing allocations from finite quantile forecast representations}
+
+In section 3 of the manuscript, we used the allocation score to evaluate forecasts of COVID-19 hospitalizations that have been submitted to the COVID-19 Forecast Hub. These forecasts are submitted to the Hub using a set of 23 quantiles of the forecast distribution at the 23 probability levels in the set $\mathcal{T} = \{0.01, 0.025, 0.05, 0.1, 0.15, \ldots, \allowbreak 0.9, 0.95, 0.975, 0.99\}$, which specify a predictive median and the endpoints of central $(1 - \alpha) \times 100\%$ prediction intervals at levels $\alpha = 0.02, 0.05, 0.1, 0.2, \allowbreak 0.3, 0.4, 0.5, 0.6, \allowbreak 0.7, 0.8, 0.9$. For a given week and target date, we use $q_{i,k}$ to denote the submitted quantiles for location $i$ and probability level $\tau_k \in \mathcal{T}$, $k = 1, \ldots, 23$.
+
+In the event that there is some $k \in \{1, \ldots, 23\}$ for which $\sum_i q_{i,k} = K$, i.e., the provided predictive quantiles at level $\tau_k$ sum across locations to the resource constraint $K$, the solution to the allocation problem is given by those quantiles. However, generally this will not be the case; the optimal allocation will typically be at some probability level $\tau^\star \notin \mathcal{T}$.
+
+To address this situation and support the numerical allocation algorithm outlined in section \ref{sec:numeric}, we need a mechanism to approximate the full cumulative distribution functions $F_i$, $i = 1, \ldots, N$ based on the provided quantiles. We have developed functionality for this purpose in the \verb`distfromq` package for R (cite). This functionality represents a distribution as a mixture of discrete and continuous parts, and it works in two steps:
+\begin{enumerate}
+  \item Identify a discrete component of the distribution consisting of zero or more point masses, and create an adjusted set of predictive quantiles for the continuous part of the distribution by subtracting the point mass probabilities and rescaling.
+  \item For the continuous part of the distribution, different approaches are used on the interior and exterior of the provided quantiles:
+  \begin{enumerate}
+    \item On the interior, a monotonic cubic spline interpolates the adjusted quantiles representing the continuous part of the distribution.
+    \item A location-scale parametric family is used to extrapolate beyond the provided quantiles. The location and scale parameters are estimated separately for the lower and upper tails so as to obtain a tail distribution that matches the two most extreme quantiles in each tail.
+  \end{enumerate}
+\end{enumerate}
+The resulting distributional estimate exactly matches all of the predictive quantiles provided by the forecaster. We use the cumulative distribution function resulting from this procedure as an input to the allocation score algorithm.
+
+We refer the reader to the \verb`distfromq` documentation for further detail.
+
+
 \section{Propriety of parametric approximation} % (fold)
 \label{sec:propriety_of_parametric_approximation}
+
+In practice, open forecasting exercises are generally not able to collect an exact representation of the forecast distribution $F$ other than in simple settings such as for a categorical variable with a relatively small number of categories. In settings where the outcome being forecasted is a continuous quantity (such as rates of influenza-like illness among outpatient doctor visits) or a count (such as influenza hospitalizations), forecasting exercises have therefore resorted to collecting summaries of a forecast distribution such as bin probabilities or predictive quantiles. This raises the question of whether use of the allocation score still consitutes a proper evaluation procedure if the forecast distribution $F$ is not itself directly recorded. The answer we provide in this section is that it is, so long as the fact that the allocation score will be used for forecast evaluation and the method that will be used to obtain a distributional estimate of $F$ from the provided forecast representation are communicated to participating forecasters prospectively.
+
+We consider a setting where a forecasting exercise (such as a forecast hub) pre-specifies that forecasts will be represented using a parametric family of forecast distributions $G_\theta(y)$, and the task of the forecaster is to select a particular parameter value $\theta$. We use $\mathcal{P}$ to denote the collection of all distributions $G_\theta$ in the given parametric family. For instance, it has recently been proposed that mixture distributions could be used to represent forecast distributions \cite{wadsworth2023mixture}. Additionally, we note that the functionality in \verb`distfromq` can be viewed as specifying a parametric family $\mathcal{P}_{\mathrm{dfq}}$ where the parameters $\theta$ of $G_\theta$
+are its quantiles at pre-specified probability levels, and where the shape of any $G_\theta \in \mathcal{P}_{\mathrm{dfq}}$ over the full range of its support is entirely controlled by these quantiles.
 
 For convenience we write $S(F,G) := \Ex_G[S(F,Y)]$. Let
 \begin{align*}
@@ -249,6 +366,9 @@ which is improper because
 \end{align*}
 
 
+
+
+As another alternative for practical forecasting exercises, a forecast hub could ask forecasters to directly provide the Bayes allocations associated with their forecasts for one or more specified resource constraints $K$. At the cost of increasing the number of quantities solicited by the forecast hub, this would have several advantages: it would prevent any artificial distortion of the forecast distributions, allow for direct calculation of scores, and narrow the gap between model outputs and public health end users. For this to be feasible, implementations of the allocation algorithm would have to be provided to participating forecasters in the computational languages being used for modeling.
 
 
 % section propriety_of_parametric_approximation (end)
