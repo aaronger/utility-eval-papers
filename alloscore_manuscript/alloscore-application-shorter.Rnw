@@ -121,7 +121,7 @@ However, we emphasize again that these studies did not take the step of evaluati
 \section{The Allocation Score}
 \label{sec:methods}
 
-We begin with an informal description of the allocation score and some examples illustrating its key characteristics in section \ref{sec:methods.overview}. In section \ref{sec:methods.detailed} we develop the allocation score more carefully, using a basic decision theoretic procedure for deriving proper scoring rules. (See section \ref{sec:proper} of the supplement for a definition of a proper scoring rule
+We begin with an informal description of the allocation score and some examples illustrating its key characteristics in section \ref{sec:methods.overview}. In section \ref{sec:methods.detailed} we develop the allocation score more carefully, using a decision theoretic procedure for deriving proper scoring rules. (See section \ref{sec:proper} of the supplement for a definition of a proper scoring rule
 and a more technical discussion of the procedure). In section \ref{sec:methods.related}, we note that another group of common scores including the quantile score, WIS, and CRPS, can also be derived from decision theoretic foundations \textemdash starting from a different decision making context.
 
 \subsection{Overview of Allocation Scoring}
@@ -196,7 +196,7 @@ We can formalize the preceding discussion with the following three-step procedur
 \item The \emph{scoring rule} for $F$ calculates the score as the loss incurred when the Bayes act was used: $S(F, y) = s(x^F, y)$.
 \end{enumerate}
 This is a general procedure that may be applied in settings where it is possible to specify a quantitative loss function. We call a scoring rule obtained from this procedure a \emph{Bayes scoring rule} and in section \ref{sec:proper} of the 
-supplement we show that they are proper by construction.
+supplement we show that Bayes scoring rules are proper by construction.
 
 \subsubsection{The allocation score for a fixed resource constraint}
 \label{sec:methods.detailed.specific_allocation}
@@ -315,7 +315,7 @@ We computed the mean WIS (MWIS) across all of the forecasted state-level locatio
 
 For both scores, we also computed models' standardized rank among all models that submitted forecasts each week. The standardized rank is between 0 and 1, where 0 corresponds to the worst rank and 1 to the best. In the case of a tie between one or more models, all models received the better rank.
 
-As described above, predictions were submitted to the Forecast Hub in the form of a set of 23 quantiles of the predictive distribution. The WIS can be directly calculated from these quantiles. However, calculation of the AS requires that the full cumulative distribution functions of the forecast distribution are available for each location. For the purpose of this analysis, to calculate the allocation score we approximated the full cumulative distribution functions based on the provided quantiles. On the interior of the provided quantiles we used a monotonic cubic spline to interpolate the quantiles, and in the lower and upper tails we used normal distributions with parameters selected so as to match the two lowest and two highest quantiles (see the supplement for further details). In the supplement, we show that if this evaluation procedure had been specified prospectively, the resulting score would be proper \textemdash but a post hoc application of this procedure is improper. We use the procedure here to illustrate the properties of the score, and note that a forecaster or collaborative forecasting exercise interested in using the allocation score for evaluation could circumvent issues with propriety through thoughtful elicitation of representations of forecast distributions or by collecting the allocations at specified resource levels as part of forecast submissions.
+As described above, predictions were submitted to the Forecast Hub in the form of a set of 23 quantiles of the predictive distribution. The WIS can be directly calculated from these quantiles. However, calculation of the AS requires that the full cumulative distribution functions of the forecast distributions for each location are available. For the purpose of this analysis, to calculate the allocation score we approximated the full cumulative distribution functions based on the provided quantiles. On the interior of the provided quantiles we used a monotonic cubic spline to interpolate the quantiles, and in the lower and upper tails we used normal distributions with parameters selected so as to match the two lowest and two highest quantiles (see the supplement for further details). In the supplement, we show that if this evaluation procedure had been specified prospectively, the resulting score would be proper \textemdash but a post hoc application of this procedure is improper. We use the procedure here to illustrate the properties of the score, and note that a forecaster or collaborative forecasting exercise interested in using the allocation score for evaluation could circumvent issues with propriety through thoughtful elicitation of representations of forecast distributions or by collecting the allocations at specified resource levels as part of forecast submissions.
 
 %We also computed a standardized rank for the allocation score for each model $m$ and week $w$.
 %First, we computed the number of models that forecasted that week ($n_w$) and the rank of model $m$ among the $n_w$ models ($r_{m,w}^{AS}$).
@@ -383,7 +383,7 @@ all_scores <- left_join(alloscore_data_summaries, score_data_summaries,
 \subsubsection{Anatomy of forecast scores for one week}
 
 To illustrate the mechanics of allocation scoring, we start by focusing on how forecasts generated on or before December 20, 2021, with predictions for January 03, 2022, were scored by different metrics.
-This week was around the Omicon wave peak nationally, with individual states typically observing a peak at or after January 3, 2022.
+This week was around the peak of the Omicon wave nationally, with individual states typically observing a peak at or after January 3, 2022.
 
 %For many locations, forecasts predicted lower values than were eventually observed, as this was during the period of steep increase of viral transmission across many states.
 Of the 10 models evaluated, the CU-select model had the most accurate forecasts according to the allocation score while the USC-SI\_kJalpha model had the most accurate forecasts based on MWIS (Table \ref{tab:multi-k-scores}).
