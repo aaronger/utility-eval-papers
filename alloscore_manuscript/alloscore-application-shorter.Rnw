@@ -670,7 +670,7 @@ alloscore_data_summaries |>
             range = maxAS-minAS)
 @
 
-Overall, across the first 11 weeks evaluated (we excluded the last four since nearly all the models achieved an allocation score of zero), the \texttt{COVIDhub-baseline} model, which predicts a flat line from the most recent observation with uncertainty bounds based on a random walk, had the highest rank for allocation score in four weeks, more than any other model except the \texttt{COVIDhub-ensemble} which also had four.
+%Overall, across the first 11 weeks evaluated (we excluded the last four since nearly all the models achieved an allocation score of zero), the \texttt{COVIDhub-baseline} model, which predicts a flat line from the most recent observation with uncertainty bounds based on a random walk, had the highest rank for allocation score in four weeks, more than any other model except the \texttt{COVIDhub-ensemble} which also had four.
 
 <<eval=FALSE>>=
 ## analysis for the above statements
@@ -810,6 +810,7 @@ In epidemiological forecasting, well-known proper scoring rules such as the log 
 Often models are ranked with respect to accuracy according to a particular score, but without reference to any underlying decision-making process for which that score was designed or from which it might be derivable as a Bayes scoring rule.
 With careful thought and collaboration between modelers and public health officials, we argue that scores that are more aligned with public health decisions could be developed to inform specific problems.
 We have demonstrated that forecast evaluation methods that are tied to a specific decision making context can yield model rankings that differ substantively from those based on standard measures of forecast skill.
+In particular, the allocation score penalizes models that mischaracterize the relative magnitude of resource need across different locations, while WIS penalizes forecasts that do not capture the absolute magnitude of the target quantity in each location.
 
 %We often conceive of infectious disease forecasts as being useful for decision making purposes, but it is rare for forecast evaluation to be tied directly to the value of the forecasts for informing those decisions. This work seeks to address that gap.
 %However, we do note that the decision-making context presented in this work, while motivated by examples from real-world public health resource allocation problems, has not been used to inform an actual real-time decision-making process.
@@ -830,14 +831,14 @@ In these settings, where tailored models are not available, it still could be po
 % This may be tricky to operationalize in the setting of a general forecast hub. It matters how you elicit and represent probabilistic forecasts (quantiles? samples? cdfs?).
 
 
-In our specific application, we made several key observations that we believe should inform future work in this area.
-First, it is clear that different metrics (in our case allocation score and mean weighted interval score) captured different aspects of forecast performance.
-The allocation score penalizes models that mischaracterize the relative magnitude of resource need across different locations, while WIS penalizes forecasts that do not capture the absolute magnitude of the target quantity in each location.
+%In our specific application, we made several key observations that we believe should inform future work in this area.
+%First, it is clear that different metrics (in our case allocation score and mean weighted interval score) captured different aspects of forecast performance.
+%The allocation score penalizes models that mischaracterize the relative magnitude of resource need across different locations, while WIS penalizes forecasts that do not capture the absolute magnitude of the target quantity in each location.
 %A forecast with a good allocation score can have a poor weighted interval score and vice versa.
 %The mean WIS (MWIS) was strongly dependent on the scale of the forecasted quantity (e.g., when hospitalizations were high, so were MWIS scores).
 %The allocation score was not as scale-dependent, as the highest/worst allocation scores were observed when the number of hospitalizations was closest to the allocation constraint.
-We also note that contributed models found it hard to achieve a better allocation score than a na\"ive baseline model that just predicted a flat line from the last previous observation with wide uncertainty.
-This suggests suggests that contributed models (other than the ensemble, which combined forecasts from all contributed models) were not consistently adding value to allocation decisions over just extrapolating from the current levels.
+%We also note that contributed models found it hard to achieve a better allocation score than a na\"ive baseline model that just predicted a flat line from the last previous observation with wide uncertainty.
+%This suggests suggests that contributed models (other than the ensemble, which combined forecasts from all contributed models) were not consistently adding value to allocation decisions over just extrapolating from the current levels.
 
 
 There are several important limitations to the current work.
