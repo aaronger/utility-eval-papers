@@ -294,9 +294,11 @@ S_M(F,y) = s_M(\theta^F,y) & = \min_{\theta}\{s_M(\theta,F)\} \\
 \end{align}
 (Note that this does not imply that $M(\theta^F) = x^F$ since $x^F$ might not be a unique Bayes act.)
 
-The set $\mathcal{P}_{\mathrm{dfq}}$ with map $M(G_{\theta}):= x^{G_{\theta}}$ is surjective onto the action set of allocations
-under any constraint $K$ since they can be specified as quantiles for distributions in $\mathcal{P}_{\mathrm{dfq}}$.  Therefore
-the \verb`distfromq` ``reparametrized'' allocation scoring rule coincides with the AS itself.
+Identifying $G_{\theta}\in \mathcal{P}_{\mathrm{dfq}}$ with its quantile parameters $\theta$, the map $M(\theta):= x^{\theta}$  
+is surjective onto the action set of allocations under any constraint $K$ since they can be specified as quantiles for 
+distributions in $\mathcal{P}_{\mathrm{dfq}}$.  Therefore
+the \verb`distfromq` ``reparametrized'' allocation scoring rule 
+$S_{A, \mathrm{dfq}}(F,y):= s_{\mathrm{dfq}}(\theta^F,y) = s_A(x^{\theta^F},y)$ coincides with the AS $S_A(F,y)$ itself.
 
 Unfortunately, 
 
