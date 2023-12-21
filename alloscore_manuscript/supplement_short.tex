@@ -297,6 +297,50 @@ We refer the reader to the \verb`distfromq` documentation for further detail.\ci
 \section{Propriety of parametric approximation} % (fold)
 \label{sec:propriety_of_parametric_approximation}
 
+In section \ref{sec:alloscore_proper} we showed that Bayes scoring rules (and the allocation score as a special case) are proper. However, this result was stated for a setting where the full forecast distribution $F$ is available. In practice, open forecasting exercises are generally not able to collect an exact representation of the forecast distribution $F$ other than in simple settings such as for a categorical variable with a relatively small number of categories. In settings where the outcome being forecasted is a continuous quantity (such as the proportion of outpatient doctor visits where the patient had influenza-like illness) or a count (such as influenza hospitalizations), forecasting exercises have therefore resorted to collecting summaries of a forecast distribution such as predictive quantiles.
+
+Here we consider a setting where forecast distributions are summarized by some low-dimensional summary $\theta$. We make two observations in this setting:
+\begin{enumerate}
+  \item If the hub (or forecast evaluator) specifies ahead of time how $\theta$ will be converted into a score in the presence of data y, and ... level set stuff ..., a scoring rule can be formulated that is equivalent to S. 
+  \begin{itemize}
+    \item We have a low dimensional summary (e.g. quantiles).  Maybe that summary directly gives us the summary we want. For example, to calculate WIS, we are done!
+  \end{itemize}
+  \item On the other hand, if the loss that will be used to score a submitted $\theta$ is not specified in advance, there is no way for the forecaster to select a value of $\theta$ that is derived from their forecast distribution F in any meaningful way.
+\end{enumerate}
+
+
+
+TEXT WE MAY NOT LIKE ANYMORE:
+Here, we consider a setting where forecasts are represented using a parametric family of forecast distributions $G_\theta(y)$, and the task of the forecaster is to select a particular parameter value $\theta$. We use $\mathcal{P} = \{G_\theta(y), \theta \in \Theta \}$ to denote the collection of all distributions in the given parametric family. For instance, it has recently been proposed that mixture distributions could be used to represent forecast distributions \cite{wadsworth2023mixture}. Additionally, we note that the functionality in \verb`distfromq` can be viewed as specifying a parametric family $\mathcal{P}_{\mathrm{dfq}}$ where the parameters $\theta$ of $G_\theta$
+are its quantiles at pre-specified probability levels, and where the shape of any $G_\theta \in \mathcal{P}_{\mathrm{dfq}}$ over the full range of its support is entirely controlled by these quantiles.
+
+Our general result is that Bayes scoring rules are invariant under reparametrization of the action space.
+
+Main points:
+ * If we have access to the actual forecast distributions F, Bayes scoring rules (including allocation score) are proper.
+    - We already said this in section 2, remind the reader of that.
+    - We don't need to say this: the propriety of such a score doesn't depend on whether or not the forecaster knows that we'll be using that score
+ * However, if we don't have access to F, the forecaster can only share some intermediate [representation]/[low-dimensional functional] of F
+    - The hub (or forecast evaluator) must specify ahead of time how that representation will be converted into a score in the presence of data y, i.e., the mapping s^\star(theta, y) = s(M(theta), y).  With this knowledge, the ELM forecaster can select the representation theta^F that minimizes E_F[s^\star(theta, Y)] = E_F[ s(M(theta), Y) ] (1).
+        - In the range of 0 to 1 sentences: Suppose that the set of functionals that may be submitted is Theta, and M(Theta) \subset, not equal....
+            - some forecasts F, F' with different bayes acts x^F, x^{F'} but theta^F = theta^{F'} ... there is no way to tell them apart from functionals, (a score that was stricly proper may be converted to a score that is proper, for example.  )
+            - there is a level set for a theta value that does not live inside a level set for a single A value, and therefore the scores are not equivalent --- the score calcualted based on this functional is "coarser" at that value.
+    - On the other hand, if this information is not communicated to the forecaster ahead of time, they may select some non-optimal theta, theta^\prime which does not minimize (1)
+    
+
+OLD BRAINSTORMING:
+ * However, if we don't have access to F, the forecaster can only share some intermediate [representation]/[low-dimensional functional] of F
+    - Consider the quantile score: We can't directly evaluate S_q(F, y)
+       - Option 1: but we can evaluate it exactly via the functionals that are provided, if the forecaster knew that they should provide quantiles for their functionals, i.e., if they knew that we were going to use quantile score/WIS for evaluation.
+       - Option 2: if I have a sufficient statistic theta_suff^F that allows me to calculate the quantiles of F as M_suff(theta_suff^F) "regardless of whether or not forecaster knows mapping M_suff", I can calculate S_q(F, y)
+          - But there's a step in the hub setup/elicitation process where we tell the forecaster to submit theta_suff^F
+       - Option 3: 
+    - For allocation score:
+       - One option: the forecaster submits their allocations x^F.  This is the only quantity you need to plug into s_A(x, y) in order to calculate S_A(F, y).
+       - Another option: the forecaster submits some other quantity theta^F that is (sufficient) for downstream calculations of x^F, e.g. via x^F = allocate(distfromq(theta^F)).  As long as the evaluator and the forecaster agree on the mapping from theta^F to x^F, and any point in X can be reached by some theta in Theta, the resulting score is proper.
+       - Quantiles are not "sufficient" for allocations.
+       - But a vector of 23 numbers used to parameterize dfq are sufficient for allocations
+
 \textbf{Bayes scoring rules are invariant under reparametrization of the action space.}
 
 Let $S(F,y)$ be a Bayes scoring rule derived from an action set $\mathcal{X}$ and loss $s(x,y)$.
