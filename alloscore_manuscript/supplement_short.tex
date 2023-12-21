@@ -65,6 +65,8 @@
 
 \maketitle
 
+\tableofcontents
+
 \begin{todolist}
 \item 2 actual references to supplement (re exponential quantiles and solving the allocation problem)
 \item the statement that "we computed the allocation score for the 14 day-ahead forecast" which needs some answer to "how?"
@@ -211,14 +213,96 @@ of $\mathbb{E}_{F} [s_A(x, Y)]$.)
 That is, $x^{\star}_k$ is a quantile $q_{\tau,F_k}$ for
 $\tau = 1 - \lambda/L$. The value of $\tau$ is then determined by the constraint equation 
 \begin{align}
-\sum_{i=1}^N q_{\tau,F_i} = K.
+\sum_{i=1}^N q_{\tau,F_i} = K. \label{eqn:quantiles-sum-to-K}
 \end{align}
 It is important to note that $\tau$ depends on $F$ and $K$ and is \emph{not} a fixed parameter
 of the allocation scoring rule.
-\newpage
+
+\section{Numerical computation of allocation Bayes acts}
+\label{sec:numeric}
+
+To compute an allocation score $S_A(F,y;K) := s_A(x^{F,K},y)$, we require numerical values for a 
+Bayes act solving the AP \eqref{AP}.  Assuming we have reliable means of calculating quantiles $q_{\alpha,F_i}$ 
+of the marginal forecasts $F_i$,  
+such values are given by $q_{\tau^{\star},F_i}$ where $\tau^{\star}$ solves the equation \eqref{eqn:quantiles-sum-to-K}.
+Usually, however, this equation is not analytically tractable and we must resort to a numerical method
+for finding an approximation $\tilde{\tau}$ of $\tau^{\star}$.  This task is made simpler by $\sum_{i=1}^N q_{\tau,F_i}$ being
+an increasing function of $\tau$, and, in principle, a bisection method that evaluates the sign of $\sum_{i=1}^N q_{\tau,F_i} - K$
+at each midpoint of the search interval, narrowing it accordingly, will suffice.  We have implemented such a procedure along with 
+the resulting score computations in the 
+R package \verb`alloscore` which provided all allocation score values used in the analysis of section \ref{sec:application} 
+in the main text. 
+
+Awkward subtleties can arise though when the forecast
+densities $f_i$ vanish or are very small, in which case quantiles are non-unique or highly variable at a probability level, 
+leading to ambiguity in how to evaluate $\sum_{i=1}^N q_{\tau,F_i}$. And if point masses are present in any of the $F_i$, 
+\eqref{eqn:quantiles-sum-to-K} will fail to have a unique solution for some discrete set of constraint levels $K$.
+Potentially complex conventions must be adopted for both detecting such levels and enforcing consistency in score calculations
+near them. In both situations, it appears to us that conditions guaranteeing that numerical instabilities and artifacts do not 
+threaten the validity of inferences regarding forecaster performance may be highly dependent on $N$ as well as forecast ranges
+and regularity.  We have established and coded conditions that through extensive experimentation seem appropriate for...
+but we leave a more rigorous approximation error analysis for later work.
+
+\section{Computing allocations from finite quantile forecast representations}
+
+In section 3 of the manuscript, we used the allocation score to evaluate forecasts of COVID-19 hospitalizations that have been submitted to the COVID-19 Forecast Hub. These forecasts are submitted to the Hub using a set of 23 quantiles of the forecast distribution at the 23 probability levels in the set $\mathcal{T} = \{0.01, 0.025, 0.05, 0.1, 0.15, \ldots, \allowbreak 0.9, 0.95, 0.975, 0.99\}$, which specify a predictive median and the endpoints of central $(1 - \alpha) \times 100\%$ prediction intervals at levels $\alpha = 0.02, 0.05, 0.1, 0.2, \allowbreak 0.3, 0.4, 0.5, 0.6, \allowbreak 0.7, 0.8, 0.9$. For a given week and target date, we use $q_{i,k}$ to denote the submitted quantiles for location $i$ and probability level $\tau_k \in \mathcal{T}$, $k = 1, \ldots, 23$.
+
+In the event that there is some $k \in \{1, \ldots, 23\}$ for which $\sum_i q_{i,k} = K$, i.e., the provided predictive quantiles at level $\tau_k$ sum across locations to the resource constraint $K$, the solution to the allocation problem is given by those quantiles. However, generally this will not be the case; the optimal allocation will typically be at some probability level $\tau^\star \notin \mathcal{T}$.
+
+To address this situation and support the numerical allocation algorithm outlined in section \ref{sec:numeric}, we need a mechanism to approximate the full cumulative distribution functions $F_i$, $i = 1, \ldots, N$ based on the provided quantiles. We have developed functionality for this purpose in the \verb`distfromq` package for R (cite). This functionality represents a distribution as a mixture of discrete and continuous parts, and it works in two steps:
+\begin{enumerate}
+  \item Identify a discrete component of the distribution consisting of zero or more point masses, and create an adjusted set of predictive quantiles for the continuous part of the distribution by subtracting the point mass probabilities and rescaling.
+  \item For the continuous part of the distribution, different approaches are used on the interior and exterior of the provided quantiles:
+  \begin{enumerate}
+    \item On the interior, a monotonic cubic spline interpolates the adjusted quantiles representing the continuous part of the distribution.
+    \item A location-scale parametric family is used to extrapolate beyond the provided quantiles. The location and scale parameters are estimated separately for the lower and upper tails so as to obtain a tail distribution that matches the two most extreme quantiles in each tail.
+  \end{enumerate}
+\end{enumerate}
+The resulting distributional estimate exactly matches all of the predictive quantiles provided by the forecaster. We use the cumulative distribution function resulting from this procedure as an input to the allocation score algorithm.
+
+We refer the reader to the \verb`distfromq` documentation for further detail.
+
+% \begin{enumerate}
+%   \item First, we handle settings where the provided quantiles imply the existence of one or more point masses. Specifically, if there are distinct probability levels $\tau_k < \tau_{k^\prime}$ that have the same quantiles, $q_{l,k} = q_{l, k^\prime}$, the distribution contains a point mass at $q_{l,k}$. We split into three cases depending on the number of distinct provided quantiles:
+%   \begin{enumerate}
+%     \item If all provided quantiles are equal to each other, we infer that the distribution consists of a single point mass at that quantile value.
+%     \item If there are two distinct quantiles across all of the probability levels $\tau_k \in \mathcal{T}$, our estimated distribution consists of a mixture of two point masses. The probability assigned to the point mass at $q$ is proportional to $\tau_q^\max - \tau_q^\min$, where
+%     $$\tau_q^\max = \begin{cases}
+%       \max_{\{\}} \tau_k
+%     \end{cases}$$ is the largest probability level $\tau_k$ for which $q_{l,k} = q$, and $\tau_q^\min$ is defined similarly.
+%     \item Otherwise, our final estimate will consist of a mixture of a discrete distribution with point masses at the duplicated quantiles and a continuous distribution elsewhere. In this step, we  In this case, the discrete distribution has point mass probabilities calculated as $d_q = \tau_q^\max - \tau_q^\min$, where $\tau_q^\max$ and $\tau_q^\min$ are defined as in the previous point.
+%   \end{enumerate}
+% \end{enumerate}
+
 
 \section{Propriety of parametric approximation} % (fold)
 \label{sec:propriety_of_parametric_approximation}
+
+\textbf{Bayes scoring rules are invariant under reparametrization of the action space.}
+
+Let $S(F,y)$ be a Bayes scoring rule derived from an action set $\mathcal{X}$ and loss $s(x,y)$.
+Let $\mathcal{W}$ be another set and $M:\mathcal{W} \to \mathcal{X}$ a map. $M$ defines a loss $s_M(\theta, y):= s(M(\theta), y)$
+on $\mathcal{W}$. This in turn defines the Bayes scoring rule
+\begin{align}
+S_M(F,y) := s_M(\theta^F,y) = s(M(\theta^F),y).
+\end{align}
+If $M$ is surjective onto the set of Bayes acts $\{x \in \mathcal{X} \mid x = x^F \text{ for some } F \in \mathcal{P}\}$, then the scores coincide since
+\begin{align}
+S_M(F,y) = s_M(\theta^F,y) & = \min_{\theta}\{s_M(\theta,F)\} \\
+&= \min_{\theta}\{s(M(\theta),F)\}  \\
+&= \min_{x}\{s(x,F)\} = s(x^F,F) = S(F,y).
+\end{align}
+(Note that this does not imply that $M(\theta^F) = x^F$ since $x^F$ might not be a unique Bayes act.)
+
+The set $\mathcal{P}_{\mathrm{dfq}}$ with map $M(G_{\theta}):= x^{G_{\theta}}$ is surjective onto the action set of allocations
+under any constraint $K$ since they can be specified as quantiles for distributions in $\mathcal{P}_{\mathrm{dfq}}$.  Therefore
+the \verb`distfromq` ``reparametrized'' allocation scoring rule coincides with the AS itself.
+
+Unfortunately, 
+
+
+
+
 
 For convenience we write $S(F,G) := \Ex_G[S(F,Y)]$. Let
 \begin{align*}

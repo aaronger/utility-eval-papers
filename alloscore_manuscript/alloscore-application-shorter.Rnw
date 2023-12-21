@@ -241,7 +241,7 @@ the raw score by this loss.
 The oracle-adjusted score can therefore be written as
 \begin{align}
 S_A(F, y; K)  &= S_A^{\text{raw}}(F, y; K) - L \cdot \max\left(0,\sum_{i=1}^{N}y_i - K\right) \\
-&= L\left\{\sum_{i=1}^N \max(0, y_i - x_i^{F,K}) -  \max\left(0,\sum_{i=1}^{N}y_i - K\right)\right\}
+&= L\left\{\sum_{i=1}^N \max(0, y_i - x_i^{F,K}) -  \max\left(0,\sum_{i=1}^{N}y_i - K\right)\right\}.
 \end{align}
 The oracle adjustment aligns with a common theme in economic decision theory that \emph{opportunity loss} (often known as \emph{regret} or (negative) \emph{relative utility}) is often a more important quantity than absolute loss (see e.g., \cite{DIECIDUE201788}).
 
