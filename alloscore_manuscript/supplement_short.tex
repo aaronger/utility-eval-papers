@@ -73,14 +73,10 @@
 \item use of "proper" a number of times
 \end{todolist}
 
-\begin{abstract}
-We briefly address some technical and methodological points in the main text, referring to the forthcoming ... for 
-more thorough discussion.
-\end{abstract}
-
-
 \section{Introduction}
 \label{sec:intro}
+
+\elr{This section needs to be updated.}
 
 We briefly address some technical and methodological points in the main text. We begin in section \ref{sec:shortage} by formalizing the concept of a \emph{shortage} of resources and giving some key results about expected resource shortages under a distribution characterizing uncertainty about (future) levels of resource need. Resource shortages play a central role in the decision-making problems that give rise to the quantile loss and the allocation score, which we discuss in sections \ref{sec:quantiles_shortage} and \ref{sec:bayes-quantiles} respectively. Section \ref{sec:numeric} gives details on the numerical methods that we use to calculate allocation scores, including some special considerations for settings where forecasts are represented by a finite collection of predictive quantiles, such as the application to forecasts of hospitalizations due to COVID-19 in section 3 of the article.
 
@@ -104,11 +100,11 @@ as being better than $F$ itself, that is, that
 \Ex_F [S(F, Y)] \leq \Ex_F [S(G, Y)] \label{eqn:prop_ineq}
 \end{align} 
 for any $F,G$. A scoring rule meeting this criterion is called \emph{proper}. If $S$ were improper, then from the perspective of 
-a forecaster focussed (solely) on expected loss minimization (which we will call an ELM forecaster), the decision to state 
+a forecaster focussed (solely) on expected loss minimization, the decision to state 
 a forecast $G$ other than the forecast $F$ which they believe describes $Y$ could be superior to the decision to state $F$. 
 $S$ is \emph{strictly proper} when 
-\eqref{eqn:prop_ineq} is sharp, in which case the 
-\emph{only} optimal decision for an ELM forecaster is to state the forecast they believe to be true.
+\eqref{eqn:prop_ineq} is a strict inequality, in which case the 
+\emph{only} optimal decision for a forecaster seeking to minimize their expected loss is to state the forecast they believe to be true.
 
 \subsection{The allocation score is proper}
 \label{sec:alloscore_proper}
@@ -135,7 +131,7 @@ termed Bayes scoring rules typically appear via \eqref{eqn:bayes_sr} where $x^F$
 can be shown to be \emph{elicitable}, that is, to be the Bayes act for some loss function $s$.
 Such a loss function is said to be a \emph{consistent loss (or scoring) function} for the functional $F \mapsto x^F$, and many important
 recent results in the literature (e.g., \cite{fisslerziegel2016consistency}) address whether there \emph{exists} any loss 
-function for $x^F$ which is consistent. Our orientation
+function that is consistent for $x^F$. Our orientation
 is different from this insofar as we \emph{begin} by specifying a decision problem and a loss function of subject matter relevance
 and use the Bayes act only as a bridge to a proper scoring rule.  Consistency is never in doubt.
 
@@ -145,7 +141,7 @@ and use the Bayes act only as a bridge to a proper scoring rule.  Consistency is
 
 A key feature of loss functions used in the decision theoretic definition of quantiles and related scoring rules such as the 
 CRPS and the WIS (see ...), as well as the allocation loss function presented in this work, is the presence of a \emph{shortage}: 
-the amount $\max\{0,y-x\}$ by which a random resource demand 
+the amount $\max\{0,y-x\}$ by which a resource demand 
 $y$ exceeds a supply decision variable $x$, which, for convenience, we write as $(y-x)_{+}$. In particular, a quantile at 
 probability level $\alpha$ of a distribution $F$ on $\mathbb{R}^1$ (which we assume to have a well-defined density $f(x)$) 
 is a Bayes act for the loss function
@@ -162,36 +158,41 @@ Bayes act, as a minimizer of $\Ex_F[l(x,Y)]$, must also be a vanishing point of 
 &= C + L(F(x) - 1), \label{eqn:q_deriv}
 \end{align}
 so that $1-C/L = F(x)$.
-The formula $\dby{}{x}\Ex_F\left[(Y-x)_+\right] = F(x) - 1$ for the derivative of the shortage 
-which we use below in deriving the Bayes act for the allocation
-loss, can be seen as following, as indicated above in \eqref{eqn:q_deriv}, from a probability theoretic definition of the expectation operator on piecewise defined functions, or as application of the ``Leibniz Rule''
+The formula $\dby{}{x}\Ex_F\left[(Y-x)_+\right] = F(x) - 1$ for the derivative of the shortage,
+used above in \eqref{eqn:q_deriv}, can be obtained from an application of the ``Leibniz Rule'':
 \begin{align}
 	\frac{d}{dx} \Ex_F [(Y-x)_{+}] &= \frac{d}{dx} \int_{x}^{\infty} (y-x) f_Y(y)dy \nonumber\\
 	&= \int_{x}^{\infty} \frac{d}{dx}(y-x) f_Y(y)dy - (x-x) f_Y(x) = -\int_{x}^{\infty} f_Y(y)dy = F(x)-1. \label{eqn:shortage_deriv}
 \end{align}
-(Note that more care is required when $F$ does not have a density.) 
-
+Note that more care is required when $F$ does not have a density.
+We will also use this result below in deriving the Bayes act for the allocation loss.
 
 \section{Allocation Bayes acts as vectors of marginal quantiles.}
 \label{sec:bayes-quantiles}
 
-Here we show that the Bayes act $x^{F,K} = (x_1^{F,K},\ldots,x_N^{F,K})$ for a forecast $F$, corresponding to the
-allocation problem (AP) (\eqref{eqn:loss_fn} in section \ref{sec:methods.detailed.specific_allocation})
+Here we study the form of the Bayes act for the allocation problem (AP) (\eqref{eqn:loss_fn} in section \ref{sec:methods.detailed.specific_allocation}) of the text:
 \begin{align}
     \underset{0 \leq x}{\mathrm{minimize}}\,\, \mathbb{E}_{F} [s_A(x, Y)]= \sum_{i=1}^{N} L \cdot \mathbb{E}_{F_i}[(Y_i - x_i)_{+}] 
      \text{ subject to }
      \, \sum_{i=1}^N x_i = K, \label{AP}
 \end{align}
-can be represented as a vector of quantiles for the marginal forecast distributions $F_i$ at a single probability level
+We show that the Bayes act $x^{F,K} = (x_1^{F,K},\ldots,x_N^{F,K})$ for a forecast $F$ and resource constraint level $K$
+is a vector of quantiles of the marginal forecast distributions $F_i$ at a single probability level
 $\tau^{F,K}$, that is, $x_i^{F,K} = q_{F_i,\tau^{F,K}}$. An immediate consequence used in the examples in Section \ref
 {sec:methods.overview} in the main text is that if $F_i = \mathrm{Exp}(1/\sigma_i)$ for all $i$, then the Bayes act is
 proportional to $(\sigma_1,\ldots,\sigma_N)$, since $q_{\mathrm{Exp}(1/\sigma),\tau} = -\sigma \log(1-\tau)$.
 
-In order for $x^{\star} \in \mathbb{R}^N_{+}$ to solve the AP it must be true that reallocatating $\delta > 0$ of the 
-$x_i^{\star}$ units of resource allocated to location $i$ to location $j$ will increase the expected shortage in location
-$i$ by at least as much as it decreases the expected shortage in location $j$. Letting $\delta \searrow 0$, this implies from
-\eqref{eqn:shortage_deriv} that
+In order for $x^{\star} \in \mathbb{R}^N_{+}$ to solve the AP it must be true that reallocating $\delta > 0$ units of the resource from location $i$ to location $j$ will lead to a net increase in expected shortage --- in other words, the reallocation increases the expected shortage in location $i$ is at least as much as it decreases the expected shortage in location $j$:
+\begin{align*}
+&\mathbb{E}_{F_i}[(Y_i - (x^{\star}_i - \delta))_{+}] - \mathbb{E}_{F_i}[(Y_i - x^{\star}_i)_{+}]
+\text{ (increase in $i$) } \nonumber \\
+&\qquad \geq 
+\mathbb{E}_{F_j}[(Y_j - x^{\star}_j)_{+}] - \mathbb{E}_{F_j}[(Y_j - (x^{\star}_j + \delta))_{+}]
+\text{ (decrease in $j$) }.
+\end{align*}
 
+Dividing by $\delta$ and letting $\delta \searrow 0$, this implies from
+\eqref{eqn:shortage_deriv} that
 \begin{align}
 1-F_i(x^{\star}_i) &= -\frac{d}{dx_i}\mathbb{E}_{F_i}[(Y_i - x^{\star}_i)_{+}] \nonumber \\
 &= \lim_{\delta \searrow 0} \frac{1}{\delta}
@@ -205,7 +206,7 @@ $i$ by at least as much as it decreases the expected shortage in location $j$. L
 \end{align}
 
 Note that negative derivatives appear because our optimality condition addresses how a \emph{decrease} in resources will 
-\emph{increase} the expected shortage in $i$ and vice versa in $j$. Since \eqref{eqn:ASoptimal1} holds with $i$ and $j$ 
+\emph{increase} the expected shortage in $i$ and vice versa in $j$. Since \eqref{eqn:ASoptimal1} also holds with $i$ and $j$ 
 reversed, a number $\lambda$ (a \emph{Lagrange multiplier}) exists such that
 $L(1-F_k(x^{\star}_k)) = \lambda$ for all $k \in 1,\ldots,N$.
 (We scale by $L$ to facilitate possible future interpretations of $\lambda$ in terms of the partial derivatives 
@@ -222,26 +223,33 @@ of the allocation scoring rule.
 \label{sec:numeric}
 
 To compute an allocation score $S_A(F,y;K) := s_A(x^{F,K},y)$, we require numerical values for a 
-Bayes act solving the AP \eqref{AP}.  Assuming we have reliable means of calculating quantiles $q_{\alpha,F_i}$ 
+Bayes act solving the AP \eqref{AP} --- that is, we must find the specific resource allocations for each location that are determined by the forecast $F$ under the resource constraint $K$.
+Assuming we have reliable means of calculating quantiles $q_{\alpha,F_i}$ 
 of the marginal forecasts $F_i$,  
-such values are given by $q_{\tau^{\star},F_i}$ where $\tau^{\star}$ solves the equation \eqref{eqn:quantiles-sum-to-K}.
-Usually, however, this equation is not analytically tractable and we must resort to a numerical method
-for finding an approximation $\tilde{\tau}$ of $\tau^{\star}$.  This task is made simpler by $\sum_{i=1}^N q_{\tau,F_i}$ being
-an increasing function of $\tau$, and, in principle, a bisection method that evaluates the sign of $\sum_{i=1}^N q_{\tau,F_i} - K$
-at each midpoint of the search interval, narrowing it accordingly, will suffice.  We have implemented such a procedure along with 
-the resulting score computations in the 
+these allocations are given by $q_{\tau^{\star},F_i}$ where $\tau^{\star}$ solves the equation \eqref{eqn:quantiles-sum-to-K}.
+However, this equation is not analytically tractable and we must resort to a numerical method
+for finding an approximation $\tilde{\tau}$ of $\tau^{\star}$.
+
+We have implemented an iterative bisection method that makes use of the fact that $\sum_{i=1}^N q_{\tau,F_i}$
+is an increasing function of $\tau$.
+The algorithm begins with an initial search interval $[\tau_L, \tau_U]$ that is known to contain the solution $\tau^{\star}$.
+This can be confirmed by verifying that the resource allocations corresponding to the lower endpoint of the search interval do not exceed the resource constraint ($\sum_{i=1}^N q_{\tau_L,F_i} \leq K$) and the resource allocations corresponding to the upper endpoint match or exceed the available resources ($\sum_{i=1}^N q_{\tau_U,F_i} \geq K$).
+At each step of the algorithm, we evaluate the total allocation $\sum_{i=1}^N q_{\tau_{M},F_i}$ at the midpoint of the search interval, $\tau_M = \frac{1}{2}(\tau_L + \tau_U)$. We then narrow the search to the sub-interval that contains the solution:
+\begin{itemize}
+  \item If $\sum_{i=1}^N q_{\tau_{M},F_i} \geq K$, we continue the search on the interval $[\tau_L, \tau_M]$.
+  \item If $\sum_{i=1}^N q_{\tau_M, F_i} \leq K$, we continue the search on the interval $[\tau_M, \tau_U]$.
+\end{itemize}
+This search continues until a stopping condition, defined in terms of the width of the search interval, is met.
+We have implemented this procedure along with the resulting score computations in the 
 R package \verb`alloscore` which provided all allocation score values used in the analysis of section \ref{sec:application} 
 in the main text. 
 
-Awkward subtleties can arise though when the forecast
-densities $f_i$ vanish or are very small, in which case quantiles are non-unique or highly variable at a probability level, 
-leading to ambiguity in how to evaluate $\sum_{i=1}^N q_{\tau,F_i}$. And if point masses are present in any of the $F_i$, 
-\eqref{eqn:quantiles-sum-to-K} will fail to have a unique solution for some discrete set of constraint levels $K$.
-Potentially complex conventions must be adopted for both detecting such levels and enforcing consistency in score calculations
-near them. In both situations, it appears to us that conditions guaranteeing that numerical instabilities and artifacts do not 
-threaten the validity of inferences regarding forecaster performance may be highly dependent on $N$ as well as forecast ranges
-and regularity.  We have established and coded conditions that through extensive experimentation seem appropriate for...
-but we leave a more rigorous approximation error analysis for later work.
+% Subtleties can arise when the forecast
+% densities $f_i$ vanish or are very small, in which case quantiles are non-unique or highly variable near a probability level, 
+% leading to ambiguity or numerical instabilities in the evaluation of $\sum_{i=1}^N q_{\tau,F_i}$. Additionally, if point masses are present in any of the $F_i$, 
+% \eqref{eqn:quantiles-sum-to-K} will not have a unique solution for some discrete set of constraint levels $K$.
+% We have adopted conventions for detecting such levels and enforcing consistency in score calculations
+% near them. Through extensive experimentation, we have determined that these conditions seem to address these challenges with the forecasts we are working with, but we leave a more rigorous approximation error analysis for later work.
 
 \section{Computing allocations from finite quantile forecast representations}
 
