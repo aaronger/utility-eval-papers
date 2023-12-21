@@ -232,24 +232,34 @@ for finding an approximation $\tilde{\tau}$ of $\tau^{\star}$.
 
 We have implemented an iterative bisection method that makes use of the fact that $\sum_{i=1}^N q_{\tau,F_i}$
 is an increasing function of $\tau$.
-The algorithm begins with an initial search interval $[\tau_L, \tau_U]$ that is known to contain the solution $\tau^{\star}$.
-This can be confirmed by verifying that the resource allocations corresponding to the lower endpoint of the search interval do not exceed the resource constraint ($\sum_{i=1}^N q_{\tau_L,F_i} \leq K$) and the resource allocations corresponding to the upper endpoint match or exceed the available resources ($\sum_{i=1}^N q_{\tau_U,F_i} \geq K$).
-At each step of the algorithm, we evaluate the total allocation $\sum_{i=1}^N q_{\tau_{M},F_i}$ at the midpoint of the search interval, $\tau_M = \frac{1}{2}(\tau_L + \tau_U)$. We then narrow the search to the sub-interval that contains the solution:
-\begin{itemize}
-  \item If $\sum_{i=1}^N q_{\tau_{M},F_i} \geq K$, we continue the search on the interval $[\tau_L, \tau_M]$.
-  \item If $\sum_{i=1}^N q_{\tau_M, F_i} \leq K$, we continue the search on the interval $[\tau_M, \tau_U]$.
-\end{itemize}
-This search continues until a stopping condition, defined in terms of the width of the search interval, is met.
+The algorithm begins with an initial search interval $[\tau_{L,1}, \tau_{U,1}]$ (such as $[0,\max_{i}F_i(K)]$) that clearly contains 
+the solution $\tau^{\star}$.
+% This can be confirmed by verifying that the resource allocations corresponding to the lower endpoint of the search interval do not exceed the resource constraint ($\sum_{i=1}^N q_{\tau_L,F_i} \leq K$) and the resource allocations corresponding to the upper endpoint match or exceed the available resources ($\sum_{i=1}^N q_{\tau_U,F_i} \geq K$).
+At each step $j$ of the algorithm, we evaluate the total allocation $\sum_{i=1}^N q_{\tau_{M,j},F_i}$ at the midpoint of the search interval, 
+$\tau_{M,j} = \frac{1}{2}(\tau_{L,j} + \tau_{U,j})$ and continue the search on the narrowed sub-interval
+\begin{align}
+[\tau_{L,j+1},\tau_{U,j+1}] = 
+\begin{cases}
+[\tau_{L,j}, \tau_{M,j}] & \text{if } \sum_{i=1}^N q_{\tau_{M,j},F_i} \geq K \\
+[\tau_{M,j}, \tau_{U,j}] & \text{if } \sum_{i=1}^N q_{\tau_{M,j},F_i} < K.
+\end{cases} \nonumber
+\end{align}
+% We then narrow the search to the sub-interval that contains the solution:
+% \begin{itemize}
+%   \item If $\sum_{i=1}^N q_{\tau_{M},F_i} \geq K$, we continue the search on the interval $[\tau_L, \tau_M]$.
+%   \item If $\sum_{i=1}^N q_{\tau_M, F_i} \leq K$, we continue the search on the interval $[\tau_M, \tau_U]$.
+% \end{itemize}
+This search continues until $\tau_{U,j+1} < (1+\varepsilon)\tau_{L,j+1}$ for a suitably small $\varepsilon>0$.
 We have implemented this procedure along with the resulting score computations in the 
 R package \verb`alloscore` which provided all allocation score values used in the analysis of section \ref{sec:application} 
 in the main text. 
 
-% Subtleties can arise when the forecast
-% densities $f_i$ vanish or are very small, in which case quantiles are non-unique or highly variable near a probability level, 
-% leading to ambiguity or numerical instabilities in the evaluation of $\sum_{i=1}^N q_{\tau,F_i}$. Additionally, if point masses are present in any of the $F_i$, 
-% \eqref{eqn:quantiles-sum-to-K} will not have a unique solution for some discrete set of constraint levels $K$.
-% We have adopted conventions for detecting such levels and enforcing consistency in score calculations
-% near them. Through extensive experimentation, we have determined that these conditions seem to address these challenges with the forecasts we are working with, but we leave a more rigorous approximation error analysis for later work.
+Subtleties can arise when the forecast
+densities $f_i$ vanish or are very small, in which case quantiles are non-unique or highly variable near a probability level, 
+leading to ambiguity or numerical instabilities in the evaluation of $\sum_{i=1}^N q_{\tau,F_i}$. Additionally, if point masses are present in any of the $F_i$, 
+\eqref{eqn:quantiles-sum-to-K} will not have a unique solution for some discrete set of constraint levels $K$.
+We have adopted conventions for detecting such levels and enforcing consistency in score calculations
+near them. Through extensive experimentation, we have determined that these conditions seem to address these challenges with the forecasts we are working with, but we leave a more rigorous approximation error analysis for later work.
 
 \section{Computing allocations from finite quantile forecast representations}
 
