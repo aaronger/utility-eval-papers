@@ -246,12 +246,12 @@ $\tau_{M,j} = \frac{1}{2}(\tau_{L,j} + \tau_{U,j})$ and continue the search on t
 % \end{itemize}
 This search continues until $\tau_{U,j+1} < (1+\varepsilon)\tau_{L,j+1}$ for a suitably small $\varepsilon>0$.
 We have implemented this procedure along with the resulting score computations in the
-R package \verb`alloscore` which provided all allocation score values used in the analysis of section \ref{sec:application}
+R package \verb`alloscore` \citep{gerding-alloscore} which provided all allocation score values used in the analysis of section \ref{sec:application}
 in the main text.
 
 Subtleties can arise when the forecast
 densities $f_i$ vanish or are very small, in which case quantiles are non-unique or highly variable near a probability level,
-leading to ambiguity or numerical instabilities in the evaluation of $\sum_{i=1}^N q_{\tau,F_i}$. Additionally, if point masses are present in any of the $F_i$,
+leading to ambiguity or numerical instabilities{} in the evaluation of $\sum_{i=1}^N q_{\tau,F_i}$. Additionally, if point masses are present in any of the $F_i$,
 \eqref{eqn:quantiles-sum-to-K} will not have a unique solution for some discrete set of constraint levels $K$.
 We have adopted conventions for detecting such levels and enforcing consistency in score calculations
 near them. Through extensive experimentation, we have determined that these conditions seem to address these challenges with the forecasts we are working with, but we leave a more rigorous approximation error analysis for later work.
