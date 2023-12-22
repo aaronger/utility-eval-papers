@@ -293,7 +293,7 @@ We refer the reader to the \verb`distfromq` documentation for further detail.\ci
 In practice, open forecasting exercises are generally not able to collect a perfect description of the forecast distribution $F$ other than in simple settings such as for a categorical variable with a relatively small number of categories. In settings where the outcome being forecasted is a continuous quantity (such as the proportion of outpatient doctor visits where the patient has influenza-like illness) or a count (such as influenza hospitalizations), forecasting exercises have therefore resorted to collecting summaries of a forecast distribution such as bin probabilities or predictive quantiles.
 In this section, we address two practical concerns raised by this. First, we discuss conditions under which it is possible to calculate the allocation score when only summaries of a forecast distribution are recorded in a submission to a forecast hub. Second, we show that a post hoc attempt to compute the allocation score based on submitted predictive quantiles may in fact compute an alternative score that is not proper.
 
-\subsection{Propriety -- prospective}
+\subsection{Propriety when scoring methods are announced prospectively}
 
 We consider a setting where a forecasting exercise (such as a forecast hub) pre-specifies that forecasts will be represented using a parametric family of forecast distributions $G_\theta(y)$, and the task of the forecaster is to select a particular parameter value $\theta$. We use $\mathcal{P}$ to denote the collection of all distributions $G_\theta$ in the given parametric family. For instance, it has recently been proposed that mixture distributions could be used to represent forecast distributions \cite{wadsworth2023mixture}. Additionally, we note that the functionality in \verb`distfromq` can be viewed as specifying a parametric family $\mathcal{P}_{\mathrm{dfq}}$ where the parameters $\theta$ of $G_\theta$
 are its quantiles at pre-specified probability levels, and where the shape of any $G_\theta \in \mathcal{P}_{\mathrm{dfq}}$ over the full range of its support is entirely controlled by these quantiles.
@@ -337,7 +337,7 @@ For example, for the actual forecast distribution $F$ the allocations may occur 
 
 As another alternative for practical forecasting exercises, a forecast hub could ask forecasters to directly provide the Bayes allocations associated with their forecasts for one or more specified resource constraints $K$. At the cost of increasing the number of quantities solicited by the forecast hub, this would have several advantages: it would prevent any artificial distortion of the forecast distributions, allow for direct calculation of scores, and narrow the gap between model outputs and public health end users. For this to be feasible, implementations of the allocation algorithm would have to be provided to participating forecasters in the computational languages being used for modeling.
 
-\subsection{Propriety -- post hoc}
+\subsection{Impropriety of post hoc allocation scoring with quantile forecasts}
 
 A \emph{post hoc} evaluation of quantile forecasts that combines the parametric family specified by \verb`distfromq` with the allocation score does not yield the allocation score of the forecast distribution $F$. Instead, it computes an alternative score that is improper. This is because the forecast distribution $F$ and the distribution $G^q \in \mathcal{P}_{\text{dfq}}$ with the same quantiles as $F$ may determine different resource allocations. In our investigations, these discrepancies appear to be relatively minor on the interior of the provided quantiles, but could be severe if the tail extrapolations performed by \verb`distfromq` do not match the tail behavior of $F$ and the allocations are in the tails of the predictive distribution.
 
@@ -354,7 +354,7 @@ In general, we have
 E_{F}[\tilde{S}(G^\star(F), Y)] &\leq E_{F}[ S_A(G^q(F), Y) ] \label{eqn:tilde_s_improper} \\
   &= E_{F}[\tilde{S}(F, Y)] \nonumber
 \end{align}
-However, the inequality in step \eqref{eqn:tilde_s_improper} will typically be strict. For example, if $F$ has heavy upper tails (such as for a lognormal distribution), but normal distributions are used for tail extrapolations in \verb`distfromq`, then the resource allocations based on the distribution $G^q(F)$ may be quite different from the optimal allocations under the distribution $F$, leading to a strict inequality. This demonstrates that $\tilde{S}$ is improper.
+However, the inequality in \eqref{eqn:tilde_s_improper} will typically be strict. For example, if $F$ has heavy upper tails (such as for a lognormal distribution), but normal distributions are used for tail extrapolations in \verb`distfromq`, then the resource allocations based on the distribution $G^q(F)$ may be quite different from the optimal allocations under the distribution $F$, leading to a strict inequality. This demonstrates that $\tilde{S}$ is improper.
 
 
 % Def. $S(F, y)$ is proper if $E_{Y \sim F}[S(F, Y)] \leq E_{Y \sim F}[S(G, Y)]$ for all $F$, $G$.

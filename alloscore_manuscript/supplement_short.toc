@@ -6,5 +6,5 @@
 \contentsline {section}{\numberline {5}Numerical computation of allocation Bayes acts}{4}{section.5}%
 \contentsline {section}{\numberline {6}Computing allocations from finite quantile forecast representations}{4}{section.6}%
 \contentsline {section}{\numberline {7}Propriety of parametric approximation}{5}{section.7}%
-\contentsline {subsection}{\numberline {7.1}Propriety -- prospective}{5}{subsection.7.1}%
-\contentsline {subsection}{\numberline {7.2}Propriety -- post hoc}{7}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.1}Propriety when scoring methods are announced prospectively}{5}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Impropriety of post hoc allocation scoring with quantile forecasts}{7}{subsection.7.2}%
