@@ -67,18 +67,10 @@
 
 \tableofcontents
 
-\begin{todolist}
-\item 2 actual references to supplement (re exponential quantiles and solving the allocation problem)
-\item the statement that "we computed the allocation score for the 14 day-ahead forecast" which needs some answer to "how?"
-\item use of "proper" a number of times
-\end{todolist}
-
 \section{Introduction}
 \label{sec:intro}
 
-\elr{This section needs to be updated.}
-
-We briefly address some technical and methodological points in the main text. We begin in section \ref{sec:shortage} by formalizing the concept of a \emph{shortage} of resources and giving some key results about expected resource shortages under a distribution characterizing uncertainty about (future) levels of resource need. Resource shortages play a central role in the decision-making problems that give rise to the quantile loss and the allocation score, which we discuss in sections \ref{sec:quantiles_shortage} and \ref{sec:bayes-quantiles} respectively. Section \ref{sec:numeric} gives details on the numerical methods that we use to calculate allocation scores, including some special considerations for settings where forecasts are represented by a finite collection of predictive quantiles, such as the application to forecasts of hospitalizations due to COVID-19 in section 3 of the article.
+We address some technical and methodological points from the main text. We begin in section \ref{sec:proper} by defining proper scoring rules and showing that the allocation score is proper. In section \ref{sec:ex-shortage}, we formalize the concept of a \emph{shortage} of resources, give some key results about expected resource shortages under a distribution characterizing uncertainty about (future) levels of resource need, and illustrate how quantiles arise as the Bayes act in a decision making problem about the quantity of a resource to purchase. Section \ref{sec:bayes-quantiles} gives a justification for the result that the Bayes act for the allocation problem is given by a vector of quantiles of the forecast distributions in each location at a shared probability level, which was stated in section \ref{sec:methods.detailed.specific_allocation} of the main text. We describe the algorithm that we use to compute allocations given a forecast distribution in each location in section \ref{sec:numeric}. In section \ref{sec:distfromq}, we describe the methods for approximating a full distribution from a set of quantiles, implemented in the R package \verb`distfromq`, that we used to support computation of allocation scores from quantile forecasts that were submitted to the COVID-19 Forecast Hub for the application in the main text. Finally, in section \ref{sec:propriety_of_parametric_approximation} we examine implications for propriety of an analysis that uses summaries of forecasts (such as predictive quantiles) rather than the full forecast distributions for computation of allocation scores.
 
 \section{Proper scoring rules}
 \label{sec:proper}
