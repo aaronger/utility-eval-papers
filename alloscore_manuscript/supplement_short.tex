@@ -298,112 +298,110 @@ We refer the reader to the \verb`distfromq` documentation for further detail.\ci
 \section{Propriety of parametric approximation} % (fold)
 \label{sec:propriety_of_parametric_approximation}
 
-In section \ref{sec:alloscore_proper} we saw that Bayes scoring rules (such as the allocation score) are proper. However, this result implicitly assumes a perfect description of the full forecast distribution $F$ is available for computing the Bayes act. In practice, open forecasting exercises are not able to collect a desription of the forecast distribution $F$ that suffices for the computation of Bayes acts for arbitrary loss functions other than in simple settings such as the elicitation of probabilities for all levels of a categorical variable. In settings where the outcome being forecasted is a continuous quantity (such as the proportion of outpatient doctor visits where the patient had influenza-like illness) or a large count (such as influenza hospitalizations), forecasting exercises instead collect low-dimensional forecast distribution summaries, such as the 23$N$ quantiles $\{q_{i,k}\}$ (see section \ref{sec:distfromq}) collected by the US COVID-19 Forecast Hub.
+In practice, open forecasting exercises are generally not able to collect a perfect description of the forecast distribution $F$ other than in simple settings such as for a categorical variable with a relatively small number of categories. In settings where the outcome being forecasted is a continuous quantity (such as the proportion of outpatient doctor visits where the patient has influenza-like illness) or a count (such as influenza hospitalizations), forecasting exercises have therefore resorted to collecting summaries of a forecast distribution such as bin probabilities or predictive quantiles.
+In this section, we address two practical concerns raised by this. First, we discuss conditions under which it is possible to calculate the allocation score when only summaries of a forecast distribution are recorded in a submission to a forecast hub. Second, we show that a post hoc attempt to compute the allocation score based on submitted predictive quantiles may in fact compute an alternative score that is not proper.
 
-And indeed, $\{q_{i,k}\}$ unfortunately does not suffice for calculating the Bayes act for the allocation loss since generally
-$\tau^{F,K} \neq \tau^{G,K}$ (c.f. section \ref{sec:bayes-quantiles}) even when $F$ and $G$ have identical quantile summaries $\{q_{i,k}\}$.
+\subsection{Propriety -- prospective}
 
+We consider a setting where a forecasting exercise (such as a forecast hub) pre-specifies that forecasts will be represented using a parametric family of forecast distributions $G_\theta(y)$, and the task of the forecaster is to select a particular parameter value $\theta$. We use $\mathcal{P}$ to denote the collection of all distributions $G_\theta$ in the given parametric family. For instance, it has recently been proposed that mixture distributions could be used to represent forecast distributions \cite{wadsworth2023mixture}. Additionally, we note that the functionality in \verb`distfromq` can be viewed as specifying a parametric family $\mathcal{P}_{\mathrm{dfq}}$ where the parameters $\theta$ of $G_\theta$
+are its quantiles at pre-specified probability levels, and where the shape of any $G_\theta \in \mathcal{P}_{\mathrm{dfq}}$ over the full range of its support is entirely controlled by these quantiles.
 
-% Here we consider a setting where forecast distributions are summarized by some low-dimensional summary $\theta$. We make two observations in this setting:
-% \begin{enumerate}
-%   \item If the hub (or forecast evaluator) specifies ahead of time how $\theta$ will be converted into a score in the presence of data y, and ... level set stuff ..., a scoring rule can be formulated that is equivalent to S. 
-%   \begin{itemize}{}
-%     \item We have a low dimensional summary (e.g. quantiles).  Maybe that summary directly gives us the summary we want. For example, to calculate WIS, we are done!
-%   \end{itemize}
-%   \item On the other hand, if the loss that will be used to score a submitted $\theta$ is not specified in advance, there is no way for the forecaster to select a value of $\theta$ that is derived from their forecast distribution F in any meaningful way.
-% \end{enumerate}
+We find it helpful now to formally distinguish between two decision making problems. The first is the public health decision maker's allocation problem where the task is to select an allocation $x$, with the allocation loss $s_A(x, y) = \sum_{i=1}^N L \cdot \max(0, y_i - x_i)$ as described in section \ref{sec:methods.detailed.specific_allocation} of the main text.
+The second is the forecaster's reporting problem where the task is to select parameter values $\theta$ to report. The forecaster's loss is given by $s_R(\theta, y) = s_A(x^{G_\theta}, y)$, where $x^{G_\theta}$ is the Bayes act for the allocation problem under the distribution $G_\theta$. In words, the loss associated with reporting $\theta$ is equal to the loss associated with taking the Bayes allocation corresponding to the distribution $G_\theta$.
 
+Following our usual construction, the Bayes act for the forecast reporting problem is the parameter set that minimizes the forecaster's expected loss. Breaking with our earlier notation for improved legibility, we use $\theta^\star(F)$ to denote this Bayes act:
+\begin{align*}
+\theta^\star(F) &= \text{argmin}_\theta \Ex_F [s_R(\theta, Y)] \\
+&= \text{argmin}_\theta \Ex_F [s_A(x^{G_\theta}, Y)]
+\end{align*}
 
+We then arrive at the scoring rule
+$$S_R(F, y) = s_R(\theta^\star(F), y) = s_A(x^{G_{\theta^\star(F)}}, y).$$
+It follows from the discussion in section \ref{sec:alloscore_proper} that this is a proper scoring rule for $F$.
+Although the full forecast distribution $F$ is not available in the forecast submission, the score $S_R(F, y)$ can be calculated from the reported parameter values as long as the forecaster submits the optimal parameters $\theta^\star(F)$.
 
-% TEXT WE MAY NOT LIKE ANYMORE:
-% Here, we consider a setting where forecasts are represented using a parametric family of forecast distributions $G_\theta(y)$, and the task of the forecaster is to select a particular parameter value $\theta$. We use $\mathcal{P} = \{G_\theta(y), \theta \in \Theta \}$ to denote the collection of all distributions in the given parametric family. For instance, it has recently been proposed that mixture distributions could be used to represent forecast distributions \cite{wadsworth2023mixture}. Additionally, we note that the functionality in \verb`distfromq` can be viewed as specifying a parametric family $\mathcal{P}_{\mathrm{dfq}}$ where the parameters $\theta$ of $G_\theta$
-% are its quantiles at pre-specified probability levels, and where the shape of any $G_\theta \in \mathcal{P}_{\mathrm{dfq}}$ over the full range of its support is entirely controlled by these quantiles.
+We emphasize that the forecaster's true predictive distribution $F$ does not need to be a member of the specified parametric family $\mathcal{P}$ for this construction to yield a proper score.
+It is, however, necessary to specify the parametric family to use and the foundational scoring rule $s_A$ (including any relevant problem parameters such as the resource constraint $K$) in advance, so that forecasters can identify the Bayes act parameter set $\theta^\star(F)$ to report.
 
-% Our general result is that Bayes scoring rules are invariant under reparametrization of the action space.
+If the parametric family used to represent forecast distributions is flexible enough, the reporting scoring rule $S_R$ and the allocation score are equivalent in the sense that they will yield the same score for any distribution $F$.
+Suppose that for a given resource constraint $K$, for any forecast distribution $F$ it is possible to find a member $G_{\theta^\star}$ of the specified parametric family $\mathcal{P}$ with the same allocation as $F$ (i.e., $x^F = x^{G_{\theta^\star}}$). Then $\theta^\star$ is a Bayes act for the reporting problem since for any other parameter value $\theta$,
+\begin{align*}
+\Ex_F[s_R(\theta^\star, Y)] &= \Ex_F[ s_A(x^{G_{\theta^\star}}, Y) ] \\
+&= \Ex_F[s_A(x^F, Y)]  \quad \text{ (since $x^F = x^{G_{\theta^\star}}$)} \\
+&\leq \Ex_F[ s_A(x^{G_\theta}, Y) ]  \quad \text{ (by definition of $x^F$)} \\
+&= \Ex_F[ s_R(\theta, Y)].
+\end{align*}
+It therefore follows that
+\begin{align*}
+S_R(F, y) &= s_R(\theta^\star, y) \\
+&= s_A(x^{G_{\theta^\star}}, y) \\
+&= s_A(x^F, y) \\
+&= S_A(F, y).
+\end{align*}
 
-% Main points:
-%  * If we have access to the actual forecast distributions F, Bayes scoring rules (including allocation score) are proper.
-%     - We already said this in section 2, remind the reader of that.
-%     - We don't need to say this: the propriety of such a score doesn't depend on whether or not the forecaster knows that we'll be using that score
-%  * However, if we don't have access to F, the forecaster can only share some intermediate [representation]/[low-dimensional functional] of F
-%     - The hub (or forecast evaluator) must specify ahead of time how that representation will be converted into a score in the presence of data y, i.e., the mapping s^\star(theta, y) = s(M(theta), y).  With this knowledge, the ELM forecaster can select the representation theta^F that minimizes E_F[s^\star(theta, Y)] = E_F[ s(M(theta), Y) ] (1).
-%         - In the range of 0 to 1 sentences: Suppose that the set of functionals that may be submitted is Theta, and M(Theta) \subset, not equal....
-%             - some forecasts F, F' with different bayes acts x^F, x^{F'} but theta^F = theta^{F'} ... there is no way to tell them apart from functionals, (a score that was stricly proper may be converted to a score that is proper, for example.  )
-%             - there is a level set for a theta value that does not live inside a level set for a single A value, and therefore the scores are not equivalent --- the score calcualted based on this functional is "coarser" at that value.
-%     - On the other hand, if this information is not communicated to the forecaster ahead of time, they may select some non-optimal theta, theta^\prime which does not minimize (1)
-    
+For the particular choice of the parametric family $\mathcal{P}_{\text{dfq}}$ (i.e., using the \verb`distfromq` package), this flexibility requirement is satisfied. For instance, the forecaster could pick one required quantile level (such as 0.5, for which the corresponding predictions are predictive medians), and set the submitted quantiles of their forecast distribution in each location at that level to be the desired allocations, which sum to $K$ across all locations.
+However, this representation of the forecast may be quite different from the actual forecast distribution $F$.
+For example, for the actual forecast distribution $F$ the allocations may occur at some quantile level other than 0.5.
 
-% OLD BRAINSTORMING:
-%  * However, if we don't have access to F, the forecaster can only share some intermediate [representation]/[low-dimensional functional] of F
-%     - Consider the quantile score: We can't directly evaluate S_q(F, y)
-%        - Option 1: but we can evaluate it exactly via the functionals that are provided, if the forecaster knew that they should provide quantiles for their functionals, i.e., if they knew that we were going to use quantile score/WIS for evaluation.
-%        - Option 2: if I have a sufficient statistic theta_suff^F that allows me to calculate the quantiles of F as M_suff(theta_suff^F) "regardless of whether or not forecaster knows mapping M_suff", I can calculate S_q(F, y)
-%           - But there's a step in the hub setup/elicitation process where we tell the forecaster to submit theta_suff^F
-%        - Option 3: 
-%     - For allocation score:
-%        - One option: the forecaster submits their allocations x^F.  This is the only quantity you need to plug into s_A(x, y) in order to calculate S_A(F, y).
-%        - Another option: the forecaster submits some other quantity theta^F that is (sufficient) for downstream calculations of x^F, e.g. via x^F = allocate(distfromq(theta^F)).  As long as the evaluator and the forecaster agree on the mapping from theta^F to x^F, and any point in X can be reached by some theta in Theta, the resulting score is proper.
-%        - Quantiles are not "sufficient" for allocations.
-%        - But a vector of 23 numbers used to parameterize dfq are sufficient for allocations
+As another alternative for practical forecasting exercises, a forecast hub could ask forecasters to directly provide the Bayes allocations associated with their forecasts for one or more specified resource constraints $K$. At the cost of increasing the number of quantities solicited by the forecast hub, this would have several advantages: it would prevent any artificial distortion of the forecast distributions, allow for direct calculation of scores, and narrow the gap between model outputs and public health end users. For this to be feasible, implementations of the allocation algorithm would have to be provided to participating forecasters in the computational languages being used for modeling.
 
-\textbf{Bayes scoring rules are invariant under reparametrization of the action space.}
+\subsection{Propriety -- post hoc}
 
-Let $S(F,y)$ be a Bayes scoring rule derived from an action set $\mathcal{X}$ and loss $s(x,y)$.
-Let $\mathcal{W}$ be another set and $M:\mathcal{W} \to \mathcal{X}$ a map. $M$ defines a loss $s_M(\theta, y):= s(M(\theta), y)$
-on $\mathcal{W}$. This in turn defines the Bayes scoring rule
+A \emph{post hoc} evaluation of quantile forecasts that combines the parametric family specified by \verb`distfromq` with the allocation score does not yield the allocation score of the forecast distribution $F$. Instead, it computes an alternative score that is improper. This is because the forecast distribution $F$ and the distribution $G^q \in \mathcal{P}_{\text{dfq}}$ with the same quantiles as $F$ may determine different resource allocations. In our investigations, these discrepancies appear to be relatively minor on the interior of the provided quantiles, but could be severe if the tail extrapolations performed by \verb`distfromq` do not match the tail behavior of $F$ and the allocations are in the tails of the predictive distribution.
+
+We define
+$$G^{\star}(F) := \argmin_{G \in \mathcal{P}_{\mathrm{dfq}}} E_{F}[S_A(G, Y)],$$
+the distribution corresponding to the optimal submission for the forecaster with predictive distribution $F$.
+Because the distribution $G^q(F)$ typically will not yield allocations that are optimal under the distribution $F$, in general $G^q(F)$ and $G^\star(F)$ are different distributions.
+
+When an analyst attempts a post hoc computation of the allocation score using $G^q(F)$ (implicitly assuming that $G^q(F) = G^\star(F)$), they in fact compute the alternative score
+$$\tilde{S}(F, y) = S_A(G^q(F), y) = s_A(x^{G^q(F)}, y).$$
+This score is improper because $E_{F}[S_A(G, Y)]$ is minimized by $G^\star(F)$, not $G^q(F)$.
+That is,
 \begin{align}
-S_M(F,y) := s_M(\theta^F,y) = s(M(\theta^F),y).
+E_{F}[\tilde{S}(G^\star(F), Y)] &< E_{F}[ S_A(G^q(F), Y) ] \label{eqn:tilde_s_improper} \\
+  &= E_{F}[\tilde{S}(F, Y)] \nonumber
 \end{align}
-If $M$ is surjective onto the set of Bayes acts $\{x \in \mathcal{X} \mid x = x^F \text{ for some } F \in \mathcal{P}\}$, then the scores coincide since
-\begin{align}
-S_M(F,y) = s_M(\theta^F,y) & = \min_{\theta}\{s_M(\theta,F)\} \\
-&= \min_{\theta}\{s(M(\theta),F)\}  \\
-&= \min_{x}\{s(x,F)\} = s(x^F,F) = S(F,y).
-\end{align}
-(Note that this does not imply that $M(\theta^F) = x^F$ since $x^F$ might not be a unique Bayes act.)
-
-Identifying $G_{\theta}\in \mathcal{P}_{\mathrm{dfq}}$ with its quantile parameters $\theta$, the map $M(\theta):= x^{\theta}$
-is surjective onto the action set of allocations under any constraint $K$ since they can be specified as quantiles for
-distributions in $\mathcal{P}_{\mathrm{dfq}}$.  Therefore
-the \verb`distfromq` ``reparametrized'' allocation scoring rule
-$S_{A, \mathrm{dfq}}(F,y):= s_{\mathrm{dfq}}(\theta^F,y) = s_A(x^{\theta^F},y)$ coincides with the AS $S_A(F,y)$ itself.
-
-Unfortunately,
+The inequality in step \eqref{eqn:tilde_s_improper} is strict when $G^q(F)$ is not a minimizer of the expected allocation loss under the distribution $F$. At an intuitive level, this occurs when the allocations determined by $G^\star(F)$ and $G^q(F)$ are different.
 
 
+% Def. $S(F, y)$ is proper if $E_{Y \sim F}[S(F, Y)] \leq E_{Y \sim F}[S(G, Y)]$ for all $F$, $G$.
 
+% One way to demonstrate that S is improper is to find a pair F, G such that $E_{Y \sim F}[S(F, Y)] > E_{Y \sim F}[S(G, Y)]$.
 
+% Take $\tilde{S}(F, y)$ to be the "incorrect" scoring rule that uses quantiles rather than a minimizer of the expected DFQ+Alloscore loss:
+% $$\tilde{S}(F, y) = S_A(G^q(F), y) = s_A(x^{G^q(F)}, y)$$
 
-For convenience we write $S(F,G) := \Ex_G[S(F,Y)]$. Let
-\begin{align*}
-q_{23}(F) &:= (q_{.01,F},\ldots,q_{.99,F}) \\
-G^q(F) &:= G_{q_{23}(F)} \in \mathcal{P}_{\mathrm{dfq}} \\
-G^{\star}(F) &:= \argmin_{G \in \mathcal{P}_{\mathrm{dfq}}} S_A(G,F)
-\end{align*}
-We have the ``right'' approximate allocation score
-\begin{align*}
-S_{R}(F,y):= S_A(G^{\star}(F),y)
-\end{align*}
-which is proper because
-\begin{align*}
-S_R(F,F) &= S_A(G^{\star}(F), F) \\
-&\leq S_A(G^{\star}(F), H) \quad \text{ (by definition of $G^{\star}$)} \\
-&=S_R(F,H).
-\end{align*}
-This seems to almost be what is called ``properization'' in \cite{brehmer2020properization}.
-We also have a ``wrong'' approximation
-\begin{align*}
-\tilde{S}_R(F,y) := S_A(G^q(F),y)
-\end{align*}
-which is improper because
-\begin{align*}
-\tilde{S}_R(F,G^q(F)) &= S_A(G^q(F),G^q(F)) \\
- &<  S_A(G^q(F),F) \quad \text{ (because $S_A$ is proper)} \\
- &= \tilde{S}_R(F,F).
-\end{align*}
+% What we want is a distribution F and an alternative distribution G such that $E_{Y \sim F}[S(F, Y)] > E_{Y \sim F}[S(G, Y)]$.
 
+%  - Take F to be something with non-normal tails, in which case $x^{G^q(F)}$ will be a non-optimal allocation, and
+%  - G to be $G^\star(F)$ = the minimizer of $E_{Y \sim F}[S_A(F, Y)]$
 
+%  Then we will have
+% \begin{align*}
+% E_{Y \sim F}[\tilde{S}(G, Y)] &= E_{Y \sim F}[\tilde{S}(G^\star(F), Y)] \\
+% &= E_{Y \sim F}[ S_A(G^q(G^\star(F)), Y) ] \\
+% &= E_{Y \sim F}[ S_A(G^\star(F), Y) ] \\
+% &= E_{Y \sim F}[ s_A(x^{G^\star(F)}, Y) ] \\
+% &= E_{Y \sim F}[ s_A(x^{F}, Y) ] \\
+% &< E_{Y \sim F}[ s_A(x^{G^q(F)}, Y) ] \\
+% &= E_{Y \sim F}[\tilde{S}(F, Y)]
+% \end{align*}
 
+% \begin{align*}
+%   E_{Y \sim F}[\tilde{S}(G, Y)] &= E_{Y \sim F}[\tilde{S}(G^\star(F), Y)] \\
+%   &= E_{Y \sim F}[ S_A(G^q(G^\star(F)), Y) ] \\
+%   &= E_{Y \sim F}[ S_A(G^\star(F), Y) ] \\
+%   &< E_{Y \sim F}[ S_A(G^q(F), Y) ] \\
+%   &= E_{Y \sim F}[\tilde{S}(F, Y)]
+%   \end{align*}
+  
+
+% $G^q(G^\star(F)) = G^\star(F)$
+
+% $E_{Y \sim F}[\tilde{S}(F, Y)]$
+
+% We can show that this scoring rule is improper by taking, for example, $F = (Exp(1/1), Exp(1/4))$, or something else like this with non-normal tails.  Find an example where the allocations derived from $G^q(F)$ are different from the allocations from $F$.
 
 % section propriety_of_parametric_approximation (end)
 
