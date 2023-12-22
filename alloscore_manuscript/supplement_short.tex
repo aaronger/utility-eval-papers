@@ -131,8 +131,10 @@ and use the Bayes act only as a bridge to a proper scoring rule.  Consistency is
 \section{Expected shortages}
 \label{sec:ex-shortage}
 
-A key feature of loss functions used in the decision theoretic definition of quantiles and related scoring rules such as the
-CRPS and the WIS (see ...), as well as the allocation loss function presented in this work, is the presence of a \emph{shortage}:
+A key feature of loss functions for decision problems used to define quantiles and related scoring rules such as the
+CRPS and the WIS (see e.g., \cite{gneiting2011quantiles}, \cite{jose2009evaluating}, 
+and \cite{royset2022optimization}, sections 1.C and 3.C), as well as the allocation loss function presented in this work, 
+is the presence of a \emph{shortage}:
 the amount $\max\{0,y-x\}$ by which a resource demand
 $y$ exceeds a supply decision variable $x$, which, for convenience, we write as $(y-x)_{+}$. In particular, a quantile at
 probability level $\alpha$ of a distribution $F$ on $\mathbb{R}^1$ (which we assume to have a well-defined density $f(x)$)
@@ -299,7 +301,11 @@ We consider a setting where a forecasting exercise (such as a forecast hub) pre-
 are its quantiles at pre-specified probability levels, and where the shape of any $G_\theta \in \mathcal{P}_{\mathrm{dfq}}$ over the full range of its support is entirely controlled by these quantiles.
 
 We find it helpful now to formally distinguish between two decision making problems. The first is the public health decision maker's allocation problem where the task is to select an allocation $x$, with the allocation loss $s_A(x, y) = \sum_{i=1}^N L \cdot \max(0, y_i - x_i)$ as described in section \ref{sec:methods.detailed.specific_allocation} of the main text.
-The second is the forecaster's reporting problem where the task is to select parameter values $\theta$ to report. The forecaster's loss is given by $s_R(\theta, y) = s_A(x^{G_\theta}, y)$, where $x^{G_\theta}$ is the Bayes act for the allocation problem under the distribution $G_\theta$. In words, the loss associated with reporting $\theta$ is equal to the loss associated with taking the Bayes allocation corresponding to the distribution $G_\theta$.
+The second is the forecaster's reporting problem where the task is to select parameter values $\theta$ to report. The forecaster's loss is given by 
+\begin{align}
+s_R(\theta, y) = s_A(x^{G_\theta}, y), \label{eqn:forecaster_theta_loss}
+\end{align}
+where $x^{G_\theta}$ is the Bayes act for the allocation problem under the distribution $G_\theta$. In words, the loss associated with reporting $\theta$ is equal to the loss associated with taking the Bayes allocation corresponding to the distribution $G_\theta$.
 
 Following our usual construction, the Bayes act for the forecast reporting problem is the parameter set that minimizes the forecaster's expected loss. Breaking with our earlier notation for improved legibility, we use $\theta^\star(F)$ to denote this Bayes act:
 \begin{align*}
@@ -342,9 +348,13 @@ As another alternative for practical forecasting exercises, a forecast hub could
 A \emph{post hoc} evaluation of quantile forecasts that combines the parametric family specified by \verb`distfromq` with the allocation score does not yield the allocation score of the forecast distribution $F$. Instead, it computes an alternative score that is improper. This is because the forecast distribution $F$ and the distribution $G^q \in \mathcal{P}_{\text{dfq}}$ with the same quantiles as $F$ may determine different resource allocations. In our investigations, these discrepancies appear to be relatively minor on the interior of the provided quantiles, but could be severe if the tail extrapolations performed by \verb`distfromq` do not match the tail behavior of $F$ and the allocations are in the tails of the predictive distribution.
 
 We define
-$$G^{\star}(F) := \argmin_{G \in \mathcal{P}_{\mathrm{dfq}}} E_{F}[S_A(G, Y)],$$
-the distribution corresponding to the optimal submission for the forecaster with predictive distribution $F$.
-Because the distribution $G^q(F)$ typically will not yield allocations that are optimal under the distribution $F$, in general $G^q(F)$ and $G^\star(F)$ are different distributions.
+$$G^{\star}(F) := \argmin_{G \in \mathcal{P}_{\mathrm{dfq}}} E_{F}[S_A(G, Y)].$$
+Since $S_R$ is defined as the Bayes scoring rule for the forecaster's loss \eqref{eqn:forecaster_theta_loss}, $G^{\star}(F)$ coincides
+with $G_{\theta^{\star}(F)}$, the distribution in $\mathcal{P}_{\mathrm{dfq}}$ given by the 
+optimal submission parameters $\theta^{\star}(F)$ for the forecaster with predictive distribution $F$.
+In general, $G^q(F)$ and $G^\star(F)$ will be different distributions:  matching $F$ at specific quantiles
+does not require $G^q(F)$ to match $F$ at the quantiles for $\tau^{F,K}$ (c.f. \eqref{eqn:quantiles-sum-to-K}), 
+which would be necessary for it to share $x^F$ as an optimal allocation.
 
 When an analyst attempts a post hoc computation of the allocation score using $G^q(F)$ (implicitly assuming that $G^q(F) = G^\star(F)$), they in fact compute the alternative score
 $$\tilde{S}(F, y) = S_A(G^q(F), y) = s_A(x^{G^q(F)}, y).$$
