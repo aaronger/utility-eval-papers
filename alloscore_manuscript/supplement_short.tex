@@ -275,7 +275,7 @@ To address this situation and support the numerical allocation algorithm outline
   \item For the continuous part of the distribution, different approaches are used on the interior and exterior of the provided quantiles:
   \begin{enumerate}
     \item On the interior, a monotonic cubic spline interpolates the adjusted quantiles representing the continuous part of the distribution.
-    \item A location-scale parametric family is used to extrapolate beyond the provided quantiles. The location and scale parameters are estimated separately for the lower and upper tails so as to obtain a tail distribution that matches the two most extreme quantiles in each tail.
+    \item A location-scale parametric family is used to extrapolate beyond the provided quantiles. The location and scale parameters are estimated separately for the lower and upper tails so as to obtain a tail distribution that matches the two most extreme quantiles in each tail. In this work, we use normal distributions for the tails.
   \end{enumerate}
 \end{enumerate}
 The resulting distributional estimate exactly matches all of the predictive quantiles provided by the forecaster. We use the cumulative distribution function resulting from this procedure as an input to the allocation score algorithm.
@@ -357,12 +357,12 @@ Because the distribution $G^q(F)$ typically will not yield allocations that are 
 When an analyst attempts a post hoc computation of the allocation score using $G^q(F)$ (implicitly assuming that $G^q(F) = G^\star(F)$), they in fact compute the alternative score
 $$\tilde{S}(F, y) = S_A(G^q(F), y) = s_A(x^{G^q(F)}, y).$$
 This score is improper because $E_{F}[S_A(G, Y)]$ is minimized by $G^\star(F)$, not $G^q(F)$.
-That is,
+In general, we have
 \begin{align}
-E_{F}[\tilde{S}(G^\star(F), Y)] &< E_{F}[ S_A(G^q(F), Y) ] \label{eqn:tilde_s_improper} \\
+E_{F}[\tilde{S}(G^\star(F), Y)] &\leq E_{F}[ S_A(G^q(F), Y) ] \label{eqn:tilde_s_improper} \\
   &= E_{F}[\tilde{S}(F, Y)] \nonumber
 \end{align}
-The inequality in step \eqref{eqn:tilde_s_improper} is strict when $G^q(F)$ is not a minimizer of the expected allocation loss under the distribution $F$. At an intuitive level, this occurs when the allocations determined by $G^\star(F)$ and $G^q(F)$ are different.
+However, the inequality in step \eqref{eqn:tilde_s_improper} will typically be strict. For example, if $F$ has heavy upper tails (such as for a lognormal distribution), but normal distributions are used for tail extrapolations in \verb`distfromq`, then the resource allocations based on the distribution $G^q(F)$ may be quite different from the optimal allocations under the distribution $F$, leading to a strict inequality. This demonstrates that $\tilde{S}$ is improper.
 
 
 % Def. $S(F, y)$ is proper if $E_{Y \sim F}[S(F, Y)] \leq E_{Y \sim F}[S(G, Y)]$ for all $F$, $G$.
