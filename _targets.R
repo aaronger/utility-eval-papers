@@ -27,6 +27,7 @@ tar_source(files = c("R/data-ingestion.R",
                      "R/run-alloscore.R",
                      "R/determine-model-eligibility.R",
                      "R/exponential-examples.R",
+                     "R/percap.R",
                      "R/plot_functions.R"))
 
 values <- tibble(forecast_dates = as.character(seq.Date(as.Date("2021-11-22"), as.Date("2022-02-28"), by = "7 days")))
@@ -96,5 +97,9 @@ combined <- tar_combine(
 #   format = "file"
 # )
 
+make_percap <- tar_target(
+  name = percap,
+  command = score_per_capita_allocation(all_alloscore_data, Kat15k_alloscores)
+)
 
-list(setup, mapped, combined)
+list(setup, mapped, combined, make_percap)
