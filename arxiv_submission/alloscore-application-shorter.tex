@@ -1,8 +1,60 @@
-\documentclass{article}
+\documentclass{article}\usepackage[]{graphicx}\usepackage[]{xcolor}
+\pdfoutput=1
+% maxwidth is the original width if it is less than linewidth
+% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
 
 \usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
 
 \usepackage{amsmath, amsfonts, amssymb}
+\usepackage{authblk}
 \usepackage{graphicx}
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
@@ -35,10 +87,16 @@
 \usepackage{natbib}
 \bibliographystyle{unsrtnat-abbr}
 
+\author{Aaron Gerding\thanks{Corresponding Author: \texttt{agerding@umass.edu}}}
+\author{Nicholas G. Reich}
+\author{Benjamin Rogers}
+\author{Evan L. Ray}
+\affil{Department of Biostatistics and Epidemiology, School of Public Health and Health
+Sciences, University of Massachusetts at Amherst}
 
 \title{Evaluating infectious disease forecasts \\ with allocation scoring rules}
-\author{Aaron Gerding, Nicholas G. Reich, Benjamin Rogers, Evan L. Ray}
-
+%\author{Aaron Gerding, Nicholas G. Reich, Benjamin Rogers, Evan L. Ray}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 
 \newcommand{\del}[2]{\frac{\partial {#1} }{\partial {#2}} }
@@ -53,20 +111,9 @@
 
 
 
-<<setup, tidy=FALSE, echo=FALSE, message=FALSE>>=
-knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE)
-@
 
-<<environment-setup>>=
-library(targets)
-library(tidyverse)
-library(ggbump)
 
-theme_set(theme_bw())
 
-## necessary to have project root as wd, to override document directory
-knitr::opts_knit$set(root.dir = '../')
-@
 
 \begin{abstract}
 
@@ -152,7 +199,7 @@ Rather, the allocation score measures the unmet need that could have been avoide
 \ref{sec:bayes-quantiles} of the supplemental materials). If $K = 5$ units of the resource are available, the optimal allocation according to $F$ would be 1 unit of resources in location 1 and 4 units of resources in location 2. If, on the other hand, $K = 10$ units are available, we will allocate 2 units of resources to location 1 and 8 units to location 2. Figure~\ref{fig:exp_alloc_example} illustrates the situation.
 
 \begin{figure}
-    \includegraphics[width=\textwidth]{../figures/exponential_pred_expected_loss.pdf}
+    \includegraphics[width=\textwidth]{figure/exponential_pred_expected_loss}
     \caption{An illustration of the resource allocation problem in Example 1. There are $N = 2$ locations, with predictive distributions $F_1 = \mathrm{Exp}(1)$ and $F_2 = \mathrm{Exp}(1/4)$. The cumulative distribution functions of these distributions are illustrated in the panels at bottom and right. In the center panel, the background shading corresponds to the expected loss according to these forecasts. Diagonal black lines indicate resource constraints at $K=5$ and $K=10$ units; any point along those lines corresponds to an allocation that meets the resource constraint. For these forecasts, the optimal allocations are $(1, 4)$ for $K=5$ and $(2, 8)$ for $K=10$. These allocations are at the point on the constraint line where the expected loss is smallest, which also corresponds to the point where a level set of the expected loss surface (blue curve) is tangent to the constraint.}
     \label{fig:exp_alloc_example}
 \end{figure}
@@ -276,9 +323,7 @@ From this point, the WIS or CRPS can be obtained by averaging across a range of 
 We illustrate with an application to hospital admissions in the U.S., considering a hypothetical problem of allocating a limited supply of medical resources to states.
 
 \subsection{Data}
-<<get-data-dates>>=
-metadata <- tar_meta()
-@
+
 
 
 %\subsubsection{Hospitalization data}
@@ -295,7 +340,7 @@ Probability distributions were represented using a set of 23 quantiles for each 
 
 The analysis in this work focuses on forecasts made before and during the first wave of the Omicron SARS-CoV-2 variant in the US.
 As such, we analyzed forecasts for the 15 weeks starting with Monday November 22, 2021 through Monday February 28, 2022.
-%Forecast data were downloaded on for analysis on \Sexpr{format(as.Date(metadata$time[which(metadata$name == "forecast_data")]), "%B %d, %Y")}.
+%Forecast data were downloaded on for analysis on format(as.Date(metadata$time[which(metadata$name == "forecast_data")]), "%B %d, %Y").
 
 Submission to the Forecast Hub followed a weekly cycle, and each Monday the Hub collected the most recent forecasts submitted by all teams that met certain inclusion criteria and created ensemble forecasts using quantile averaging \citep{ray_comparing_2023}.
 Our analysis includes these ensembles (COVIDhub-ensemble and COVIDhub-trained\_ensemble) as well as one other ensemble of hub models created by another team (JHUAPL-SLPHospEns) and several other individual models.
@@ -303,7 +348,7 @@ Models were eligible to be included in the analysis if they were designated as a
 For a model to have a complete, eligible submission in a given week, it had to have a 14 day-ahead forecast for all 50 states plus Washington DC.
 Models had to have a complete forecast for at least 4 of the 15 weeks in the analysis to be eligible for inclusion.
 
-The hospitalization data used for scoring forecasts were downloaded on \Sexpr{format(as.Date(metadata$time[which(metadata$name == "truth_data")]), "%B %d, %Y")}.
+The hospitalization data used for scoring forecasts were downloaded on December 03, 2023.
 
 \subsection{Evaluation metrics}
 
@@ -343,41 +388,7 @@ All forecast data used in this evaluation are available through the COVID-19 For
 
 \subsection{Application results}
 
-<<score-computation>>=
-tar_load("Kat15k_alloscores")
-tar_load("score_data")
-tar_load("truth_data")
-tar_load("forecast_data")
 
-alloscore_data_summaries <- Kat15k_alloscores |>
-  group_by(model, reference_date) |>
-  summarize(alloscore = sum(components), yobs = sum(y)) |>
-  group_by(reference_date) |>
-  mutate(nmodels = n(),
-         allo_rank = rank(alloscore, ties.method = "min"),
-         allo_rank_std = 1- (allo_rank-1)/(nmodels-1)) |>
-  ungroup() |>
-  complete(model, reference_date) |>
-  mutate(target_end_date = as.Date(reference_date) + 14)
-
-alloscore_models <- unique(alloscore_data_summaries$model)
-score_data_summaries <- score_data |>
-  mutate(reference_date = target_end_date - 14) |>
-  filter(model %in% alloscore_models) |>
-  group_by(model, reference_date) |>
-  summarize(mwis = mean(wis)) |>
-  ungroup() |>
-  group_by(reference_date) |>
-  mutate(nmodels = n(),
-         mwis_rank = rank(mwis, ties.method = "min"),
-         mwis_rank_std = 1- (mwis_rank-1)/(nmodels-1)) |>
-  ungroup() |>
-  complete(model, reference_date) |>
-  mutate(target_end_date = as.Date(reference_date) + 14)
-
-all_scores <- left_join(alloscore_data_summaries, score_data_summaries,
-                      by=c("model", "target_end_date"))
-@
 
 
 \subsubsection{Anatomy of forecast scores for one week}
@@ -389,71 +400,35 @@ This week was around the peak of the Omicon wave nationally, with individual sta
 Of the 10 models evaluated, the CU-select model had the most accurate forecasts according to the allocation score while the USC-SI\_kJalpha model had the most accurate forecasts based on MWIS (Table \ref{tab:multi-k-scores}).
 The JHUAPL-Bucky model had the second best MWIS but the third worst allocation score.
 
-<<ias-comparison>>=
-tar_load(alloscore_2021.12.20)
-slim_alloscore_2021.12.20 <- alloscore::slim(alloscore_2021.12.20, id_cols = c("model", "reference_date"))
-
-## for visual context
-## curve(dnorm(x, mean=15000, sd=3000), from=0, to=30000)
-ks <- seq(5000, 25000, by=200)
-kprobs <- data.frame(K = ks,
-                     weight = dnorm(ks, mean=15000, sd=3000)/sum(dnorm(ks, mean=15000, sd=3000)))
 
 
-ias <- slim_alloscore_2021.12.20 |>
-  group_by(model, K) |>
-  summarize(`Allocation score` = sum(components)) |>
-  left_join(kprobs) |>
-  group_by(model) |>
-  summarize(IAS_wt = sum(`Allocation score`*weight, na.rm=TRUE),
-            IAS = mean(`Allocation score`)) |>
-  arrange(IAS)
-
-as <- slim_alloscore_2021.12.20 |>
-  filter(K == 15000) |>
-  group_by(model) |>
-  summarize(AS = sum(components)) |>
-  arrange(AS)
-@
-
-<<multi-k-scores, results='asis'>>=
-wis_vals <- all_scores |>
-  filter(target_end_date == "2022-01-03", !is.na(mwis)) |>
-  select(model,
-# can uncomment the two lines below to check they match
-#         AS = alloscore,
-#         `AS rank` = allo_rank,
-         MWIS = mwis)
-
-left_join(ias, as) |>
-  left_join(wis_vals, by="model") |>
-  rename(Model = model,
-         `IAS centered at 15k` = IAS_wt,
-         `IAS uniform` = IAS) |>
-  select(Model, AS, MWIS, `IAS centered at 15k`, `IAS uniform`) |>
-  arrange(AS) |>
-  xtable::xtable(caption = "Comparison of allocation scores (AS), mean weighted interval scores (MWIS), and two varieties of Integrated Allocation Scores (IAS). All metrics are shown for 10 models that made forecasts of hospital admissions for 2022-01-03. Results are sorted by AS. For all metrics, lower scores indicate better accuracy.",
-                 digits = 0,
-                 label = "tab:multi-k-scores") |>
-  print(include.rownames = FALSE, )
-@
+% latex table generated in R 4.3.1 by xtable 1.8-4 package
+% Fri Dec 22 11:30:21 2023
+\begin{table}[ht]
+\centering
+\begin{tabular}{lrrrr}
+  \hline
+Model & AS & MWIS & IAS centered at 15k & IAS uniform \\ 
+  \hline
+CU-select & 669 & 133 & 774 & 326 \\ 
+  COVIDhub-ensemble & 873 & 159 & 1067 & 438 \\ 
+  USC-SI\_kJalpha & 995 & 91 & 1216 & 1097 \\ 
+  JHUAPL-Gecko & 1034 & 164 & 1141 & 418 \\ 
+  MUNI-ARIMA & 1084 & 169 & 1248 & 440 \\ 
+  COVIDhub-trained\_ensemble & 1089 & 169 & 1271 & 823 \\ 
+  COVIDhub-baseline & 1175 & 170 & 1317 & 535 \\ 
+  JHUAPL-Bucky & 1358 & 102 & 1566 & 1214 \\ 
+  JHUAPL-SLPHospEns & 1540 & 129 & 1604 & 1102 \\ 
+  UVA-Ensemble & 2469 & 213 & 2635 & 2494 \\ 
+   \hline
+\end{tabular}
+\caption{Comparison of allocation scores (AS), mean weighted interval scores (MWIS), and two varieties of Integrated Allocation Scores (IAS). All metrics are shown for 10 models that made forecasts of hospital admissions for 2022-01-03. Results are sorted by AS. For all metrics, lower scores indicate better accuracy.} 
+\label{tab:multi-k-scores}
+\end{table}
 
 
-<<metrics-rankings, results = "asis", eval=FALSE>>=
-## NOTE: this content now shown in multi-k-scores chunk
-## for highlighting cells, if we want that https://stackoverflow.com/questions/37448348/color-code-cells-of-xtable
-all_scores |>
-  filter(target_end_date == "2022-01-03", !is.na(mwis)) |>
-  select(model,
-         AS = alloscore,
-         `AS rank` = allo_rank,
-         MWIS = mwis,
-         `MWIS rank` = mwis_rank) |>
-  arrange(`AS rank`) |>
-  xtable::xtable(label = "tab:one-week-results",
-                 caption = "Allocation scores (AS) and mean weighted interval scores (MWIS) for each model' as forecasted's forecasts for ") |>
-  print(include.rownames = FALSE)
-@
+
+
 
 
 
@@ -461,75 +436,19 @@ all_scores |>
 %As described in the methods above, allocations for a given location from a specific model are generated by finding the single quantile of the probabilistic forecast across all locations that reaches the resource allocation limit (in this case, assumed to be 15,000).
 %A direct comparison between the forecasts from the JHUAPL-Bucky and CU-select models show that while the JHUAPL-Bucky forecast distributions were closer to the eventual observations in many states, the allocations suggested by those forecasts often were more inefficient than those from the CU-select model (Figure \ref{fig:thermometer-plot}).
 
-<<detailedASinfo>>=
-source("R/run-alloscore.R")
-as_Buck <- run_alloscore(
-  forecast_data = forecast_data,
-  truth_data = truth_data,
-  one_reference_date = "2021-12-20",
-  one_model = "JHUAPL-Bucky",
-  one_K = 15000,
-  slim = FALSE)
 
-as_CU <- run_alloscore(
-  forecast_data = forecast_data,
-  truth_data = truth_data,
-  one_reference_date = "2021-12-20",
-  one_model = "CU-select",
-  one_K = 15000,
-  slim = FALSE)
 
-Buck_quantile <- round(1 - as_Buck$lam,2)*100
-CU_quantile <- round(1 - as_CU$lam,2)*100
-
-FL_allocs <- Kat15k_alloscores |>
-   dplyr::filter(
-     model %in% c("JHUAPL-Bucky", "CU-select"),
-     reference_date == "2021-12-20",
-     abbreviation == "FL") |>
-  dplyr::select(model, x) |>
-  tibble::deframe()
-FL_diff <- round(FL_allocs["CU-select"] - FL_allocs["JHUAPL-Bucky"])
-@
-
-%For JHUAPL-Bucky, the allocations were assigned at the \Sexpr{Buck_quantile}th percentile of the predictive distribution and for CU-select they were at the \Sexpr{CU_quantile}th percentile.
+%For JHUAPL-Bucky, the allocations were assigned at the Buck_quantileth percentile of the predictive distribution and for CU-select they were at the CU_quantileth percentile.
 %This reflects that in general the JHUAPL-Bucky forecasts assigned more probability to higher values and thus a low quantile value across all locations reached the allocation limit of 15,000.
 %In California, New York and Texas, the eventually observed number of hospital admissions was closer to the predicted median from JHUAPL-Bucky than the median from CU-select, and was contained in JHUAPL-Bucky's 80\% PI but not in the 80\% PI from CU-select. However for each of these three states, the resource allocation was lower for JHUAPL-Bucky than for CU-select and therefore resulted in more hypothetical unmet need.
-%In Florida, which was the state that saw the largest number of reported hospitalizations on this target date, the forecast from JHUAPL-Bucky missed by a wide margin (as did the forecast from CU-select) and the allocation was \Sexpr{FL_diff} units lower than the allocation derived from the CU-select model.
+%In Florida, which was the state that saw the largest number of reported hospitalizations on this target date, the forecast from JHUAPL-Bucky missed by a wide margin (as did the forecast from CU-select) and the allocation was FL_diff units lower than the allocation derived from the CU-select model.
 
-<<thermometer-plot, fig.height=7, fig.width=7.5, fig.cap="Probabilistic forecasts for new hospital admissions and the inferred resource allocations for COVID-19 on January 3, 2022 for the states with the ten highest hospitalization counts. For each state, the dark black line shows the data observed when the forecast was made and the grey line shows eventually observed counts. The side-by-side shaded regions show the median (solid horizontal line) and 50%, 80% and 95% prediction intervals for the two selected models. The forecasts were made for new hospitalizations on January 3, 2022 (vertical dashed line, with number of hospitalizations indicated by red horizontal line segment at the intersection of the dashed line and the grey line of data). The vertical bars with red and yellow shading show the allocations: the red bar goes from zero to the level of the observed number of hospitalizations while the yellow bar shows how many resources were suggested by the model to be allocated to that location. The allocations (yellow bar) may be more or less than the observed number, therefore exposed red bar indicates unmet need, while the yellow bar extending above the observed number of hospitalizations means that excess resources were suggested for that given location.">>=
-source("R/plot_functions.R")
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}
+\includegraphics[width=\maxwidth]{figure/thermometer-plot-1} \caption[Probabilistic forecasts for new hospital admissions and the inferred resource allocations for COVID-19 on January 3, 2022 for the states with the ten highest hospitalization counts]{Probabilistic forecasts for new hospital admissions and the inferred resource allocations for COVID-19 on January 3, 2022 for the states with the ten highest hospitalization counts. For each state, the dark black line shows the data observed when the forecast was made and the grey line shows eventually observed counts. The side-by-side shaded regions show the median (solid horizontal line) and 50\%, 80\% and 95\% prediction intervals for the two selected models. The forecasts were made for new hospitalizations on January 3, 2022 (vertical dashed line, with number of hospitalizations indicated by red horizontal line segment at the intersection of the dashed line and the grey line of data). The vertical bars with red and yellow shading show the allocations: the red bar goes from zero to the level of the observed number of hospitalizations while the yellow bar shows how many resources were suggested by the model to be allocated to that location. The allocations (yellow bar) may be more or less than the observed number, therefore exposed red bar indicates unmet need, while the yellow bar extending above the observed number of hospitalizations means that excess resources were suggested for that given location.}\label{fig:thermometer-plot}
+\end{figure}
 
-locs_to_plot <- truth_data |>
-  dplyr::filter(target_end_date == "2022-01-03", location != "US") |>
-  dplyr::arrange(desc(value)) |>
-  head(10) |>
-  dplyr::pull(abbreviation)
-
-plot_hosp(models = c("JHUAPL-Bucky", "CU-select"),
-          start_date = "2021-12-01",
-          stop_date = "2022-01-25",
-          f_date = "2021-12-20",
-          te_date = "2022-01-03",
-          ## highest locations in terms of hospitalizations
-          locations = locs_to_plot,
-          f_width1 = 4, f_alpha = .4,
-          facet_ncol=2,
-          allocations = TRUE,
-          forecasts_hosp = forecast_data %>% filter(reference_date == "2021-12-20") %>%
-            dplyr::mutate(
-              abbreviation = factor(abbreviation, levels=locs_to_plot, ordered=TRUE),
-              geo_value = abbreviation),
-          alloscores = slim_alloscore_2021.12.20 %>%
-            dplyr::mutate(
-              abbreviation = factor(abbreviation, levels=locs_to_plot, ordered=TRUE)),
-          truth = truth_data %>%
-            dplyr::mutate(
-              abbreviation = factor(abbreviation, levels=locs_to_plot, ordered=TRUE),
-              geo_value = abbreviation),
-          f_colors = c("#4A708B", "#CD2626"),
-          one_K = 15000) + labs(x = NULL)
-@
+\end{knitrout}
 
 A comparison of the forecasts from the JHUAPL-Bucky and CU-select models shows that while the JHUAPL-Bucky forecast distributions were closer to the eventual observations in many states, the allocations suggested by those forecasts often were more inefficient than those from the CU-select model (Figure \ref{fig:thermometer-plot}).
 In the example of this one week, JHUAPL-Bucky had a worse allocation score than CU-select because its forecasts led to allocations that sent excess resources to several states, such as Ohio, Pennsylvania, and Michigan, that would have been more effectively allocated to states that did receive enough resources to meet their needs, such as Florida and California (Figure \ref{fig:multi-loc-ranks}A). These allocation errors resulted because that model’s forecasts did not consistently capture the relative resource needs across different states. (Figure \ref{fig:thermometer-plot} \& \ref{fig:multi-loc-ranks}A). The CU-select model made some similar errors — most prominently, over-allocating resources to Ohio — but overall, it did a better job of forecasting the relative resource demands across different locations.
@@ -540,180 +459,50 @@ On the other hand, CU-select had worse performance as measured by WIS. Its forec
 
 
 
-<<multi-loc-ranks, fig.width=8, fig.cap="Component-wise breakdowns of the allocation score (Panel A) and weighted interval score (Panel B), by location for forecasts of hospitalization admissions on January 3, 2022, for two selected models (JHUAPL-Bucky and CU-select). Panel A shows the observed resource need, in this case the observed number of hospitalizations, for each state, along with the hypothetical number of resources allocated to the given location based on the forecasts from each model. The number of available resources was fixed at 15,000 and forecasts from each model were used to determine an optimal allocation strategy before the resource need was known. For most locations the resource need exceeded the resources allocated, indicated by the `observed resource need' bar being larger than the `allocation' bar. Panel B shows the breakdown of the weighted interval score (WIS) into components of underprediction, overprediction and dispersion. Larger values of WIS indicate more error, and the full WIS score for each location can be decomposed into the three components shown here.">>=
-## date points to target_end_date of 2022-01-10 to highlight
-ref_date_for_plot <- "2021-12-20"
-models_to_plot <- c("JHUAPL-Bucky", "CU-select")
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}
+\includegraphics[width=\maxwidth]{figure/multi-loc-ranks-1} \caption[Component-wise breakdowns of the allocation score (Panel A) and weighted interval score (Panel B), by location for forecasts of hospitalization admissions on January 3, 2022, for two selected models (JHUAPL-Bucky and CU-select)]{Component-wise breakdowns of the allocation score (Panel A) and weighted interval score (Panel B), by location for forecasts of hospitalization admissions on January 3, 2022, for two selected models (JHUAPL-Bucky and CU-select). Panel A shows the observed resource need, in this case the observed number of hospitalizations, for each state, along with the hypothetical number of resources allocated to the given location based on the forecasts from each model. The number of available resources was fixed at 15,000 and forecasts from each model were used to determine an optimal allocation strategy before the resource need was known. For most locations the resource need exceeded the resources allocated, indicated by the `observed resource need' bar being larger than the `allocation' bar. Panel B shows the breakdown of the weighted interval score (WIS) into components of underprediction, overprediction and dispersion. Larger values of WIS indicate more error, and the full WIS score for each location can be decomposed into the three components shown here.}\label{fig:multi-loc-ranks}
+\end{figure}
 
-multiloc_dat <- Kat15k_alloscores |>
-  filter(reference_date == ref_date_for_plot,
-         ## the above date points to target_end_date of 2022-01-03 where things were really wrong
-         model %in% models_to_plot) |>
-  rename(allocation = x, `observed resource need` = y, state = abbreviation) |>
-  select(model, reference_date, state, allocation, `observed resource need`) |>
-  pivot_longer(cols = c("allocation", "observed resource need"))
-
-## plot all locations observations and allocations
-
-## line plot below here
-# multiloc_plot <- ggplot(multiloc_dat, aes(x=name, y=value, group=state)) +
-#   geom_line() +
-#   geom_line(data=dplyr::filter(multiloc_dat, state=="FL"), color="orange") +
-#   ylab("Daily hospital admissions") +
-#   scale_x_discrete(name=NULL, limits=rev, expand = c(.1,.1)) +
-#   facet_grid(.~model)
-
-ordered_levels <- truth_data |>
-  filter(target_end_date == as.Date(ref_date_for_plot)+14, location != "US") |>
-  select(location, abbreviation, value) |>
-  arrange(-value)
-
-alloc_plot <- multiloc_dat |>
-  mutate(state = factor(state, levels = ordered_levels$abbreviation),
-         name = factor(name, levels = c("observed resource need", "allocation"))) |>
-  arrange(name) |>
-  ggplot(aes(x=state, y=value, fill=name)) +
-  scale_fill_manual(name=NULL, values = c("#CD2626", "goldenrod")) +
-  theme(axis.text.x=element_text(angle=90,vjust=.5), legend.position = c(.9,.95), legend.justification = c(1,1)) +
-  ylab("Resource need and allocation") +
-  xlab(NULL) +
-  geom_col(position="identity", alpha=.7) +
-  facet_grid(model~.)
-
-wis <- covidHubUtils::score_forecasts(
-  forecast_data |> filter(reference_date == "2021-12-20", str_detect(model,"Buck|CU-select")),
-  truth_data,
-  use_median_as_point = TRUE,
-  metrics = "wis_components",
-  return_format="long") |>
-  filter(location != "US", score_name != "true_value") |>
-  left_join(select(ordered_levels, location, abbreviation)) |>
-  mutate(abbreviation = factor(abbreviation, levels=ordered_levels$abbreviation),
-         `WIS component` = factor(score_name, levels = c("overprediction", "dispersion", "underprediction")))
-
-
-## palette from
-## colorspace::divergingx_hcl(palette = "Blue-Yellow 3", n=3)
-
-wis_plot <- ggplot(data = wis, aes(x=abbreviation)) +
-  geom_col(aes(y=score_value, fill=`WIS component`)) +
-  scale_fill_manual(values = c("#9FA2FF", "gray77", "#BAAE00")) +
-  facet_grid(model~.) +
-  theme(axis.text.x=element_text(angle=90,vjust=.5), legend.position = c(.9,.95), legend.justification = c(1,1)) +
-  xlab(NULL) +
-  ylab("WIS")
-
-cowplot::plot_grid(alloc_plot, wis_plot,
-                   nrow=2,
-                   align="v",
-                   rel_heights = c(1, 1),
-                   labels = "AUTO")
-
-@
+\end{knitrout}
 
 \subsubsection{Forecast scores showed differences over time}
-<<grob-hosps-over-time>>=
-dat_to_plot <- truth_data |>
-  filter(location == "US",
-         target_end_date %in% score_data_summaries$target_end_date)
-p1 <- ggplot(dat_to_plot,
-             aes(x=target_end_date, y=value)) +
-  geom_line() +
-  geom_point() +
-  geom_hline(yintercept=15000, linetype=2) +
-  ylab("Hospital admissions") +
-  xlab(NULL) +
-  ylim(c(0, NA))
-@
 
 
-<<metrics-over-time, fig.height=8, fig.width=8, fig.cap="Hospital admissions and evaluation metrics over time. Panel A shows the number of hospital admissions in the US as a whole due to COVID-19 on a sequence of 15 Mondays from December 2021 through March 2022. These are the dates for which forecasts were made and evaluated. A horizontal dashed line at 15,000 shows the assumed resource constraint $K$. Panel B shows allocation scores (AS) for each model's 14 day-ahead forecast, across all US states. The x-axis corresponds to the date for which the prediction was made. AS typically are high when the observed value is near to the constraint, which occurs during the last Monday in December (on the way up) and the last Monday in January (on the way down). Panel C shows the MWIS metric across weeks, averaged across all states. MWIS values tend to scale with the observed and predicted values, and the peak MWIS values happen around and just after the peak of the Omicron wave.">>=
-p2 <- ggplot(alloscore_data_summaries,
-             aes(x=target_end_date, y=alloscore, color=model, shape=model)) +
-  scale_x_date(limits=range(score_data_summaries$target_end_date)) +
-  scale_shape_manual(values=c(15:18, 4, 6, 15:18, 4, 6, 15:18, 4)) +
-  ylab("Allocation score") +
-  geom_point() + geom_line()+
-  theme(legend.pos="none") +
-  xlab(NULL)
 
-p4 <- ggplot(score_data_summaries,
-             aes(x=target_end_date, y=mwis, color=model,shape=model)) +
-  geom_point() + geom_line() +
-  scale_shape_manual(values=c(15:18, 4, 6, 15:18, 4, 6, 15:18, 4)) +
-  xlab("Forecast target date") +
-  ylab("MWIS")+
-  theme(legend.pos="bottom")+
-  guides(colour = guide_legend(title=NULL, ncol = 4),
-         shape = guide_legend(title=NULL, ncol = 4))
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}
+\includegraphics[width=\maxwidth]{figure/metrics-over-time-1} \caption[Hospital admissions and evaluation metrics over time]{Hospital admissions and evaluation metrics over time. Panel A shows the number of hospital admissions in the US as a whole due to COVID-19 on a sequence of 15 Mondays from December 2021 through March 2022. These are the dates for which forecasts were made and evaluated. A horizontal dashed line at 15,000 shows the assumed resource constraint $K$. Panel B shows allocation scores (AS) for each model's 14 day-ahead forecast, across all US states. The x-axis corresponds to the date for which the prediction was made. AS typically are high when the observed value is near to the constraint, which occurs during the last Monday in December (on the way up) and the last Monday in January (on the way down). Panel C shows the MWIS metric across weeks, averaged across all states. MWIS values tend to scale with the observed and predicted values, and the peak MWIS values happen around and just after the peak of the Omicron wave.}\label{fig:metrics-over-time}
+\end{figure}
 
-cowplot::plot_grid(p1, p2, p4,
-                   nrow=3,
-                   align="v",
-                   rel_heights = c(1, 1, 1.85),
-                   labels = "AUTO")
-@
+\end{knitrout}
 
 Allocation scores varied substantially by date and by model (Figure \ref{fig:metrics-over-time}).
 For predictions made for the first three Mondays in December 2021 and the last three Mondays in February 2022 all models had allocation scores under 500 (and the mean across all models was less than 100), indicating that unnecessary unmet need was fairly low on those days.
 The allocation scores were on the whole highest when the observed number of new hospital admissions was closest to the resource threshold of 15,000, as those are the times when any mistakes in allocation are costly in terms of wasting resources in one location that could have been used in another.
 %Predictions made during the peak week and just after showed the highest variation in allocation scores, with some models having allocation scores under 1000 and others having values over 3500.
 
-<<eval=FALSE>>=
-## some analysis to support above statements
-alloscore_data_summaries |>
-  group_by(target_end_date) |>
-  summarize(meanAS = mean(alloscore, na.rm=TRUE),
-            medianAS = median(alloscore, na.rm=TRUE),
-            minAS = min(alloscore, na.rm=TRUE),
-            maxAS = max(alloscore, na.rm=TRUE),
-            range = maxAS-minAS)
-@
+
 
 %Overall, across the first 11 weeks evaluated (we excluded the last four since nearly all the models achieved an allocation score of zero), the \texttt{COVIDhub-baseline} model, which predicts a flat line from the most recent observation with uncertainty bounds based on a random walk, had the highest rank for allocation score in four weeks, more than any other model except the \texttt{COVIDhub-ensemble} which also had four.
 
-<<eval=FALSE>>=
-## analysis for the above statements
-alloscore_data_summaries |>
-  filter(as.Date(reference_date) < as.Date("2022-02-01"), allo_rank == 1)
-@
+
 
 
 %Mean weighted interval scores (MWIS) also varied by date and model, and more clearly were dependent on the scale of the observed data.
 %MWIS values were low (all models under 100) for all Mondays in December 2021 and the final four Mondays evaluated.
 %Across all models both the average and median MWIS value for every Monday in January was above 100, with the largest errors occurring one and two weeks after the peak was observed.
 
-<<eval=FALSE>>=
-## some analysis to support above statements
-score_data_summaries |>
-  group_by(target_end_date) |>
-  summarize(meanWIS = mean(mwis, na.rm=TRUE),
-            medianWIS = median(mwis, na.rm=TRUE),
-            minWIS = min(mwis, na.rm=TRUE),
-            maxWIS = max(mwis, na.rm=TRUE),
-            range = maxWIS-minWIS)
-@
+
 
 \subsubsection{Metrics were not consistently correlated over time}
 
-<<metrics-correlation, fig.width=8, fig.height=9, fig.cap="Association of standardized ranks for MWIS and allocation score by model and week. Each facet of the plot corresponds to one model. Within each facet, each point corresponds to a week. The x- and y-values correspond to the MWIS standardized rank and the allocation score standardized rank for that week. Points corresponding to earlier dates have darker shading. The size of the point corresponds to the observed value on the date for which the prediction was made. Models show different degrees of association between the two metrics.">>=
-all_scores |>
-  filter(as.Date(reference_date.x) < as.Date("2022-02-01") ) |>
-  dplyr::mutate(target_end_date = as.Date(target_end_date)) |>
-  ggplot(aes(x=mwis_rank_std, y=allo_rank_std, color=target_end_date, size=yobs)) +
-    geom_point(alpha=.7) +
-    scale_x_continuous("MWIS standardized rank", limits=c(0,1)) +
-    scale_y_continuous("Allocation score standardized rank", limits=c(0,1)) +
-#    scale_color_gradient("Target date") +
-    scale_color_date(
-      name="Target date",
-      breaks = seq.Date(from=as.Date("2021-12-13"), by = 14, length.out=5)) +
-    scale_size_continuous("Observed\nhospitalizations") +
-    facet_wrap(.~model, ncol=3) +
-    geom_abline(slope=1, intercept=0, linetype=2, color="gray") #+
-#    theme(legend.pos="bottom")
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}
+\includegraphics[width=\maxwidth]{figure/metrics-correlation-1} \caption[Association of standardized ranks for MWIS and allocation score by model and week]{Association of standardized ranks for MWIS and allocation score by model and week. Each facet of the plot corresponds to one model. Within each facet, each point corresponds to a week. The x- and y-values correspond to the MWIS standardized rank and the allocation score standardized rank for that week. Points corresponding to earlier dates have darker shading. The size of the point corresponds to the observed value on the date for which the prediction was made. Models show different degrees of association between the two metrics.}\label{fig:metrics-correlation}
+\end{figure}
 
-@
+\end{knitrout}
 
 Models showed differing levels of correlation between their allocation scores and MWIS values (Figure \ref{fig:metrics-correlation}).
 Here are some examples of the different model-specific patterns observed:
@@ -724,11 +513,7 @@ Here are some examples of the different model-specific patterns observed:
 \item One model performed consistently well for allocation score but had only middlings ranks for MWIS (\texttt{CMU-TimeSeries})
 \end{itemize}
 
-<<eval=FALSE>>=
-alloscore_data_summaries |>
-  group_by(model) |>
-  summarize(top_rank = sum(allo_rank_std==1))
-@
+
 
 
 \subsubsection{Integrated allocation score across values of K}
@@ -737,16 +522,11 @@ alloscore_data_summaries |>
 %This could be useful in situations where the actual constraint may not be known precisely, or where we wish to consider results across a range of decision making settings with different constraints.
 %Unlike in the above analyses where we conducted analyses assuming that $K$ was known to be 15,000, the analyses in this subsection are conducted assuming different distributions on $K$.
 
-<<calc-tot-y>>=
-tot_y <- slim_alloscore_2021.12.20 |>
-  filter(model == "COVIDhub-ensemble", K==200) |>
-  pull(y) |>
-  sum()
-@
+
 
 
 AS was computed for a range of $K$ from 200 to 60,000 for forecasts made on December 20, 2020 predicting levels of hospitalizations on January 3, 2021 (Figure \ref{fig:multi-k}A).
-These calculations highlight that AS was highest at at values of $K$ near the observed nationwide total hospital admissions of \Sexpr{format(tot_y, big.mark = ",")} that day.
+These calculations highlight that AS was highest at at values of $K$ near the observed nationwide total hospital admissions of 19,581 that day.
 Rankings of AS from all models were fairly stable across a range of values for K, with some crossings, especially at $K$ values further away from the observed value.
 
 The integrated allocation score (IAS) summarizes allocation scores (AS) across a range of possible values of the constraint ($K$), possibly taking weights into account for different values of $K$ that might be more or less likely (Section \ref{sec:methods.detailed.integrated_allocation}).
@@ -755,48 +535,12 @@ Both versions of the IAS were correlated with the original AS conducted at $K=15
 Model rankings based on the AC and the centered IAS were roughly similar, with the top and bottom two models being the same for both scores (Table \ref{tab:multi-k-scores}).
 
 
-<<multi-k, fig.height=10, fig.width = 8, fig.cap = "Allocation scores (AS) across different resource constraints (K) for 10 models that made forecasts on 2021-12-20. Panel A shows, for each model, the AS for values of K between 200 and 60,000 at increments of 200. The AS show a sharp peak just under 20,000, near the eventually observed number of hospitalizations. Panel B shows two possible weighting functions for the Integrated Allocation Score (IAS). The first (dark blue circles) computes weights proportional to a normal distribution centered at 15,000 (solid vertical gray line) with a standard deviation of 3,000, and truncated to be between 5,000 and 25,000. The second (light orange triangles) uses a uniform weight for all possible values of K. Note that the AS used in earlier sections of the application uses the single fixed value of K=15,000.  Panel C shows how either method of computing the IAS (y-axis) is correlated with AS at K=15,000 (x-axis). Every point represents the AS and IAS for one model. The IAS centered at 15,000 are more closely correlated with the AS values.">>=
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}
+\includegraphics[width=\maxwidth]{figure/multi-k-1} \caption[Allocation scores (AS) across different resource constraints (K) for 10 models that made forecasts on 2021-12-20]{Allocation scores (AS) across different resource constraints (K) for 10 models that made forecasts on 2021-12-20. Panel A shows, for each model, the AS for values of K between 200 and 60,000 at increments of 200. The AS show a sharp peak just under 20,000, near the eventually observed number of hospitalizations. Panel B shows two possible weighting functions for the Integrated Allocation Score (IAS). The first (dark blue circles) computes weights proportional to a normal distribution centered at 15,000 (solid vertical gray line) with a standard deviation of 3,000, and truncated to be between 5,000 and 25,000. The second (light orange triangles) uses a uniform weight for all possible values of K. Note that the AS used in earlier sections of the application uses the single fixed value of K=15,000.  Panel C shows how either method of computing the IAS (y-axis) is correlated with AS at K=15,000 (x-axis). Every point represents the AS and IAS for one model. The IAS centered at 15,000 are more closely correlated with the AS values.}\label{fig:multi-k}
+\end{figure}
 
-ias_to_plot <- left_join(ias, as) |>
-  pivot_longer(cols = c(IAS, IAS_wt), names_to = "IAS_type", values_to = "IAS") |>
-  mutate(IAS_type = ifelse(IAS_type=="IAS", "uniform", "centered at 15,000"))
-
-p1 <- ggplot(ias_to_plot, aes(x=AS, y=IAS, color=IAS_type, shape=IAS_type)) +
-  geom_point() +
-  geom_smooth(method="lm", se=FALSE, linetype=2) +
-  scale_color_manual(name = "Integrated allocation score weighting", values = c("#386cb0", "#fdc086")) +
-  scale_shape_manual(name = "Integrated allocation score weighting", values = c(1, 2)) +
-  geom_abline(slope=1, intercept=0, color="gray") +
-  xlab("Allocation score") +
-  ylab("Integrated allocation score") +
-  theme(legend.position = c(0.05,.9), legend.justification = c(0,1),
-        legend.background=element_rect(fill = alpha("white", 0.2)))
-
-p2 <- slim_alloscore_2021.12.20 |>
-  group_by(model, K) |>
-  summarize(`Allocation score` = sum(components)) |>
-  left_join(kprobs) |>
-  ggplot(aes(x=K)) +
-  geom_point(aes(y=weight), color = "#386cb0") +
-  geom_point(y=1/length(unique(slim_alloscore_2021.12.20$K)), color="#fdc086", shape = 2) +
-  geom_vline(xintercept = 15000, color="gray") +
-  ylab("Weight")
-
-p3 <- slim_alloscore_2021.12.20 |>
-  group_by(model, K) |>
-  summarize(`Allocation score` = sum(components)) |>
-  mutate(model = factor(model, levels = rev(ias$model))) |>
-  ggplot(aes(x=K, y=`Allocation score`, color=model, linetype=model)) +
-  geom_line() +
-  theme(legend.position = c(0.01,.99), legend.justification = c(0,1),
-        legend.background=element_rect(fill = alpha("white", 0.2)),
-        legend.title = element_blank(), legend.text = element_text(size=7))
-
-cowplot::plot_grid(p3, p2, p1,
-                   nrow=3,
-                   align = "h",
-                   labels = "AUTO")
-@
+\end{knitrout}
 
 
 

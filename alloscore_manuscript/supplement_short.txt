@@ -1,7 +1,7 @@
 \documentclass{article}
 
 \usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
-
+\pdfoutput=1
 \usepackage{amsmath, amsfonts, amssymb, mathtools}
 \usepackage{accents}
 \usepackage{graphicx}
@@ -70,7 +70,7 @@
 \section{Introduction}
 \label{sec:intro}
 
-We address some technical and methodological points from the main text. We begin in section \ref{sec:proper} by defining proper scoring rules and showing that the allocation score is proper. In section \ref{sec:ex-shortage}, we formalize the concept of a \emph{shortage} of resources, give some key results about expected resource shortages under a distribution characterizing uncertainty about (future) levels of resource need, and illustrate how quantiles arise as the Bayes act in a decision making problem about the quantity of a resource to purchase. Section \ref{sec:bayes-quantiles} gives a justification for the result that the Bayes act for the allocation problem is given by a vector of quantiles of the forecast distributions in each location at a shared probability level, which was stated in section \ref{sec:methods.detailed.specific_allocation} of the main text. We describe the algorithm that we use to compute allocations given a forecast distribution in each location in section \ref{sec:numeric}. In section \ref{sec:distfromq}, we describe the methods for approximating a full distribution from a set of quantiles, implemented in the R package \verb`distfromq`, that we used to support computation of allocation scores from quantile forecasts that were submitted to the COVID-19 Forecast Hub for the application in the main text. Finally, in section \ref{sec:propriety_of_parametric_approximation} we examine implications for propriety of an analysis that uses summaries of forecasts (such as predictive quantiles) rather than the full forecast distributions for computation of allocation scores.
+We address some technical and methodological points from the main text. We begin in section \ref{sec:proper} by defining proper scoring rules and showing that the allocation score is proper. In section \ref{sec:ex-shortage}, we formalize the concept of a \emph{shortage} of resources, give some key results about expected resource shortages under a distribution characterizing uncertainty about (future) levels of resource need, and illustrate how quantiles arise as the Bayes act in a decision making problem about the quantity of a resource to purchase. Section \ref{sec:bayes-quantiles} gives a justification for the result that the Bayes act for the allocation problem is given by a vector of quantiles of the forecast distributions in each location at a shared probability level, which was stated in section \ref{sec:methods.detailed.specific_allocation} of the main text. We describe the algorithm that we use to compute allocations given a forecast distribution in each location in section \ref{sec:numeric}. In section \ref{sec:distfromq}, we describe the methods for approximating a full distribution from a set of quantiles, implemented in the R package \verb`distfromq`, that we used to support computation of allocation scores from quantile forecasts that were submitted to the US COVID-19 Forecast Hub for the application in the main text. Finally, in section \ref{sec:propriety_of_parametric_approximation} we examine implications for propriety of an analysis that uses summaries of forecasts (such as predictive quantiles) rather than the full forecast distributions for computation of allocation scores.
 
 \section{Proper scoring rules}
 \label{sec:proper}
@@ -132,8 +132,8 @@ and use the Bayes act only as a bridge to a proper scoring rule.  Consistency is
 \label{sec:ex-shortage}
 
 A key feature of loss functions for decision problems used to define quantiles and related scoring rules such as the
-CRPS and the WIS (see e.g., \cite{gneiting2011quantiles}, \cite{jose2009evaluating}, 
-and \cite{royset2022optimization}, sections 1.C and 3.C), as well as the allocation loss function presented in this work, 
+CRPS and the WIS (see e.g., \cite{gneiting2011quantiles}, \cite{jose2009evaluating},
+and \cite{royset2022optimization}, sections 1.C and 3.C), as well as the allocation loss function presented in this work,
 is the presence of a \emph{shortage}:
 the amount $\max\{0,y-x\}$ by which a resource demand
 $y$ exceeds a supply decision variable $x$, which, for convenience, we write as $(y-x)_{+}$. In particular, a quantile at
@@ -297,11 +297,11 @@ In this section, we address two practical concerns raised by this. First, we dis
 
 \subsection{Propriety when scoring methods are announced prospectively}
 
-We consider a setting where a forecasting exercise (such as a forecast hub) pre-specifies that forecasts will be represented using a parametric family of forecast distributions $G_\theta(y)$, and the task of the forecaster is to select a particular parameter value $\theta$. We use $\mathcal{P}$ to denote the collection of all distributions $G_\theta$ in the given parametric family. For instance, it has recently been proposed that mixture distributions could be used to represent forecast distributions \cite{wadsworth2023mixture}. Additionally, we note that the functionality in \verb`distfromq` can be viewed as specifying a parametric family $\mathcal{P}_{\mathrm{dfq}}$ where the parameters $\theta$ of $G_\theta$
+We consider a setting where a forecasting exercise (such as a forecast hub) pre-specifies that forecasts will be represented using a parametric family of forecast distributions $G_\theta(y)$, and the task of the forecaster is to select a particular parameter value $\theta$. We use $\mathcal{P}$ to denote the collection of all distributions $G_\theta$ in the given parametric family. For instance, it has recently been proposed that mixture distributions could be used to represent forecast distributions \citep{wadsworth2023mixture}. Additionally, we note that the functionality in \verb`distfromq` can be viewed as specifying a parametric family $\mathcal{P}_{\mathrm{dfq}}$ where the parameters $\theta$ of $G_\theta$
 are its quantiles at pre-specified probability levels, and where the shape of any $G_\theta \in \mathcal{P}_{\mathrm{dfq}}$ over the full range of its support is entirely controlled by these quantiles.
 
 We find it helpful now to formally distinguish between two decision making problems. The first is the public health decision maker's allocation problem where the task is to select an allocation $x$, with the allocation loss $s_A(x, y) = \sum_{i=1}^N L \cdot \max(0, y_i - x_i)$ as described in section \ref{sec:methods.detailed.specific_allocation} of the main text.
-The second is the forecaster's reporting problem where the task is to select parameter values $\theta$ to report. The forecaster's loss is given by 
+The second is the forecaster's reporting problem where the task is to select parameter values $\theta$ to report. The forecaster's loss is given by
 \begin{align}
 s_R(\theta, y) = s_A(x^{G_\theta}, y), \label{eqn:forecaster_theta_loss}
 \end{align}
@@ -350,10 +350,10 @@ A \emph{post hoc} evaluation of quantile forecasts that combines the parametric 
 We define
 $$G^{\star}(F) := \argmin_{G \in \mathcal{P}_{\mathrm{dfq}}} E_{F}[S_A(G, Y)].$$
 Since $S_R$ is defined as the Bayes scoring rule for the forecaster's loss \eqref{eqn:forecaster_theta_loss}, $G^{\star}(F)$ coincides
-with $G_{\theta^{\star}(F)}$, the distribution in $\mathcal{P}_{\mathrm{dfq}}$ given by the 
+with $G_{\theta^{\star}(F)}$, the distribution in $\mathcal{P}_{\mathrm{dfq}}$ given by the
 optimal submission parameters $\theta^{\star}(F)$ for the forecaster with predictive distribution $F$.
 In general, $G^q(F)$ and $G^\star(F)$ will be different distributions:  matching $F$ at specific quantiles
-does not require $G^q(F)$ to match $F$ at the quantiles for $\tau^{F,K}$ (c.f. \eqref{eqn:quantiles-sum-to-K}), 
+does not require $G^q(F)$ to match $F$ at the quantiles for $\tau^{F,K}$ (c.f. \eqref{eqn:quantiles-sum-to-K}),
 which would be necessary for it to share $x^F$ as an optimal allocation.
 
 When an analyst attempts a post hoc computation of the allocation score using $G^q(F)$ (implicitly assuming that $G^q(F) = G^\star(F)$), they in fact compute the alternative score
@@ -397,7 +397,7 @@ However, the inequality in \eqref{eqn:tilde_s_improper} will typically be strict
 %   &< E_{Y \sim F}[ S_A(G^q(F), Y) ] \\
 %   &= E_{Y \sim F}[\tilde{S}(F, Y)]
 %   \end{align*}
-  
+
 
 % $G^q(G^\star(F)) = G^\star(F)$
 
