@@ -869,7 +869,7 @@ We see this work as an initial overture for what we hope will grow to be a large
 
 \section*{Acknowledgements}
 
-We wish to thank the following individuals who contributed valuable comments and feedback on early versions of this work: Matthew Biggerstaff, Rebecca Borchering, Rosa Ergas, Sebastian Funk, Melissa Kerr, and Jeffrey Shaman.
+We wish to thank the following individuals who contributed valuable comments and feedback on early versions of this work: Matthew Biggerstaff, Rebecca Borchering, Sebastian Funk, Melissa Kerr, and Jeffrey Shaman.
 
 This work has been supported by the National Institutes of General Medical Sciences (R35GM119582) and the U.S. CDC(1U01IP001122). The content is solely the responsibility of the authors and does not necessarily represent the official views of NIGMS, the National Institutes of Health, or CDC.
 
