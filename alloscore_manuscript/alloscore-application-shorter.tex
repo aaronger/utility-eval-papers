@@ -53,7 +53,6 @@
 \usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
 
 \usepackage{amsmath, amsfonts, amssymb}
-\usepackage{authblk}
 \usepackage{graphicx}
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
@@ -86,15 +85,9 @@
 \usepackage{natbib}
 \bibliographystyle{unsrtnat-abbr}
 
-\author{Aaron Gerding\thanks{Corresponding Author: \texttt{agerding@umass.edu}}}
-\author{Nicholas G. Reich}
-\author{Benjamin Rogers}
-\author{Evan L. Ray}
-\affil{Department of Biostatistics and Epidemiology, School of Public Health and Health
-Sciences, University of Massachusetts at Amherst}
 
 \title{Evaluating infectious disease forecasts \\ with allocation scoring rules}
-%\author{Aaron Gerding, Nicholas G. Reich, Benjamin Rogers, Evan L. Ray}
+\author{Aaron Gerding, Nicholas G. Reich, Benjamin Rogers, Evan L. Ray}
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 
@@ -122,20 +115,31 @@ Recent years have seen increasing efforts to forecast infectious disease burdens
 
 \section{Introduction}
 
-Infectious disease forecasting models have emerged as important tools in public health. Predictions of disease dynamics have been used to inform decision making about a wide variety of measures to reduce disease spread and/or mitigate the severity of disease outcomes. For example, estimates of expected onset of flu season have been used to aid national vaccination strategies \citep{igboh2023timing}, and forecasts of Ebola dynamics have been used to allocate surveillance resources \citep{meltzer2014estimating, rainisch2015regional}. \cite{bertsimas2021predictionsCOVID} developed tools to guide decision making from infectious disease forecasts, which have been used to inform allocation of limited medical supplies such as ventilators, ICU capacity planning, and vaccine distribution strategy. Models developed by \cite{fox_real-time_2022} have been used to inform resource and care site planning, as well as community guidelines for masking, traveling, dining and shopping (University of Texas, 2022)\nocite{utnews2022}.
+Infectious disease forecasting models have emerged as important tools in public health outbreak response. Predictions of disease dynamics have been used to inform decision making about a wide variety of measures to reduce disease spread and/or mitigate the severity of disease outcomes. For example, estimates of expected onset of flu season have been used to aid national vaccination strategies \citep{igboh2023timing}, and forecasts of Ebola and diptheria dynamics have been used to allocate resources \citep{meltzer2014estimating, rainisch2015regional,camacho2015-ebola-bed,finger_real-time_2019}. \cite{bertsimas2021predictionsCOVID} developed tools to guide decision making from infectious disease forecasts, which have been used to inform allocation of limited resources such as ventilators, ICU capacity, and vaccine supply. Models developed by \cite{fox_real-time_2022} have been used to inform resource and care site planning, as well as community guidelines for masking, traveling, dining and shopping (University of Texas, 2022)\nocite{utnews2022}.
 %In April of 2022, the Centers for Disease Control and Prevention (CDC) announced the launch of the Center for Forecasting and Outbreak Analytics (CFA) to translate disease forecasts into decision making (CDC, 2022)\nocite{cdc2022cfa}, indicating that this has been identified as an important direction at the highest levels of government public health response.
-%The value of infectious disease forecasts has typically been measured by how closely they predict disease outcomes such as cases, hospitalizations or deaths using, for example, root mean square error (RMSE) \citep{papastefanopoulos2020covid} or weighted interval score (WIS) \citep{bracher2021evaluating}.  However, recently authors have been calling for evaluating forecasts through their impact on policy \citep{marshall2023predictions, bilinski_adaptive_2023}.
 
-In decision making settings where it is possible to quantify the utility or loss associated with a particular action, standard tools of decision theory provide a procedure for developing forecast scoring rules that measure the value of forecasts through the quality of the decisions that they lead to. We give an overview of these procedures in Section \ref{sec:methods.detailed.decisiontheory}.
-There is a large history of literature applying these ideas to obtain measures of the value of forecasts that are tied to a decision making context, primarily in fields such as economics and finance, supply chain management, and meteorology. We review this work only briefly here, and we refer the reader to \cite{yardley2021utility_cost_forecasts} for a general overview, and to \cite{pesaran2002decision_based_eval} and \cite{murphy1993whatisagoodforecast} for discussions focused on applications to economics and meteorology, respectively. In finance, the value of forecasts can often be measured by the profits generated by trading decisions informed by the forecasts, perhaps adjusted for risk levels \cite[e.g.,][]{leitch1991economicForecastEval, cenesizoglu2012returnPredictionEconValue}. In applications to supply chain management and meteorology, the value of forecasts has typically been operationalized by considering the costs associated with decisions regarding the amount of inventory to hold or the level of protection against the impacts of extreme weather events to enact \cite[e.g.,][]{catt2007assessingcostofforecasterror, petropoulos2019inventoryperformanceforecasting, palmer2002economic, pappenberger2015monetarybenefitfloodwarnings}. For example, in supply chain management these decisions may incur costs related to holding inventory, labor, or providing poor service, while in meteorology we may need to balance the costs of implementing protective measures with the costs of potentially preventable weather damages. In this framework, a forecast has value if it leads to decisions with low total costs. In all of these fields, analyses have consistently found that common measures of statistical forecast accuracy do not necessarily correspond directly to measures of the value of forecasts as an input to decision making \cite[e.g.,][]{leitch1991economicForecastEval, murphy1993whatisagoodforecast, cenesizoglu2012returnPredictionEconValue}.
+In the wake of the COVID-19 pandemic, researchers have been calling for evaluating forecasts through their impact on policy \citep{marshall2023predictions, bilinski_adaptive_2023}.
+The value of infectious disease forecasts has typically been measured by how closely they predict disease outcomes such as cases, hospitalizations or deaths using, for example, root mean square error (RMSE) \citep{papastefanopoulos2020covid}, log-score \citep{mcgowan_collaborative_2019}, or weighted interval score (WIS) \citep{bracher2021evaluating}.
+However, as we show in this paper, these metrics only evaluate one specific dimension of accuracy, and often do not have a clear correspondence to features that would make a forecast valuable in the context of a specific decision.
+While these ideas have received little attention in the context of infectious disease forecasting, the results are well known from other fields, such as economics and finance, supply chain management, and meteorology.
 
-However, we are aware of only a limited body of work that explicitly attempts to measure the value of infectious disease forecasts through their impact on policy, and much of this discussion has proceeded informally. For example, \cite{ioannidis2022forecastingCOVIDfailed} discuss the possible negative consequences of inaccurate forecasts of infectious disease, but do not attempt to quantify the utility or loss incurred as a result of those forecasts. \cite{bilinski_adaptive_2023} explore ways in which policymaker preferences could inform risk thresholds for predictive models using a framework for measuring the costs and losses associated with taking an action that is similar to methods that have been used in meteorology and elsewhere. \cite{marshall2023predictions} develop a forecast scoring rule that is informally motivated by utility considerations, but the score is not derived from a decision-theoretic set up. Separately, there is a thread of literature that quantifies the link between infectious disease modeling and policy making outside of a forecasting context. As an example, \cite{Probert2016decisionMakingFootMouth} develop measures of the cost of actions designed to control a hypothetical outbreak of foot-and-mouth disease and use this framework to explore policy recommendations from a variety of simulation-based projection models.
+In decision making settings where it is possible to quantify the utility or loss associated with a particular action, standard tools of decision theory provide a procedure for developing forecast scoring rules that measure the value of forecasts through the quality of the decisions that they lead to (see details in Section \ref{sec:methods.detailed.decisiontheory}).
+%There is a large history of literature applying these ideas to obtain measures of the value of forecasts that are tied to a decision making context, primarily in fields such as economics and finance, supply chain management, and meteorology.
+We refer the reader to \cite{yardley2021utility_cost_forecasts} for a general overview, and to \cite{pesaran2002decision_based_eval} and \cite{murphy1993whatisagoodforecast} for discussions focused on applications to economics and meteorology, respectively.
+%In finance, the value of forecasts can often be measured by the profits generated by trading decisions informed by the forecasts, perhaps adjusted for risk levels \cite[e.g.,][]{leitch1991economicForecastEval, cenesizoglu2012returnPredictionEconValue}. In applications to supply chain management and meteorology, the value of forecasts has typically been operationalized by considering the costs associated with decisions regarding the amount of inventory to hold or the level of protection against the impacts of extreme weather events to enact \cite[e.g.,][]{catt2007assessingcostofforecasterror, petropoulos2019inventoryperformanceforecasting, palmer2002economic, pappenberger2015monetarybenefitfloodwarnings}.
+In this framework, a forecast has value if it leads to decisions with low total costs.
+As one example,
+% in supply chain management these decisions may incur costs related to holding inventory, labor, or providing poor service, while
+in meteorology, policy makers need to balance the costs of implementing protective measures with the costs of potentially preventable weather damages \citep{palmer2002economic, pappenberger2015monetarybenefitfloodwarnings}.
+Across many fields, analyses have consistently found that common measures of forecast accuracy do not necessarily correspond directly to measures of the value of forecasts as an input to decision making \cite[e.g.,][]{leitch1991economicForecastEval, murphy1993whatisagoodforecast, cenesizoglu2012returnPredictionEconValue}.
 
-In practice, probabilistic infectious disease forecasts have most often been made for observations that emerge from public health surveillance systems and have typically been evaluated with standard, ``off-the-shelf'' scoring rules.
+We are aware of only a limited body of work that explicitly attempts to measure the value of infectious disease forecasts through their impact on policy. For example, \cite{ioannidis2022forecastingCOVIDfailed} discuss the possible negative consequences of inaccurate forecasts of infectious disease, but do not attempt to quantify the utility or loss incurred as a result of those forecasts. \cite{bilinski_adaptive_2023} explore ways in which policymaker preferences could inform risk thresholds for predictive models using a framework for measuring the costs and losses associated with taking an action that is similar to methods that have been used in meteorology and elsewhere. \cite{marshall2023predictions} develop a forecast scoring rule that is informally motivated by utility considerations, but the score is not derived from a decision-theoretic set up. Separately, there is a thread of literature that quantifies the link between infectious disease modeling and policy making outside of a forecasting context. As an example, \cite{Probert2016decisionMakingFootMouth} develop measures of the cost of actions designed to control a hypothetical outbreak of foot-and-mouth disease and use this framework to explore policy recommendations from a variety of simulation-based projection models.
+
+In practice, probabilistic infectious disease forecasts have most often been made for observations that emerge from public health surveillance systems and have typically been evaluated with common scoring rules that have implementations available in existing software packages.
 For example, seasonal influenza forecasts in the US and dengue forecasts for Peru and Puerto Rico targeted public health surveillance measures of incidence over time and space, and used log-score and mean absolute errors to evaluate forecast skill \citep{mcgowan_collaborative_2019,reich_collaborative_2019,johansson_open_2019}.
 Pandemic COVID-19 forecasts of observed cases, hospitalizations and/or deaths in the US and Europe, as reported by municipal, state, or federal surveillance systems, were evaluated using the weighted interval score (WIS, which is an approximation of the continuous ranked probability score, or CRPS), and prediction interval coverage \citep{cramer_evaluation_2022,fox_real-time_2022,sherratt2023predictive}.
 Similarly, CRPS was also used to assess probabilistic forecasts of dengue incidence at the district level in Vietnam \citep{colon-gonzalez_probabilistic_2021}.
-While some of these scores can be interpreted through the lens of decision theory, and all of the application-specific papers cited above had authors from public health agencies, none of them make explicit connections between forecast evaluation and how a forecast was used in practice.
+While some of these scores can be interpreted through the lens of decision theory, and all of the application-specific papers cited above have benefited from direct collaboration with public health agencies, none of them make explicit connections between forecast evaluation and how a forecast was used in practice.
 
 In this work, we begin to fill this gap between the ways that infectious disease forecasts have traditionally been evaluated and the ways that they have been used to support public health policy.
 We consider a setting in which forecasts are used to help determine the allocation of a limited quantity of medical supplies across multiple regions.
@@ -153,9 +157,9 @@ In section~\ref{sec:methods} of the paper, we define a new forecast scoring rule
 
 In section \ref{sec:application}, we present an illustrative analysis using the allocation score to evaluate forecasts of hospital admissions in the US leading up to the Omicron wave in winter 2022.
 This analysis is ``synthetic'' in that it does not correspond to an actual analysis that supported decision making in real time.
-However, the framework described in this paper corresponds to real-world decisions that must be made by public health administrators around the globe, and could be adapted in the future for such real-time situations.
-For example, forecasts for districts in Sierra Leone of bed demand to care for patients with Ebola was the subject of a real-time modeling study in late 2014 and early 2015 \citep{camacho2015-ebola-bed}.
-And, in 2020, a model developed by an academic research group turned predictions of COVID-19 hospitalizations into estimates of ventilator usage and shortages. This framework was used by the Hartford HealthCare system in Connecticut ``to align ventilator supply with projected demand at a time where the [COVID-19] pandemic was on the rise'' \citep{bertsimas2021predictionsCOVID}.
+However, the framework described in this paper corresponds to real-world decisions that must be made by public health administrators around the globe, and could be adapted in the future for such real-time situations such as informing bed demand, ventilator usage, or doses needed for specific medications.
+%For example, forecasts for districts in Sierra Leone of bed demand to care for patients with Ebola was the subject of a real-time modeling study in late 2014 and early 2015 \citep{camacho2015-ebola-bed}.
+%And, in 2020, a model developed by an academic research group turned predictions of COVID-19 hospitalizations into estimates of ventilator usage and shortages. This framework was used by the Hartford HealthCare system in Connecticut ``to align ventilator supply with projected demand at a time where the [COVID-19] pandemic was on the rise'' \citep{bertsimas2021predictionsCOVID}.
 %These examples illustrate the potential for forecasts to inform decisions about how to allocate limited supplies such as temporary hospital beds, ventilators, personal protective equipment, or other supplies that are known to be effective at reducing transmission or severity of disease.
 However, we emphasize again that these studies did not take the step of evaluating forecasts based on the quality of the allocation decisions that they supported or could have been used to support.
 
@@ -211,7 +215,7 @@ On the other hand, when $K = 10$, the forecast's allocation results in $10 - 8 =
 In this case, the oracle would be able to prevent all but 1 of the total 11 units of need from going unmet, for example by allocating 1 unit of resources to location 1 and the remaining 9 units of resources to location 2.
 The allocation score for the forecast when $K = 10$ would therefore be 1 (= 2 realized $-$ 1 unavoidable) in units of avoidable unmet need.
 
-These scores illustrate a general result: allocation scores for a forecast will tend to be larger when the resource constraint is close to the observed need, because this is when it matters most which locations are allocated more or less resources. If the resource constraint is very small, any allocation of those limited resources will result in a large amount of unmet need. If the resource constraint is very large, it becomes less important which locations receive relatively more or less resources because all locations will receive enough resources to meet their need. In either of these extremes of resource availability, the avoidable unmet need that arises from the allocation suggested by a forecast (i.e., the forecast's allocation score) will tend to be small.
+These scores illustrate a general result: allocation scores for a forecast will tend to be larger when the resource constraint is close to the observed need, because this is when it matters most which locations are allocated more or less resources. If the available resources are small compared to the observed need, any allocation of those limited resources will result in a large amount of unmet need. If the available resources are comparatively larger, it becomes less important which locations receive relatively more or fewer resources because all locations will receive enough resources to meet their need. In either of these extremes of resource availability, the avoidable unmet need that arises from the allocation suggested by a forecast (i.e., the forecast's allocation score) will tend to be small.
 
 \paragraph{Example 2} Now consider a different forecast that also has exponential distributions for resource need in each location, but that has the scale parameters $\sigma_1 = 2$ and $\sigma_2 = 8$, twice as large as the scale parameters of the forecast in Example 1. Because the optimal allocation is proportional to the scale parameters, this forecast would lead to the same allocations as the forecast in Example 1, and would therefore be assigned the same allocation score.
 
@@ -241,8 +245,8 @@ We can formalize the preceding discussion with the following three-step procedur
 \item Given a probabilistic forecast $F$, determine the \emph{Bayes act} $x^F$ that minimizes the expected loss under the distribution $F$.
 \item The \emph{scoring rule} for $F$ calculates the score as the loss incurred when the Bayes act was used: $S(F, y) = s(x^F, y)$.
 \end{enumerate}
-This is a general procedure that may be applied in settings where it is possible to specify a quantitative loss function. We call a scoring rule obtained from this procedure a \emph{Bayes scoring rule} and in section \ref{sec:proper} of the 
-supplement we show that Bayes scoring rules are proper by construction.
+This is a general procedure that may be applied in settings where it is possible to specify a quantitative loss function. We call a scoring rule obtained from this procedure a \emph{Bayes scoring rule} and in section \ref{sec:proper} of the
+supplement we demonstrate that Bayes scoring rules are proper by construction (a result also shown by \cite{dawid2007geometry,gneiting2007strictly}).
 
 \subsubsection{The allocation score for a fixed resource constraint}
 \label{sec:methods.detailed.specific_allocation}
@@ -280,7 +284,7 @@ This measures the total unmet need across all locations that results from using 
 
 To make this a more easily interpreted measure of forecast performance, we will adjust the raw score by subtracting the minimum loss
 achievable by an \emph{oracle} allocator which has precise foreknowledge of the outcomes $y_i$.
-When the oracle has sufficient resources to meet the total need, i.e., when $\sum_{i=1}^{N}y_i \leq K$, the oracle's loss is zero 
+When the oracle has sufficient resources to meet the total need, i.e., when $\sum_{i=1}^{N}y_i \leq K$, the oracle's loss is zero
 and allocation score coincides with the raw score.
 On the other hand, when the oracle cannot cover all need and incurs a loss of $L \cdot \left(\sum_{i=1}^{N}y_i - K \right) > 0$, we adjust
 the raw score by this loss.
@@ -305,7 +309,7 @@ The weighted interval score (WIS) was proposed in 2020 as a way to score forecas
 The WIS is a proper scoring rule for forecasts that use a set of quantiles to represent a probabilistic forecast distribution.
 While pointing a reader interested in more mathematical detail to \cite{bracher2021evaluating}, we note simply that the WIS is a weighted sum of interval scores at different probability levels (e.g., 50\% prediction intervals, 80\% PIs, 95\% PIs, etc...).
 Larger interval scores indicate less skillful forecasts.
-An interval score consists of (a) the width of the interval, with larger intervals receiving higher scores, and (b) a penalty if the interval does not cover the eventual observation, which increases the further away the interval is from the observed value.
+An interval score consists of (a) the width of the interval, with larger intervals receiving higher scores (higher scores indicate less accuracy), and (b) a penalty if the interval does not cover the eventual observation, which increases the further away the interval is from the observed value.
 Equivalently, the WIS can also be characterized as a weighted sum of quantile scores for each individual predictive quantile.
 The quantile score for a particular quantile level assigns an asymmetric penalty to predictions that are too high or too low, with the relative sizes of the penalties set so that in expectation the score is minimized by the given quantile of the distribution.
 The most commonly used version of WIS is one that uses an equal weighting of all quantile levels, in which case WIS approximates the continuous ranked probability score (CRPS), a commonly used score for probabilistic forecasts.
@@ -343,9 +347,11 @@ As such, we analyzed forecasts for the 15 weeks starting with Monday November 22
 
 Submission to the Forecast Hub followed a weekly cycle, and each Monday the Hub collected the most recent forecasts submitted by all teams that met certain inclusion criteria and created ensemble forecasts using quantile averaging \citep{ray_comparing_2023}.
 Our analysis includes these ensembles (COVIDhub-ensemble and COVIDhub-trained\_ensemble) as well as one other ensemble of hub models created by another team (JHUAPL-SLPHospEns) and several other individual models.
-Models were eligible to be included in the analysis if they were designated as a ``primary'' model from a team. 
+Models were eligible to be included in the analysis if they were designated as a ``primary'' model from a team.
 For a model to have a complete, eligible submission in a given week, it had to have a 14 day-ahead forecast for all 50 states plus Washington DC.
 Models had to have a complete forecast for at least 4 of the 15 weeks in the analysis to be eligible for inclusion.
+
+
 
 The hospitalization data used for scoring forecasts were downloaded on December 03, 2023.
 
@@ -357,7 +363,7 @@ For this analysis, we fixed the resource constraint used for the AS to be $K=15,
 We computed the mean WIS (MWIS) across all of the forecasted state-level locations.
 %For each week, we computed the allocation score for the 14 day-ahead forecast.
 
-For both scores, we also computed models' standardized rank among all models that submitted forecasts each week. The standardized rank is between 0 and 1, where 0 corresponds to the worst rank and 1 to the best. In the case of a tie between one or more models, all models received the better rank.
+For both scores, we also computed models standardized rank among all models that submitted forecasts each week. The standardized rank is between 0 and 1, where 0 corresponds to the worst rank and 1 to the best. In the case of a tie between one or more models, all models received the better rank.
 
 As described above, predictions were submitted to the Forecast Hub in the form of a set of 23 quantiles of the predictive distribution. The WIS can be directly calculated from these quantiles. However, calculation of the AS requires that the full cumulative distribution functions of the forecast distributions for each location are available. For the purpose of this analysis, to calculate the allocation score we approximated the full cumulative distribution functions based on the provided quantiles. On the interior of the provided quantiles we used a monotonic cubic spline to interpolate the quantiles, and in the lower and upper tails we used normal distributions with parameters selected so as to match the two lowest and two highest quantiles (see the supplement for further details). In the supplement, we show that if this evaluation procedure had been specified prospectively, the resulting score would be proper \textemdash but a post hoc application of this procedure is improper. We use the procedure here to illustrate the properties of the score, and note that a forecaster or collaborative forecasting exercise interested in using the allocation score for evaluation could circumvent issues with propriety through thoughtful elicitation of representations of forecast distributions or by collecting the allocations at specified resource levels as part of forecast submissions.
 
@@ -401,8 +407,8 @@ The JHUAPL-Bucky model had the second best MWIS but the third worst allocation s
 
 
 
-% latex table generated in R 4.3.1 by xtable 1.8-4 package
-% Fri Dec 22 11:30:21 2023
+% latex table generated in R 4.3.2 by xtable 1.8-4 package
+% Mon Jan 29 10:57:25 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrrr}
@@ -564,7 +570,7 @@ Other examples include the allocation of a limited stockpile of vaccinations\cit
 
 In practice, there are many potential users of forecasts with many different decision making problems.
 Not all can be easily modeled as an effort to minimize the expectation of a transparent loss function.
-And even those that are easily framed as expected loss minimization may differ enough that no single score would be 
+And even those that are easily framed as expected loss minimization may differ enough that no single score would be
 appropriate for all users.
 Ideally, targeted forecasting tools could be developed through close collaboration between modelers and public health officials.
 However, this may only be possible in settings with sufficient staffing on both an analytics and a public health team.
@@ -588,7 +594,7 @@ There are several important limitations to the current work.
 The allocation score we developed here does not directly account for important considerations such as fairness or equity of allocations.
 Nor does the proposed framework attempt to capture the broader context of decision making. For example, in practice it may be possible to increase the resource constraint $K$ by shifting funding from other disease mitigation measures.
 We also note that in some settings, a ``successful'' epidemiological forecast may lead to policy decisions that change the distribution of the predicted outcome $Y$. Our framework would need considerable enhancements before being applicable to forecast evaluation beyond horizons
-for which causal feedback can be neglected. 
+for which causal feedback can be neglected.
 
 An opportunity for further investigation is to more carefully evaluate whether a forecast adds value to existing decision making processes.
 In the context of decisions about allocations, standard procedures might involve extrapolating need based on a current observed data (similar to the `baseline' model presented above), with or without adjustments based on other political or real-world considerations.
@@ -607,6 +613,9 @@ New collaborative work between public health officials and modeling teams is nee
 We see this work as an initial overture for what we hope will grow to be a large, collaborative body of work more closely coupling applied epidemiological forecasting with public health decision making.
 
 \section*{Acknowledgements}
+
+We wish to thank the following individuals who contributed valuable comments and feedback on early versions of this work: Matthew Biggerstaff, Rebecca Borchering, Sebastian Funk, Melissa Kerr, and Jeffrey Shaman.
+
 This work has been supported by the National Institutes of General Medical Sciences (R35GM119582) and the U.S. CDC(1U01IP001122). The content is solely the responsibility of the authors and does not necessarily represent the official views of NIGMS, the National Institutes of Health, or CDC.
 
 \bibliography{allocation}
