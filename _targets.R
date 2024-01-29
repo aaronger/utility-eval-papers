@@ -68,6 +68,12 @@ setup <- list(
                                           truth_data,
                                           reference_dates = values$forecast_dates,
                                           one_K = 15000)
+  ),
+  tar_target(
+    name = pops22,
+    command = readr::read_csv("https://raw.githubusercontent.com/reichlab/flusion/main/data-raw/us-census/NST-EST2022-ALLDATA.csv") |> 
+      dplyr::select(full_location_name = NAME, POPESTIMATE2021) |>
+      dplyr::inner_join(hub_locations, by = join_by(full_location_name))
   )
 )
 
@@ -99,7 +105,7 @@ combined <- tar_combine(
 
 make_percap <- tar_target(
   name = percap,
-  command = score_per_capita_allocation(all_alloscore_data, Kat15k_alloscores)
+  command = score_per_capita_allocation(dat = Kat15k_alloscores, pops = pops22)
 )
 
 list(setup, mapped, combined, make_percap)

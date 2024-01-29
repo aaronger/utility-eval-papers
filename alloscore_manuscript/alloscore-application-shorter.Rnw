@@ -352,6 +352,9 @@ tar_load("Kat15k_alloscores")
 tar_load("score_data")
 tar_load("truth_data")
 tar_load("forecast_data")
+tar_load("percap")
+
+Kat15k_alloscores <- bind_rows(Kat15k_alloscores, percap |> filter(K == 15000))
 
 alloscore_data_summaries <- Kat15k_alloscores |>
   group_by(model, reference_date) |>
@@ -547,7 +550,7 @@ On the other hand, CU-select had worse performance as measured by WIS. Its forec
 <<multi-loc-ranks, fig.width=8, fig.cap="Component-wise breakdowns of the allocation score (Panel A) and weighted interval score (Panel B), by location for forecasts of hospitalization admissions on January 3, 2022, for two selected models (JHUAPL-Bucky and CU-select). Panel A shows the observed resource need, in this case the observed number of hospitalizations, for each state, along with the hypothetical number of resources allocated to the given location based on the forecasts from each model. The number of available resources was fixed at 15,000 and forecasts from each model were used to determine an optimal allocation strategy before the resource need was known. For most locations the resource need exceeded the resources allocated, indicated by the `observed resource need' bar being larger than the `allocation' bar. Panel B shows the breakdown of the weighted interval score (WIS) into components of underprediction, overprediction and dispersion. Larger values of WIS indicate more error, and the full WIS score for each location can be decomposed into the three components shown here.">>=
 ## date points to target_end_date of 2022-01-10 to highlight
 ref_date_for_plot <- "2021-12-20"
-models_to_plot <- c("JHUAPL-Bucky", "CU-select")
+models_to_plot <- c("JHUAPL-Bucky", "CU-select", "percap")
 
 multiloc_dat <- Kat15k_alloscores |>
   filter(reference_date == ref_date_for_plot,

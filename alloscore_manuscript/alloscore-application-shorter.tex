@@ -53,7 +53,6 @@
 \usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
 
 \usepackage{amsmath, amsfonts, amssymb}
-\usepackage{authblk}
 \usepackage{graphicx}
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
@@ -86,15 +85,9 @@
 \usepackage{natbib}
 \bibliographystyle{unsrtnat-abbr}
 
-\author{Aaron Gerding\thanks{Corresponding Author: \texttt{agerding@umass.edu}}}
-\author{Nicholas G. Reich}
-\author{Benjamin Rogers}
-\author{Evan L. Ray}
-\affil{Department of Biostatistics and Epidemiology, School of Public Health and Health
-Sciences, University of Massachusetts at Amherst}
 
 \title{Evaluating infectious disease forecasts \\ with allocation scoring rules}
-%\author{Aaron Gerding, Nicholas G. Reich, Benjamin Rogers, Evan L. Ray}
+\author{Aaron Gerding, Nicholas G. Reich, Benjamin Rogers, Evan L. Ray}
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 
@@ -241,7 +234,7 @@ We can formalize the preceding discussion with the following three-step procedur
 \item Given a probabilistic forecast $F$, determine the \emph{Bayes act} $x^F$ that minimizes the expected loss under the distribution $F$.
 \item The \emph{scoring rule} for $F$ calculates the score as the loss incurred when the Bayes act was used: $S(F, y) = s(x^F, y)$.
 \end{enumerate}
-This is a general procedure that may be applied in settings where it is possible to specify a quantitative loss function. We call a scoring rule obtained from this procedure a \emph{Bayes scoring rule} and in section \ref{sec:proper} of the 
+This is a general procedure that may be applied in settings where it is possible to specify a quantitative loss function. We call a scoring rule obtained from this procedure a \emph{Bayes scoring rule} and in section \ref{sec:proper} of the
 supplement we show that Bayes scoring rules are proper by construction.
 
 \subsubsection{The allocation score for a fixed resource constraint}
@@ -280,7 +273,7 @@ This measures the total unmet need across all locations that results from using 
 
 To make this a more easily interpreted measure of forecast performance, we will adjust the raw score by subtracting the minimum loss
 achievable by an \emph{oracle} allocator which has precise foreknowledge of the outcomes $y_i$.
-When the oracle has sufficient resources to meet the total need, i.e., when $\sum_{i=1}^{N}y_i \leq K$, the oracle's loss is zero 
+When the oracle has sufficient resources to meet the total need, i.e., when $\sum_{i=1}^{N}y_i \leq K$, the oracle's loss is zero
 and allocation score coincides with the raw score.
 On the other hand, when the oracle cannot cover all need and incurs a loss of $L \cdot \left(\sum_{i=1}^{N}y_i - K \right) > 0$, we adjust
 the raw score by this loss.
@@ -343,9 +336,11 @@ As such, we analyzed forecasts for the 15 weeks starting with Monday November 22
 
 Submission to the Forecast Hub followed a weekly cycle, and each Monday the Hub collected the most recent forecasts submitted by all teams that met certain inclusion criteria and created ensemble forecasts using quantile averaging \citep{ray_comparing_2023}.
 Our analysis includes these ensembles (COVIDhub-ensemble and COVIDhub-trained\_ensemble) as well as one other ensemble of hub models created by another team (JHUAPL-SLPHospEns) and several other individual models.
-Models were eligible to be included in the analysis if they were designated as a ``primary'' model from a team. 
+Models were eligible to be included in the analysis if they were designated as a ``primary'' model from a team.
 For a model to have a complete, eligible submission in a given week, it had to have a 14 day-ahead forecast for all 50 states plus Washington DC.
 Models had to have a complete forecast for at least 4 of the 15 weeks in the analysis to be eligible for inclusion.
+
+
 
 The hospitalization data used for scoring forecasts were downloaded on December 03, 2023.
 
@@ -357,7 +352,7 @@ For this analysis, we fixed the resource constraint used for the AS to be $K=15,
 We computed the mean WIS (MWIS) across all of the forecasted state-level locations.
 %For each week, we computed the allocation score for the 14 day-ahead forecast.
 
-For both scores, we also computed models' standardized rank among all models that submitted forecasts each week. The standardized rank is between 0 and 1, where 0 corresponds to the worst rank and 1 to the best. In the case of a tie between one or more models, all models received the better rank.
+For both scores, we also computed models standardized rank among all models that submitted forecasts each week. The standardized rank is between 0 and 1, where 0 corresponds to the worst rank and 1 to the best. In the case of a tie between one or more models, all models received the better rank.
 
 As described above, predictions were submitted to the Forecast Hub in the form of a set of 23 quantiles of the predictive distribution. The WIS can be directly calculated from these quantiles. However, calculation of the AS requires that the full cumulative distribution functions of the forecast distributions for each location are available. For the purpose of this analysis, to calculate the allocation score we approximated the full cumulative distribution functions based on the provided quantiles. On the interior of the provided quantiles we used a monotonic cubic spline to interpolate the quantiles, and in the lower and upper tails we used normal distributions with parameters selected so as to match the two lowest and two highest quantiles (see the supplement for further details). In the supplement, we show that if this evaluation procedure had been specified prospectively, the resulting score would be proper \textemdash but a post hoc application of this procedure is improper. We use the procedure here to illustrate the properties of the score, and note that a forecaster or collaborative forecasting exercise interested in using the allocation score for evaluation could circumvent issues with propriety through thoughtful elicitation of representations of forecast distributions or by collecting the allocations at specified resource levels as part of forecast submissions.
 
@@ -402,7 +397,7 @@ The JHUAPL-Bucky model had the second best MWIS but the third worst allocation s
 
 
 % latex table generated in R 4.3.1 by xtable 1.8-4 package
-% Fri Dec 22 11:30:21 2023
+% Mon Jan 29 15:31:56 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrrr}
@@ -470,10 +465,10 @@ On the other hand, CU-select had worse performance as measured by WIS. Its forec
 
 
 \begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}
-\includegraphics[width=\maxwidth]{figure/metrics-over-time-1} \caption[Hospital admissions and evaluation metrics over time]{Hospital admissions and evaluation metrics over time. Panel A shows the number of hospital admissions in the US as a whole due to COVID-19 on a sequence of 15 Mondays from December 2021 through March 2022. These are the dates for which forecasts were made and evaluated. A horizontal dashed line at 15,000 shows the assumed resource constraint $K$. Panel B shows allocation scores (AS) for each model's 14 day-ahead forecast, across all US states. The x-axis corresponds to the date for which the prediction was made. AS typically are high when the observed value is near to the constraint, which occurs during the last Monday in December (on the way up) and the last Monday in January (on the way down). Panel C shows the MWIS metric across weeks, averaged across all states. MWIS values tend to scale with the observed and predicted values, and the peak MWIS values happen around and just after the peak of the Omicron wave.}\label{fig:metrics-over-time}
-\end{figure}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in `palette()`:\\\#\# ! Insufficient values in manual scale. 18 needed but only 17 provided.}}\end{kframe}
 \end{knitrout}
 
 Allocation scores varied substantially by date and by model (Figure \ref{fig:metrics-over-time}).
@@ -564,7 +559,7 @@ Other examples include the allocation of a limited stockpile of vaccinations\cit
 
 In practice, there are many potential users of forecasts with many different decision making problems.
 Not all can be easily modeled as an effort to minimize the expectation of a transparent loss function.
-And even those that are easily framed as expected loss minimization may differ enough that no single score would be 
+And even those that are easily framed as expected loss minimization may differ enough that no single score would be
 appropriate for all users.
 Ideally, targeted forecasting tools could be developed through close collaboration between modelers and public health officials.
 However, this may only be possible in settings with sufficient staffing on both an analytics and a public health team.
@@ -588,7 +583,7 @@ There are several important limitations to the current work.
 The allocation score we developed here does not directly account for important considerations such as fairness or equity of allocations.
 Nor does the proposed framework attempt to capture the broader context of decision making. For example, in practice it may be possible to increase the resource constraint $K$ by shifting funding from other disease mitigation measures.
 We also note that in some settings, a ``successful'' epidemiological forecast may lead to policy decisions that change the distribution of the predicted outcome $Y$. Our framework would need considerable enhancements before being applicable to forecast evaluation beyond horizons
-for which causal feedback can be neglected. 
+for which causal feedback can be neglected.
 
 An opportunity for further investigation is to more carefully evaluate whether a forecast adds value to existing decision making processes.
 In the context of decisions about allocations, standard procedures might involve extrapolating need based on a current observed data (similar to the `baseline' model presented above), with or without adjustments based on other political or real-world considerations.
