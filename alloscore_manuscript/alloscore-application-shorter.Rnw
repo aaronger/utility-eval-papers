@@ -560,13 +560,36 @@ On the other hand, CU-select had worse performance as measured by WIS. Its forec
 ref_date_for_plot <- "2021-12-20"
 models_to_plot <- c("JHUAPL-Bucky", "CU-select")
 
+ordered_levels <- truth_data |>
+  filter(target_end_date == as.Date(ref_date_for_plot)+14, location != "US") |>
+  select(location, abbreviation, value) |>
+  arrange(-value)
+
 multiloc_dat <- Kat15k_alloscores |>
   filter(reference_date == ref_date_for_plot,
          ## the above date points to target_end_date of 2022-01-03 where things were really wrong
          model %in% models_to_plot) |>
   rename(allocation = x, `observed resource need` = y, state = abbreviation) |>
-  select(model, reference_date, state, allocation, `observed resource need`) |>
-  pivot_longer(cols = c("allocation", "observed resource need"))
+  mutate(`unmet resource need` = ifelse(allocation < `observed resource need`,
+                                        `observed resource need` - allocation,
+                                        0),
+         `need met by allocated resources` = ifelse(allocation < `observed resource need`,
+                                                    allocation,
+                                                    `observed resource need`),
+         `allocation exceeding need` = ifelse(allocation < `observed resource need`,
+                                        0,
+                                        allocation - `observed resource need`)
+         ) |>
+  # select(model, reference_date, state, allocation, `observed resource need`) |>
+  select(model, reference_date, state,
+         `unmet resource need`, `need met by allocated resources`, `allocation exceeding need`) |>
+  pivot_longer(cols = c("unmet resource need", "need met by allocated resources", "allocation exceeding need")) |>
+  mutate(state = factor(state, levels = ordered_levels$abbreviation),
+         name = factor(name, levels = c("unmet resource need",
+                                        "allocation exceeding need",
+                                        "need met by allocated resources"))) |>
+  arrange(name)
+
 
 ## plot all locations observations and allocations
 
@@ -578,22 +601,28 @@ multiloc_dat <- Kat15k_alloscores |>
 #   scale_x_discrete(name=NULL, limits=rev, expand = c(.1,.1)) +
 #   facet_grid(.~model)
 
-ordered_levels <- truth_data |>
-  filter(target_end_date == as.Date(ref_date_for_plot)+14, location != "US") |>
-  select(location, abbreviation, value) |>
-  arrange(-value)
 
-alloc_plot <- multiloc_dat |>
-  mutate(state = factor(state, levels = ordered_levels$abbreviation),
-         name = factor(name, levels = c("observed resource need", "allocation"))) |>
-  arrange(name) |>
-  ggplot(aes(x=state, y=value, fill=name)) +
-  scale_fill_manual(name=NULL, values = c("#CD2626", "goldenrod")) +
+alloc_plot <- ggplot(multiloc_dat, aes(x=state, y=value, fill=name)) +
+  geom_col(position="stack", alpha=1) +
+  #scale_fill_manual(name=NULL, values = c("#ca0020", "#0571b0", "purple")) +
+  #scale_fill_manual(name=NULL, values = c(  "#e41a1c", "#377eb8", "lightgray")) +
+  scale_fill_manual(name=NULL, values = c("#fb6a4a", "#9ecae1", "#807dba")) +
   theme(axis.text.x=element_text(angle=90,vjust=.5), legend.position = c(.9,.95), legend.justification = c(1,1)) +
   ylab("Resource need and allocation") +
   xlab(NULL) +
-  geom_col(position="identity", alpha=.7) +
   facet_grid(model~.)
+
+# alloc_plot <- multiloc_dat |>
+#   mutate(state = factor(state, levels = ordered_levels$abbreviation),
+#          name = factor(name, levels = c("observed resource need", "allocation"))) |>
+#   arrange(name) |>
+#   ggplot(aes(x=state, y=value, fill=name)) +
+#   scale_fill_manual(name=NULL, values = c("#CD2626", "goldenrod")) +
+#   theme(axis.text.x=element_text(angle=90,vjust=.5), legend.position = c(.9,.95), legend.justification = c(1,1)) +
+#   ylab("Resource need and allocation") +
+#   xlab(NULL) +
+#   geom_col(position="identity", alpha=.7) +
+#   facet_grid(model~.)
 
 wis <- covidHubUtils::score_forecasts(
   forecast_data |> filter(reference_date == "2021-12-20", str_detect(model,"Buck|CU-select")),
