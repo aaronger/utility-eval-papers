@@ -363,6 +363,9 @@ tar_load("Kat15k_alloscores")
 tar_load("score_data")
 tar_load("truth_data")
 tar_load("forecast_data")
+tar_load("percap")
+
+Kat15k_alloscores <- bind_rows(Kat15k_alloscores, percap |> filter(K == 15000))
 
 alloscore_data_summaries <- Kat15k_alloscores |>
   group_by(model, reference_date) |>
@@ -406,7 +409,8 @@ The JHUAPL-Bucky model had the second best MWIS but the third worst allocation s
 
 <<ias-comparison>>=
 tar_load(alloscore_2021.12.20)
-slim_alloscore_2021.12.20 <- alloscore::slim(alloscore_2021.12.20, id_cols = c("model", "reference_date"))
+slim_alloscore_2021.12.20 <- alloscore::slim(alloscore_2021.12.20, id_cols = c("model", "reference_date")) %>% 
+bind_rows(percap %>% filter(reference_date == "2021-12-20"))
 
 ## for visual context
 ## curve(dnorm(x, mean=15000, sd=3000), from=0, to=30000)
@@ -558,7 +562,7 @@ On the other hand, CU-select had worse performance as measured by WIS. Its forec
 <<multi-loc-ranks, fig.width=8, fig.cap="Component-wise breakdowns of the allocation score (Panel A) and weighted interval score (Panel B), by location for forecasts of hospitalization admissions on January 3, 2022, for two selected models (JHUAPL-Bucky and CU-select). Panel A shows the observed resource need, in this case the observed number of hospitalizations, for each state, along with the hypothetical number of resources allocated to the given location based on the forecasts from each model. The number of available resources was fixed at 15,000 and forecasts from each model were used to determine an optimal allocation strategy before the resource need was known. For most locations the resource need exceeded the resources allocated, indicated by the `observed resource need' bar being larger than the `allocation' bar. Panel B shows the breakdown of the weighted interval score (WIS) into components of underprediction, overprediction and dispersion. Larger values of WIS indicate more error, and the full WIS score for each location can be decomposed into the three components shown here.">>=
 ## date points to target_end_date of 2022-01-10 to highlight
 ref_date_for_plot <- "2021-12-20"
-models_to_plot <- c("JHUAPL-Bucky", "CU-select")
+models_to_plot <- c("JHUAPL-Bucky", "CU-select", "percap")
 
 ordered_levels <- truth_data |>
   filter(target_end_date == as.Date(ref_date_for_plot)+14, location != "US") |>
@@ -675,16 +679,19 @@ p1 <- ggplot(dat_to_plot,
 p2 <- ggplot(alloscore_data_summaries,
              aes(x=target_end_date, y=alloscore, color=model, shape=model)) +
   scale_x_date(limits=range(score_data_summaries$target_end_date)) +
-  scale_shape_manual(values=c(15:18, 4, 6, 15:18, 4, 6, 15:18, 4)) +
+  scale_shape_manual(values=c(15:18, 4, 6, 15:18, 4, 6, 15:18, 4, 6)) +
+  scale_linewidth_manual(values = c(.5,1.5)) +
   ylab("Allocation score") +
-  geom_point() + geom_line()+
+  geom_point() + geom_line(aes(linewidth = as.factor(model == "percap")))+
   theme(legend.pos="none") +
   xlab(NULL)
 
-p4 <- ggplot(score_data_summaries,
+p4 <- ggplot(bind_rows(score_data_summaries, percap %>% 
+                         select(model, reference_date) %>% 
+                         mutate(reference_date = as.Date(reference_date))),
              aes(x=target_end_date, y=mwis, color=model,shape=model)) +
   geom_point() + geom_line() +
-  scale_shape_manual(values=c(15:18, 4, 6, 15:18, 4, 6, 15:18, 4)) +
+  scale_shape_manual(values=c(15:18, 4, 6, 15:18, 4, 6, 15:18, 4, 6)) +
   xlab("Forecast target date") +
   ylab("MWIS")+
   theme(legend.pos="bottom")+

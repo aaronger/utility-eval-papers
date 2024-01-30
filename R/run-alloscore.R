@@ -54,8 +54,7 @@ run_alloscore <- function(
     if (!is.null(one_K)) {
       Ks <- one_K
     } else {
-      ytot <- sum(forecast_data_processed$value)
-      Ks <- seq(200, min(60000, 4 * ytot), by = 200)
+      Ks <- make_K_grid(values = forecast_data_processed$value)
     }
 
   ## run alloscore
@@ -81,6 +80,13 @@ run_alloscore <- function(
   return(ascores)
 }
 
+## make a grid of Ks that goes from start to at most maxlength by step
+
+make_K_grid <- function(values, start = 200, stopfactor = 4, maxlength = 60000, step = 200) {
+  ytot <- sum(values)
+  Ks <- seq(step, min(maxlength, stopfactor * ytot), by = step)
+  return(Ks)
+}
 
 ## take estimated alloscores and put them in one clean dataset
 ## returned object has a row for each model, reference_date, K, state

@@ -27,6 +27,7 @@ tar_source(files = c("R/data-ingestion.R",
                      "R/run-alloscore.R",
                      "R/determine-model-eligibility.R",
                      "R/exponential-examples.R",
+                     "R/percap.R",
                      "R/plot_functions.R"))
 
 values <- tibble(forecast_dates = as.character(seq.Date(as.Date("2021-11-22"), as.Date("2022-02-28"), by = "7 days")))
@@ -67,6 +68,12 @@ setup <- list(
                                           truth_data,
                                           reference_dates = values$forecast_dates,
                                           one_K = 15000)
+  ),
+  tar_target(
+    name = pops22,
+    command = readr::read_csv("https://raw.githubusercontent.com/reichlab/flusion/main/data-raw/us-census/NST-EST2022-ALLDATA.csv") |> 
+      dplyr::select(full_location_name = NAME, POPESTIMATE2021) |>
+      dplyr::inner_join(hub_locations, by = join_by(full_location_name))
   )
 )
 
@@ -96,5 +103,9 @@ combined <- tar_combine(
 #   format = "file"
 # )
 
+make_percap <- tar_target(
+  name = percap,
+  command = score_per_capita_allocation(dat = Kat15k_alloscores, pops = pops22)
+)
 
-list(setup, mapped, combined)
+list(setup, mapped, combined, make_percap)
