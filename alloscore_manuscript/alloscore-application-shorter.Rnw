@@ -409,7 +409,7 @@ The JHUAPL-Bucky model had the second best MWIS but the third worst allocation s
 
 <<ias-comparison>>=
 tar_load(alloscore_2021.12.20)
-slim_alloscore_2021.12.20 <- alloscore::slim(alloscore_2021.12.20, id_cols = c("model", "reference_date")) %>% 
+slim_alloscore_2021.12.20 <- alloscore::slim(alloscore_2021.12.20, id_cols = c("model", "reference_date")) %>%
 bind_rows(percap %>% filter(reference_date == "2021-12-20"))
 
 ## for visual context
@@ -546,7 +546,7 @@ plot_hosp(models = c("JHUAPL-Bucky", "CU-select"),
             dplyr::mutate(
               abbreviation = factor(abbreviation, levels=locs_to_plot, ordered=TRUE),
               geo_value = abbreviation),
-          f_colors = c("#4A708B", "#CD2626"),
+          f_colors = c("thistle", "wheat"),
           one_K = 15000) + labs(x = NULL)
 @
 
@@ -686,8 +686,8 @@ p2 <- ggplot(alloscore_data_summaries,
   theme(legend.pos="none") +
   xlab(NULL)
 
-p4 <- ggplot(bind_rows(score_data_summaries, percap %>% 
-                         select(model, reference_date) %>% 
+p4 <- ggplot(bind_rows(score_data_summaries, percap %>%
+                         select(model, reference_date) %>%
                          mutate(reference_date = as.Date(reference_date))),
              aes(x=target_end_date, y=mwis, color=model,shape=model)) +
   geom_point() + geom_line() +
