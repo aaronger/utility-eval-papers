@@ -398,7 +398,8 @@ The JHUAPL-Bucky model had the second best MWIS but the third worst allocation s
 
 <<ias-comparison>>=
 tar_load(alloscore_2021.12.20)
-slim_alloscore_2021.12.20 <- alloscore::slim(alloscore_2021.12.20, id_cols = c("model", "reference_date"))
+slim_alloscore_2021.12.20 <- alloscore::slim(alloscore_2021.12.20, id_cols = c("model", "reference_date")) %>% 
+bind_rows(percap %>% filter(reference_date == "2021-12-20"))
 
 ## for visual context
 ## curve(dnorm(x, mean=15000, sd=3000), from=0, to=30000)
@@ -638,16 +639,19 @@ p1 <- ggplot(dat_to_plot,
 p2 <- ggplot(alloscore_data_summaries,
              aes(x=target_end_date, y=alloscore, color=model, shape=model)) +
   scale_x_date(limits=range(score_data_summaries$target_end_date)) +
-  scale_shape_manual(values=c(15:18, 4, 6, 15:18, 4, 6, 15:18, 4)) +
+  scale_shape_manual(values=c(15:18, 4, 6, 15:18, 4, 6, 15:18, 4, 6)) +
+  scale_linewidth_manual(values = c(.5,1.5)) +
   ylab("Allocation score") +
-  geom_point() + geom_line()+
+  geom_point() + geom_line(aes(linewidth = as.factor(model == "percap")))+
   theme(legend.pos="none") +
   xlab(NULL)
 
-p4 <- ggplot(score_data_summaries,
+p4 <- ggplot(bind_rows(score_data_summaries, percap %>% 
+                         select(model, reference_date) %>% 
+                         mutate(reference_date = as.Date(reference_date))),
              aes(x=target_end_date, y=mwis, color=model,shape=model)) +
   geom_point() + geom_line() +
-  scale_shape_manual(values=c(15:18, 4, 6, 15:18, 4, 6, 15:18, 4)) +
+  scale_shape_manual(values=c(15:18, 4, 6, 15:18, 4, 6, 15:18, 4, 6)) +
   xlab("Forecast target date") +
   ylab("MWIS")+
   theme(legend.pos="bottom")+

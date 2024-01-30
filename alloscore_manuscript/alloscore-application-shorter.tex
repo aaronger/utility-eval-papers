@@ -397,7 +397,7 @@ The JHUAPL-Bucky model had the second best MWIS but the third worst allocation s
 
 
 % latex table generated in R 4.3.1 by xtable 1.8-4 package
-% Mon Jan 29 15:31:56 2024
+% Mon Jan 29 20:07:04 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrrr}
@@ -405,6 +405,7 @@ The JHUAPL-Bucky model had the second best MWIS but the third worst allocation s
 Model & AS & MWIS & IAS centered at 15k & IAS uniform \\ 
   \hline
 CU-select & 669 & 133 & 774 & 326 \\ 
+  percap & 865 &  & 1029 & 366 \\ 
   COVIDhub-ensemble & 873 & 159 & 1067 & 438 \\ 
   USC-SI\_kJalpha & 995 & 91 & 1216 & 1097 \\ 
   JHUAPL-Gecko & 1034 & 164 & 1141 & 418 \\ 
@@ -465,10 +466,10 @@ On the other hand, CU-select had worse performance as measured by WIS. Its forec
 
 
 \begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}
+\includegraphics[width=\maxwidth]{figure/metrics-over-time-1} \caption[Hospital admissions and evaluation metrics over time]{Hospital admissions and evaluation metrics over time. Panel A shows the number of hospital admissions in the US as a whole due to COVID-19 on a sequence of 15 Mondays from December 2021 through March 2022. These are the dates for which forecasts were made and evaluated. A horizontal dashed line at 15,000 shows the assumed resource constraint $K$. Panel B shows allocation scores (AS) for each model's 14 day-ahead forecast, across all US states. The x-axis corresponds to the date for which the prediction was made. AS typically are high when the observed value is near to the constraint, which occurs during the last Monday in December (on the way up) and the last Monday in January (on the way down). Panel C shows the MWIS metric across weeks, averaged across all states. MWIS values tend to scale with the observed and predicted values, and the peak MWIS values happen around and just after the peak of the Omicron wave.}\label{fig:metrics-over-time}
+\end{figure}
 
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in `palette()`:\\\#\# ! Insufficient values in manual scale. 18 needed but only 17 provided.}}\end{kframe}
 \end{knitrout}
 
 Allocation scores varied substantially by date and by model (Figure \ref{fig:metrics-over-time}).

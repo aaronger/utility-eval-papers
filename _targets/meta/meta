@@ -1,5 +1,5 @@
 name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
-.Random.seed|object|079f854e3e202b6b|||||||||||||||
+.Random.seed|object|eb9f20a40b7ad074|||||||||||||||
 add_pdqr_funs|function|0a4331f9688ec9c9|||||||||||||||
 add_ytot|function|fe1d973124c400aa|||||||||||||||
 all_alloscore_data|stem|440b74d73ae13244|2d6d5f607d3d773d|cc0c9ed65c66367e|-627143361||t19748.8209513734s|44e58bbb1b073e68|29919907|rds|local|vector|||0.443||
@@ -62,7 +62,7 @@ oracle_alloscore_direct|function|6868ffa822e5a16e|||||||||||||||
 over_loss|function|d1a3f1a60a9930e1|||||||||||||||
 pal1|object|d1c99e7a57ad5a63|||||||||||||||
 pdqr_factory|function|e0d6b167575a9f0e|||||||||||||||
-percap|stem|afaa67c6168f47a1|e82182b26e94139c|46b2ffe679151bc9|1891299352||t19751.8459677798s|255995e3cc4a483f|1975200|rds|local|vector|||5.373||
+percap|stem|206acf01395d5424|e82182b26e94139c|fed8ca4e70d1da2b|1891299352||t19751.9429335581s|94838fa1db3a04eb|3124440|rds|local|vector|||5.549||
 plot_components|function|48990d53bbebacf3|||||||||||||||
 plot_components_slim|function|77f4d0eff32bc251|||||||||||||||
 plot_components.allocated|function|7e24c8f9c7c2f764|||||||||||||||
@@ -79,7 +79,7 @@ run_alloscore|function|cf798ecd92ce4720|||||||||||||||
 run_alloscore_one_date|function|8b023c0c08b4cc9b|||||||||||||||
 run_and_assemble_alloscores|function|832c87060179eb76|||||||||||||||
 score_data|stem|0e073a2a1825883f|9929d49cc92b0dbb|755936b3c7a28d48|-880466632||t19694.9908974925s|e7fc305e8e643a66|330887|rds|local|vector|||18.215||
-score_per_capita_allocation|function|9be39104684217b1|||||||||||||||
+score_per_capita_allocation|function|29cb3914dce61d19|||||||||||||||
 setup|object|d09d426434132c21|||||||||||||||
 slim|function|25bd603f6d970ea2|||||||||||||||
 stdize_met_params|function|fedac6a72e030f7d|||||||||||||||
