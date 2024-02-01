@@ -387,6 +387,14 @@ As described above, predictions were submitted to the Forecast Hub in the form o
 %where $F_{l,m,w}$ is the probabilistic forecast from model $m$ for location $l$ and week $w$.
 %Using the same procedure as for allocation scores described above, we computed standardized ranks for MWIS ($sr_{m,w}^{MWIS}$).
 
+\subsection{Allocation benchmarks}
+
+To adequately compare allocations from individual models with existing standard practices, we used two benchmarks against which the performance of using forecasts to inform allocations could be evaluated.
+First, we evaluated forecasts from the \texttt{COVIDhub-baseline} model, which predicts a flat line from the most recent observation with uncertainty bounds based on a random walk, and the allocations that resulted from those forecasts \citep{cramer_evaluation_2022}.
+Second, we generated proposed set of allocations on a per capita basis by state, referred to below as \texttt{per-capita}.
+These two approaches generally reflect common choices for ``best practices'' of allocation: either allocating resources based on the most recent observed data, or in proportion to the population of each location.
+As such, they serve as good comparisons for allocations based on forecast models.
+
 \subsection{Data and code availability}
 
 All forecast data used in this evaluation are available through the COVID-19 Forecast Hub \citep{cramer_united_2022}. An R package implementing the allocation score is available at \url{https://github.com/aaronger/alloscore}. All code and data for the analyses presented in this manuscript are available at \url{https://github.com/aaronger/utility-eval-papers}. The analyses were generated using a reproducible workflow using R version 4.3.2 (2023-10-31) and the {\tt targets} package \citep{Rcore-2023, landau_2021_targets}.
@@ -408,7 +416,7 @@ The JHUAPL-Bucky model had the second best MWIS but the third worst allocation s
 
 
 % latex table generated in R 4.3.2 by xtable 1.8-4 package
-% Thu Feb  1 11:20:53 2024
+% Thu Feb  1 12:24:44 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrrr}
@@ -416,7 +424,7 @@ The JHUAPL-Bucky model had the second best MWIS but the third worst allocation s
 Model & AS & MWIS & IAS centered at 15k & IAS uniform \\ 
   \hline
 CU-select & 669 & 133 & 774 & 326 \\ 
-  percap & 865 &  & 1029 & 366 \\ 
+  per-capita & 865 &  & 1029 & 366 \\ 
   COVIDhub-ensemble & 873 & 159 & 1067 & 438 \\ 
   USC-SI\_kJalpha & 995 & 91 & 1216 & 1097 \\ 
   JHUAPL-Gecko & 1034 & 164 & 1141 & 418 \\ 
@@ -428,7 +436,7 @@ CU-select & 669 & 133 & 774 & 326 \\
   UVA-Ensemble & 2469 & 213 & 2635 & 2494 \\ 
    \hline
 \end{tabular}
-\caption{Comparison of allocation scores (AS), mean weighted interval scores (MWIS), and two varieties of Integrated Allocation Scores (IAS). All metrics are shown for 10 models that made forecasts of hospital admissions for 2022-01-03. Results are sorted by AS. For all metrics, lower scores indicate better accuracy.} 
+\caption{For one illustrative week, a comparison of allocation scores (AS), mean weighted interval scores (MWIS), and two varieties of Integrated Allocation Scores (IAS). All metrics are shown for 10 models that made forecasts of hospital admissions for 2022-01-03. Results are sorted by AS. For all metrics, lower scores indicate better accuracy.} 
 \label{tab:multi-k-scores}
 \end{table}
 
