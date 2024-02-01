@@ -416,7 +416,7 @@ The JHUAPL-Bucky model had the second best MWIS but the third worst allocation s
 
 
 % latex table generated in R 4.3.2 by xtable 1.8-4 package
-% Thu Feb  1 12:24:44 2024
+% Thu Feb  1 13:48:15 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrrr}
@@ -527,6 +527,32 @@ Here are some examples of the different model-specific patterns observed:
 \item One model performed consistently well for allocation score but had only middlings ranks for MWIS (\texttt{CMU-TimeSeries})
 \end{itemize}
 
+
+
+
+% latex table generated in R 4.3.2 by xtable 1.8-4 package
+% Thu Feb  1 13:48:21 2024
+\begin{table}[ht]
+\centering
+\begin{tabular}{lrr}
+  \hline
+model & MWIS & MAS \\ 
+  \hline
+COVIDhub-ensemble & 70 & 389 \\ 
+  per-capita &  & 464 \\ 
+  COVIDhub-trained\_ensemble & 87 & 483 \\ 
+  CU-select & 81 & 502 \\ 
+  JHUAPL-SLPHospEns & 67 & 526 \\ 
+  COVIDhub-baseline & 93 & 594 \\ 
+  JHUAPL-Bucky & 112 & 643 \\ 
+  MUNI-ARIMA & 116 & 707 \\ 
+  JHUAPL-Gecko & 110 & 929 \\ 
+  USC-SI\_kJalpha & 155 & 1473 \\ 
+   \hline
+\end{tabular}
+\caption{Mean weighted interval scores (MWIS) and mean allocation scores (MAS) by model across 13 weeks. For the nine models that submitted forecasts for every week from 2021-11-29 through 2022-02-21, plus a per-capita allocation, these results show the average performance of each model across all weeks. Lower scores indicate better performance, and models are sorted with the most accurate allocations at the top.} 
+\label{tab:multi-week-performance-summary}
+\end{table}
 
 
 
