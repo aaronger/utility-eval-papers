@@ -354,7 +354,7 @@ As described above, predictions were submitted to the Forecast Hub in the form o
 
 \subsection{Data and code availability}
 
-All forecast data used in this evaluation are available through the COVID-19 Forecast Hub \citep{cramer_reichlabcovid19-forecast-hub_2021}. An R package implementing the allocation score is available at \url{https://github.com/aaronger/alloscore}. All code and data for the analyses presented in this manuscript are available at \url{https://github.com/aaronger/utility-eval-papers}. The analyses were generated using a reproducible workflow using \Sexpr{version$version.string} and the {\tt targets} package \citep{Rcore-2023, landau_2021_targets}.
+All forecast data used in this evaluation are available through the COVID-19 Forecast Hub \citep{cramer_united_2022}. An R package implementing the allocation score is available at \url{https://github.com/aaronger/alloscore}. All code and data for the analyses presented in this manuscript are available at \url{https://github.com/aaronger/utility-eval-papers}. The analyses were generated using a reproducible workflow using \Sexpr{version$version.string} and the {\tt targets} package \citep{Rcore-2023, landau_2021_targets}.
 
 \subsection{Application results}
 
