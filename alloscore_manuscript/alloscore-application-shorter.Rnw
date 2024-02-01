@@ -356,7 +356,7 @@ As described above, predictions were submitted to the Forecast Hub in the form o
 
 To adequately compare allocations from individual models with existing standard practices, we used two benchmarks against which the performance of using forecasts to inform allocations could be evaluated.
 First, we evaluated forecasts from the \texttt{COVIDhub-baseline} model, which predicts a flat line from the most recent observation with uncertainty bounds based on a random walk, and the allocations that resulted from those forecasts \citep{cramer_evaluation_2022}.
-Second, we generated proposed set of allocations on a per capita basis by state, referred to below as \texttt{per-capita}.
+Second, we generated a proposed set of allocations on a per capita basis by state (using US Census data of vintage 2022 \citep{us_census_nst_est2022}), referred to below as \texttt{per-capita}.
 These two approaches generally reflect common choices for ``best practices'' of allocation: either allocating resources based on the most recent observed data, or in proportion to the population of each location.
 As such, they serve as good comparisons for allocations based on forecast models.
 
@@ -619,7 +619,7 @@ alloc_plot <- ggplot(multiloc_dat, aes(x=state, y=value, fill=name)) +
   #scale_fill_manual(name=NULL, values = c("#ca0020", "#0571b0", "purple")) +
   #scale_fill_manual(name=NULL, values = c(  "#e41a1c", "#377eb8", "lightgray")) +
   scale_fill_manual(name=NULL, values = c("#fb6a4a", "#9ecae1", "#807dba")) +
-  theme(axis.text.x=element_text(angle=90,vjust=.5), legend.position = c(.9,.95), legend.justification = c(1,1)) +
+  theme(axis.text.x=element_text(angle=90,vjust=.5), legend.position = c(.95,.98), legend.justification = c(1,1), legend.key.size = unit(0.45, "cm"), legend.background = element_rect(fill = "transparent")) +
   ylab("Resource need and allocation") +
   xlab(NULL) +
   facet_grid(model~.)
@@ -655,7 +655,7 @@ wis_plot <- ggplot(data = wis, aes(x=abbreviation)) +
   geom_col(aes(y=score_value, fill=`WIS component`)) +
   scale_fill_manual(values = c("#9FA2FF", "gray77", "#BAAE00")) +
   facet_grid(model~.) +
-  theme(axis.text.x=element_text(angle=90,vjust=.5), legend.position = c(.9,.95), legend.justification = c(1,1)) +
+  theme(axis.text.x=element_text(angle=90,vjust=.5), legend.position = c(.82,.95), legend.justification = c(1,1), legend.key.size = unit(0.45, "cm"), legend.background = element_rect(fill = "transparent")) +
   xlab(NULL) +
   ylab("WIS")
 

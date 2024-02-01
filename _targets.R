@@ -71,7 +71,7 @@ setup <- list(
   ),
   tar_target(
     name = pops22,
-    command = readr::read_csv("https://raw.githubusercontent.com/reichlab/flusion/main/data-raw/us-census/NST-EST2022-ALLDATA.csv") |> 
+    command = readr::read_csv("https://www2.census.gov/programs-surveys/popest/datasets/2020-2022/state/totals/NST-EST2022-ALLDATA.csv") |> 
       dplyr::select(full_location_name = NAME, POPESTIMATE2021) |>
       dplyr::inner_join(hub_locations, by = join_by(full_location_name))
   )
