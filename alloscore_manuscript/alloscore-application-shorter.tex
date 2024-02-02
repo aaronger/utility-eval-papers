@@ -353,7 +353,7 @@ Models had to have a complete forecast for at least 4 of the 15 weeks in the ana
 
 
 
-The hospitalization data used for scoring forecasts were downloaded on January 30, 2024.
+The hospitalization data used for scoring forecasts were downloaded on February 01, 2024.
 
 \subsection{Evaluation metrics}
 
@@ -391,13 +391,13 @@ As described above, predictions were submitted to the Forecast Hub in the form o
 
 To adequately compare allocations from individual models with existing standard practices, we used two benchmarks against which the performance of using forecasts to inform allocations could be evaluated.
 First, we evaluated forecasts from the \texttt{COVIDhub-baseline} model, which predicts a flat line from the most recent observation with uncertainty bounds based on a random walk, and the allocations that resulted from those forecasts \citep{cramer_evaluation_2022}.
-Second, we generated proposed set of allocations on a per capita basis by state, referred to below as \texttt{per-capita}.
+Second, we generated a proposed set of allocations on a per capita basis by state (using US Census data of vintage 2022 \citep{us_census_nst_est2022}), referred to below as \texttt{per-capita}.
 These two approaches generally reflect common choices for ``best practices'' of allocation: either allocating resources based on the most recent observed data, or in proportion to the population of each location.
 As such, they serve as good comparisons for allocations based on forecast models.
 
 \subsection{Data and code availability}
 
-All forecast data used in this evaluation are available through the COVID-19 Forecast Hub \citep{cramer_united_2022}. An R package implementing the allocation score is available at \url{https://github.com/aaronger/alloscore}. All code and data for the analyses presented in this manuscript are available at \url{https://github.com/aaronger/utility-eval-papers}. The analyses were generated using a reproducible workflow using R version 4.3.2 (2023-10-31) and the {\tt targets} package \citep{Rcore-2023, landau_2021_targets}.
+All forecast data used in this evaluation are available through the COVID-19 Forecast Hub \citep{cramer_united_2022}. An R package implementing the allocation score is available at \url{https://github.com/aaronger/alloscore}. All code and data for the analyses presented in this manuscript are available at \url{https://github.com/aaronger/utility-eval-papers}. The analyses were generated using a reproducible workflow using R version 4.3.1 (2023-06-16) and the {\tt targets} package \citep{Rcore-2023, landau_2021_targets}.
 
 \subsection{Application results}
 
@@ -415,8 +415,8 @@ The JHUAPL-Bucky model had the second best MWIS but the third worst allocation s
 
 
 
-% latex table generated in R 4.3.2 by xtable 1.8-4 package
-% Thu Feb  1 13:48:15 2024
+% latex table generated in R 4.3.1 by xtable 1.8-4 package
+% Thu Feb  1 16:41:23 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrrr}
@@ -530,8 +530,8 @@ Here are some examples of the different model-specific patterns observed:
 
 
 
-% latex table generated in R 4.3.2 by xtable 1.8-4 package
-% Thu Feb  1 13:48:21 2024
+% latex table generated in R 4.3.1 by xtable 1.8-4 package
+% Thu Feb  1 16:41:28 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrr}
@@ -539,7 +539,7 @@ Here are some examples of the different model-specific patterns observed:
 model & MWIS & MAS \\ 
   \hline
 COVIDhub-ensemble & 70 & 389 \\ 
-  per-capita &  & 464 \\ 
+  per-capita & - & 464 \\ 
   COVIDhub-trained\_ensemble & 87 & 483 \\ 
   CU-select & 81 & 502 \\ 
   JHUAPL-SLPHospEns & 67 & 526 \\ 
