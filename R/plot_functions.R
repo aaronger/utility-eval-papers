@@ -194,22 +194,48 @@ plot_hosp <- function(
       mutate(
         xmin = xmin + f_width1*2/5,
         xmax = xmax - f_width1*2/5
+      ) |>
+      rename(allocation = x,
+             need = y) |>
+      mutate(`unmet resource need` = ifelse(allocation < need,
+                                            need - allocation,
+                                            0),
+             `need met by allocated resources` = ifelse(allocation < need,
+                                                        allocation,
+                                                        need),
+             `allocation exceeding need` = ifelse(allocation < need,
+                                                  0,
+                                                  allocation - need)
       )
-    p <- p + geom_rect(
+    p <- p +
+      ## add the unmet need
+      geom_rect(
       data = adf_x,
       mapping = aes(
         xmin = xmin,
         xmax = xmax,
-        ymin = 0,
-        ymax = x), fill = "gold", color = "black", linewidth = .2) +
+        ymin = `need met by allocated resources`,
+        ymax = `need met by allocated resources` + `unmet resource need`),
+      fill = "#fb6a4a") +
+      ## add the need met by allocated resources
       geom_rect(
         data = adf_x,
         mapping = aes(
           xmin = xmin,
           xmax = xmax,
-          ymin = x,
-          ymax = pmax(x,y)), fill = "darkred")
-      scale_y_continuous(expand = c(0,0))
+          ymin = 0,
+          ymax = `need met by allocated resources`),
+        fill = "#807dba") +
+      ## add the allocation exceeding need
+      geom_rect(
+        data = adf_x,
+        mapping = aes(
+          xmin = xmin,
+          xmax = xmax,
+          ymin = `need met by allocated resources`,
+          ymax = `need met by allocated resources` + `allocation exceeding need`),
+        fill = "#9ecae1") +
+      scale_y_continuous(expand=c(0,0))
   }
   if (geofacet) {
     require(geofacet)
