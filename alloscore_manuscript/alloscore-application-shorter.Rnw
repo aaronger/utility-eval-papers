@@ -77,8 +77,8 @@ Recent years have seen increasing efforts to forecast infectious disease burdens
 \section{Introduction}
 
 Infectious disease forecasting models have emerged as important tools in public health outbreak response. The predictions they provide increasingly inform decisions regarding a wide variety of countermeasures intended to reduce transmission and mitigate the severity of disease outcomes. For example, estimates of the onset time of the flu season have been used in developing national vaccination strategies \citep{igboh2023timing}, and forecasts of Ebola and diptheria dynamics have been made with the clearly stated goal of helping local 
-public health workers choose the timing and location of interventions in settings where resources are severely constrained \citep{meltzer2014estimating, rainisch2015regional,camacho2015-ebola-bed,finger_real-time_2019}. More recently, in the context of the outbreak of COVID-19 across the US, \cite{bertsimas2021predictionsCOVID} explicitly based triage decision tools for the interstate reallocation
-of ventilators and ICU capacity on forecast inputs and used these forecasts as well to recommend vaccine trial sites to a 
+public health workers choose the timing and location of interventions in settings where resources are severely constrained \citep{meltzer2014estimating, rainisch2015regional,camacho2015-ebola-bed,finger_real-time_2019}. More recently, in the context of the outbreak of COVID-19 across the US, \cite{bertsimas2021predictionsCOVID} used forecasts as inputs to decision tools for the interstate reallocation
+of ventilators and ICU capacity, and to recommend vaccine trial sites to a 
 major trial sponsor. \cite{fox_real-time_2022} similarly used predictive models to inform intrastate resource and care site planning, as well as local community guidelines for masking, traveling, dining and shopping (University of Texas, 2022)\nocite{utnews2022}.
 %In April of 2022, the Centers for Disease Control and Prevention (CDC) announced the launch of the Center for Forecasting and Outbreak Analytics (CFA) to translate disease forecasts into decision making (CDC, 2022)\nocite{cdc2022cfa}, indicating that this has been identified as an important direction at the highest levels of government public health response.
 
@@ -90,14 +90,13 @@ This contrasts, however, with the historically standard practice of measuring th
 accuracy and skill scores, especially those that have implementations available in existing software when the relevant outbreak occurs. For point forecasts,
 the root mean square error (RMSE) (e.g., \cite{papastefanopoulos2020covid}) and the mean absolute error (MAE) (e.g., \cite{johansson2016evaluating}) 
 are common choices.
-For probabilistic forecasts, (which are the focus of this paper), researchers have often relied on the logarithmic score (LS), which
-has been used, for example, to evaluate (with respect to both time and space) the skill of US seasonal influenza forecasts \citep{mcgowan_collaborative_2019,reich_collaborative_2019} as well as forecasts targeting surveillance measures of dengue incidence in Peru and Puerto Rico
+For probabilistic forecasts, which are the focus of this paper, researchers have often relied on the logarithmic score (LS).
+For example, the LS has been used to evaluate the skill of US seasonal influenza forecasts \citep{mcgowan_collaborative_2019,reich_collaborative_2019} as well as forecasts targeting surveillance measures of dengue incidence in Peru and Puerto Rico
  \citep{johansson_open_2019}.
 More recently, the continuous ranked probability score (CRPS) and a discretized version adapted to multi-quantile forecasts, the weighted interval 
-score (WIS) \citep{bracher2021evaluating} (named for its expression in terms of central prediction interval coverage), have gained prominence.
+score (WIS) \citep{bracher2021evaluating}, have gained prominence.
 For example, the CRPS was used to assess probabilistic forecasts (based on random effect models) of dengue incidence at the district level 
-in Vietnam \citep{colon-gonzalez_probabilistic_2021}. And the WIS has been used during the COVID-19 pandemic (through efforts with which we 
-have been intimately involved) to evaluate forecasts of 
+in Vietnam \citep{colon-gonzalez_probabilistic_2021}. And the WIS has been used during the COVID-19 pandemic to evaluate forecasts of 
 observed cases, hospitalizations and deaths in the US and Europe, as reported by municipal, state, and federal surveillance systems 
 \citep{cramer_evaluation_2022,fox_real-time_2022,sherratt2023predictive}.
 
@@ -107,24 +106,22 @@ present work has been that we were not able to find in any of them, nor in the l
 forecast was evaluated and how that forecast was used in practice.
 
 A general phenomenon at play here --- one that has been observed repeatedly over the past few decades in other fields such as finance, supply chain management, and meteorology --- is that while scores such as RMSE, MAE, LS, CRPS, and WIS can describe the \emph{quality} of a forecast 
-at corresponding to the observed disease outcome, they will often fail to register the \emph{value} (or lack thereof) 
-a forecast has in the context of a specific decision. We refer the reader to \cite{yardley2021utility_cost_forecasts} and the references collected 
+in terms of how well it corresponds to the observed disease outcome, they will often fail to register the \emph{value} of a forecast in the context of a specific decision. We refer the reader to \cite{yardley2021utility_cost_forecasts} and the references collected 
 therein (especially the foundational \cite{murphy1993whatisagoodforecast}) for a general overview touching on a wide range of forecasting contexts and  
 also to \cite{pesaran2002decision_based_eval} for a clear discussion from an econometric perspective.
 
 %------ literature that seems to be aware of the problem we see and how it falls short ------%
-This is to say that the quality-value distinction is not a new concept in the larger forecasting community. We are aware, however, of only a 
-limited literature attempting to connect the value of infectious disease forecasts to their impact on and through policy.  And
+Although there has been discussion of the quality-value distinction in the larger forecasting community, we are aware of only a 
+limited literature attempting to connect the value of \emph{infectious disease} forecasts to their impact on and through policy.  And
 within this body of work we have found the discussion of such a connection to still be at a formally and quantitively imprecise stage. 
 In \cite{ioannidis2022forecastingCOVIDfailed}, the possible negative consequences of inaccurate forecasts of infectious disease are discussed, but there is no attempt to quantify the utility or loss incurred as a result of those forecasts. \cite{bilinski_adaptive_2023} explore ways in which predictive classifiers of local COVID-19 risk levels in the US could be tuned to policymaker preferences for different
 costs associated with over- and under-reaction to disease dynamics, but they do not clearly identify the source of these costs or how they
 depend on quantifiable policy choices. A similar discussion related to dengue countermeasures in Vietnam appears in
-\cite{colon-gonzalez_probabilistic_2021}.  A novel version of the WIS informally motivated by utility considerations is devoloped in 
+\cite{colon-gonzalez_probabilistic_2021}.  A novel version of the WIS informally motivated by utility considerations is developed in 
 \cite{marshall2023predictions}, but the score is not derived in a decision-theoretic manner.  There is also a thread of literature that frames infectious disease modeling as a component of a larger system for understanding how policy goals, means, and choices interact and constrain
-one another. As an example, \cite{Probert2016decisionMakingFootMouth} explore how policy recommendations ought to flow from a possibly 
-incongruous set of simulation-based projection models of a hypothetical
+one another. As an example, \cite{Probert2016decisionMakingFootMouth} explore how policy recommendations ought to flow from a set of simulation-based projection models of a hypothetical
 foot-and-mouth disease outbreak when there are ranges of plausible responses and stakeholder interests. Decision theory plays a prominent
-role here but not explicitly as a way to evaluate the choices made in developing or running the models.
+role here, but not explicitly as a way to evaluate the choices made in developing the models.
 
 % However, as we show in this paper, it is possible, using standard tools of decision theory, to construct formal methods (detailed in Section 
 % \ref{sec:methods.detailed.decisiontheory})) for evaluating probabilistic forecasts that are directly and uniquely tied to policy decisions, 
