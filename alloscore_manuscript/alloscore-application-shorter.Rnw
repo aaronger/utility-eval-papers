@@ -70,152 +70,207 @@ knitr::opts_knit$set(root.dir = '../')
 
 \begin{abstract}
 
-Recent years have seen increasing efforts to forecast infectious disease burdens, with a primary goal being to help public health workers make informed policy decisions. However, there has only been limited discussion of how predominant forecast evaluation metrics might indicate the success of policies based in part on those forecasts. We explore one possible tether between forecasts and policy: the allocation of limited medical resources so as to minimize unmet need. We use probabilistic forecasts of disease burden in each of several regions to determine optimal resource allocations, and then we score forecasts according to how much unmet need their associated allocations would have allowed. We illustrate with forecasts of COVID-19 hospitalizations in the US, and we find that the forecast skill ranking given by this allocation scoring rule can vary substantially from the ranking given by the weighted interval score. We see this as evidence that the allocation scoring rule detects forecast value that is missed by traditional accuracy measures and that the general strategy of designing scoring rules that are directly linked to policy performance is a promising direction for epidemic forecast evaluation.
+Recent years have seen increasing efforts to forecast infectious disease burdens, with a primary goal being to help
+public health workers make informed policy decisions. However, there has only been limited discussion of how
+predominant forecast evaluation metrics might indicate the success of policies based in part on those forecasts. We
+explore one possible tether between forecasts and policy: the allocation of limited medical resources so as to minimize
+unmet need. We use probabilistic forecasts of disease burden in each of several regions to determine optimal resource
+allocations, and then we score forecasts according to how much unmet need their associated allocations would have
+allowed. We illustrate with forecasts of COVID-19 hospitalizations in the US, and we find that the forecast skill
+ranking given by this allocation scoring rule can vary substantially from the ranking given by the weighted interval
+score. We see this as evidence that the allocation scoring rule detects forecast value that is missed by traditional
+accuracy measures and that the general strategy of designing scoring rules that are directly linked to policy
+performance is a promising direction for epidemic forecast evaluation.
 
 \end{abstract}
 
 \section{Introduction}
 
-Infectious disease forecasting models have emerged as important tools in public health outbreak response. The predictions they provide increasingly inform decisions regarding a wide variety of countermeasures intended to reduce transmission and mitigate the severity of disease outcomes. For example, estimates of the onset time of the flu season have been used in developing national vaccination strategies \citep{igboh2023timing}, and forecasts of Ebola and diptheria dynamics have been made with the clearly stated goal of helping local 
-public health workers choose the timing and location of interventions in settings where resources are severely constrained \citep{meltzer2014estimating, rainisch2015regional,camacho2015-ebola-bed,finger_real-time_2019}. More recently, in the context of the outbreak of COVID-19 across the US, \cite{bertsimas2021predictionsCOVID} used forecasts as inputs to decision tools for the interstate reallocation
-of ventilators and ICU capacity, and to recommend vaccine trial sites to a 
-major trial sponsor. \cite{fox_real-time_2022} similarly used predictive models to inform intrastate resource and care site planning, as well as local community guidelines for masking, traveling, dining and shopping (University of Texas, 2022)\nocite{utnews2022}.
-%In April of 2022, the Centers for Disease Control and Prevention (CDC) announced the launch of the Center for Forecasting and Outbreak Analytics (CFA) to translate disease forecasts into decision making (CDC, 2022)\nocite{cdc2022cfa}, indicating that this has been identified as an important direction at the highest levels of government public health response.
+Infectious disease forecasting models have emerged as important tools in public health outbreak response. The
+predictions they provide increasingly inform decisions regarding a wide variety of countermeasures intended to reduce
+transmission and mitigate the severity of disease outcomes. For example, estimates of the onset time of the flu season
+have been used in developing national vaccination strategies \citep{igboh2023timing}, and forecasts of Ebola and
+diptheria dynamics have been made with the clearly stated goal of helping local public health workers choose the timing
+and location of interventions in settings where resources are severely constrained 
+\citep{meltzer2014estimating, rainisch2015regional, camacho2015-ebola-bed,finger_real-time_2019}. More recently, in the
+context of the outbreak of COVID-19 across the US, \cite{bertsimas2021predictionsCOVID} used forecasts as inputs to
+decision tools for the interstate reallocation of ventilators and ICU capacity, and to recommend vaccine trial sites to
+a major trial sponsor. \cite{fox_real-time_2022} similarly used predictive models to inform intrastate resource and
+care site planning, as well as local community guidelines for masking, traveling, dining and shopping (University of
+Texas, 2022)\nocite{utnews2022}.
 
-In the wake of the COVID-19 pandemic, this trend has been followed by calls for infectious disease forecasts to 
-be not only designed, but 
-also evaluated in ways that align specifically with how forecasts can be used to inform such outbreak control
-decisions \citep{marshall2023predictions, bilinski_adaptive_2023}.
-This contrasts, however, with the historically standard practice of measuring the quality of disease forecasts using general purpose
-accuracy and skill scores, especially those that have implementations available in existing software when the relevant outbreak occurs. For point forecasts,
-the root mean square error (RMSE) (e.g., \cite{papastefanopoulos2020covid}) and the mean absolute error (MAE) (e.g., \cite{johansson2016evaluating}) 
-are common choices.
-For probabilistic forecasts, which are the focus of this paper, researchers have often relied on the logarithmic score (LS).
-For example, the LS has been used to evaluate the skill of US seasonal influenza forecasts \citep{mcgowan_collaborative_2019,reich_collaborative_2019} as well as forecasts targeting surveillance measures of dengue incidence in Peru and Puerto Rico
- \citep{johansson_open_2019}.
-More recently, the continuous ranked probability score (CRPS) and a discretized version adapted to multi-quantile forecasts, the weighted interval 
-score (WIS) \citep{bracher2021evaluating}, have gained prominence.
-For example, the CRPS was used to assess probabilistic forecasts (based on random effect models) of dengue incidence at the district level 
-in Vietnam \citep{colon-gonzalez_probabilistic_2021}. And the WIS has been used during the COVID-19 pandemic to evaluate forecasts of 
-observed cases, hospitalizations and deaths in the US and Europe, as reported by municipal, state, and federal surveillance systems 
-\citep{cramer_evaluation_2022,fox_real-time_2022,sherratt2023predictive}.
+In the wake of the COVID-19 pandemic, this trend has been followed by calls for infectious disease forecasts to be not
+only designed, but also evaluated in ways that align specifically with how forecasts can be used to inform such outbreak
+control decisions \citep{marshall2023predictions, bilinski_adaptive_2023}. This contrasts, however, with the
+historically standard practice of measuring the quality of disease forecasts using general purpose accuracy and skill
+scores, especially those that have implementations available in existing software when the relevant outbreak occurs. For
+point forecasts, the root mean square error (RMSE) (e.g., \cite{papastefanopoulos2020covid}) and the mean absolute error
+(MAE) (e.g., \cite{johansson2016evaluating}) are common choices. For probabilistic forecasts, which are the focus of
+this paper, researchers have often relied on the logarithmic score (LS). For example, the LS has been used to evaluate
+the skill of US seasonal influenza forecasts \citep{mcgowan_collaborative_2019,reich_collaborative_2019} as well as
+forecasts targeting surveillance measures of dengue incidence in Peru and Puerto Rico \citep{johansson_open_2019}. More
+recently, the continuous ranked probability score (CRPS) and a discretized version adapted to multi-quantile forecasts,
+the weighted interval score (WIS) \citep{bracher2021evaluating}, have gained prominence. For example, the CRPS was used
+to assess probabilistic forecasts (based on random effect models) of dengue incidence at the district level in Vietnam
+\citep{colon-gonzalez_probabilistic_2021}. And the WIS has been used during the COVID-19 pandemic to evaluate forecasts
+of observed cases, hospitalizations and deaths in the US and Europe, as reported by municipal, state, and federal
+surveillance systems \citep{cramer_evaluation_2022,fox_real-time_2022,sherratt2023predictive}.
 
-While it should be noted that there are ways to interpret any of these scores abstractly through the lens of decision theory, and that all of 
-the application-specific papers cited above benefited from direct collaboration with public health agencies, a key impetus for the
-present work has been that we were not able to find in any of them, nor in the literature they represent, explicit connections between how a 
-forecast was evaluated and how that forecast was used in practice.
+While it should be noted that there are ways to interpret any of these scores abstractly through the lens of decision
+theory, and that all of the application-specific papers cited above benefited from direct collaboration with public
+health agencies, a key impetus for the present work has been that we were not able to find in any of them, nor in the
+literature they represent, explicit connections between how a forecast was evaluated and how that forecast was used in
+practice.
 
-A general phenomenon at play here --- one that has been observed repeatedly over the past few decades in other fields such as finance, supply chain management, and meteorology --- is that while scores such as RMSE, MAE, LS, CRPS, and WIS can describe the \emph{quality} of a forecast 
-in terms of how well it corresponds to the observed disease outcome, they will often fail to register the \emph{value} of a forecast in the context of a specific decision. We refer the reader to \cite{yardley2021utility_cost_forecasts} and the references collected 
-therein (especially the foundational \cite{murphy1993whatisagoodforecast}) for a general overview touching on a wide range of forecasting contexts and  
-also to \cite{pesaran2002decision_based_eval} for a clear discussion from an econometric perspective.
+A general phenomenon at play here --- one that has been observed repeatedly over the past few decades in other fields
+such as finance, supply chain management, and meteorology --- is that while scores such as RMSE, MAE, LS, CRPS, and WIS
+can describe the \emph{quality} of a forecast in terms of how well it corresponds to the observed disease outcome, they
+will often fail to register the \emph{value} of a forecast in the context of a specific decision. We refer the reader to
+\cite{yardley2021utility_cost_forecasts} and the references collected therein (especially the foundational
+\cite{murphy1993whatisagoodforecast}) for a general overview touching on a wide range of forecasting contexts and  also
+to \cite{pesaran2002decision_based_eval} for a clear discussion from an econometric perspective.
 
-%------ literature that seems to be aware of the problem we see and how it falls short ------%
-Although there has been discussion of the quality-value distinction in the larger forecasting community, we are aware of only a 
-limited literature attempting to connect the value of \emph{infectious disease} forecasts to their impact on and through policy.  And
-within this body of work we have found the discussion of such a connection to still be at a formally and quantitively imprecise stage. 
-In \cite{ioannidis2022forecastingCOVIDfailed}, the possible negative consequences of inaccurate forecasts of infectious disease are discussed, but there is no attempt to quantify the utility or loss incurred as a result of those forecasts. \cite{bilinski_adaptive_2023} explore ways in which predictive classifiers of local COVID-19 risk levels in the US could be tuned to policymaker preferences for different
-costs associated with over- and under-reaction to disease dynamics, but they do not clearly identify the source of these costs or how they
-depend on quantifiable policy choices. A similar discussion related to dengue countermeasures in Vietnam appears in
-\cite{colon-gonzalez_probabilistic_2021}.  A novel version of the WIS informally motivated by utility considerations is developed in 
-\cite{marshall2023predictions}, but the score is not derived in a decision-theoretic manner.  There is also a thread of literature that frames infectious disease modeling as a component of a larger system for understanding how policy goals, means, and choices interact and constrain
-one another. As an example, \cite{Probert2016decisionMakingFootMouth} explore how policy recommendations ought to flow from a set of simulation-based projection models of a hypothetical
-foot-and-mouth disease outbreak when there are ranges of plausible responses and stakeholder interests. Decision theory plays a prominent
-role here, but not explicitly as a way to evaluate the choices made in developing the models.
+Despite this now well-developed discussion of the quality-value distinction in the larger forecasting community, we are
+aware of only a limited literature attempting to connect the value of \emph{infectious disease} forecasts to their
+impact on and through policy.  And within this body of work we have found the discussion of such a connection to still
+be at a formally and quantitively imprecise stage. In \cite{ioannidis2022forecastingCOVIDfailed}, the possible negative
+consequences of inaccurate forecasts of infectious disease are discussed, but there is no attempt to quantify the
+utility or loss incurred as a result of those forecasts. \cite{bilinski_adaptive_2023} explore ways in which predictive
+classifiers of local COVID-19 risk levels in the US could be tuned to policymaker preferences for different costs
+associated with over- and under-reaction to disease dynamics, but they do not clearly identify the source of these
+costs or how they depend on quantifiable policy choices. A similar discussion related to dengue countermeasures in
+Vietnam appears in \cite{colon-gonzalez_probabilistic_2021}.  A novel version of the WIS informally motivated by
+utility considerations is developed in \cite{marshall2023predictions}, but the score is not derived in a
+decision-theoretic manner.  There is also a thread of literature that frames infectious disease modeling as a component
+of a larger system for understanding how policy goals, means, and choices interact and constrain one another. As an
+example, \cite{Probert2016decisionMakingFootMouth} explore how policy recommendations ought to flow from a possibly 
+incongruous set of simulation-based projection models of a hypothetical foot-and-mouth disease outbreak when there are 
+ranges of plausible responses and stakeholder interests. Decision theory plays a prominent role here, but not explicitly
+as a way to evaluate the choices made in developing the models.
 
-% However, as we show in this paper, it is possible, using standard tools of decision theory, to construct formal methods (detailed in Section 
-% \ref{sec:methods.detailed.decisiontheory})) for evaluating probabilistic forecasts that are directly and uniquely tied to policy decisions, 
-% in particular those related to resource allocation.  In essence, we will define the score (as a measure of value) of a forecast as  
-% Furthermore, we find evidence that such scores can illuminate important features of forecasts related to their value as decision-making inputs which
-% are missed by traditional quality (that is, accuracy and skill) measures.
-
-
-% %------ what you can do instead ------%
-% In decision making settings where it is possible to quantify the utility or loss associated with a particular action, standard tools of decision theory provide a procedure for developing forecast scoring rules that measure the value of forecasts through the quality of the decisions that they lead to (see details in Section \ref{sec:methods.detailed.decisiontheory}).
-
-
-% %In finance, the value of forecasts can often be measured by the profits generated by trading decisions informed by the forecasts, perhaps adjusted for risk levels \cite[e.g.,][]{leitch1991economicForecastEval, cenesizoglu2012returnPredictionEconValue}. In applications to supply chain management and meteorology, the value of forecasts has typically been operationalized by considering the costs associated with decisions regarding the amount of inventory to hold or the level of protection against the impacts of extreme weather events to enact \cite[e.g.,][]{catt2007assessingcostofforecasterror, petropoulos2019inventoryperformanceforecasting, palmer2002economic, pappenberger2015monetarybenefitfloodwarnings}.
-
-% In this framework, a forecast has value if it leads to decisions with low total costs.
-% As one example,
-% % in supply chain management these decisions may incur costs related to holding inventory, labor, or providing poor service, while
-% in meteorology, policy makers need to balance the costs of implementing protective measures with the costs of potentially preventable weather damages \citep{palmer2002economic, pappenberger2015monetarybenefitfloodwarnings}.
-
-
-%------ our game plan ------%
-In this work, we begin to fill this gap between the ways that infectious disease forecasts have traditionally been evaluated and the ways that they have been used to support public health policy. To do so, we consider a setting in which forecasts are used to help determine the allocation of a limited quantity of medical supplies across multiple regions.
-In section~\ref{sec:methods} of the paper, we define a new forecast scoring rule --- the {\em allocation score} --- that evaluates forecasts based on how beneficial resource allocations derived from them would turn out to be.
-%Unlike the traditional measures of forecast skill such as WIS, CRPS, and log score, the proposed allocation score measures the suitability of a forecast as an input to this specific decision making task.
-In section \ref{sec:application}, we present an illustrative analysis using the allocation score to evaluate forecasts of hospital admissions in the US that were made leading up to and during the Omicron wave that peaked in January of 2022.
-This analysis is ``synthetic'' insofar as it is not intended to correspond to any specific historical record of allocation decisions 
-that could have been supported by hospitalization forecasts during this period.
-However, we view the general allocation problem on which our framework is based as a versatile template for 
-formalizing real-world decisions that must constantly be made in real-time by public health administrators around the globe, especially those
-related to hospital capacity, ventilator usage, doses needed for specific medications and other situations where an outbreak creates sudden and
-highly variable demand for potentially scarce resources.  
-
-%The remainder of this article is organized as follows.
-%We describe the allocation score in Section \ref{sec:methods}, and in Section \ref{sec:application} we illustrate the use of the score in an application to evaluate short-term forecasts of COVID-19 hospital admissions in the US.
-%Section \ref{sec:discussion} summarizes our contributions and discusses opportunities for further extensions in future work.
-
+In this work, we begin to fill this gap between the ways that infectious disease forecasts have traditionally been
+evaluated and the ways that they have been used to support public health policy. To do so, we consider a setting in
+which forecasts are used to help determine the allocation of a limited quantity of medical supplies across multiple
+regions. In section~\ref{sec:methods} of the paper, we define a new forecast scoring rule --- the {\em allocation score}
+--- that evaluates forecasts based on how beneficial resource allocations derived from them would turn out to be. In
+section \ref{sec:application}, we present an illustrative analysis using the allocation score to evaluate forecasts of
+hospital admissions in the US that were made leading up to and during the Omicron wave that peaked in January of 2022.
+This analysis is ``synthetic'' insofar as it is not intended to correspond to any specific historical record of
+allocation decisions that could have been supported by hospitalization forecasts during this period. However, we view
+the general allocation problem on which our framework is based as a versatile template for formalizing real-world
+decisions that must constantly be made in real-time by public health administrators around the globe, especially those
+related to hospital capacity, ventilator usage, doses needed for specific medications and other situations where an
+outbreak creates sudden and highly variable demand for potentially scarce resources.  
 
 \section{The Allocation Score}
 \label{sec:methods}
 
-We begin with an informal description of the allocation score and some examples illustrating its key characteristics in section \ref{sec:methods.overview}. In section \ref{sec:methods.detailed} we develop the allocation score more carefully, using a decision theoretic procedure for deriving proper scoring rules. (See section \ref{sec:proper} of the supplement for a definition of a proper scoring rule
-and a more technical discussion of the procedure). In section \ref{sec:methods.related}, we note that another group of common scores including the quantile score, WIS, and CRPS, can also be derived from decision theoretic foundations \textemdash starting from a different decision making context.
+We begin with an informal description of the allocation score and some examples illustrating its key characteristics in
+section \ref{sec:methods.overview}. In section \ref{sec:methods.detailed} we develop the allocation score more
+carefully, using a decision theoretic procedure for deriving proper scoring rules. (See section \ref{sec:proper} of the
+supplement for a definition of a proper scoring rule and a more technical discussion of the procedure). In section
+\ref{sec:methods.related}, we note that another group of common scores including the quantile score, WIS, and CRPS, can
+also be derived from decision theoretic foundations \textemdash starting from a different decision making context.
 
 \subsection{Overview of Allocation Scoring}
 \label{sec:methods.overview}
 
-Suppose that a decision maker is tasked with determining how to allocate $K$ available units of a resource across $N$ locations.
-If the decision maker is provided with a multivariate forecast $F$ where each marginal forecast distribution $F_i$ predicts resource need in a particular location, one option is to choose the resource allocation that minimizes the expected total unmet need according to the forecast.
-We will give a more precise mathematical statement in section \ref{sec:methods.detailed}, but informally, the total expected unmet need according to the forecast is{}
+Suppose that a decision maker is tasked with determining how to allocate $K$ available units of a resource across $N$
+locations. If the decision maker is provided with a multivariate forecast $F$ where each marginal forecast distribution
+$F_i$ predicts resource need in a particular location, one option is to choose the resource allocation that minimizes
+the expected total unmet need according to the forecast. We will give a more precise mathematical statement in section
+\ref{sec:methods.detailed}, but informally, the total expected unmet need according to the forecast is
 \begin{align}
 \sum_{i=1}^N \mathbb{E}_{F_i}[\text{unmet need in location $i$}], \label{eqn:informal_objective}
 \end{align}
-where the unmet need in a particular location is the difference between resource need in that location and the number of resources that were allocated there.
-This allocation problem has an intuitively appealing solution: allocate so that the probabilities of need exceeding allocation in various locations are as close to each other as possible.
-This will lead to the allocations provided by $F$ being quantiles of the marginal distributions $F_i$ for some \emph{single} probability level $\tau$ that is shared in common for all locations.
+where the unmet need in a particular location is the difference between resource need in that location and the number of
+resources that were allocated there. This allocation problem has an intuitively appealing solution: allocate so that the
+probabilities of need exceeding allocation in various locations are as close to each other as possible. This will lead
+to the allocations provided by $F$ being quantiles of the marginal distributions $F_i$ for some \emph{single}
+probability level $\tau$ that is shared in common for all locations.
 
-After time passes and the actual level of resource need has been observed, the quality of a selected allocation can be measured by comparing the actual need in each location to the amount of resources that were sent there. Specifically, we compute the total unmet need that resulted from the selected allocation:
+After time passes and the actual level of resource need has been observed, the quality of a selected allocation can be
+measured by comparing the actual need in each location to the amount of resources that were sent there. Specifically, we
+compute the total unmet need that resulted from the selected allocation:
 \begin{align}
     \sum_{i=1}^N \text{unmet need in location $i$}. \label{eqn:informal_loss}
 \end{align}
 %We emphasize that in Equation \eqref{eqn:informal_loss} the calculation of unmet need is based on the actual resource need that was realized in each location, while in Equation \eqref{eqn:informal_objective} the calculation of unmet need was based on the forecast distribution of future levels of resource need.
-One allocation is better than another if it results in lower total unmet need, and one forecast is better than another if the allocation derived from it results in lower total unmet need.
+One allocation is better than another if it results in lower total unmet need, and one forecast is better than another
+if the allocation derived from it results in lower total unmet need.
 
-The \textbf{allocation score} of the forecast $F$ is the avoidable unmet need that results from using the allocation that minimizes the expected unmet need according to that forecast.
-By ``avoidable unmet need'', we mean that the allocation score does not include the amount of unmet need that was inevitable simply because the amount of available resources $K$ was less than the need for resources.
-Rather, the allocation score measures the unmet need that could have been avoided by an oracle that knows exactly how much need will occur in each location and divides the amount $K$ so that nothing is wasted in one location while it could be put to use in another. An allocation score of 0 is optimal, and indicates that no other allocation of resources could have met need better than the allocation suggested by $F$. A larger allocation score indicates that it would have been possible to improve upon the allocation suggested by $F$.
+The \textbf{allocation score} of the forecast $F$ is the avoidable unmet need that results from using the allocation
+that minimizes the expected unmet need according to that forecast. By ``avoidable unmet need'', we mean that the
+allocation score does not include the amount of unmet need that was inevitable simply because the amount of available
+resources $K$ was less than the need for resources. Rather, the allocation score measures the unmet need that could have
+been avoided by an oracle that knows exactly how much need will occur in each location and divides the amount $K$ so
+that nothing is wasted in one location while it could be put to use in another. An allocation score of 0 is optimal, and
+indicates that no other allocation of resources could have met need better than the allocation suggested by $F$. A
+larger allocation score indicates that it would have been possible to improve upon the allocation suggested by $F$.
 
-\paragraph{Example 1} Suppose we have a forecast $F$ for need in two locations with $F_1 = \mathrm{Exp}(1 / \sigma_1)$ and $F_2 = \mathrm{Exp}(1 / \sigma_2)$, where $\sigma_1 = 1$ and $\sigma_2 = 4$. The means of these distributions are given by the scale parameters $\sigma_i$. When the marginal forecasts are exponential distributions, it can be shown that the optimal allocation divides the available resources among the locations proportionally to the scale parameters $\sigma_i$ (see section
-\ref{sec:bayes-quantiles} of the supplemental materials). If $K = 5$ units of the resource are available, the optimal allocation according to $F$ would be 1 unit of resources in location 1 and 4 units of resources in location 2. If, on the other hand, $K = 10$ units are available, we will allocate 2 units of resources to location 1 and 8 units to location 2. Figure~\ref{fig:exp_alloc_example} illustrates the situation.
+\paragraph{Example 1} Suppose we have a forecast $F$ for need in two locations with $F_1 = \mathrm{Exp}(1 / \sigma_1)$
+and $F_2 = \mathrm{Exp}(1 / \sigma_2)$, where $\sigma_1 = 1$ and $\sigma_2 = 4$. The means of these distributions are
+given by the scale parameters $\sigma_i$. When the marginal forecasts are exponential distributions, it can be shown
+that the optimal allocation divides the available resources among the locations proportionally to the scale parameters
+$\sigma_i$ (see section \ref{sec:bayes-quantiles} of the supplemental materials). If $K = 5$ units of the resource are
+available, the optimal allocation according to $F$ would be 1 unit of resources in location 1 and 4 units of resources
+in location 2. If, on the other hand, $K = 10$ units are available, we will allocate 2 units of resources to location 1
+and 8 units to location 2. Figure~\ref{fig:exp_alloc_example} illustrates the situation.
 
 \begin{figure}
     \includegraphics[width=\textwidth]{../figures/exponential_pred_expected_loss.pdf}
-    \caption{An illustration of the resource allocation problem in Example 1. There are $N = 2$ locations, with predictive distributions $F_1 = \mathrm{Exp}(1)$ and $F_2 = \mathrm{Exp}(1/4)$. The cumulative distribution functions of these distributions are illustrated in the panels at bottom and right. In the center panel, the background shading corresponds to the expected loss according to these forecasts. Diagonal black lines indicate resource constraints at $K=5$ and $K=10$ units; any point along those lines corresponds to an allocation that meets the resource constraint. For these forecasts, the optimal allocations are $(1, 4)$ for $K=5$ and $(2, 8)$ for $K=10$. These allocations are at the point on the constraint line where the expected loss is smallest, which also corresponds to the point where a level set of the expected loss surface (blue curve) is tangent to the constraint.}
+    \caption{An illustration of the resource allocation problem in Example 1. There are $N = 2$ locations, with
+    predictive distributions $F_1 = \mathrm{Exp}(1)$ and $F_2 = \mathrm{Exp}(1/4)$. The cumulative distribution
+    functions of these distributions are illustrated in the panels at bottom and right. In the center panel, the
+    background shading corresponds to the expected loss according to these forecasts. Diagonal black lines indicate
+    resource constraints at $K=5$ and $K=10$ units; any point along those lines corresponds to an allocation that meets
+    the resource constraint. For these forecasts, the optimal allocations are $(1, 4)$ for $K=5$ and $(2, 8)$ for
+    $K=10$. These allocations are at the point on the constraint line where the expected loss is smallest, which also
+    corresponds to the point where a level set of the expected loss surface (blue curve) is tangent to the constraint.}
     \label{fig:exp_alloc_example}
 \end{figure}
 
-Next suppose that we observe resource needs of 1 and 10 in locations 1 and 2, respectively.
-Based on these observed needs, we can measure the quality of the allocation suggested by the forecast by calculating the amount of unmet need that resulted from that allocation over and above what was unavoidable given the resource constraint.
-With $K = 5$ units of the resource, the allocation based on the forecast exactly meets the observed need in location 1, but it leaves 6 units of need unmet in location 2.
-However, working within the resource constraint, no other allocation could have done better: for example, allocating 0 units of resources to location 1 and 5 to location 2 still results in a total unmet need of 6 across both locations. Therefore, the forecast's allocation score is 0 with $K = 5$.
-On the other hand, when $K = 10$, the forecast's allocation results in $10 - 8 = 2$ units of unmet need in location 2 despite leaving no need unmet in location 1.
-In this case, the oracle would be able to prevent all but 1 of the total 11 units of need from going unmet, for example by allocating 1 unit of resources to location 1 and the remaining 9 units of resources to location 2.
-The allocation score for the forecast when $K = 10$ would therefore be 1 (= 2 realized $-$ 1 unavoidable) in units of avoidable unmet need.
+Next suppose that we observe resource needs of 1 and 10 in locations 1 and 2, respectively. Based on these observed
+needs, we can measure the quality of the allocation suggested by the forecast by calculating the amount of unmet need
+that resulted from that allocation over and above what was unavoidable given the resource constraint. With $K = 5$ units
+of the resource, the allocation based on the forecast exactly meets the observed need in location 1, but it leaves 6
+units of need unmet in location 2. However, working within the resource constraint, no other allocation could have done
+better: for example, allocating 0 units of resources to location 1 and 5 to location 2 still results in a total unmet
+need of 6 across both locations. Therefore, the forecast's allocation score is 0 with $K = 5$. On the other hand, when
+$K = 10$, the forecast's allocation results in $10 - 8 = 2$ units of unmet need in location 2 despite leaving no need
+unmet in location 1. In this case, the oracle would be able to prevent all but 1 of the total 11 units of need from
+going unmet, for example by allocating 1 unit of resources to location 1 and the remaining 9 units of resources to
+location 2. The allocation score for the forecast when $K = 10$ would therefore be 1 (= 2 realized $-$ 1 unavoidable) in
+units of avoidable unmet need.
 
-These scores illustrate a general result: allocation scores for a forecast will tend to be larger when the resource constraint is close to the observed need, because this is when it matters most which locations are allocated more or less resources. If the amount of available resources is small relative to the observed need, any allocation of those limited resources will result in a large amount of unmet need. If the amount of available resources is comparatively large, it becomes less important which locations receive relatively more or fewer resources because all locations will receive enough resources to meet their need. In either of these extremes of resource availability, the avoidable unmet need that arises from the allocation suggested by a forecast (i.e., the forecast's allocation score) will tend to be small.
+These scores illustrate a general result: allocation scores for a forecast will tend to be larger when the resource
+constraint is close to the observed need, because this is when it matters most which locations are allocated more or
+less resources. If the amount of available resources is small relative to the observed need, any allocation of those
+limited resources will result in a large amount of unmet need. If the amount of available resources is comparatively
+large, it becomes less important which locations receive relatively more or fewer resources because all locations will
+receive enough resources to meet their need. In either of these extremes of resource availability, the avoidable unmet
+need that arises from the allocation suggested by a forecast (i.e., the forecast's allocation score) will tend to be
+small.
 
-\paragraph{Example 2} Now consider a different forecast that also has exponential distributions for resource need in each location, but that has the scale parameters $\sigma_1 = 2$ and $\sigma_2 = 8$, twice as large as the scale parameters of the forecast in Example 1. Because the optimal allocation is proportional to the scale parameters, this forecast would lead to the same allocations as the forecast in Example 1, and would therefore be assigned the same allocation score.
+\paragraph{Example 2} Now consider a different forecast that also has exponential distributions for resource need in
+each location, but that has the scale parameters $\sigma_1 = 2$ and $\sigma_2 = 8$, twice as large as the scale
+parameters of the forecast in Example 1. Because the optimal allocation is proportional to the scale parameters, this
+forecast would lead to the same allocations as the forecast in Example 1, and would therefore be assigned the same
+allocation score.
 
-Examination of these results leads to two observations. First, the reason that these forecasts had a positive (i.e., non-optimal) allocation score at $K=10$ is that they did not get the relative magnitude of resource need across the two locations right: the realized need was 10 times as large in location 2 as in location 1, but the forecasts only indicated that the resource allocation for location 2 should be 4 times the allocation for location 1.
-At its core, the allocation score measures whether the forecast accurately captures the relative magnitudes of resource need across different locations, which is precisely the information that is needed to allocate resources to those locations subject to a fixed resource constraint.
+Examination of these results leads to two observations. First, the reason that these forecasts had a positive (i.e.,
+non-optimal) allocation score at $K=10$ is that they did not get the relative magnitude of resource need across the two
+locations right: the realized need was 10 times as large in location 2 as in location 1, but the forecasts only
+indicated that the resource allocation for location 2 should be 4 times the allocation for location 1. At its core, the
+allocation score measures whether the forecast accurately captures the relative magnitudes of resource need across
+different locations, which is precisely the information that is needed to allocate resources to those locations subject
+to a fixed resource constraint.
 
-A second observation is that the forecasts in examples 1 and 2 predicted different mean levels of resource needs, but had the same allocation score.
-The allocation score does not directly measure whether the forecasts correctly capture the absolute magnitude of resource need in each individual location.
-This stands in contrast to other common scoring methods that aggregate scores such as log score, CRPS, or WIS for each location, where a poor forecast for one location is penalized regardless of alignments in other units.
+A second observation is that the forecasts in examples 1 and 2 predicted different mean levels of resource needs, but
+had the same allocation score. The allocation score does not directly measure whether the forecasts correctly capture
+the absolute magnitude of resource need in each individual location. This stands in contrast to other common scoring
+methods that aggregate scores such as log score, CRPS, or WIS for each location, where a poor forecast for one location
+is penalized regardless of alignments in other units.
 %Note that we do not claim that the allocation score is generically preferable to these other scores \textemdash rather, it provides a view of forecast performance that is specifically tuned to the context of decision making about resource allocations.
 
 \subsection{A decision theoretic development of the allocation score}
