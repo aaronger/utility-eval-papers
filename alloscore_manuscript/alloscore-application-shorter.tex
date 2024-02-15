@@ -583,7 +583,7 @@ The JHUAPL-Bucky model had the second best MWIS but the third worst allocation s
 
 
 % latex table generated in R 4.3.1 by xtable 1.8-4 package
-% Wed Feb 14 01:08:30 2024
+% Thu Feb 15 02:01:02 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrrr}
@@ -626,15 +626,16 @@ CU-select & 669 & 133 & 774 & 326 \\
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}
-\includegraphics[width=\maxwidth]{figure/thermometer-plot-1} \caption[Probabilistic forecasts for new hospital admissions and the inferred resource allocations for COVID-19 on January 3, 2022 for the states with the ten highest hospitalization counts]{Probabilistic forecasts for new hospital admissions and the inferred resource allocations for COVID-19 on January 3, 2022 for the states with the ten highest hospitalization counts. For each state, the dark black line shows the data observed when the forecast was made and the grey line shows eventually observed counts. The side-by-side shaded regions show the median (solid red horizontal line) and 50\%, 80\% and 95\% prediction intervals for the two selected models. The forecasts were made for new hospitalizations on January 3, 2022 (vertical dashed line, with number of hospitalizations indicated by red horizontal line segment at the intersection of the dashed line and the grey line of data). The vertical bars with purple, blue and red shading show the allocations. The purple bar goes from zero to the amount of need that was met by the allocation from that model to a specific location. A red bar indicates need that exceeded the resource allocation for a location, and a light blue bar shows the amount by which the resource allocation suggested by that model exceeded the need for that location.}\label{fig:thermometer-plot}
+\includegraphics[width=\maxwidth]{figure/thermometer-plot-1} \caption[Probabilistic forecasts for new COVID-19 hospital admissions on January 3, 2022 and their suggested resource allocations for the states with the ten highest (eventually observed) hospitalization counts]{Probabilistic forecasts for new COVID-19 hospital admissions on January 3, 2022 and their suggested resource allocations for the states with the ten highest (eventually observed) hospitalization counts. For each state, the dark black line shows the data observed when the forecast was made and the grey line shows eventually observed counts. The side-by-side shaded regions show the median (solid red horizontal line) and 50\%, 80\% and 95\% prediction intervals for the two selected models. The forecasts were made for new hospitalizations on January 3, 2022 (vertical dashed line, with number of hospitalizations indicated by red horizontal line segment at the intersection of the dashed line and the grey line of data). The vertical bars with purple, blue and red shading show the allocations. The purple bar goes from zero to the amount of need that was met by the allocation from that model to a specific location. A red bar indicates need that exceeded the resource allocation for a location, and a light blue bar shows the amount by which the resource allocation suggested by that model exceeded the need for that location.}\label{fig:thermometer-plot}
 \end{figure}
 
 \end{knitrout}
 
-A comparison of the forecasts from the JHUAPL-Bucky and CU-select models shows that while the JHUAPL-Bucky forecast distributions were closer to the eventual observations in many states, the allocations suggested by those forecasts often were more inefficient than those from the CU-select model (Figure \ref{fig:thermometer-plot}).
-In the example of this one week, JHUAPL-Bucky had a worse allocation score than CU-select because its forecasts led to allocations that sent excess resources to several states, such as Ohio, Pennsylvania, and Michigan, that would have been more effectively allocated to states that did receive enough resources to meet their needs, such as Florida and California (Figure \ref{fig:multi-loc-ranks}A). These allocation errors resulted because that model’s forecasts did not consistently capture the relative resource needs across different states. (Figure \ref{fig:thermometer-plot} \& \ref{fig:multi-loc-ranks}A). The CU-select model made some similar errors — most prominently, over-allocating resources to Ohio — but overall, it did a better job of forecasting the relative resource demands across different locations.
+A state-wise comparison using Figures \ref{fig:thermometer-plot} and \ref{fig:multi-loc-ranks}A of the JHUAPL-Bucky and CU-select models shows that while the JHUAPL-Bucky forecast distributions were more centered on the eventual observations in many states, the suggested allocations of the JHUAPL-Bucky model were less efficient than those of the CU-select model.
+Thus JHUAPL-Bucky achieved a worse allocation score than CU-select (on this particular week) by allocating excess resources to several states, such as Pennsylvania and Michigan, rather than to states such as Florida and California where
+these resources would have reduced unmet need.  These allocation errors of JHUAPL-Bucky resulted from forecasts failing to consistently capture the relative resource needs across different states. The CU-select model made some similar errors — most prominently, over-allocating resources to Ohio — but overall, it more successfully forecasted the resource demands across different locations in relative terms.
 
-On the other hand, CU-select had worse performance as measured by WIS. Its forecasts were biased downwards, and it consistently incurred a large penalty for underprediction (Figure \ref{fig:multi-loc-ranks}B). Predictions from the JHUAPL-Bucky model were wider, and included the observed level of daily hospital admissions more often. Therefore, it did not receive as severe penalties for forecasts that underpredicted or overpredicted the actual hospitalization count.
+On the other hand, CU-select had worse performance as measured by MWIS. Its forecasts were biased downwards, and it consistently incurred a large penalty for underprediction (Figure \ref{fig:multi-loc-ranks}B). The JHUAPL-Bucky model had wider predictive intervals which more often included the observed level of daily hospital admissions. Its MWIS was therefore less severely penalized by under- or over-predictions of the actual hospitalization counts.
 
 %Together, these results corroborate the understanding that the allocation score and weighted interval score measure different aspects of forecast performance. The allocation score penalizes models that mischaracterize the relative magnitude of resource need across different locations, while WIS penalizes forecasts that do not capture the absolute magnitude of the target quantity in each location.
 
@@ -683,12 +684,12 @@ The COVIDhub-ensemble had the best MAS across all weeks, the per-capita allocati
 No individual model had a better MAS than the per-capita allocation.
 
 Most models were ranked similarly when evaluated using mean allocation scores (MAS) and mean weighted interval scores (MWIS), with some places of disagreement.
-The the four most accurate and the five least accurate models were the same according to both metrics, although not in exactly the same order (Table \ref{tab:multi-week-performance-summary}).
-(This comparison excludes the per-capita method which can be used to suggest allocations but does not make probabilistic forecasts and therefore cannot have a WIS.)
-Notably, the best model according to MWIS was the JHUAPL-SLPHospEns model, but this model only had the fourth best allocation scores.
+The four most accurate and the five least accurate models were the same according to both metrics, although not in exactly the same order (Table \ref{tab:multi-week-performance-summary}).
+(This comparison excludes the per-capita allocation which does not use forecasts and therefore cannot have a WIS.)
+Notably, the best model according to MWIS was the JHUAPL-SLPHospEns model, but this model had only the fourth best MAS.
 
 % latex table generated in R 4.3.1 by xtable 1.8-4 package
-% Wed Feb 14 01:08:35 2024
+% Thu Feb 15 02:01:06 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrr}
@@ -707,7 +708,8 @@ COVIDhub-ensemble & 389 & 70 \\
   USC-SI\_kJalpha & 1473 & 155 \\ 
    \hline
 \end{tabular}
-\caption{Mean weighted interval scores (MWIS) and mean allocation scores (MAS) by model across 13 weeks. For the nine models that submitted forecasts for every week from 2021-11-29 through 2022-02-21, plus a per-capita allocation, these results show the average performance of each model across all weeks. Lower scores indicate better performance, and models are sorted with the most accurate allocations at the top. WIS is not defined for the per-capita model as this approach only provides a mechanism to allocate resources, it does not provide probabilistic forecasts.} 
+\caption{Mean weighted interval scores (MWIS) and mean allocation scores (MAS) by model across 13 weeks. These results show the average performance across time for the nine models that submitted forecasts for every week from 2021-11-29 through 2022-02-21, as well
+  as for a per-capita allocation. WIS is not defined for the per-capita allocation which does not use forecasts.} 
 \label{tab:multi-week-performance-summary}
 \end{table}
 
@@ -755,7 +757,7 @@ Model rankings based on the AC and the centered IAS were roughly similar, with t
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}
-\includegraphics[width=\maxwidth]{figure/multi-k-1} \caption[Allocation scores (AS) across different resource constraints ($K$) for 10 models that made forecasts on 2021-12-20]{Allocation scores (AS) across different resource constraints ($K$) for 10 models that made forecasts on 2021-12-20. Panel A shows, for each model, the AS for values of $K$ between 200 and 60,000 at increments of 200. The AS show a sharp peak just under 20,000, near the eventually observed number of hospitalizations. Panel B shows two possible weighting functions for the Integrated Allocation Score (IAS). The first (dark blue circles) computes weights proportional to a normal distribution centered at 15,000 (solid vertical gray line) with a standard deviation of 3,000, and truncated to be between 5,000 and 25,000. The second (light orange triangles) uses a uniform weight for all possible values of $K$. Note that the AS used in earlier sections of the application uses the single fixed value of $K=15,000$.  Panel C shows how either method of computing the IAS ($y$-axis) is correlated with AS at $K=15,000$ ($x$-axis). Every point represents the AS and IAS for one model. The IAS centered at 15,000 are more closely correlated with the AS values.}\label{fig:multi-k}
+\includegraphics[width=\maxwidth]{figure/multi-k-1} \caption[Allocation scores (AS) across different resource constraints ($K$) for 10 models that made forecasts on 2021-12-20]{Allocation scores (AS) across different resource constraints ($K$) for 10 models that made forecasts on 2021-12-20. Panel A shows, for each model, the AS for values of $K$ between 200 and 60,000 at increments of 200. The AS show a sharp peak just under 20,000, near the eventually observed number of hospitalizations. Two possible weighting functions for the Integrated Allocation Score (IAS) are shown. The first (blue shaded area) computes weights proportional to a normal distribution centered at 15,000 with a standard deviation of 3,000, and truncated to be between 5,000 and 25,000. The second (orange shaded area) uses a uniform weight for all possible values of $K$. Note that the AS used in earlier sections of the application uses the single fixed value of $K=15,000$.  Panel B shows how the two versions of the IAS ($y$-axis) correlate with the AS at $K=15,000$ ($x$-axis). Every point represents the AS at 15,000 and a version of the IAS for one model. As we would expect, the IAS centered at 15,000 (circles) is more closely correlated with the AS at 15,000 than is the uniform IAS (triangles).}\label{fig:multi-k}
 \end{figure}
 
 \end{knitrout}

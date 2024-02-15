@@ -540,6 +540,12 @@ tar_load("truth_data")
 tar_load("forecast_data")
 tar_load("percap")
 
+model_palette <- setNames(
+  hcl(h = seq(15, 375, length = 18), l = 65, c = 100),
+  c(unique(forecast_data$model), "per-capita"))
+model_palette["JHUAPL-Bucky"] <- "thistle"
+model_palette["CU-select"] <- "wheat"
+
 Kat15k_alloscores <- bind_rows(Kat15k_alloscores, percap |> filter(K == 15000))
 
 alloscore_data_summaries <- Kat15k_alloscores |>
@@ -691,7 +697,7 @@ FL_diff <- round(FL_allocs["CU-select"] - FL_allocs["JHUAPL-Bucky"])
 %In California, New York and Texas, the eventually observed number of hospital admissions was closer to the predicted median from JHUAPL-Bucky than the median from CU-select, and was contained in JHUAPL-Bucky's 80\% PI but not in the 80\% PI from CU-select. However for each of these three states, the resource allocation was lower for JHUAPL-Bucky than for CU-select and therefore resulted in more hypothetical unmet need.
 %In Florida, which was the state that saw the largest number of reported hospitalizations on this target date, the forecast from JHUAPL-Bucky missed by a wide margin (as did the forecast from CU-select) and the allocation was \Sexpr{FL_diff} units lower than the allocation derived from the CU-select model.
 
-<<thermometer-plot, fig.height=7, fig.width=7.5, fig.cap="Probabilistic forecasts for new hospital admissions and the inferred resource allocations for COVID-19 on January 3, 2022 for the states with the ten highest hospitalization counts. For each state, the dark black line shows the data observed when the forecast was made and the grey line shows eventually observed counts. The side-by-side shaded regions show the median (solid red horizontal line) and 50%, 80% and 95% prediction intervals for the two selected models. The forecasts were made for new hospitalizations on January 3, 2022 (vertical dashed line, with number of hospitalizations indicated by red horizontal line segment at the intersection of the dashed line and the grey line of data). The vertical bars with purple, blue and red shading show the allocations. The purple bar goes from zero to the amount of need that was met by the allocation from that model to a specific location. A red bar indicates need that exceeded the resource allocation for a location, and a light blue bar shows the amount by which the resource allocation suggested by that model exceeded the need for that location.">>=
+<<thermometer-plot, fig.height=7, fig.width=7.5, fig.cap="Probabilistic forecasts for new COVID-19 hospital admissions on January 3, 2022 and their suggested resource allocations for the states with the ten highest (eventually observed) hospitalization counts. For each state, the dark black line shows the data observed when the forecast was made and the grey line shows eventually observed counts. The side-by-side shaded regions show the median (solid red horizontal line) and 50%, 80% and 95% prediction intervals for the two selected models. The forecasts were made for new hospitalizations on January 3, 2022 (vertical dashed line, with number of hospitalizations indicated by red horizontal line segment at the intersection of the dashed line and the grey line of data). The vertical bars with purple, blue and red shading show the allocations. The purple bar goes from zero to the amount of need that was met by the allocation from that model to a specific location. A red bar indicates need that exceeded the resource allocation for a location, and a light blue bar shows the amount by which the resource allocation suggested by that model exceeded the need for that location.">>=
 source("R/plot_functions.R")
 
 locs_to_plot <- truth_data |>
@@ -721,14 +727,15 @@ plot_hosp(models = c("JHUAPL-Bucky", "CU-select"),
             dplyr::mutate(
               abbreviation = factor(abbreviation, levels=locs_to_plot, ordered=TRUE),
               geo_value = abbreviation),
-          f_colors = c("thistle", "wheat"),
+          f_colors = model_palette[c("JHUAPL-Bucky", "CU-select")],
           one_K = 15000) + labs(x = NULL)
 @
 
-A comparison of the forecasts from the JHUAPL-Bucky and CU-select models shows that while the JHUAPL-Bucky forecast distributions were closer to the eventual observations in many states, the allocations suggested by those forecasts often were more inefficient than those from the CU-select model (Figure \ref{fig:thermometer-plot}).
-In the example of this one week, JHUAPL-Bucky had a worse allocation score than CU-select because its forecasts led to allocations that sent excess resources to several states, such as Ohio, Pennsylvania, and Michigan, that would have been more effectively allocated to states that did receive enough resources to meet their needs, such as Florida and California (Figure \ref{fig:multi-loc-ranks}A). These allocation errors resulted because that model’s forecasts did not consistently capture the relative resource needs across different states. (Figure \ref{fig:thermometer-plot} \& \ref{fig:multi-loc-ranks}A). The CU-select model made some similar errors — most prominently, over-allocating resources to Ohio — but overall, it did a better job of forecasting the relative resource demands across different locations.
+A state-wise comparison using Figures \ref{fig:thermometer-plot} and \ref{fig:multi-loc-ranks}A of the JHUAPL-Bucky and CU-select models shows that while the JHUAPL-Bucky forecast distributions were more centered on the eventual observations in many states, the suggested allocations of the JHUAPL-Bucky model were less efficient than those of the CU-select model.
+Thus JHUAPL-Bucky achieved a worse allocation score than CU-select (on this particular week) by allocating excess resources to several states, such as Pennsylvania and Michigan, rather than to states such as Florida and California where
+these resources would have reduced unmet need.  These allocation errors of JHUAPL-Bucky resulted from forecasts failing to consistently capture the relative resource needs across different states. The CU-select model made some similar errors — most prominently, over-allocating resources to Ohio — but overall, it more successfully forecasted the resource demands across different locations in relative terms.
 
-On the other hand, CU-select had worse performance as measured by WIS. Its forecasts were biased downwards, and it consistently incurred a large penalty for underprediction (Figure \ref{fig:multi-loc-ranks}B). Predictions from the JHUAPL-Bucky model were wider, and included the observed level of daily hospital admissions more often. Therefore, it did not receive as severe penalties for forecasts that underpredicted or overpredicted the actual hospitalization count.
+On the other hand, CU-select had worse performance as measured by MWIS. Its forecasts were biased downwards, and it consistently incurred a large penalty for underprediction (Figure \ref{fig:multi-loc-ranks}B). The JHUAPL-Bucky model had wider predictive intervals which more often included the observed level of daily hospital admissions. Its MWIS was therefore less severely penalized by under- or over-predictions of the actual hospitalization counts.
 
 %Together, these results corroborate the understanding that the allocation score and weighted interval score measure different aspects of forecast performance. The allocation score penalizes models that mischaracterize the relative magnitude of resource need across different locations, while WIS penalizes forecasts that do not capture the absolute magnitude of the target quantity in each location.
 
@@ -854,6 +861,7 @@ p1 <- ggplot(dat_to_plot,
 p2 <- ggplot(alloscore_data_summaries,
              aes(x=target_end_date, y=alloscore, color=model, shape=model)) +
   scale_x_date(limits=range(score_data_summaries$target_end_date)) +
+  scale_color_manual(values = model_palette) +
   scale_shape_manual(values=c(15:18, 4, 6, 15:18, 4, 6, 15:18, 4, 6)) +
   scale_linewidth_manual(values = c(.5,1.5)) +
   ylab("Allocation score") +
@@ -866,6 +874,7 @@ p4 <- ggplot(bind_rows(score_data_summaries, percap %>%
                          mutate(reference_date = as.Date(reference_date))),
              aes(x=target_end_date, y=mwis, color=model,shape=model)) +
   geom_point() + geom_line() +
+  scale_color_manual(values = model_palette) +
   scale_shape_manual(values=c(15:18, 4, 6, 15:18, 4, 6, 15:18, 4, 6)) +
   xlab("Forecast target date") +
   ylab("MWIS")+
@@ -927,9 +936,9 @@ The COVIDhub-ensemble had the best MAS across all weeks, the per-capita allocati
 No individual model had a better MAS than the per-capita allocation.
 
 Most models were ranked similarly when evaluated using mean allocation scores (MAS) and mean weighted interval scores (MWIS), with some places of disagreement.
-The the four most accurate and the five least accurate models were the same according to both metrics, although not in exactly the same order (Table \ref{tab:multi-week-performance-summary}).
-(This comparison excludes the per-capita method which can be used to suggest allocations but does not make probabilistic forecasts and therefore cannot have a WIS.)
-Notably, the best model according to MWIS was the JHUAPL-SLPHospEns model, but this model only had the fourth best allocation scores.
+The four most accurate and the five least accurate models were the same according to both metrics, although not in exactly the same order (Table \ref{tab:multi-week-performance-summary}).
+(This comparison excludes the per-capita allocation which does not use forecasts and therefore cannot have a WIS.)
+Notably, the best model according to MWIS was the JHUAPL-SLPHospEns model, but this model had only the fourth best MAS.
 
 <<table-score-summary-all-weeks, results='asis'>>=
 all_scores |>
@@ -941,7 +950,8 @@ all_scores |>
   filter(N > 12) |>
   arrange(MAS) |>
   select(model, MAS, MWIS) |>
-  xtable::xtable(caption = "Mean weighted interval scores (MWIS) and mean allocation scores (MAS) by model across 13 weeks. For the nine models that submitted forecasts for every week from 2021-11-29 through 2022-02-21, plus a per-capita allocation, these results show the average performance of each model across all weeks. Lower scores indicate better performance, and models are sorted with the most accurate allocations at the top. WIS is not defined for the per-capita model as this approach only provides a mechanism to allocate resources, it does not provide probabilistic forecasts.",
+  xtable::xtable(caption = "Mean weighted interval scores (MWIS) and mean allocation scores (MAS) by model across 13 weeks. These results show the average performance across time for the nine models that submitted forecasts for every week from 2021-11-29 through 2022-02-21, as well
+  as for a per-capita allocation. WIS is not defined for the per-capita allocation which does not use forecasts.",
                  digits = 0,
                  label = "tab:multi-week-performance-summary") |>
   print(include.rownames = FALSE, NA.string = "-")
@@ -1010,49 +1020,71 @@ Both versions of the IAS were correlated with the original AS conducted at $K=15
 Model rankings based on the AC and the centered IAS were roughly similar, with the top and bottom three approaches being the same for both scores (Table \ref{tab:multi-k-scores}).
 
 
-<<multi-k, fig.height=10, fig.width = 8, fig.cap = "Allocation scores (AS) across different resource constraints ($K$) for 10 models that made forecasts on 2021-12-20. Panel A shows, for each model, the AS for values of $K$ between 200 and 60,000 at increments of 200. The AS show a sharp peak just under 20,000, near the eventually observed number of hospitalizations. Panel B shows two possible weighting functions for the Integrated Allocation Score (IAS). The first (dark blue circles) computes weights proportional to a normal distribution centered at 15,000 (solid vertical gray line) with a standard deviation of 3,000, and truncated to be between 5,000 and 25,000. The second (light orange triangles) uses a uniform weight for all possible values of $K$. Note that the AS used in earlier sections of the application uses the single fixed value of $K=15,000$.  Panel C shows how either method of computing the IAS ($y$-axis) is correlated with AS at $K=15,000$ ($x$-axis). Every point represents the AS and IAS for one model. The IAS centered at 15,000 are more closely correlated with the AS values.">>=
+<<multi-k, fig.height=5, fig.width = 8, fig.cap = "Allocation scores (AS) across different resource constraints ($K$) for 10 models that made forecasts on 2021-12-20. Panel A shows, for each model, the AS for values of $K$ between 200 and 60,000 at increments of 200. The AS show a sharp peak just under 20,000, near the eventually observed number of hospitalizations. Two possible weighting functions for the Integrated Allocation Score (IAS) are shown. The first (blue shaded area) computes weights proportional to a normal distribution centered at 15,000 with a standard deviation of 3,000, and truncated to be between 5,000 and 25,000. The second (orange shaded area) uses a uniform weight for all possible values of $K$. Note that the AS used in earlier sections of the application uses the single fixed value of $K=15,000$.  Panel B shows how the two versions of the IAS ($y$-axis) correlate with the AS at $K=15,000$ ($x$-axis). Every point represents the AS at 15,000 and a version of the IAS for one model. As we would expect, the IAS centered at 15,000 (circles) is more closely correlated with the AS at 15,000 than is the uniform IAS (triangles).">>=
 
+  
 ias_to_plot <- left_join(ias, as) |>
   pivot_longer(cols = c(IAS, IAS_wt), names_to = "IAS_type", values_to = "IAS") |>
   mutate(IAS_type = ifelse(IAS_type=="IAS", "uniform", "centered at 15,000"))
 
-p1 <- ggplot(ias_to_plot, aes(x=AS, y=IAS, color=IAS_type, shape=IAS_type)) +
+model_palette_ias <- model_palette[unique(ias_to_plot$model)]
+model_linetypes <- setNames(rep(
+  c("solid",
+    "dashed",
+    "dotted",
+    "dotdash",
+    "longdash", "twodash"),
+  length.out = length(model_palette_ias)
+), names(model_palette_ias))
+model_linetypes["per-capita"] <- "solid"
+model_linewidths <- setNames(rep(.5,
+  length.out = length(model_palette_ias)
+), names(model_palette_ias))
+model_linewidths["per-capita"] <- 1.5
+
+p1 <- ggplot(ias_to_plot, aes(x=AS, y=IAS, group=IAS_type, color=model, shape=IAS_type)) +
   geom_point() +
-  geom_smooth(method="lm", se=FALSE, linetype=2) +
-  scale_color_manual(name = "Integrated allocation score weighting", values = c("#386cb0", "#fdc086")) +
+  geom_smooth(aes(color = IAS_type), method="lm", se=FALSE, linetype=2) +
+  scale_color_manual(guide = "none", values = c(model_palette, "uniform" = "#fdc086", "centered at 15,000" = "#386cb0")) +
+  #scale_color_manual(name = "Integrated allocation score weighting", values = c("#386cb0", "#fdc086")) +
   scale_shape_manual(name = "Integrated allocation score weighting", values = c(1, 2)) +
   geom_abline(slope=1, intercept=0, color="gray") +
   xlab(expression(paste('Allocation score at ', italic('K'), ' = 15,000'))) +
   ylab("Integrated allocation score") +
-  theme(legend.position = c(0.05,.9), legend.justification = c(0,1),
+  theme(legend.position = c(0.03,.95), legend.justification = c(0,1),
         legend.background=element_rect(fill = alpha("white", 0.2)))
-
-p2 <- slim_alloscore_2021.12.20 |>
-  group_by(model, K) |>
-  summarize(`Allocation score` = sum(components)) |>
-  left_join(kprobs) |>
-  ggplot(aes(x=K)) +
-  geom_point(aes(y=weight), color = "#386cb0") +
-  geom_point(y=1/length(unique(slim_alloscore_2021.12.20$K)), color="#fdc086", shape = 2) +
-  geom_vline(xintercept = 15000, color="gray") +
-  xlab(expression(paste(italic('K')))) +
-  ylab("Weight")
 
 p3 <- slim_alloscore_2021.12.20 |>
   group_by(model, K) |>
   summarize(`Allocation score` = sum(components)) |>
   mutate(model = factor(model, levels = rev(ias$model))) |>
-  ggplot(aes(x=K, y=`Allocation score`, color=model, linetype=model)) +
-  geom_line() +
+  ggplot(aes(x=K)) +
+  geom_line(aes(y=`Allocation score`, color=model, linetype = model, 
+                linewidth = model)) +
+  geom_area(data = kprobs, aes(x = K, y=200000*weight), fill = "#386cb0", alpha = .3) +	
+  geom_area(aes(y=200000/length(unique(slim_alloscore_2021.12.20$K))), fill="#fdc086", alpha = .3) +
   xlab(expression(paste(italic('K')))) +
-  theme(legend.position = c(0.01,.99), legend.justification = c(0,1),
-        legend.background=element_rect(fill = alpha("white", 0.2)),
-        legend.title = element_blank(), legend.text = element_text(size=7))
+  scale_color_manual(values = model_palette) +
+  scale_linetype_manual(values = model_linetypes) +
+  scale_linewidth_manual(values = model_linewidths) +
+  theme(legend.position = "none", legend.title = element_blank()) 
 
-cowplot::plot_grid(p3, p2, p1,
-                   nrow=3,
-                   align = "h",
-                   labels = "AUTO")
+p3_leg <- p3 + theme(legend.position = "bottom", legend.title = element_blank()) 
+
+leg3 <- cowplot::get_legend(p3_leg)
+
+cowplot::plot_grid(
+  cowplot::plot_grid(
+    p3,p1,
+    ncol = 2,
+    align = "h",
+    labels = "AUTO",
+    hjust = -2
+  ),
+  leg3,
+  ncol = 1,
+  rel_heights = c(1, 0.3)
+)
 @
 
 
