@@ -523,8 +523,11 @@ The hospitalization data used for scoring forecasts were downloaded on February 
 \subsection{Evaluation metrics}
 
 We evaluated forecasts using the allocation score (AS) and the weighted interval score (WIS), computed at a horizon of
-14 days. For this analysis, we fixed the resource constraint used for the AS to be $K=15,000$, based roughly on a
-reported number of ventilators available for reallocation in the US \citep{ajao_assessing_2015}. We computed the mean
+14 days. We chose to focus much of our analysis on the AS computed for a resource constraint of $K=15,000$. This level provides
+an anchor for interesting comparisons between phases of the Omicron wave by representing a national shortage at the peak and
+a national excess before and after the wave (see Figure \ref{fig:metrics-over-time}A), assuming that the resource need corresponds 
+directly to new hospital admissions.
+We additionally computed the mean
 WIS (MWIS) across all of the forecasted state-level locations. 
 
 For both scores, we also computed standardized ranks among all models that submitted forecasts each week. The
@@ -605,7 +608,7 @@ allocation score while the USC-SI\_kJalpha model had the most accurate forecasts
 
 
 % latex table generated in R 4.3.1 by xtable 1.8-4 package
-% Fri Feb 16 13:15:57 2024
+% Fri Feb 16 20:39:10 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrrr}
@@ -712,7 +715,7 @@ according to both metrics, although not in exactly the same order (Table \ref{ta
 Notably, the JHUAPL-SLPHospEns model ranked best on taMWIS but had only the fourth best MAS.
 
 % latex table generated in R 4.3.1 by xtable 1.8-4 package
-% Fri Feb 16 13:16:01 2024
+% Fri Feb 16 20:39:15 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrr}
@@ -822,23 +825,27 @@ logistical considerations depending on the geographical scales, and (c) would li
 perfectly so) with hospitalization data. However, this example has limitations in that not everyone who is hospitalized
 needs a ventilator, and new hospital admissions may not be the best stand in for a need that corresponds to a prevalence
 of severe cases. Other possible real-world examples include the allocation of a limited stockpile of vaccinations
-\citep{araz_geographic_2012,persad_fair_2023} or diagnostic tests \citep{du_optimal_2022,pasco_covid-19_2023}. While
+\citep{araz_geographic_2012,persad_fair_2023} or diagnostic tests \citep{du_optimal_2022,pasco_covid-19_2023}.
+
+While
 there may be limitations in this specific pairing of a resource and forecasted outcome, we emphasize that the important
 result from this work is how evaluating forecasts using a fundamentally different kind of score can illuminate
 previously hidden aspects of value in forecasts. In this setting, the feature of a forecast that emerges as being
 important is that the probabilistic forecasts predict the relative magnitudes between locations accurately, even if the
 absolute magnitudes are inaccurate.
 
-In practice, there are many potential users of forecasts with many different decision making problems. While outcomes of
-some decisions could potentially be specified by loss functions, other uses for forecasts may be less quantifiable, such
-as when forecasts are used to inform a general sense of situational awareness that may feed in unmeasurable ways into
-other decisions. Even those that are easily framed as expected loss minimization may differ enough that no single score
+In practice, epidemiological forecasts are often directed at a diverse set of end-users. It may be easy for some of these
+users to summarize the consequences of how they use a forecast with a numerical loss function, but for others, such
+as officials deciding how best to update public ``situational awareness'' of an outbreak, this may be essentially impossible.
+Even those forecast uses that are easily framed as expected loss minimization 
+may differ enough 
+that no single score
 would be appropriate for all users. Ideally, targeted forecasting tools could be developed through close collaboration
 between modelers and public health officials. However, this may only be possible in settings with sufficient staffing on
 both an analytics and a public health team. Increasingly, collaborative modeling hubs are being used to generate
 ``one-size-fits-all'' forecasts for many locations at once. But it could still be beneficial in these settings to expand
-the set of scoring methods used by the hub to include scores based on specific public health decision problems, such as
-AS, allowing end users to better understand the value of available forecasts as inputs to their particular
+the set of scoring methods used by the hub to include scores, such as the AS, which are based on specific public health decision
+problems.  This could help end users better understand the value of available forecasts as inputs to their particular
 decision making contexts. (We note that issues of propriety are raised when forecasts are evaluated with scoring rules
 for which they were not elicited or via parameters imputed by a hub after submission, both of which are done in our
 application example.  We consider these issues briefly in supplement sections \ref{sec:distfromq} and
