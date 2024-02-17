@@ -607,24 +607,24 @@ allocation score while the USC-SI\_kJalpha model had the most accurate forecasts
 
 
 % latex table generated in R 4.3.1 by xtable 1.8-4 package
-% Sat Feb 17 02:22:59 2024
+% Sat Feb 17 02:56:05 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrrr}
   \hline
 Model & AS & MWIS & IAS centered at 15k & IAS uniform \\ 
   \hline
-CU-select & 669 & 133 & 774 & 326 \\ 
-  per-capita & 865 & - & 1029 & 366 \\ 
-  COVIDhub-ensemble & 873 & 159 & 1067 & 438 \\ 
-  USC-SI\_kJalpha & 995 & 91 & 1216 & 1097 \\ 
-  JHUAPL-Gecko & 1034 & 164 & 1141 & 418 \\ 
-  MUNI-ARIMA & 1084 & 169 & 1248 & 440 \\ 
-  COVIDhub-trained\_ensemble & 1089 & 169 & 1271 & 823 \\ 
-  COVIDhub-baseline & 1175 & 170 & 1317 & 535 \\ 
-  JHUAPL-Bucky & 1358 & 102 & 1566 & 1214 \\ 
-  JHUAPL-SLPHospEns & 1540 & 129 & 1604 & 1102 \\ 
-  UVA-Ensemble & 2469 & 213 & 2635 & 2494 \\ 
+\texttt{CU-select} & 669 & 133 & 774 & 326 \\ 
+  \texttt{per-capita} & 865 & - & 1029 & 366 \\ 
+  \texttt{COVIDhub-ensemble} & 873 & 159 & 1067 & 438 \\ 
+  \texttt{USC-SI\_kJalpha} & 995 & 91 & 1216 & 1097 \\ 
+  \texttt{JHUAPL-Gecko} & 1034 & 164 & 1141 & 418 \\ 
+  \texttt{MUNI-ARIMA} & 1084 & 169 & 1248 & 440 \\ 
+  \texttt{COVIDhub-trained\_ensemble} & 1089 & 169 & 1271 & 823 \\ 
+  \texttt{COVIDhub-baseline} & 1175 & 170 & 1317 & 535 \\ 
+  \texttt{JHUAPL-Bucky} & 1358 & 102 & 1566 & 1214 \\ 
+  \texttt{JHUAPL-SLPHospEns} & 1540 & 129 & 1604 & 1102 \\ 
+  \texttt{UVA-Ensemble} & 2469 & 213 & 2635 & 2494 \\ 
    \hline
 \end{tabular}
 \caption{For one illustrative week, a comparison of allocation scores (AS), mean weighted interval scores (MWIS), and two varieties of Integrated Allocation Scores (IAS), (see Section \ref{sec:ias_examp}). All metrics are shown for 10 models that made forecasts of hospital admissions for 2022-01-03. Results are sorted by AS. For all metrics, lower scores indicate better accuracy.} 
@@ -651,8 +651,8 @@ CU-select & 669 & 133 & 774 & 326 \\
 
 A state-wise comparison using Figures \ref{fig:thermometer-plot} and \ref{fig:multi-loc-ranks}A of the \texttt{JHUAPL-Bucky} and
 \texttt{CU-select} models shows that while the \texttt{JHUAPL-Bucky} forecast distributions were more centered on the eventual
-observations in many states, the suggested allocations of the JHUAPL-Bucky model were less efficient than those of the
-\texttt{CU-select} model. Thus \texttt{JHUAPL-Bucky} achieved a worse allocation score than CU-select (on this particular week) by
+observations in many states, the suggested allocations of the \texttt{JHUAPL-Bucky} model were less efficient than those of the
+\texttt{CU-select} model. Thus \texttt{JHUAPL-Bucky} achieved a worse allocation score than \texttt{CU-select} (on this particular week) by
 allocating excess resources to several states, such as Pennsylvania and Michigan, rather than to states such as Florida
 and California where these resources would have reduced unmet need.  These allocation errors of \texttt{JHUAPL-Bucky} resulted
 from forecasts failing to consistently capture the relative resource needs across different states. The \texttt{CU-select} model
@@ -714,23 +714,23 @@ according to both metrics, although not in exactly the same order (Table \ref{ta
 Notably, the \texttt{JHUAPL-SLPHospEns} model ranked best on taMWIS but had only the fourth best MAS.
 
 % latex table generated in R 4.3.1 by xtable 1.8-4 package
-% Sat Feb 17 02:23:03 2024
+% Sat Feb 17 02:56:09 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrr}
   \hline
 model & MAS & taMWIS & taMWIS rank \\ 
   \hline
-COVIDhub-ensemble & 389 & 70 & 2 \\ 
-  per-capita & 464 & - & - \\ 
-  COVIDhub-trained\_ensemble & 483 & 87 & 4 \\ 
-  CU-select & 502 & 81 & 3 \\ 
-  JHUAPL-SLPHospEns & 526 & 67 & 1 \\ 
-  COVIDhub-baseline & 594 & 93 & 5 \\ 
-  JHUAPL-Bucky & 643 & 112 & 7 \\ 
-  MUNI-ARIMA & 707 & 116 & 8 \\ 
-  JHUAPL-Gecko & 929 & 110 & 6 \\ 
-  USC-SI\_kJalpha & 1473 & 155 & 9 \\ 
+\texttt{COVIDhub-ensemble} & 389 & 70 & 2 \\ 
+  \texttt{per-capita} & 464 & - & - \\ 
+  \texttt{COVIDhub-trained\_ensemble} & 483 & 87 & 4 \\ 
+  \texttt{CU-select} & 502 & 81 & 3 \\ 
+  \texttt{JHUAPL-SLPHospEns} & 526 & 67 & 1 \\ 
+  \texttt{COVIDhub-baseline} & 594 & 93 & 5 \\ 
+  \texttt{JHUAPL-Bucky} & 643 & 112 & 7 \\ 
+  \texttt{MUNI-ARIMA} & 707 & 116 & 8 \\ 
+  \texttt{JHUAPL-Gecko} & 929 & 110 & 6 \\ 
+  \texttt{USC-SI\_kJalpha} & 1473 & 155 & 9 \\ 
    \hline
 \end{tabular}
 \caption{Time averaged mean weighted interval scores (taMWIS) and mean allocation scores (MAS) by model across 13 weeks. These results show the average performance across time for the nine models that submitted forecasts for every week from 2021-11-29 through 2022-02-21, as well

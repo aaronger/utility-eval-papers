@@ -662,11 +662,13 @@ left_join(ias, as) |>
          `IAS centered at 15k` = IAS_wt,
          `IAS uniform` = IAS) |>
   select(Model, AS, MWIS, `IAS centered at 15k`, `IAS uniform`) |>
+  mutate(Model = gsub("_", "\\\\_", Model)) |>
+  mutate(Model = sprintf("\\texttt{%s}", Model)) |>
   arrange(AS) |>
   xtable::xtable(caption = paste("For one illustrative week, a comparison of allocation scores (AS), mean weighted interval scores (MWIS), and two varieties of Integrated Allocation Scores (IAS), (see Section \\ref{sec:ias_examp}). All metrics are shown for 10 models that made forecasts of hospital admissions for 2022-01-03. Results are sorted by AS. For all metrics, lower scores indicate better accuracy."),
                  digits = 0,
                  label = "tab:multi-k-scores") |>
-  print(include.rownames = FALSE, NA.string = "-")
+  print(include.rownames = FALSE, NA.string = "-", sanitize.text.function = function(x) {x})
 @
 
 
@@ -758,8 +760,8 @@ plot_hosp(models = c("JHUAPL-Bucky", "CU-select"),
 
 A state-wise comparison using Figures \ref{fig:thermometer-plot} and \ref{fig:multi-loc-ranks}A of the \texttt{JHUAPL-Bucky} and
 \texttt{CU-select} models shows that while the \texttt{JHUAPL-Bucky} forecast distributions were more centered on the eventual
-observations in many states, the suggested allocations of the JHUAPL-Bucky model were less efficient than those of the
-\texttt{CU-select} model. Thus \texttt{JHUAPL-Bucky} achieved a worse allocation score than CU-select (on this particular week) by
+observations in many states, the suggested allocations of the \texttt{JHUAPL-Bucky} model were less efficient than those of the
+\texttt{CU-select} model. Thus \texttt{JHUAPL-Bucky} achieved a worse allocation score than \texttt{CU-select} (on this particular week) by
 allocating excess resources to several states, such as Pennsylvania and Michigan, rather than to states such as Florida
 and California where these resources would have reduced unmet need.  These allocation errors of \texttt{JHUAPL-Bucky} resulted
 from forecasts failing to consistently capture the relative resource needs across different states. The \texttt{CU-select} model
@@ -982,14 +984,16 @@ all_scores |>
             MAS = mean(alloscore, na.rm=TRUE),
             taMWIS = mean(mwis, na.rm=TRUE)) |>
   filter(N > 12) |>
-  mutate(`taMWIS rank` = rank(taMWIS, na.last = "keep")) |>
+  mutate(`taMWIS rank` = rank(taMWIS, na.last = "keep"),
+         model = gsub("_", "\\\\_", model) %>% 
+           sprintf("\\texttt{%s}", .)) |>
   arrange(MAS) |>
   select(model, MAS, taMWIS, `taMWIS rank`) |>
   xtable::xtable(caption = "Time averaged mean weighted interval scores (taMWIS) and mean allocation scores (MAS) by model across 13 weeks. These results show the average performance across time for the nine models that submitted forecasts for every week from 2021-11-29 through 2022-02-21, as well
   as for a per-capita allocation. MWIS is not defined for the \\texttt{per-capita} allocation which does not use forecasts.",
                  digits = 0,
                  label = "tab:multi-week-performance-summary") |>
-  print(include.rownames = FALSE, NA.string = "-")
+  print(include.rownames = FALSE, NA.string = "-", sanitize.text.function = function(x) {x})
 @
 
 \subsubsection{Metrics were not consistently correlated over time}
