@@ -607,7 +607,7 @@ allocation score while the USC-SI\_kJalpha model had the most accurate forecasts
 
 
 % latex table generated in R 4.3.1 by xtable 1.8-4 package
-% Sat Feb 17 02:56:05 2024
+% Tue Feb 20 19:44:31 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrrr}
@@ -714,7 +714,7 @@ according to both metrics, although not in exactly the same order (Table \ref{ta
 Notably, the \texttt{JHUAPL-SLPHospEns} model ranked best on taMWIS but had only the fourth best MAS.
 
 % latex table generated in R 4.3.1 by xtable 1.8-4 package
-% Sat Feb 17 02:56:09 2024
+% Tue Feb 20 19:44:36 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrr}
@@ -814,27 +814,20 @@ problems. For example, in order to surpass benchmark allocation scores, forecast
 the \emph{relative} magnitude of future resource need across different locations.  Success at this task is not, however,
 directly rewarded by the WIS. 
 
-Our example application of the AS refers to a hypothetical and unspecified resource need that is supposed to 
+Our example application of the AS refers to a hypothetical and unspecified resource need that is assumed to 
 pair with our forecasted outcome (new hospital admissions) in a manner that might appear overly simplistic and 
-artificially direct.
-A concrete decision problem, which motivated our work on allocation scoring, is
-
-allocation of ventilators during a respiratory viral pandemic
-\citep{huang_stockpiling_2017}.
-We used ventilators as a notional example for a resource allocation problem because it (a) has been identified as a
-scarce resource during outbreaks \citep{huang_stockpiling_2017}, (b) could be allocated across different locations, with
-logistical considerations depending on the geographical scales, and (c) would likely be correlated (although not
-perfectly so) with hospitalization data. However, this example has limitations in that not everyone who is hospitalized
-needs a ventilator, and new hospital admissions may not be the best stand in for a need that corresponds to a prevalence
+artificially direct.  We are optimistic, however, that by augmenting this scheme with a probabilistic measurement
+model for resource need and more detailed domain knowledge, it could be meaningfully aligned with a 
+more concrete decision problem such as the allocation of ventilators during a respiratory viral pandemic.  This problem 
+was explored from a stochastic optimization perspective (not from a forecast evaluation perspective) in 
+\cite{huang_stockpiling_2017} and provided an initial motivation for this project.
+We see it as promising focus for further development of the AS framework since it (a) has been identified as a prime
+manifestation of scarcity during respiratory outbreaks (b) tansparently involves
+logistical considerations depending on geographical and population scales, and (c) would likely imply a central role for 
+hospitalization data. But again, additional modeling and data synthesis would be required since not everyone who is hospitalized
+needs a ventilator, and new hospital admissions will not fully describe for a need that corresponds to a prevalence
 of severe cases. Other possible real-world examples include the allocation of a limited stockpile of vaccinations
 \citep{araz_geographic_2012,persad_fair_2023} or diagnostic tests \citep{du_optimal_2022,pasco_covid-19_2023}.
-
-While
-there may be limitations in this specific pairing of a resource and forecasted outcome, we emphasize that the important
-result from this work is how evaluating forecasts using a fundamentally different kind of score can illuminate
-previously hidden aspects of value in forecasts. In this setting, the feature of a forecast that emerges as being
-important is that the probabilistic forecasts predict the relative magnitudes between locations accurately, even if the
-absolute magnitudes are inaccurate.
 
 In practice, epidemiological forecasts are often directed at a diverse set of end-users. It may be easy for some of
 these users to summarize the consequences of how they use a forecast with a numerical loss function, but for others,
@@ -900,7 +893,9 @@ official views of NIGMS, the National Institutes of Health, or CDC.
 \section{Introduction}
 \label{sec:intro}
 
-We address some technical and methodological points from the main text. We begin in section \ref{sec:proper} by defining proper scoring rules and showing that the allocation score is proper. In section \ref{sec:ex-shortage}, we formalize the concept of a \emph{shortage} of resources, give some key results about expected resource shortages under a distribution characterizing uncertainty about (future) levels of resource need, and illustrate how quantiles arise as the Bayes act in a decision making problem about the quantity of a resource to purchase. Section \ref{sec:bayes-quantiles} gives a justification for the result that the Bayes act for the allocation problem is given by a vector of quantiles of the forecast distributions in each location at a shared probability level, which was stated in section \ref{sec:methods.detailed.specific_allocation} of the main text. We describe the algorithm that we use to compute allocations given a forecast distribution in each location in section \ref{sec:numeric}. In section \ref{sec:distfromq}, we describe the methods for approximating a full distribution from a set of quantiles, implemented in the R package \verb`distfromq`, that we used to support computation of allocation scores from quantile forecasts that were submitted to the US COVID-19 Forecast Hub for the application in the main text. Finally, in section \ref{sec:propriety_of_parametric_approximation} we examine implications for propriety of an analysis that uses summaries of forecasts (such as predictive quantiles) rather than the full forecast distributions for computation of allocation scores.
+We address some technical and methodological points from the main text. We begin in section \ref{sec:proper} by defining proper scoring rules and showing that the allocation score is proper. In section \ref{sec:ex-shortage}, we formalize the concept of a \emph{shortage} of resources, give some key results about expected resource shortages under a distribution characterizing uncertainty about (future) levels of resource need, and illustrate how quantiles arise as the Bayes act in a decision making problem about the quantity of a resource to purchase. Section \ref{sec:bayes-quantiles} gives a justification for the result that the Bayes act for the allocation problem is given by a vector of quantiles of the forecast distributions in each location at a shared probability level, which was stated in section 
+\ref{sec:methods.detailed.specific_allocation}. We describe the algorithm that we use to compute allocations given a forecast distribution in each location in section \ref{sec:numeric}. In section \ref{sec:distfromq}, we describe the methods for approximating a full distribution from a set of quantiles, implemented in the R package \verb`distfromq`, that we used to support computation of allocation scores from quantile forecasts that were submitted to the US COVID-19 Forecast Hub for the application in section \ref{sec:application}. Finally, in section 
+\ref{sec:propriety_of_parametric_approximation} we examine implications for propriety of an analysis that uses summaries of forecasts (such as predictive quantiles) rather than the full forecast distributions for computation of allocation scores.
 
 \section{Proper scoring rules}
 \label{sec:proper}
@@ -931,7 +926,7 @@ $S$ is \emph{strictly proper} when
 \subsection{The allocation score is proper}
 \label{sec:alloscore_proper}
 
-Our primary decision theoretical procedure, outlined in section \ref{sec:methods.detailed.decisiontheory} of the main text,
+Our primary decision theoretical procedure, outlined in section \ref{sec:methods.detailed.decisiontheory},
 uses a decision problem with loss function $s(x,y)$ to define a scoring rule
 \begin{align}
 S(F,y) := s(x^F,y) \label{eqn:bayes_sr}
@@ -1004,7 +999,7 @@ where the marginal forecasts $F_i$ for $i=1,\dots,N$ represent forecasts for $N$
 We show that the Bayes act $x^{F,K} = (x_1^{F,K},\ldots,x_N^{F,K})$ for a forecast $F$ and resource constraint level $K$
 is a vector of quantiles of the marginal forecast distributions $F_i$ at a single probability level
 $\tau^{F,K}$, that is, $x_i^{F,K} = q_{F_i,\tau^{F,K}}$. An immediate consequence used in the examples in Section \ref
-{sec:methods.overview} in the main text is that if $F_i = \mathrm{Exp}(1/\sigma_i)$ for all $i$, then the Bayes act is
+{sec:methods.overview} is that if $F_i = \mathrm{Exp}(1/\sigma_i)$ for all $i$, then the Bayes act is
 proportional to $(\sigma_1,\ldots,\sigma_N)$, since $q_{\mathrm{Exp}(1/\sigma),\tau} = -\sigma \log(1-\tau)$.
 
 In order for $x^{\star} \in \mathbb{R}^N_{+}$ to solve the AP it must be true that reallocating $\delta > 0$ units of the resource from location $i$ to location $j$ will lead to a net increase in expected shortage --- in other words, the reallocation increases the expected shortage in location $i$ is at least as much as it decreases the expected shortage in location $j$:
@@ -1076,8 +1071,7 @@ $\tau_{M,j} = \frac{1}{2}(\tau_{L,j} + \tau_{U,j})$ and continue the search on t
 % \end{itemize}
 This search continues until $\tau_{U,j+1} < (1+\varepsilon)\tau_{L,j+1}$ for a suitably small $\varepsilon>0$.
 We have implemented this procedure along with the resulting score computations in the
-R package \verb`alloscore` \citep{gerding-alloscore} which provided all allocation score values used in the analysis of section \ref{sec:application}
-in the main text.
+R package \verb`alloscore` \citep{gerding-alloscore} which provided all allocation score values used in the analysis of section \ref{sec:application}.
 
 Subtleties can arise when the forecast
 densities $f_i$ vanish or are very small, in which case quantiles are non-unique or highly variable near a probability level,
@@ -1130,7 +1124,7 @@ In this section, we address two practical concerns raised by this. First, we dis
 We consider a setting where a forecasting exercise (such as a forecast hub) pre-specifies that forecasts will be represented using a parametric family of forecast distributions $G_\theta(y)$, and the task of the forecaster is to select a particular parameter value $\theta$. We use $\mathcal{P}$ to denote the collection of all distributions $G_\theta$ in the given parametric family. For instance, it has recently been proposed that mixture distributions could be used to represent forecast distributions \citep{wadsworth2023mixture}. Additionally, we note that the functionality in \verb`distfromq` can be viewed as specifying a parametric family $\mathcal{P}_{\mathrm{dfq}}$ where the parameters $\theta$ of $G_\theta$
 are its quantiles at pre-specified probability levels, and where the shape of any $G_\theta \in \mathcal{P}_{\mathrm{dfq}}$ over the full range of its support is entirely controlled by these quantiles.
 
-We find it helpful now to formally distinguish between two decision making problems. The first is the public health decision maker's allocation problem where the task is to select an allocation $x$, with the allocation loss $s_A(x, y) = \sum_{i=1}^N L \cdot \max(0, y_i - x_i)$ as described in section \ref{sec:methods.detailed.specific_allocation} of the main text.
+We find it helpful now to formally distinguish between two decision making problems. The first is the public health decision maker's allocation problem where the task is to select an allocation $x$, with the allocation loss $s_A(x, y) = \sum_{i=1}^N L \cdot \max(0, y_i - x_i)$ as described in section \ref{sec:methods.detailed.specific_allocation}.
 The second is the forecaster's reporting problem where the task is to select parameter values $\theta$ to report. The forecaster's loss is given by
 \begin{align}
 s_R(\theta, y) = s_A(x^{G_\theta}, y), \label{eqn:forecaster_theta_loss}
