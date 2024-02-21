@@ -233,7 +233,6 @@ compute the total unmet need that resulted from the selected allocation:
 \begin{align}
     \sum_{i=1}^N \text{unmet need in location $i$}. \label{eqn:informal_loss}
 \end{align}
-%We emphasize that in Equation \eqref{eqn:informal_loss} the calculation of unmet need is based on the actual resource need that was realized in each location, while in Equation \eqref{eqn:informal_objective} the calculation of unmet need was based on the forecast distribution of future levels of resource need.
 We regard one allocation as better than another (with respect to the realized need) if it results in lower total 
 unmet need, and accordingly regard one forecast as better than another (again with respect to the realized need)
 if the allocation derived from the former results in lower total unmet need than does the allocation derived from the 
@@ -271,16 +270,16 @@ situation.
 \end{figure}
 
 Next suppose that we observe resource needs of 1 and 10 in locations 1 and 2, respectively. Based on these observed
-needs, we evaluate the allocation suggested by the forecast by calculating the amount of unmet need
-that resulted from that allocation over and above what was unavoidable given the resource constraint. With $K = 5$ 
-available resource units, the allocation based on the forecast exactly meets the observed need in location 1, but it leaves 6
-units of need unmet in location 2. But these 6 units of unmet need are unaviodable under the constraint $K=5$: allocating 0 units of resources to location 1 and 5 to location 2, for example, still results in a total unmet
-need of 6 across both locations. This gives an allocation score of 0 for the forecast when $K = 5$. On the other hand, when
-$K = 10$, the forecast's allocation results in $10 - 8 = 2$ units of unmet need in location 2 despite leaving no need
-unmet in location 1. In this case, the oracle would be able to prevent all but 1 of the total 11 units of need from
-going unmet, for example by allocating 1 unit of resources to location 1 and the remaining 9 units of resources to
-location 2. So for $K = 10$, the forecast gets an allocaton score of 1 (= 2 realized $-$ 1 unavoidable) in
-units of avoidable unmet need.
+needs, we evaluate the allocation suggested by the forecast by calculating the amount of unmet need that resulted from
+that allocation over and above what was unavoidable given the resource constraint. With $K = 5$ available resource
+units, the allocation based on the forecast exactly meets the observed need in location 1, but it leaves 6 units of need
+unmet in location 2. But these 6 units of unmet need are unaviodable under the constraint $K=5$: allocating 0 units of
+resources to location 1 and 5 to location 2, for example, still results in a total unmet need of 6 across both
+locations. This gives an allocation score of 0 for the forecast when $K = 5$. On the other hand, when $K = 10$, the
+forecast's allocation results in $10 - 8 = 2$ units of unmet need in location 2 despite leaving no need unmet in
+location 1. In this case, the oracle would be able to prevent all but 1 of the total 11 units of need from going unmet,
+for example by allocating 1 unit of resources to location 1 and the remaining 9 units of resources to location 2. So for
+$K = 10$, the forecast gets an allocaton score of 1 (= 2 realized $-$ 1 unavoidable) in units of avoidable unmet need.
 
 These scores illustrate a general result: allocation scores for a forecast will tend to be larger when the resource
 constraint is close to the observed need, because this is when it matters most which locations are allocated more or
@@ -311,7 +310,6 @@ had the same allocation score. The allocation score does not directly measure wh
 the absolute magnitude of resource need in each individual location. This stands in contrast to other common scoring
 methods that aggregate scores such as log score, CRPS, or WIS for each location, where a poor forecast for one location
 is penalized regardless of alignments in other units.
-%Note that we do not claim that the allocation score is generically preferable to these other scores \textemdash rather, it provides a view of forecast performance that is specifically tuned to the context of decision making about resource allocations.
 
 \subsection{A decision theoretic development of the allocation score}
 \label{sec:methods.detailed}
@@ -326,11 +324,6 @@ to the \emph{integrated allocation score}.
 
 \subsubsection{The decision theoretic setup for forecast evaluation}
 \label{sec:methods.detailed.decisiontheory}
-
-%In this section, we give an overview of the decision theoretic setup for developing proper scoring rules that measure
-%the value of a forecast as an input to decision making. We keep the discussion here at a somewhat informal level; we
-%refer the reader to [some subset of Brehmer and Gneiting; Grünwald and Dawid; Dawid; Granger and Pesaran 2000; Granger
-%and Machina 2006; Ehm et al. 2016] for more technically precise discussion.
 
 Decision theory is concerned with understanding how an \emph{action} $x$ both is and ought to be selected from a set of
 possible actions $\mathcal{X}$ --- that is, how a decision is and ought to be made --- based on the anticipated
@@ -413,13 +406,13 @@ problem} associated with $K$:
 where $\mathbb{E}_{F} [s_A(x, Y)] = \sum_{i=1}^{N} L \cdot \mathbb{E}_{F_i}[\max(0, Y_i - x_i)]$ sums the expected loss
 due to unmet need across all locations.
 
-In appendix \ref{sec:bayes-quantiles} we show that the components of the Bayes act are quantiles $x_i^{F,K} = F_i^{-1}(\tau^{F,K})$ at a
-probability level $\tau^{F,K}$ that depends on the forecast $F$ and the resource constraint $K$, but is shared across
-all locations. This probability level is the level at which the resource constraint is satisfied: $\sum_{i=1}^N
-F_i^{-1}(\tau^{F,K}) = K$. This tells us that in order to allocate optimally (according to $F$), we must divide
-resources among the locations so that there is an equal forecasted probability in every location that the allocation is
-sufficient to meet resource need. This solution to the allocation problem is well-known in inventory management and is
-often attributed to \cite{hadleywhitin1963}.
+In appendix \ref{sec:bayes-quantiles} we show that the components of the Bayes act are quantiles 
+$x_i^{F,K} = F_i^{-1}(\tau^{F,K})$ at a probability level $\tau^{F,K}$ that depends on the forecast $F$ and the resource
+constraint $K$, but is shared across all locations. This probability level is the level at which the resource constraint
+is satisfied: $\sum_{i=1}^N F_i^{-1}(\tau^{F,K}) = K$. This tells us that in order to allocate optimally (according to
+$F$), we must divide resources among the locations so that there is an equal forecasted probability in every location
+that the allocation is sufficient to meet resource need. This solution to the allocation problem is well-known in
+inventory management and is often attributed to \cite{hadleywhitin1963}.
 
 \paragraph{Step 3: Define the scoring rule.} We can now use the Bayes act to define a proper scoring rule for the
 probabilistic forecast $F$. Consider first the ``raw'' score defined as
@@ -508,12 +501,12 @@ February 28, 2022.
 
 Submission to the Forecast Hub followed a weekly cycle, and each Monday the Hub collected the most recent forecasts
 submitted by all teams that met certain inclusion criteria and created ensemble forecasts using quantile averaging
-\citep{ray_comparing_2023}. Our analysis includes these ensembles (\texttt{COVIDhub-ensemble} and \texttt{COVIDhub-trained\_ensemble}) as
-well as one other ensemble of hub models created by another team (\texttt{JHUAPL-SLPHospEns}) and several other individual
-models. Models were eligible to be included in the analysis if they were designated as a ``primary'' model from a team.
-For a model to have a complete, eligible submission in a given week, it had to have a 14 day-ahead forecast for all 50
-states plus Washington DC. Models had to have a complete forecast for at least 4 of the 15 weeks in the analysis to be
-eligible for inclusion.
+\citep{ray_comparing_2023}. Our analysis includes these ensembles (\texttt{COVIDhub-ensemble} and
+\texttt{COVIDhub-trained\_ensemble}) as well as one other ensemble of hub models created by another team
+(\texttt{JHUAPL-SLPHospEns}) and several other individual models. Models were eligible to be included in the analysis if
+they were designated as a ``primary'' model from a team. For a model to have a complete, eligible submission in a given
+week, it had to have a 14 day-ahead forecast for all 50 states plus Washington DC. Models had to have a complete
+forecast for at least 4 of the 15 weeks in the analysis to be eligible for inclusion.
 
 
 
@@ -522,12 +515,11 @@ The hospitalization data used for scoring forecasts were downloaded on February 
 \subsection{Evaluation metrics}
 
 We evaluated forecasts using the allocation score (AS) and the weighted interval score (WIS), computed at a horizon of
-14 days. We chose to focus much of our analysis on the AS computed for a resource constraint of $K=15,000$. This level provides
-an anchor for interesting comparisons between phases of the Omicron wave by representing a national shortage at the peak and
-a national excess before and after the wave (see Figure \ref{fig:metrics-over-time}A), assuming that the resource need corresponds 
-directly to new hospital admissions.
-We additionally computed the mean
-WIS (MWIS) across all of the forecasted state-level locations. 
+14 days. We chose to focus much of our analysis on the AS computed for a resource constraint of $K=15,000$. This level
+provides an anchor for interesting comparisons between phases of the Omicron wave by representing a national shortage at
+the peak and a national excess before and after the wave (see Figure \ref{fig:metrics-over-time}A), assuming that the
+resource need corresponds directly to new hospital admissions. We additionally computed the mean WIS (MWIS) across all
+of the forecasted state-level locations. 
 
 For both scores, we also computed standardized ranks among all models that submitted forecasts each week. The
 standardized rank lies in the interval $[0, 1]$, where 0 corresponds to the worst rank and 1 to the best. In the case of
@@ -546,26 +538,6 @@ procedure is improper. We use the procedure here to illustrate the properties of
 forecasting hub interested in using the AS for evaluation could circumvent propriety issues by communicating the
 definition of the AS to forecasters and then collecting allocations at specified resource levels as part of forecast
 submissions.
-
-%We also computed a standardized rank for the allocation score for each model $m$ and week $w$.
-%First, we computed the number of models that forecasted that week ($n_w$) and the rank of model $m$ among the $n_w$ models ($r_{m,w}^{AS}$).
-%The model with the best allocation score received a rank of 1 and the worst received a rank of $n_w$.
-%In the case of a tie between one or more models, all models received the better rank.
-%We then rescaled these rankings to compute the allocation score standardized rank ($sr_{m,w}^AS$) between 0 and 1, where 0 corresponds to the worst rank and 1 to the best.
-
-%\begin{equation}
-%sr_{m,w}^{AS} = 1 - \frac{r^{AS}_{m,w}-1}{n_w-1}
-%\end{equation}
-
-%\subsubsection{Weighted Interval Score (WIS)}
-
-%The Weighted Interval Score (WIS), as described in earlier sections, measures the alignment of a single probabilistic forecast ($F$) with an observation ($y$).
-%We computed the mean WIS across all $L$ locations for each model and each forecasted week as
-%\begin{equation}
-%MWIS_{m,w} = \frac{1}{L}\sum_{l=1}^L WIS(F_{l,m,w},y)
-%\end{equation}
-%where $F_{l,m,w}$ is the probabilistic forecast from model $m$ for location $l$ and week $w$.
-%Using the same procedure as for allocation scores described above, we computed standardized ranks for MWIS ($sr_{m,w}^{MWIS}$).
 
 \subsection{Allocation benchmarks}
 
@@ -607,7 +579,7 @@ allocation score while the USC-SI\_kJalpha model had the most accurate forecasts
 
 
 % latex table generated in R 4.3.1 by xtable 1.8-4 package
-% Tue Feb 20 19:44:31 2024
+% Tue Feb 20 23:42:19 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrrr}
@@ -637,11 +609,6 @@ Model & AS & MWIS & IAS centered at 15k & IAS uniform \\
 
 
 
-%For JHUAPL-Bucky, the allocations were assigned at the Buck_quantileth percentile of the predictive distribution and for CU-select they were at the CU_quantileth percentile.
-%This reflects that in general the JHUAPL-Bucky forecasts assigned more probability to higher values and thus a low quantile value across all locations reached the allocation limit of 15,000.
-%In California, New York and Texas, the eventually observed number of hospital admissions was closer to the predicted median from JHUAPL-Bucky than the median from CU-select, and was contained in JHUAPL-Bucky's 80\% PI but not in the 80\% PI from CU-select. However for each of these three states, the resource allocation was lower for JHUAPL-Bucky than for CU-select and therefore resulted in more hypothetical unmet need.
-%In Florida, which was the state that saw the largest number of reported hospitalizations on this target date, the forecast from JHUAPL-Bucky missed by a wide margin (as did the forecast from CU-select) and the allocation was FL_diff units lower than the allocation derived from the CU-select model.
-
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}
 \includegraphics[width=\maxwidth]{figure/thermometer-plot-1} \caption[Probabilistic forecasts for new COVID-19 hospital admissions on January 3, 2022 and their suggested resource allocations for the states with the ten highest (eventually observed) hospitalization counts]{Probabilistic forecasts for new COVID-19 hospital admissions on January 3, 2022 and their suggested resource allocations for the states with the ten highest (eventually observed) hospitalization counts. For each state, the dark black line shows the data observed when the forecast was made and the grey line shows eventually observed counts. The side-by-side shaded regions show the median (solid red horizontal line) and 50\%, 80\% and 95\% prediction intervals for the two selected models. The forecasts were made for new hospitalizations on January 3, 2022 (vertical dashed line, with number of hospitalizations indicated by red horizontal line segment at the intersection of the dashed line and the grey line of data). The vertical bars with purple, blue and red shading show the allocations. The purple bar goes from zero to the amount of need that was met by the allocation from that model to a specific location. A red bar indicates need that exceeded the resource allocation for a location, and a light blue bar shows the amount by which the resource allocation suggested by that model exceeded the need for that location.}\label{fig:thermometer-plot}
@@ -649,20 +616,22 @@ Model & AS & MWIS & IAS centered at 15k & IAS uniform \\
 
 \end{knitrout}
 
-A state-wise comparison using Figures \ref{fig:thermometer-plot} and \ref{fig:multi-loc-ranks}A of the \texttt{JHUAPL-Bucky} and
-\texttt{CU-select} models shows that while the \texttt{JHUAPL-Bucky} forecast distributions were more centered on the eventual
-observations in many states, the suggested allocations of the \texttt{JHUAPL-Bucky} model were less efficient than those of the
-\texttt{CU-select} model. Thus \texttt{JHUAPL-Bucky} achieved a worse allocation score than \texttt{CU-select} (on this particular week) by
-allocating excess resources to several states, such as Pennsylvania and Michigan, rather than to states such as Florida
-and California where these resources would have reduced unmet need.  These allocation errors of \texttt{JHUAPL-Bucky} resulted
-from forecasts failing to consistently capture the relative resource needs across different states. The \texttt{CU-select} model
-made some similar errors — most prominently, over-allocating resources to Ohio — but overall, it more successfully
-forecasted the resource demands across different locations in relative terms.
+A state-wise comparison using Figures \ref{fig:thermometer-plot} and \ref{fig:multi-loc-ranks}A of the
+\texttt{JHUAPL-Bucky} and \texttt{CU-select} models shows that while the \texttt{JHUAPL-Bucky} forecast distributions
+were more centered on the eventual observations in many states, the suggested allocations of the \texttt{JHUAPL-Bucky}
+model were less efficient than those of the \texttt{CU-select} model. Thus \texttt{JHUAPL-Bucky} achieved a worse
+allocation score than \texttt{CU-select} (on this particular week) by allocating excess resources to several states,
+such as Pennsylvania and Michigan, rather than to states such as Florida and California where these resources would have
+reduced unmet need.  These allocation errors of \texttt{JHUAPL-Bucky} resulted from forecasts failing to consistently
+capture the relative resource needs across different states. The \texttt{CU-select} model made some similar errors —
+most prominently, over-allocating resources to Ohio — but overall, it more successfully forecasted the resource demands
+across different locations in relative terms.
 
-On the other hand, \texttt{CU-select} had worse performance as measured by MWIS. Its forecasts were biased downwards, and it
-consistently incurred a large penalty for underprediction (Figure \ref{fig:multi-loc-ranks}B). The \texttt{JHUAPL-Bucky} model
-had wider predictive intervals which more often included the observed level of daily hospital admissions. Its MWIS was
-therefore less severely penalized by under- or over-predictions of the actual hospitalization counts.
+On the other hand, \texttt{CU-select} had worse performance as measured by MWIS. Its forecasts were biased downwards,
+and it consistently incurred a large penalty for underprediction (Figure \ref{fig:multi-loc-ranks}B). The
+\texttt{JHUAPL-Bucky} model had wider predictive intervals which more often included the observed level of daily
+hospital admissions. Its MWIS was therefore less severely penalized by under- or over-predictions of the actual
+hospitalization counts.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}
@@ -691,30 +660,23 @@ in one location that the oracle would have put to use in another.
 
 
 
-%Overall, across the first 11 weeks evaluated (we excluded the last four since nearly all the models achieved an allocation score of zero), the \texttt{COVIDhub-baseline} model, which predicts a flat line from the most recent observation with uncertainty bounds based on a random walk, had the highest rank for allocation score in four weeks, more than any other model except the \texttt{COVIDhub-ensemble} which also had four.
 
-
-
-
-%Mean weighted interval scores (MWIS) also varied by date and model, and more clearly were dependent on the scale of the observed data.
-%MWIS values were low (all models under 100) for all Mondays in December 2021 and the final four Mondays evaluated.
-%Across all models both the average and median MWIS value for every Monday in January was above 100, with the largest errors occurring one and two weeks after the peak was observed.
 
 
 
 Averaging across all weeks, the ensemble forecast achieved a better mean allocation score (MAS) than two benchmark
-methods. The \texttt{COVIDhub-ensemble} had the best MAS across all weeks, the \texttt{per-capita} allocation had the second best MAS, and
-the \texttt{COVIDhub-baseline} model had the sixth best allocation (Table \ref{tab:multi-week-performance-summary}). No
-individual model had a better MAS than the per-capita allocation.
+methods. The \texttt{COVIDhub-ensemble} had the best MAS across all weeks, the \texttt{per-capita} allocation had the
+second best MAS, and the \texttt{COVIDhub-baseline} model had the sixth best allocation (Table
+\ref{tab:multi-week-performance-summary}). No individual model had a better MAS than the per-capita allocation.
 
-Model rankings on mean allocation score (MAS) and time-averaged mean weighted interval score
-(taMWIS) were broadly similar, with some places of disagreement. The four most accurate and the five least accurate models were the same
+Model rankings on mean allocation score (MAS) and time-averaged mean weighted interval score (taMWIS) were broadly
+similar, with some places of disagreement. The four most accurate and the five least accurate models were the same
 according to both metrics, although not in exactly the same order (Table \ref{tab:multi-week-performance-summary}).
-(This comparison excludes the \texttt{per-capita} allocation which does not use forecasts and therefore cannot be assigned a MWIS.)
-Notably, the \texttt{JHUAPL-SLPHospEns} model ranked best on taMWIS but had only the fourth best MAS.
+(This comparison excludes the \texttt{per-capita} allocation which does not use forecasts and therefore cannot be
+assigned a MWIS.) Notably, the \texttt{JHUAPL-SLPHospEns} model ranked best on taMWIS but had only the fourth best MAS.
 
 % latex table generated in R 4.3.1 by xtable 1.8-4 package
-% Tue Feb 20 19:44:36 2024
+% Tue Feb 20 23:42:23 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrr}
@@ -741,13 +703,13 @@ model & MAS & taMWIS & taMWIS rank \\
 
 \subsubsection{Metrics were not consistently correlated over time}
 
-We can gain some insight into the discordance between MAS and taMWIS by examining the correlation between time-specific AS and MWIS values of the various models in Figure
-\ref{fig:metrics-correlation}. We find, for example, no clear association between the consistent
-and high MWIS rank of the \texttt{JHUAPL-SLPHospEns} model and its highly variable AS rank. This contrasts 
-with a clearly positive correlation between MWIS and AS ranks in other models such as 
-\texttt{Karlen-pypm} and \texttt{USC-SI\_kJalpha}.
-We also can see in more detail the consistently high performance \texttt{COVIDhub-ensemble} on both scores.
-And while it did not submit forecasts for enough weeks to be included in Table \ref{tab:multi-week-performance-summary}, \texttt{CMU-TimeSeries} is an interesting example of a model that 
+We can gain some insight into the discordance between MAS and taMWIS by examining the correlation between time-specific
+AS and MWIS values of the various models in Figure \ref{fig:metrics-correlation}. We find, for example, no clear
+association between the consistent and high MWIS rank of the \texttt{JHUAPL-SLPHospEns} model and its highly variable AS
+rank. This contrasts with a clearly positive correlation between MWIS and AS ranks in other models such as
+\texttt{Karlen-pypm} and \texttt{USC-SI\_kJalpha}. We also can see in more detail the consistently high performance
+\texttt{COVIDhub-ensemble} on both scores. And while it did not submit forecasts for enough weeks to be included in
+Table \ref{tab:multi-week-performance-summary}, \texttt{CMU-TimeSeries} is an interesting example of a model that
 performed consistently well on AS but had only middling MWIS ranks.
 
 \begin{knitrout}
@@ -762,10 +724,6 @@ performed consistently well on AS but had only middling MWIS ranks.
 
 \subsubsection{Integrated allocation score across values of K}
 \label{sec:ias_examp}
-
-%The integrated allocation score (IAS) summarizes allocation scores (AS) across a range of possible values of the constraint ($K$), possibly taking weights into account for different values of $K$ that might be more or less likely (Section \ref{sec:methods.detailed.integrated_allocation}).
-%This could be useful in situations where the actual constraint may not be known precisely, or where we wish to consider results across a range of decision making settings with different constraints.
-%Unlike in the above analyses where we conducted analyses assuming that $K$ was known to be 15,000, the analyses in this subsection are conducted assuming different distributions on $K$.
 
 
 
@@ -814,20 +772,20 @@ problems. For example, in order to surpass benchmark allocation scores, forecast
 the \emph{relative} magnitude of future resource need across different locations.  Success at this task is not, however,
 directly rewarded by the WIS. 
 
-Our example application of the AS refers to a hypothetical and unspecified resource need that is assumed to 
-pair with our forecasted outcome (new hospital admissions) in a manner that might appear overly simplistic and 
-artificially direct.  We are optimistic, however, that by augmenting this scheme with a probabilistic measurement
-model for resource need and more detailed domain knowledge, it could be meaningfully aligned with a 
-more concrete decision problem such as the allocation of ventilators during a respiratory viral pandemic.  This problem 
-was explored from a stochastic optimization perspective (not from a forecast evaluation perspective) in 
-\cite{huang_stockpiling_2017} and provided an initial motivation for this project.
-We see it as promising focus for further development of the AS framework since it (a) has been identified as a prime
-manifestation of scarcity during respiratory outbreaks (b) tansparently involves
-logistical considerations depending on geographical and population scales, and (c) would likely imply a central role for 
-hospitalization data. But again, additional modeling and data synthesis would be required since not everyone who is hospitalized
-needs a ventilator, and new hospital admissions will not fully describe for a need that corresponds to a prevalence
-of severe cases. Other possible real-world examples include the allocation of a limited stockpile of vaccinations
-\citep{araz_geographic_2012,persad_fair_2023} or diagnostic tests \citep{du_optimal_2022,pasco_covid-19_2023}.
+Our example application of the AS refers to a hypothetical and unspecified resource need that is assumed to pair with
+our forecasted outcome (new hospital admissions) in a manner that might appear overly simplistic and artificially
+direct.  We are optimistic, however, that by augmenting this scheme with a probabilistic measurement model for resource
+need and more detailed domain knowledge, it could be meaningfully aligned with a more concrete decision problem such as
+the allocation of ventilators during a respiratory viral pandemic.  This problem was explored from a stochastic
+optimization perspective (not from a forecast evaluation perspective) in \cite{huang_stockpiling_2017} and provided an
+initial motivation for this project. We see it as promising focus for further development of the AS framework since it
+(a) has been identified as a prime manifestation of scarcity during respiratory outbreaks (b) tansparently involves
+logistical considerations depending on geographical and population scales, and (c) would likely imply a central role for
+hospitalization data. But again, additional modeling and data synthesis would be required since not everyone who is
+hospitalized needs a ventilator, and new hospital admissions will not fully describe for a need that corresponds to a
+prevalence of severe cases. Other possible real-world examples include the allocation of a limited stockpile of
+vaccinations \citep{araz_geographic_2012,persad_fair_2023} or diagnostic tests
+\citep{du_optimal_2022,pasco_covid-19_2023}.
 
 In practice, epidemiological forecasts are often directed at a diverse set of end-users. It may be easy for some of
 these users to summarize the consequences of how they use a forecast with a numerical loss function, but for others,
@@ -893,35 +851,45 @@ official views of NIGMS, the National Institutes of Health, or CDC.
 \section{Introduction}
 \label{sec:intro}
 
-We address some technical and methodological points from the main text. We begin in section \ref{sec:proper} by defining proper scoring rules and showing that the allocation score is proper. In section \ref{sec:ex-shortage}, we formalize the concept of a \emph{shortage} of resources, give some key results about expected resource shortages under a distribution characterizing uncertainty about (future) levels of resource need, and illustrate how quantiles arise as the Bayes act in a decision making problem about the quantity of a resource to purchase. Section \ref{sec:bayes-quantiles} gives a justification for the result that the Bayes act for the allocation problem is given by a vector of quantiles of the forecast distributions in each location at a shared probability level, which was stated in section 
-\ref{sec:methods.detailed.specific_allocation}. We describe the algorithm that we use to compute allocations given a forecast distribution in each location in section \ref{sec:numeric}. In section \ref{sec:distfromq}, we describe the methods for approximating a full distribution from a set of quantiles, implemented in the R package \verb`distfromq`, that we used to support computation of allocation scores from quantile forecasts that were submitted to the US COVID-19 Forecast Hub for the application in section \ref{sec:application}. Finally, in section 
-\ref{sec:propriety_of_parametric_approximation} we examine implications for propriety of an analysis that uses summaries of forecasts (such as predictive quantiles) rather than the full forecast distributions for computation of allocation scores.
+We address some technical and methodological points from the main text. We begin in section \ref{sec:proper} by defining
+proper scoring rules and showing that the allocation score is proper. In section \ref{sec:ex-shortage}, we formalize the
+concept of a \emph{shortage} of resources, give some key results about expected resource shortages under a distribution
+characterizing uncertainty about (future) levels of resource need, and illustrate how quantiles arise as the Bayes act
+in a decision making problem about the quantity of a resource to purchase. Section \ref{sec:bayes-quantiles} gives a
+justification for the result that the Bayes act for the allocation problem is given by a vector of quantiles of the
+forecast distributions in each location at a shared probability level, which was stated in section
+\ref{sec:methods.detailed.specific_allocation}. We describe the algorithm that we use to compute allocations given a
+forecast distribution in each location in section \ref{sec:numeric}. In section \ref{sec:distfromq}, we describe the
+methods for approximating a full distribution from a set of quantiles, implemented in the R package \verb`distfromq`,
+that we used to support computation of allocation scores from quantile forecasts that were submitted to the US COVID-19
+Forecast Hub for the application in section \ref{sec:application}. Finally, in section
+\ref{sec:propriety_of_parametric_approximation} we examine implications for propriety of an analysis that uses summaries
+of forecasts (such as predictive quantiles) rather than the full forecast distributions for computation of allocation
+scores.
 
 \section{Proper scoring rules}
 \label{sec:proper}
 
-In decision theory, a loss function $l$ is used to formalize a decision problem by assigning numerical value $l(x,y)$ to the
-\emph{result} of taking an \emph{action} $x$ in preparation for an \emph{outcome} $y$. A \emph{scoring rule} $S$ is a
-loss function for a decision problem where the action is a probabilistic forecast $F$ of the outcome $y$ (or the statement of $F$ by a forecaster).
-% As does any loss fun $S$ transforms a random outcome variable $Y$ into a random loss $S(F,Y)$.
-We refer to the realized loss $S(F,y)$ as the \emph{score} of $F$ at $y$.
+In decision theory, a loss function $l$ is used to formalize a decision problem by assigning numerical value $l(x,y)$ to
+the \emph{result} of taking an \emph{action} $x$ in preparation for an \emph{outcome} $y$. A \emph{scoring rule} $S$ is
+a loss function for a decision problem where the action is a probabilistic forecast $F$ of the outcome $y$ (or the
+statement of $F$ by a forecaster). We refer to the realized loss $S(F,y)$ as the \emph{score} of $F$ at $y$.
 
-Probabilistic forecasts can be seen as a unique kind of action in that they can be used to generate their
-own (simulated) outcome data, against which they can be scored using $S$. A probabilistic forecast
-$F$ is thus committed to the ``self-assessment'' $\Ex_F [S(F, Y)] := \Ex [S(F, Y^F)]$, where $Y^F \sim F$ is the random variable defined
-by sampling from $F$, as well to an assessment $\Ex_F [S(G, Y)]$ of any alternative forecast $G$.
+Probabilistic forecasts can be seen as a unique kind of action in that they can be used to generate their own
+(simulated) outcome data, against which they can be scored using $S$. A probabilistic forecast $F$ is thus committed to
+the ``self-assessment'' $\Ex_F [S(F, Y)] := \Ex [S(F, Y^F)]$, where $Y^F \sim F$ is the random variable defined by
+sampling from $F$, as well to an assessment $\Ex_F [S(G, Y)]$ of any alternative forecast $G$.
 
-A natural consistency criterion for $S$ is that, for observations assumed to be drawn from $F$, it will not assess any other forecast $G$
-as being better than $F$ itself, that is, that
+A natural consistency criterion for $S$ is that, for observations assumed to be drawn from $F$, it will not assess any
+other forecast $G$ as being better than $F$ itself, that is, that
 \begin{align}
 \Ex_F [S(F, Y)] \leq \Ex_F [S(G, Y)] \label{eqn:prop_ineq}
 \end{align}
-for any $F,G$. A scoring rule meeting this criterion is called \emph{proper}. If $S$ were improper, then from the perspective of
-a forecaster focussed (solely) on expected loss minimization, the decision to state
-a forecast $G$ other than the forecast $F$ which they believe describes $Y$ could be superior to the decision to state $F$.
-$S$ is \emph{strictly proper} when
-\eqref{eqn:prop_ineq} is a strict inequality, in which case the
-\emph{only} optimal decision for a forecaster seeking to minimize their expected loss is to state the forecast they believe to be true.
+for any $F,G$. A scoring rule meeting this criterion is called \emph{proper}. If $S$ were improper, then from the
+perspective of a forecaster focussed (solely) on expected loss minimization, the decision to state a forecast $G$ other
+than the forecast $F$ which they believe describes $Y$ could be superior to the decision to state $F$. $S$ is
+\emph{strictly proper} when \eqref{eqn:prop_ineq} is a strict inequality, in which case the \emph{only} optimal decision
+for a forecaster seeking to minimize their expected loss is to state the forecast they believe to be true.
 
 \subsection{The allocation score is proper}
 \label{sec:alloscore_proper}
@@ -945,31 +913,30 @@ The allocation scoring rule is Bayes and therefore proper.
 
 We note that in the probabilistic forecasting literature (see e.g., \cite{gneiting2011making}, Theorem 3) what we have
 termed Bayes scoring rules typically appear via \eqref{eqn:bayes_sr} where $x^F$ is some given functional of $F$ which
-can be shown to be \emph{elicitable}, that is, to be the Bayes act for some loss function $s$.
-Such a loss function is said to be a \emph{consistent loss (or scoring) function} for the functional $F \mapsto x^F$, and many important
-recent results in the literature (e.g., \cite{fisslerziegel2016consistency}) address whether there \emph{exists} any loss
-function that is consistent for $x^F$. Our orientation
-is different from this insofar as we \emph{begin} by specifying a decision problem and a loss function of subject matter relevance
-and use the Bayes act only as a bridge to a proper scoring rule.  Consistency is never in doubt.
+can be shown to be \emph{elicitable}, that is, to be the Bayes act for some loss function $s$. Such a loss function is
+said to be a \emph{consistent loss (or scoring) function} for the functional $F \mapsto x^F$, and many important recent
+results in the literature (e.g., \cite{fisslerziegel2016consistency}) address whether there \emph{exists} any loss
+function that is consistent for $x^F$. Our orientation is different from this insofar as we \emph{begin} by specifying a
+decision problem and a loss function of subject matter relevance and use the Bayes act only as a bridge to a proper
+scoring rule.  Consistency is never in doubt.
 
 
 \section{Expected shortages}
 \label{sec:ex-shortage}
 
 A key feature of loss functions for decision problems used to define quantiles and related scoring rules such as the
-CRPS and the WIS (see e.g., \cite{gneiting2011quantiles}, \cite{jose2009evaluating},
-and \cite{royset2022optimization}, sections 1.C and 3.C), as well as the allocation loss function presented in this work,
-is the presence of a \emph{shortage}:
-the amount $\max\{0,y-x\}$ by which a resource demand
-$y$ exceeds a supply decision variable $x$, which, for convenience, we write as $(y-x)_{+}$. In particular, a quantile at
-probability level $\alpha$ of a distribution $F$ on $\mathbb{R}^1$ (which we assume to have a well-defined density $f(x)$)
-is a Bayes act for the loss function
+CRPS and the WIS (see e.g., \cite{gneiting2011quantiles}, \cite{jose2009evaluating}, and \cite{royset2022optimization},
+sections 1.C and 3.C), as well as the allocation loss function presented in this work, is the presence of a
+\emph{shortage}: the amount $\max\{0,y-x\}$ by which a resource demand $y$ exceeds a supply decision variable $x$,
+which, for convenience, we write as $(y-x)_{+}$. In particular, a quantile at probability level $\alpha$ of a
+distribution $F$ on $\mathbb{R}^1$ (which we assume to have a well-defined density $f(x)$) is a Bayes act for the loss
+function
 \[
 l(x,y) = Cx + L(y-x)_{+}
 \]
-where $\alpha = 1-C/L$ and $C$ and $L$ can be interpreted as the cost per unit of a resource (such as medicine) and the loss
-incurred when a unit of demand (such as illness) cannot be met due to the shortage $(y-x)_{+}$.  This follows because a
-Bayes act, as a minimizer of $\Ex_F[l(x,Y)]$, must also be a vanishing point of the derivative
+where $\alpha = 1-C/L$ and $C$ and $L$ can be interpreted as the cost per unit of a resource (such as medicine) and the
+loss incurred when a unit of demand (such as illness) cannot be met due to the shortage $(y-x)_{+}$.  This follows
+because a Bayes act, as a minimizer of $\Ex_F[l(x,Y)]$, must also be a vanishing point of the derivative
 \begin{align}
 \dby{}{x} \Ex_F\left[l(x,Y)\right] &= \Ex_F\left[\dby{}{x}l(x,Y)\right] \nonumber\\
 &= C + L\Ex_F\left[\dby{}{x}(Y-x)_+\right] \nonumber\\
@@ -977,8 +944,8 @@ Bayes act, as a minimizer of $\Ex_F[l(x,Y)]$, must also be a vanishing point of 
 &= C + L(F(x) - 1), \label{eqn:q_deriv}
 \end{align}
 so that $1-C/L = F(x)$.
-The formula $\dby{}{x}\Ex_F\left[(Y-x)_+\right] = F(x) - 1$ for the derivative of the shortage,
-used above in \eqref{eqn:q_deriv}, can be obtained from an application of the ``Leibniz Rule'':
+The formula $\dby{}{x}\Ex_F\left[(Y-x)_+\right] = F(x) - 1$ for the derivative of the shortage, used above in
+\eqref{eqn:q_deriv}, can be obtained from an application of the ``Leibniz Rule'':
 \begin{align}
 	\frac{d}{dx} \Ex_F [(Y-x)_{+}] &= \frac{d}{dx} \int_{x}^{\infty} (y-x) f_Y(y)dy \nonumber\\
 	&= \int_{x}^{\infty} \frac{d}{dx}(y-x) f_Y(y)dy - (x-x) f_Y(x) = -\int_{x}^{\infty} f_Y(y)dy = F(x)-1. \label{eqn:shortage_deriv}
@@ -989,20 +956,24 @@ We will also use this result below in deriving the Bayes act for the allocation 
 \section{Allocation Bayes acts as vectors of marginal quantiles.}
 \label{sec:bayes-quantiles}
 
-Here we study the form of the Bayes act for the allocation problem (AP) (equation \eqref{eqn:loss_fn} in section \ref{sec:methods.detailed.specific_allocation}) of the text:
+Here we study the form of the Bayes act for the allocation problem (AP) (equation \eqref{eqn:loss_fn} in section
+\ref{sec:methods.detailed.specific_allocation}) of the text:
 \begin{align}
     \underset{0 \leq x}{\mathrm{minimize}}\,\, \mathbb{E}_{F} [s_A(x, Y)]= \sum_{i=1}^{N} L \cdot \mathbb{E}_{F_i}[(Y_i - x_i)_{+}]
      \text{ subject to }
      \, \sum_{i=1}^N x_i = K, \label{AP-long}
 \end{align}
-where the marginal forecasts $F_i$ for $i=1,\dots,N$ represent forecasts for $N$ distinct locations.
-We show that the Bayes act $x^{F,K} = (x_1^{F,K},\ldots,x_N^{F,K})$ for a forecast $F$ and resource constraint level $K$
-is a vector of quantiles of the marginal forecast distributions $F_i$ at a single probability level
-$\tau^{F,K}$, that is, $x_i^{F,K} = q_{F_i,\tau^{F,K}}$. An immediate consequence used in the examples in Section \ref
-{sec:methods.overview} is that if $F_i = \mathrm{Exp}(1/\sigma_i)$ for all $i$, then the Bayes act is
-proportional to $(\sigma_1,\ldots,\sigma_N)$, since $q_{\mathrm{Exp}(1/\sigma),\tau} = -\sigma \log(1-\tau)$.
+where the marginal forecasts $F_i$ for $i=1,\dots,N$ represent forecasts for $N$ distinct locations. We show that the
+Bayes act $x^{F,K} = (x_1^{F,K},\ldots,x_N^{F,K})$ for a forecast $F$ and resource constraint level $K$ is a vector of
+quantiles of the marginal forecast distributions $F_i$ at a single probability level $\tau^{F,K}$, that is, $x_i^{F,K} =
+q_{F_i,\tau^{F,K}}$. An immediate consequence used in the examples in Section \ref {sec:methods.overview} is that if
+$F_i = \mathrm{Exp}(1/\sigma_i)$ for all $i$, then the Bayes act is proportional to $(\sigma_1,\ldots,\sigma_N)$, since
+$q_{\mathrm{Exp}(1/\sigma),\tau} = -\sigma \log(1-\tau)$.
 
-In order for $x^{\star} \in \mathbb{R}^N_{+}$ to solve the AP it must be true that reallocating $\delta > 0$ units of the resource from location $i$ to location $j$ will lead to a net increase in expected shortage --- in other words, the reallocation increases the expected shortage in location $i$ is at least as much as it decreases the expected shortage in location $j$:
+In order for $x^{\star} \in \mathbb{R}^N_{+}$ to solve the AP it must be true that reallocating $\delta > 0$ units of
+the resource from location $i$ to location $j$ will lead to a net increase in expected shortage --- in other words, the
+reallocation increases the expected shortage in location $i$ is at least as much as it decreases the expected shortage
+in location $j$:
 \begin{align*}
 &\mathbb{E}_{F_i}[(Y_i - (x^{\star}_i - \delta))_{+}] - \mathbb{E}_{F_i}[(Y_i - x^{\star}_i)_{+}]
 \text{ (increase in $i$) } \nonumber \\
@@ -1042,20 +1013,17 @@ of the allocation scoring rule.
 \section{Numerical computation of allocation Bayes acts}
 \label{sec:numeric}
 
-To compute an allocation score $S_A(F,y;K) := s_A(x^{F,K},y)$, we require numerical values for a
-Bayes act solving the AP \eqref{AP-long} --- that is, we must find the specific resource allocations for each location that are determined by the forecast $F$ under the resource constraint $K$.
-Assuming we have reliable means of calculating quantiles $q_{\alpha,F_i}$
-of the marginal forecasts $F_i$,
-these allocations are given by $q_{\tau^{\star},F_i}$ where $\tau^{\star}$ solves the equation \eqref{eqn:quantiles-sum-to-K}.
-However, this equation is not analytically tractable and we must resort to a numerical method
-for finding an approximation $\tilde{\tau}$ of $\tau^{\star}$.
+To compute an allocation score $S_A(F,y;K) := s_A(x^{F,K},y)$, we require numerical values for a Bayes act solving the
+AP \eqref{AP-long} --- that is, we must find the specific resource allocations for each location that are determined by
+the forecast $F$ under the resource constraint $K$. Assuming we have reliable means of calculating quantiles
+$q_{\alpha,F_i}$ of the marginal forecasts $F_i$, these allocations are given by $q_{\tau^{\star},F_i}$ where
+$\tau^{\star}$ solves the equation \eqref{eqn:quantiles-sum-to-K}. However, this equation is not analytically tractable
+and we must resort to a numerical method for finding an approximation $\tilde{\tau}$ of $\tau^{\star}$.
 
-We have implemented an iterative bisection method that makes use of the fact that $\sum_{i=1}^N q_{\tau,F_i}$
-is an increasing function of $\tau$.
-The algorithm begins with an initial search interval $[\tau_{L,1}, \tau_{U,1}]$ (such as $[0,\max_{i}F_i(K)]$) that clearly contains
-the solution $\tau^{\star}$.
-% This can be confirmed by verifying that the resource allocations corresponding to the lower endpoint of the search interval do not exceed the resource constraint ($\sum_{i=1}^N q_{\tau_L,F_i} \leq K$) and the resource allocations corresponding to the upper endpoint match or exceed the available resources ($\sum_{i=1}^N q_{\tau_U,F_i} \geq K$).
-At each step $j$ of the algorithm, we evaluate the total allocation $\sum_{i=1}^N q_{\tau_{M,j},F_i}$ at the midpoint of the search interval,
+We have implemented an iterative bisection method that makes use of the fact that $\sum_{i=1}^N q_{\tau,F_i}$ is an
+increasing function of $\tau$. The algorithm begins with an initial search interval $[\tau_{L,1}, \tau_{U,1}]$ (such as
+$[0,\max_{i}F_i(K)]$) that clearly contains the solution $\tau^{\star}$. At each step $j$ of the algorithm, we evaluate
+the total allocation $\sum_{i=1}^N q_{\tau_{M,j},F_i}$ at the midpoint of the search interval,
 $\tau_{M,j} = \frac{1}{2}(\tau_{L,j} + \tau_{U,j})$ and continue the search on the narrowed sub-interval
 \begin{align}
 [\tau_{L,j+1},\tau_{U,j+1}] =
@@ -1064,74 +1032,97 @@ $\tau_{M,j} = \frac{1}{2}(\tau_{L,j} + \tau_{U,j})$ and continue the search on t
 [\tau_{M,j}, \tau_{U,j}] & \text{if } \sum_{i=1}^N q_{\tau_{M,j},F_i} < K.
 \end{cases} \nonumber
 \end{align}
-% We then narrow the search to the sub-interval that contains the solution:
-% \begin{itemize}
-%   \item If $\sum_{i=1}^N q_{\tau_{M},F_i} \geq K$, we continue the search on the interval $[\tau_L, \tau_M]$.
-%   \item If $\sum_{i=1}^N q_{\tau_M, F_i} \leq K$, we continue the search on the interval $[\tau_M, \tau_U]$.
-% \end{itemize}
-This search continues until $\tau_{U,j+1} < (1+\varepsilon)\tau_{L,j+1}$ for a suitably small $\varepsilon>0$.
-We have implemented this procedure along with the resulting score computations in the
-R package \verb`alloscore` \citep{gerding-alloscore} which provided all allocation score values used in the analysis of section \ref{sec:application}.
+This search continues until $\tau_{U,j+1} < (1+\varepsilon)\tau_{L,j+1}$ for a suitably small $\varepsilon>0$. We have
+implemented this procedure along with the resulting score computations in the R package \verb`alloscore`
+\citep{gerding-alloscore} which provided all allocation score values used in the analysis of section
+\ref{sec:application}.
 
-Subtleties can arise when the forecast
-densities $f_i$ vanish or are very small, in which case quantiles are non-unique or highly variable near a probability level,
-leading to ambiguity or numerical instabilities{} in the evaluation of $\sum_{i=1}^N q_{\tau,F_i}$. Additionally, if point masses are present in any of the $F_i$,
-\eqref{eqn:quantiles-sum-to-K} will not have a unique solution for some discrete set of constraint levels $K$.
-We have adopted conventions for detecting such levels and enforcing consistency in score calculations
-near them. Through extensive experimentation, we have determined that these conditions seem to address these challenges with the forecasts we are working with, but we leave a more rigorous approximation error analysis for later work.
+Subtleties can arise when the forecast densities $f_i$ vanish or are very small, in which case quantiles are non-unique
+or highly variable near a probability level, leading to ambiguity or numerical instabilities{} in the evaluation of
+$\sum_{i=1}^N q_{\tau,F_i}$. Additionally, if point masses are present in any of the $F_i$,
+\eqref{eqn:quantiles-sum-to-K} will not have a unique solution for some discrete set of constraint levels $K$. We have
+adopted conventions for detecting such levels and enforcing consistency in score calculations near them. Through
+extensive experimentation, we have determined that these conditions seem to address these challenges with the forecasts
+we are working with, but we leave a more rigorous approximation error analysis for later work.
 
 \section{Computing allocations from finite quantile forecast representations}
 \label{sec:distfromq}
 
-In section \ref{sec:application} of the manuscript, we used the allocation score to evaluate forecasts of COVID-19 hospitalizations that have been submitted to the US COVID-19 Forecast Hub. These forecasts are submitted to the Hub using a set of 23 quantiles of the forecast distribution at the 23 probability levels in the set $\mathcal{T} = \{0.01, 0.025, 0.05, 0.1, 0.15, \ldots, \allowbreak 0.9, 0.95, 0.975, 0.99\}$, which specify a predictive median and the endpoints of central $(1 - \alpha) \times 100\%$ prediction intervals at levels $\alpha = 0.02, 0.05, 0.1, 0.2, \allowbreak 0.3, 0.4, 0.5, 0.6, \allowbreak 0.7, 0.8, 0.9$. For a given week and target date, we use $q_{i,k}$ to denote the submitted quantiles for location $i$ and probability level $\tau_k \in \mathcal{T}$, $k = 1, \ldots, 23$.
+In section \ref{sec:application} of the manuscript, we used the allocation score to evaluate forecasts of COVID-19
+hospitalizations that have been submitted to the US COVID-19 Forecast Hub. These forecasts are submitted to the Hub
+using a set of 23 quantiles of the forecast distribution at the 23 probability levels in the set $\mathcal{T} = \{0.01,
+0.025, 0.05, 0.1, 0.15, \ldots, \allowbreak 0.9, 0.95, 0.975, 0.99\}$, which specify a predictive median and the
+endpoints of central $(1 - \alpha) \times 100\%$ prediction intervals at levels $\alpha = 0.02, 0.05, 0.1, 0.2,
+\allowbreak 0.3, 0.4, 0.5, 0.6, \allowbreak 0.7, 0.8, 0.9$. For a given week and target date, we use $q_{i,k}$ to denote
+the submitted quantiles for location $i$ and probability level $\tau_k \in \mathcal{T}$, $k = 1, \ldots, 23$.
 
-In the event that there is some $k \in \{1, \ldots, 23\}$ for which $\sum_i q_{i,k} = K$, i.e., the provided predictive quantiles at level $\tau_k$ sum across locations to the resource constraint $K$, the solution to the allocation problem is given by those quantiles. However, generally this will not be the case; the optimal allocation will typically be at some probability level $\tau^\star \notin \mathcal{T}$.
+In the event that there is some $k \in \{1, \ldots, 23\}$ for which $\sum_i q_{i,k} = K$, i.e., the provided predictive
+quantiles at level $\tau_k$ sum across locations to the resource constraint $K$, the solution to the allocation problem
+is given by those quantiles. However, generally this will not be the case; the optimal allocation will typically be at
+some probability level $\tau^\star \notin \mathcal{T}$.
 
-To address this situation and support the numerical allocation algorithm outlined in section \ref{sec:numeric}, we need a mechanism to approximate the full cumulative distribution functions $F_i$, $i = 1, \ldots, N$ based on the provided quantiles. We have developed functionality for this purpose in the \verb`distfromq` package for R.\citep{ray-distfromq} This functionality represents a distribution as a mixture of discrete and continuous parts, and it works in two steps:
+To address this situation and support the numerical allocation algorithm outlined in section \ref{sec:numeric}, we need
+a mechanism to approximate the full cumulative distribution functions $F_i$, $i = 1, \ldots, N$ based on the provided
+quantiles. We have developed functionality for this purpose in the \verb`distfromq` package for R.\citep{ray-distfromq}
+This functionality represents a distribution as a mixture of discrete and continuous parts, and it works in two steps:
 \begin{enumerate}
-  \item Identify a discrete component of the distribution consisting of zero or more point masses, and create an adjusted set of predictive quantiles for the continuous part of the distribution by subtracting the point mass probabilities and rescaling.
-  \item For the continuous part of the distribution, different approaches are used on the interior and exterior of the provided quantiles:
+  \item Identify a discrete component of the distribution consisting of zero or more point masses, and create an
+    adjusted set of predictive quantiles for the continuous part of the distribution by subtracting the point mass
+    probabilities and rescaling.
+  \item For the continuous part of the distribution, different approaches are used on the interior and exterior of the
+    provided quantiles:
   \begin{enumerate}
-    \item On the interior, a monotonic cubic spline interpolates the adjusted quantiles representing the continuous part of the distribution.
-    \item A location-scale parametric family is used to extrapolate beyond the provided quantiles. The location and scale parameters are estimated separately for the lower and upper tails so as to obtain a tail distribution that matches the two most extreme quantiles in each tail. In this work, we use normal distributions for the tails.
+    \item On the interior, a monotonic cubic spline interpolates the adjusted quantiles representing the continuous part
+      of the distribution.
+    \item A location-scale parametric family is used to extrapolate beyond the provided quantiles. The location and
+      scale parameters are estimated separately for the lower and upper tails so as to obtain a tail distribution that
+      matches the two most extreme quantiles in each tail. In this work, we use normal distributions for the tails.
   \end{enumerate}
 \end{enumerate}
-The resulting distributional estimate exactly matches all of the predictive quantiles provided by the forecaster. We use the cumulative distribution function resulting from this procedure as an input to the allocation score algorithm.
+The resulting distributional estimate exactly matches all of the predictive quantiles provided by the forecaster. We use
+the cumulative distribution function resulting from this procedure as an input to the allocation score algorithm.
 
-We refer the reader to the \verb`distfromq` documentation for further detail.\citep{ray-distfromq}
-
-% \begin{enumerate}
-%   \item First, we handle settings where the provided quantiles imply the existence of one or more point masses. Specifically, if there are distinct probability levels $\tau_k < \tau_{k^\prime}$ that have the same quantiles, $q_{l,k} = q_{l, k^\prime}$, the distribution contains a point mass at $q_{l,k}$. We split into three cases depending on the number of distinct provided quantiles:
-%   \begin{enumerate}
-%     \item If all provided quantiles are equal to each other, we infer that the distribution consists of a single point mass at that quantile value.
-%     \item If there are two distinct quantiles across all of the probability levels $\tau_k \in \mathcal{T}$, our estimated distribution consists of a mixture of two point masses. The probability assigned to the point mass at $q$ is proportional to $\tau_q^\max - \tau_q^\min$, where
-%     $$\tau_q^\max = \begin{cases}
-%       \max_{\{\}} \tau_k
-%     \end{cases}$$ is the largest probability level $\tau_k$ for which $q_{l,k} = q$, and $\tau_q^\min$ is defined similarly.
-%     \item Otherwise, our final estimate will consist of a mixture of a discrete distribution with point masses at the duplicated quantiles and a continuous distribution elsewhere. In this step, we  In this case, the discrete distribution has point mass probabilities calculated as $d_q = \tau_q^\max - \tau_q^\min$, where $\tau_q^\max$ and $\tau_q^\min$ are defined as in the previous point.
-%   \end{enumerate}
-% \end{enumerate}
-
+We refer the reader to the \verb`distfromq` documentation for further detail \citep{ray-distfromq}.
 
 \section{Propriety of parametric approximation} % (fold)
 \label{sec:propriety_of_parametric_approximation}
 
-In practice, open forecasting exercises are generally not able to collect a perfect description of the forecast distribution $F$ other than in simple settings such as for a categorical variable with a relatively small number of categories. In settings where the outcome being forecasted is a continuous quantity (such as the proportion of outpatient doctor visits where the patient has influenza-like illness) or a count (such as influenza hospitalizations), forecasting exercises have therefore resorted to collecting summaries of a forecast distribution such as bin probabilities or predictive quantiles.
-In this section, we address two practical concerns raised by this. First, we discuss conditions under which it is possible to calculate the allocation score when only summaries of a forecast distribution are recorded in a submission to a forecast hub. Second, we show that a post hoc attempt to compute the allocation score based on submitted predictive quantiles may in fact compute an alternative score that is not proper.
+In practice, open forecasting exercises are generally not able to collect a perfect description of the forecast
+distribution $F$ other than in simple settings such as for a categorical variable with a relatively small number of
+categories. In settings where the outcome being forecasted is a continuous quantity (such as the proportion of
+outpatient doctor visits where the patient has influenza-like illness) or a count (such as influenza hospitalizations),
+forecasting exercises have therefore resorted to collecting summaries of a forecast distribution such as bin
+probabilities or predictive quantiles. In this section, we address two practical concerns raised by this. First, we
+discuss conditions under which it is possible to calculate the allocation score when only summaries of a forecast
+distribution are recorded in a submission to a forecast hub. Second, we show that a post hoc attempt to compute the
+allocation score based on submitted predictive quantiles may in fact compute an alternative score that is not proper.
 
 \subsection{Propriety when scoring methods are announced prospectively}
 
-We consider a setting where a forecasting exercise (such as a forecast hub) pre-specifies that forecasts will be represented using a parametric family of forecast distributions $G_\theta(y)$, and the task of the forecaster is to select a particular parameter value $\theta$. We use $\mathcal{P}$ to denote the collection of all distributions $G_\theta$ in the given parametric family. For instance, it has recently been proposed that mixture distributions could be used to represent forecast distributions \citep{wadsworth2023mixture}. Additionally, we note that the functionality in \verb`distfromq` can be viewed as specifying a parametric family $\mathcal{P}_{\mathrm{dfq}}$ where the parameters $\theta$ of $G_\theta$
-are its quantiles at pre-specified probability levels, and where the shape of any $G_\theta \in \mathcal{P}_{\mathrm{dfq}}$ over the full range of its support is entirely controlled by these quantiles.
+We consider a setting where a forecasting exercise (such as a forecast hub) pre-specifies that forecasts will be
+represented using a parametric family of forecast distributions $G_\theta(y)$, and the task of the forecaster is to
+select a particular parameter value $\theta$. We use $\mathcal{P}$ to denote the collection of all distributions
+$G_\theta$ in the given parametric family. For instance, it has recently been proposed that mixture distributions could
+be used to represent forecast distributions \citep{wadsworth2023mixture}. Additionally, we note that the functionality
+in \verb`distfromq` can be viewed as specifying a parametric family $\mathcal{P}_{\mathrm{dfq}}$ where the parameters
+$\theta$ of $G_\theta$ are its quantiles at pre-specified probability levels, and where the shape of any $G_\theta \in
+\mathcal{P}_{\mathrm{dfq}}$ over the full range of its support is entirely controlled by these quantiles.
 
-We find it helpful now to formally distinguish between two decision making problems. The first is the public health decision maker's allocation problem where the task is to select an allocation $x$, with the allocation loss $s_A(x, y) = \sum_{i=1}^N L \cdot \max(0, y_i - x_i)$ as described in section \ref{sec:methods.detailed.specific_allocation}.
-The second is the forecaster's reporting problem where the task is to select parameter values $\theta$ to report. The forecaster's loss is given by
+We find it helpful now to formally distinguish between two decision making problems. The first is the public health
+decision maker's allocation problem where the task is to select an allocation $x$, with the allocation loss $s_A(x, y) =
+\sum_{i=1}^N L \cdot \max(0, y_i - x_i)$ as described in section \ref{sec:methods.detailed.specific_allocation}. The
+second is the forecaster's reporting problem where the task is to select parameter values $\theta$ to report. The
+forecaster's loss is given by
 \begin{align}
 s_R(\theta, y) = s_A(x^{G_\theta}, y), \label{eqn:forecaster_theta_loss}
 \end{align}
-where $x^{G_\theta}$ is the Bayes act for the allocation problem under the distribution $G_\theta$. In words, the loss associated with reporting $\theta$ is equal to the loss associated with taking the Bayes allocation corresponding to the distribution $G_\theta$.
+where $x^{G_\theta}$ is the Bayes act for the allocation problem under the distribution $G_\theta$. In words, the loss
+associated with reporting $\theta$ is equal to the loss associated with taking the Bayes allocation corresponding to the
+distribution $G_\theta$.
 
-Following our usual construction, the Bayes act for the forecast reporting problem is the parameter set that minimizes the forecaster's expected loss. Breaking with our earlier notation for improved legibility, we use $\theta^\star(F)$ to denote this Bayes act:
+Following our usual construction, the Bayes act for the forecast reporting problem is the parameter set that minimizes
+the forecaster's expected loss. Breaking with our earlier notation for improved legibility, we use $\theta^\star(F)$ to
+denote this Bayes act:
 \begin{align*}
 \theta^\star(F) &= \text{argmin}_\theta \Ex_F [s_R(\theta, Y)] \\
 &= \text{argmin}_\theta \Ex_F [s_A(x^{G_\theta}, Y)]
@@ -1140,13 +1131,23 @@ Following our usual construction, the Bayes act for the forecast reporting probl
 We then arrive at the scoring rule
 $$S_R(F, y) = s_R(\theta^\star(F), y) = s_A(x^{G_{\theta^\star(F)}}, y).$$
 It follows from the discussion in section \ref{sec:alloscore_proper} that this is a proper scoring rule for $F$.
-Although the full forecast distribution $F$ is not available in the forecast submission, the score $S_R(F, y)$ can be calculated from the reported parameter values as long as the forecaster submits the optimal parameters $\theta^\star(F)$.
+Although the full forecast distribution $F$ is not available in the forecast submission, the score $S_R(F, y)$ can be
+calculated from the reported parameter values as long as the forecaster submits the optimal parameters
+$\theta^\star(F)$.
 
-We emphasize that the forecaster's true predictive distribution $F$ does not need to be a member of the specified parametric family $\mathcal{P}$ for this construction to yield a proper score.
-It is, however, necessary to specify the parametric family to use and the foundational scoring rule $s_A$ (including any relevant problem parameters such as the resource constraint $K$) in advance, so that forecasters can identify the Bayes act parameter set $\theta^\star(F)$ to report.
+We emphasize that the forecaster's true predictive distribution $F$ does not need to be a member of the specified
+parametric family $\mathcal{P}$ for this construction to yield a proper score. It is, however, necessary to specify the
+parametric family to use and the foundational scoring rule $s_A$ (including any relevant problem parameters such as the
+resource constraint $K$) in advance, so that forecasters can identify the Bayes act parameter set $\theta^\star(F)$ to
+report.
 
-If the parametric family used to represent forecast distributions is flexible enough, the reporting scoring rule $S_R$ and the allocation score are equivalent in the sense that they will yield the same score for any distribution $F$.
-Suppose that for a given resource constraint $K$, for any forecast distribution $F$ it is possible to find a member $G_{\theta^\star}$ of the specified parametric family $\mathcal{P}$ with the same allocation as $F$ (i.e., $x^F = x^{G_{\theta^\star}}$). Then $\theta^\star$ is a Bayes act for the reporting problem since for any other parameter value $\theta$,
+If the parametric family used to represent forecast distributions is flexible enough, the reporting scoring rule $S_R$
+and the allocation score are equivalent in the sense that they will yield the same score for any distribution $F$.
+Suppose that for a given resource constraint $K$, for any forecast distribution $F$ it is possible to find a member
+$G_{\theta^\star}$ of the specified parametric family $\mathcal{P}$ with the same allocation as $F$ (i.e., 
+$x^F = x^{G_{\theta^\star}}$). Then $\theta^\star$ is a Bayes act for the reporting problem since for any other
+parameter value
+$\theta$,
 \begin{align*}
 \Ex_F[s_R(\theta^\star, Y)] &= \Ex_F[ s_A(x^{G_{\theta^\star}}, Y) ] \\
 &= \Ex_F[s_A(x^F, Y)]  \quad \text{ (since $x^F = x^{G_{\theta^\star}}$)} \\
@@ -1161,15 +1162,30 @@ S_R(F, y) &= s_R(\theta^\star, y) \\
 &= S_A(F, y).
 \end{align*}
 
-For the particular choice of the parametric family $\mathcal{P}_{\text{dfq}}$ (i.e., using the \verb`distfromq` package), this flexibility requirement is satisfied. For instance, the forecaster could pick one required quantile level (such as 0.5, for which the corresponding predictions are predictive medians), and set the submitted quantiles of their forecast distribution in each location at that level to be the desired allocations, which sum to $K$ across all locations.
-However, this representation of the forecast may be quite different from the actual forecast distribution $F$.
-For example, for the actual forecast distribution $F$ the allocations may occur at some quantile level other than 0.5.
+For the particular choice of the parametric family $\mathcal{P}_{\text{dfq}}$ (i.e., using the \verb`distfromq`
+package), this flexibility requirement is satisfied. For instance, the forecaster could pick one required quantile level
+(such as 0.5, for which the corresponding predictions are predictive medians), and set the submitted quantiles of their
+forecast distribution in each location at that level to be the desired allocations, which sum to $K$ across all
+locations. However, this representation of the forecast may be quite different from the actual forecast distribution
+$F$. For example, for the actual forecast distribution $F$ the allocations may occur at some quantile level other than
+0.5.
 
-As another alternative for practical forecasting exercises, a forecast hub could ask forecasters to directly provide the Bayes allocations associated with their forecasts for one or more specified resource constraints $K$. At the cost of increasing the number of quantities solicited by the forecast hub, this would have several advantages: it would prevent any artificial distortion of the forecast distributions, allow for direct calculation of scores, and narrow the gap between model outputs and public health end users. For this to be feasible, implementations of the allocation algorithm would have to be provided to participating forecasters in the computational languages being used for modeling.
+As another alternative for practical forecasting exercises, a forecast hub could ask forecasters to directly provide the
+Bayes allocations associated with their forecasts for one or more specified resource constraints $K$. At the cost of
+increasing the number of quantities solicited by the forecast hub, this would have several advantages: it would prevent
+any artificial distortion of the forecast distributions, allow for direct calculation of scores, and narrow the gap
+between model outputs and public health end users. For this to be feasible, implementations of the allocation algorithm
+would have to be provided to participating forecasters in the computational languages being used for modeling.
 
 \subsection{Impropriety of post hoc allocation scoring with quantile forecasts}
 
-A \emph{post hoc} evaluation of quantile forecasts that combines the parametric family specified by \verb`distfromq` with the allocation score does not yield the allocation score of the forecast distribution $F$. Instead, it computes an alternative score that is improper. This is because the forecast distribution $F$ and the distribution $G^q \in \mathcal{P}_{\text{dfq}}$ with the same quantiles as $F$ may determine different resource allocations. In our investigations, these discrepancies appear to be relatively minor on the interior of the provided quantiles, but could be severe if the tail extrapolations performed by \verb`distfromq` do not match the tail behavior of $F$ and the allocations are in the tails of the predictive distribution.
+A \emph{post hoc} evaluation of quantile forecasts that combines the parametric family specified by \verb`distfromq`
+with the allocation score does not yield the allocation score of the forecast distribution $F$. Instead, it computes an
+alternative score that is improper. This is because the forecast distribution $F$ and the distribution $G^q \in
+\mathcal{P}_{\text{dfq}}$ with the same quantiles as $F$ may determine different resource allocations. In our
+investigations, these discrepancies appear to be relatively minor on the interior of the provided quantiles, but could
+be severe if the tail extrapolations performed by \verb`distfromq` do not match the tail behavior of $F$ and the
+allocations are in the tails of the predictive distribution.
 
 We define
 $$G^{\star}(F) := \argmin_{G \in \mathcal{P}_{\mathrm{dfq}}} E_{F}[S_A(G, Y)].$$
@@ -1180,7 +1196,8 @@ In general, $G^q(F)$ and $G^\star(F)$ will be different distributions:  matching
 does not require $G^q(F)$ to match $F$ at the quantiles for $\tau^{F,K}$ (c.f. \eqref{eqn:quantiles-sum-to-K}),
 which would be necessary for it to share $x^F$ as an optimal allocation.
 
-When an analyst attempts a post hoc computation of the allocation score using $G^q(F)$ (implicitly assuming that $G^q(F) = G^\star(F)$), they in fact compute the alternative score
+When an analyst attempts a post hoc computation of the allocation score using $G^q(F)$ (implicitly assuming that $G^q(F)
+= G^\star(F)$), they in fact compute the alternative score
 $$\tilde{S}(F, y) = S_A(G^q(F), y) = s_A(x^{G^q(F)}, y).$$
 This score is improper because $E_{F}[S_A(G, Y)]$ is minimized by $G^\star(F)$, not $G^q(F)$.
 In general, we have
@@ -1188,7 +1205,11 @@ In general, we have
 E_{F}[\tilde{S}(G^\star(F), Y)] &\leq E_{F}[ S_A(G^q(F), Y) ] \label{eqn:tilde_s_improper} \\
   &= E_{F}[\tilde{S}(F, Y)] \nonumber
 \end{align}
-However, the inequality in \eqref{eqn:tilde_s_improper} will typically be strict. For example, if $F$ has heavy upper tails (such as for a lognormal distribution), but normal distributions are used for tail extrapolations in \verb`distfromq`, then the resource allocations based on the distribution $G^q(F)$ may be quite different from the optimal allocations under the distribution $F$, leading to a strict inequality. This demonstrates that $\tilde{S}$ is improper.
+However, the inequality in \eqref{eqn:tilde_s_improper} will typically be strict. For example, if $F$ has heavy upper
+tails (such as for a lognormal distribution), but normal distributions are used for tail extrapolations in
+\verb`distfromq`, then the resource allocations based on the distribution $G^q(F)$ may be quite different from the
+optimal allocations under the distribution $F$, leading to a strict inequality. This demonstrates that $\tilde{S}$ is
+improper.
 
 \bibliography{allocation}
 
