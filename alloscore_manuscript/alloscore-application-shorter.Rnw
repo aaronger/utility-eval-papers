@@ -299,7 +299,7 @@ $y$.  One way that a decision maker can try to anticipate the consequence of an 
 $Y$. The loss of the action $x$ chosen according to $F$ can, in turn, be interpreted as the value of $F$ as an input to
 the decision making process under the realized outcome $y$ of $Y$.
 
-We arrive through this discussion at a three-step procedure for developing scoring rules for probabilistic forecasts:
+Through this discussion, we arrive at a three-step procedure for developing scoring rules for probabilistic forecasts:
 \begin{enumerate}
   \item Specify a \emph{loss function} $s(x, y)$ that measures the loss associated with taking action $x$ when outcome $y$
     eventually occurs.
