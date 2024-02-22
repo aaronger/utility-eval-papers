@@ -1383,7 +1383,7 @@ we are working with, but we leave a more rigorous approximation error analysis f
 \section{Computing allocations from finite quantile forecast representations}
 \label{sec:distfromq}
 
-In section \ref{sec:application} of the manuscript, we used the allocation score to evaluate forecasts of COVID-19
+In section \ref{sec:application}, we used the allocation score to evaluate forecasts of COVID-19
 hospitalizations that have been submitted to the US COVID-19 Forecast Hub. These forecasts are submitted to the Hub
 using a set of 23 quantiles of the forecast distribution at the 23 probability levels in the set $\mathcal{T} = \{0.01,
 0.025, 0.05, 0.1, 0.15, \ldots, \allowbreak 0.9, 0.95, 0.975, 0.99\}$, which specify a predictive median and the
