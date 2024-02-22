@@ -689,7 +689,7 @@ FL_allocs <- Kat15k_alloscores |>
 FL_diff <- round(FL_allocs["CU-select"] - FL_allocs["JHUAPL-Bucky"])
 @
 
-<<thermometer-plot, fig.height=7, fig.width=7.5, fig.cap="Probabilistic forecasts for new COVID-19 hospital admissions on January 3, 2022 and their suggested resource allocations for the states with the ten highest (eventually observed) hospitalization counts. For each state, the dark black line shows the data observed when the forecast was made and the grey line shows eventually observed counts. The side-by-side shaded regions show the median (solid red horizontal line) and 50\\%, 80\\% and 95\\% prediction intervals for the two selected models. The forecasts were made for new hospitalizations on January 3, 2022 (vertical dashed line, with number of hospitalizations indicated by red horizontal line segment at the intersection of the dashed line and the grey line of data). The vertical bars with purple, blue and red shading show the allocations. The purple bar goes from zero to the amount of need that was met by the allocation from that model to a specific location. A red bar indicates need that exceeded the resource allocation for a location, and a light blue bar shows the amount by which the resource allocation suggested by that model exceeded the need for that location.">>=
+<<thermometer-plot, fig.height=7, fig.width=7.5, fig.cap="Probabilistic forecasts for new COVID-19 hospital admissions on January 3, 2022 and their suggested resource allocations for the states with the ten highest (eventually observed) hospitalization counts. For each state, the dark black line shows the data observed when the forecast was made and the grey line shows eventually observed counts. The side-by-side shaded regions show the median (grey horizontal line) and 50\\%, 80\\% and 95\\% prediction intervals for the two selected models. The forecasts were made for new hospitalizations on January 3, 2022 (vertical dashed line, with number of hospitalizations indicated by red horizontal line segment at the intersection of the dashed line and the grey line of data). The vertical bars with purple, blue and red shading show the allocations. The purple bar goes from zero to the amount of need that was met by the allocation from that model to a specific location. A red bar indicates need that exceeded the resource allocation for a location, and a light blue bar shows the amount by which the resource allocation suggested by that model exceeded the need for that location.">>=
 source("R/plot_functions.R")
 
 locs_to_plot <- truth_data |>
@@ -723,13 +723,13 @@ plot_hosp(models = c("JHUAPL-Bucky", "CU-select"),
           one_K = 15000) + labs(x = NULL)
 @
 
-A state-wise comparison using Figures \ref{fig:thermometer-plot} and \ref{fig:multi-loc-ranks}A of the
+A state-wise comparison of the
 \texttt{JHUAPL-Bucky} and \texttt{CU-select} models shows that while the \texttt{JHUAPL-Bucky} forecast distributions
 were more centered on the eventual observations in many states, the suggested allocations of the \texttt{JHUAPL-Bucky}
-model were less efficient than those of the \texttt{CU-select} model. Thus \texttt{JHUAPL-Bucky} achieved a worse
+model were less efficient than those of the \texttt{CU-select} model (Figures \ref{fig:thermometer-plot} and \ref{fig:multi-loc-ranks}A). Thus \texttt{JHUAPL-Bucky} achieved a worse
 allocation score than \texttt{CU-select} (on this particular week) by allocating excess resources to several states,
 such as Pennsylvania and Michigan, rather than to states such as Florida and California where these resources would have
-reduced unmet need.  These allocation errors of \texttt{JHUAPL-Bucky} resulted from forecasts failing to consistently
+reduced unmet need.  These allocation errors resulted from forecasts failing to consistently
 capture the relative resource needs across different states. The \texttt{CU-select} model made some similar errors —
 most prominently, over-allocating resources to Ohio — but overall, it more successfully forecasted the resource demands
 across different locations in relative terms.
@@ -740,7 +740,7 @@ and it consistently incurred a large penalty for underprediction (Figure \ref{fi
 hospital admissions. Its MWIS was therefore less severely penalized by under- or over-predictions of the actual
 hospitalization counts.
 
-<<multi-loc-ranks, fig.width=8, fig.cap="Component-wise breakdowns of the allocation score (Panel A) and weighted interval score (Panel B), by location for forecasts of hospitalization admissions on January 3, 2022, for two selected models (\\texttt{JHUAPL-Bucky} and \\texttt{CU-select}). Panel A shows the observed resource need, in this case the observed number of hospitalizations, for each state, along with the hypothetical number of resources allocated to the given location based on the forecasts from each model. The number of available resources was fixed at 15,000 and forecasts from each model were used to determine an optimal allocation strategy before the resource need was known. For most locations the resource need exceeded the resources allocated, indicated by the `observed resource need' bar being larger than the `allocation' bar. Panel B shows the breakdown of the weighted interval score (WIS) into components of underprediction, overprediction and dispersion. Larger values of WIS indicate more error, and the full WIS score for each location can be decomposed into the three components shown here.">>=
+<<multi-loc-ranks, fig.width=8, fig.cap="Component-wise breakdowns of the allocation score (Panel A) and weighted interval score (Panel B), by location for forecasts of hospitalization admissions on January 3, 2022, for two selected models (\\texttt{JHUAPL-Bucky} and \\texttt{CU-select}). Panel A shows the observed resource need, in this case the observed number of hospitalizations, for each state, along with the hypothetical number of resources allocated to the given location based on the forecasts from each model. The number of available resources was fixed at 15,000 and forecasts from each model were used to determine an optimal allocation strategy before the resource need was known. For most locations the resource need exceeded the resources allocated, indicated by some amount of `unmet resource need' above the `need met by allocated resources'. Panel B shows the breakdown of the weighted interval score (WIS) into components of underprediction, overprediction and dispersion. Larger values of WIS indicate more error, and the full WIS score for each location can be decomposed into the three components shown here.">>=
 ## date points to target_end_date of 2022-01-10 to highlight
 ref_date_for_plot <- "2021-12-20"
 models_to_plot <- c("JHUAPL-Bucky", "CU-select", "per-capita")
@@ -856,7 +856,7 @@ p1 <- ggplot(dat_to_plot,
 @
 
 
-<<metrics-over-time, fig.height=8, fig.width=8, fig.cap="Hospital admissions and evaluation metrics over time. Panel A shows the number of hospital admissions in the US as a whole due to COVID-19 on a sequence of 15 Mondays from December 2021 through March 2022. These are the dates for which forecasts were made and evaluated. A horizontal dashed line at 15,000 shows the hypothetical resource constraint $K$. Panel B shows allocation scores (AS) for each model's 14 day-ahead forecast, across all US states. The $x$-axis corresponds to the date of the observation that a model's prediction was targeting (e.g., the date the forecast was made plus the forecast horizon). AS typically are high when the observed value is near to the constraint, which occurs during the last Monday in December (on the way up) and the last Monday in January (on the way down). In Panel B, the \\texttt{per-capita} allocation is drawn in a heavier solid line. Panel C shows the MWIS metric across weeks, averaged across all states. MWIS values tend to scale with the observed and predicted values, and the peak MWIS values happen around and just after the peak of the Omicron wave.">>=
+<<metrics-over-time, fig.height=8, fig.width=8, fig.cap="Hospital admissions and evaluation metrics over time. Panel A shows the number of hospital admissions in the US as a whole due to COVID-19 on a sequence of 15 Mondays from December 2021 through March 2022. These are the dates for which forecasts were made and evaluated. A horizontal dashed line at 15,000 shows the hypothetical resource constraint $K$. Panel B shows allocation scores (AS) for each model's 14 day-ahead forecast, across all US states. The $x$-axis corresponds to the date of the observation that a model's prediction was targeting (i.e., the date the forecast was made plus the forecast horizon). AS typically are high when the observed value is near to the constraint, which occurs during the last Monday in December (on the way up) and the last Monday in January (on the way down). In Panel B, the \\texttt{per-capita} allocation is drawn in a heavier solid line. Panel C shows the MWIS metric across weeks, averaged across all states. MWIS values tend to scale with the observed and predicted values, and the peak MWIS values happen around and just after the peak of the Omicron wave.">>=
 p2 <- ggplot(alloscore_data_summaries,
              aes(x=target_end_date, y=alloscore, color=model, shape=model, linewidth = model)) +
   geom_point() + geom_line()+
@@ -1112,11 +1112,10 @@ need and more detailed domain knowledge, it could be meaningfully aligned with a
 the allocation of ventilators during a respiratory viral pandemic.  This problem was explored from a stochastic
 optimization perspective (not from a forecast evaluation perspective) in \cite{huang_stockpiling_2017} and provided an
 initial motivation for this project. We see it as promising focus for further development of the AS framework since it
-(a) has been identified as a prime manifestation of scarcity during respiratory outbreaks (b) tansparently involves
+(a) has been identified as a setting in which allocation decisions are made during respiratory disease outbreaks, (b) involves
 logistical considerations depending on geographical and population scales, and (c) would likely imply a central role for
 hospitalization data. But again, additional modeling and data synthesis would be required since not everyone who is
-hospitalized needs a ventilator, and new hospital admissions will not fully describe for a need that corresponds to a
-prevalence of severe cases. Other possible real-world examples include the allocation of a limited stockpile of
+hospitalized needs a ventilator. Other possible real-world examples include the allocation of a limited stockpile of
 vaccinations \citep{araz_geographic_2012,persad_fair_2023} or diagnostic tests
 \citep{du_optimal_2022,pasco_covid-19_2023}.
 
@@ -1159,7 +1158,7 @@ scoring procedures as presented do not directly address this question, they coul
 `baseline' model or expert-elicited allocations in the absence of forecast data) to quantify the benefit of using a
 forecast to inform a specific decision.
 
-In conclusion, we argue that the way modelers and policymakers view and evaluate forecasts should more explicitly depend on
+In conclusion, we argue that when possible, the way modelers and policymakers view and evaluate forecasts should more explicitly depend on
 the specific decision-making context. Defaulting to standard forecast evaluation metrics can mask the utility (or
 disutility) of certain forecasts, or lead to forecasts being used in decision making contexts very different from those
 for which they are able to offer useful guidance. New collaborative work between public health officials and modeling teams is
@@ -1305,7 +1304,7 @@ $q_{\mathrm{Exp}(1/\sigma),\tau} = -\sigma \log(1-\tau)$.
 
 In order for $x^{\star} \in \mathbb{R}^N_{+}$ to solve the AP it must be true that reallocating $\delta > 0$ units of
 the resource from location $i$ to location $j$ will lead to a net increase in expected shortage --- in other words, the
-reallocation increases the expected shortage in location $i$ is at least as much as it decreases the expected shortage
+reallocation increases the expected shortage in location $i$ at least as much as it decreases the expected shortage
 in location $j$:
 \begin{align*}
 &\mathbb{E}_{F_i}[(Y_i - (x^{\star}_i - \delta))_{+}] - \mathbb{E}_{F_i}[(Y_i - x^{\star}_i)_{+}]
@@ -1396,7 +1395,7 @@ some probability level $\tau^\star \notin \mathcal{T}$.
 
 To address this situation and support the numerical allocation algorithm outlined in section \ref{sec:numeric}, we need
 a mechanism to approximate the full cumulative distribution functions $F_i$, $i = 1, \ldots, N$ based on the provided
-quantiles. We have developed functionality for this purpose in the \verb`distfromq` package for R.\citep{ray-distfromq}
+quantiles. We have developed functionality for this purpose in the \verb`distfromq` package for R \citep{ray-distfromq}.
 This functionality represents a distribution as a mixture of discrete and continuous parts, and it works in two steps:
 \begin{enumerate}
   \item Identify a discrete component of the distribution consisting of zero or more point masses, and create an
