@@ -205,8 +205,8 @@ allocation score does not include the amount of unmet need that was inevitable s
 resources $K$ was less than the need for resources. Rather, the allocation score measures the unmet need that could have
 been avoided by an oracle that knows exactly how much need will occur in each location and divides the amount $K$ so
 that nothing is wasted in one location while it could be put to use in another. The best and lowest possible allocation 
-score is 0.  A positive allocation score indicates some way in which an oracle could have used perfect foreknowledge to
-meet more of the need than did the allocation suggested by $F$.
+score is 0.  A positive allocation score indicates that an oracle with perfect foreknowledge could have selected an allocation 
+that met more need than the allocation suggested by $F$.
 
 \paragraph{Example 1} Suppose we have a forecast $F$ for need in two locations with $F_1 = \mathrm{Exp}(1 / \sigma_1)$
 and $F_2 = \mathrm{Exp}(1 / \sigma_2)$, where $\sigma_1 = 1$ and $\sigma_2 = 4$. The means of these distributions are
@@ -234,7 +234,7 @@ Next suppose that we observe resource needs of 1 and 10 in locations 1 and 2, re
 needs, we evaluate the allocation suggested by the forecast by calculating the amount of unmet need that resulted from
 that allocation over and above what was unavoidable given the resource constraint. With $K = 5$ available resource
 units, the allocation based on the forecast exactly meets the observed need in location 1, but it leaves 6 units of need
-unmet in location 2. But these 6 units of unmet need are unaviodable under the constraint $K=5$: allocating 0 units of
+unmet in location 2. But these 6 units of unmet need are unavoidable under the constraint $K=5$: allocating 0 units of
 resources to location 1 and 5 to location 2, for example, still results in a total unmet need of 6 across both
 locations. This gives an allocation score of 0 for the forecast when $K = 5$. On the other hand, when $K = 10$, the
 forecast's allocation results in $10 - 8 = 2$ units of unmet need in location 2 despite leaving no need unmet in
@@ -309,9 +309,8 @@ We arrive through this discussion at a three-step procedure for developing scori
     $S(F, y) = s(x^F, y)$.
 \end{enumerate}
 This is a general procedure that may be applied in settings where it is possible to specify a quantitative loss
-function. We call a scoring rule obtained from this procedure a \emph{Bayes scoring rule} --- a terminology we find to
-be convenient but which is not, to our knowledge, standard.  In appendix \ref{sec:proper} we review the
-basic fact from the scoring rule literature (e.g., \cite{dawid2007geometry,gneiting2007strictly}) that Bayes scoring
+function. We call a scoring rule obtained from this procedure a \emph{Bayes scoring rule} (noting that to our knowledge, this terminology is not standard).  In appendix \ref{sec:proper} we review the
+result from the scoring rule literature (e.g., \cite{dawid2007geometry,gneiting2007strictly}) that Bayes scoring
 rules are proper by construction.
 
 \subsubsection{The allocation score for a fixed resource constraint}
@@ -321,11 +320,10 @@ In our setting an action is a vector $x = (x_1, \ldots, x_N)$ specifying the amo
 $N$ locations. We require that $0 \leq x$, i.e., that each $x_i$ is non-negative, and that the total allocation across
 all locations equals the amount of available resources, $K$: $\sum_{i=1}^N x_i = K$. The set $\mathcal{X}$ consists of
 all possible allocations that satisfy these constraints. The eventually realized resource need in each location is
-denoted by $y = (y_1, \ldots, y_N)$. The future outcome that will determine the loss caused by choosing the allocation
-$x$ is the vector of resource needs $y = (y_1, \ldots, y_N)$ for each location which is a realization (unknown at the
+denoted by $y = (y_1, \ldots, y_N)$; this is a realization (unknown at the
 time of decision making) of the random vector $Y = (Y_1, \ldots, Y_N)$. A forecast of the random need $Y$ for each
 location is written as $F = (F_1, \ldots, F_N)$. We assume need is non-negative and the forecasts reflect that, i.e. the
-support of each $F_i$ is a subset of $\mathbb{R}^+$. Finally, we assume that any unmet unit of need in any location
+support of each $F_i$ is a subset of $\mathbb{R}^+$. Finally, we assume that each unmet unit of need in any location
 incurs a fixed loss of $L>0$, so that if the selected resource level $x_i$ in location $i$ is less than the realized
 need $y_i$, a loss of $L \cdot (y_i - x_i)$ results. A variety of extensions to this setup are possible; for example, we
 might account for storage costs for resources that go unused, allow for a different loss per unit of unmet need in each
@@ -335,7 +333,7 @@ simple to focus on the core ideas.
 It is helpful to clearly distinguish between the time $t_d$ when a \emph{d}ecision is made about a public health
 resource allocation and the time $t_r$ when \emph{r}esource needs that might be addressed by that allocation occur. Our
 setup assumes that $t_d < t_r$ and that the resource in question can only meet the need realized at $t_r$, not prevent
-it. That is, we stipulate that the random vector $Y$ of need is independent of the chosen allocation $x$. In the
+it. That is, we stipulate that the choice of allocation $x$ has no effect on the distribution of the random vector $Y$. In the
 context of infectious disease, this means that we do not consider resources, such as vaccines, that are intended to
 reduce the number of people who will become sick at some point in the future. Instead, our setup addresses resources
 like hospital beds, oxygen supply, or ventilators which are intended to meet the medical needs of patients who are
