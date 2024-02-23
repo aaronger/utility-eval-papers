@@ -325,18 +325,33 @@ to the \emph{integrated allocation score}.
 \subsubsection{The decision theoretic setup for forecast evaluation}
 \label{sec:methods.detailed.decisiontheory}
 
-Decision theory is concerned with understanding how an \emph{action} $x$ both is and ought to be selected from a set of
-possible actions $\mathcal{X}$ --- that is, how a decision is and ought to be made --- based on the anticipated
-consequences of $x$ under future states. We represent such future states as a random variable $Y$ and refer to a
-realization $y$ of $Y$ as an \emph{outcome}. In this paper $x$ will be related to the level of investment in a measure
-designed to mitigate severe disease outcomes such as hospital beds, ventilators, medication, or medical staff, with
-$\mathcal{X}$ being the set of all feasible levels of investment, while an outcome $y$ will correspond to the number of
-individuals who eventually become sick and would benefit from the mitigation measure. A basic strategy in decision
+Decision theory investigates how decisions are made by formalizing a decision as the process of selecting an
+\emph{action} $x$ from a specified set $\mathcal{X}$ of potential actions while taking into consideration the possible
+consequences of $x$ under future states of the world. Let $Y$ be a quantifiable aspect of the future which will help to
+determine the consequences of $x$. $Y$ is a random variable inasmuch as it is indeterminate when the decision is made.
+We refer to a realization $y$ of $Y$ as an \emph{outcome}. When a decision maker assumes $Y$ to have a specified
+distribution $F_Y$ and $Y$ is the only aspect of the future relevant to the selection of $x$, the process is referred to
+as a decision under risk.  The selection of $x$ without a full specification of the distribution of $Y$ is referred to
+as a decision under uncertainty. Clearly almost any real-world decision will be a decision under uncertainty.  Yet many
+foundational results in decision theory were guided (as we will be) by the intuition that much can be learned about a
+decision making process by building a ``small world'' approximation of the real-world (after \cite{savage1954foundations})
+in which the beliefs of a decision
+maker are equivalent to a fully specified distribution of a $Y$ that exhaustiveley quantifies all relevant aspects of
+the future, converting a decision under uncertainty to a decison under risk.
+
+Examples of actions with which this paper is concerned are levels of investment in measures designed to mitigate severe
+disease outcomes such as hospital beds, ventilators, medication, or medical staff, with $\mathcal{X}$ being the set of
+all feasible levels of investment. An outcome $y$ determining the consequences of such an action might be the number of
+individuals who eventually become sick and would benefit from the mitigation measure. A fundamental strategy in decision
 theory is to assume that the consequences of an action $x$ under outcome $y$ can be assigned a numerical value, or
-\emph{loss}, measuring the success of $x$, which in our examples will be the extent to which $x$ meets the realized need
-$y$.  One way that a decision maker can try to anticipate the consequence of an action $x$ is by using a forecast $F$ of
-$Y$. The loss of the action $x$ chosen according to $F$ can, in turn, be interpreted as the value of $F$ as an input to
-the decision making process under the realized outcome $y$ of $Y$.
+\emph{loss}, measuring the (lack of) success of $x$. In our example, $x$ will succeed to the extent that it meets the
+realized need $y$, so that greater unmet need will incur greater loss. 
+
+One tool a decision maker can use to anticipate the consequences of an action $x$ is a forecast
+$F$ of $Y$. And within a ``small world'' where $Y$ exhaustively quantifies the future, the decision maker might choose that
+$x$ which yields the lowest expected loss according to $F$. The loss of the action $x$ chosen according to $F$ can then, 
+in turn, be interpreted as the value of $F$ as an
+input to the decision making process under the realized outcome $y$ of $Y$.
 
 Through this discussion, we arrive at a three-step procedure for developing scoring rules for probabilistic forecasts:
 \begin{enumerate}
@@ -577,7 +592,7 @@ allocation score while the USC-SI\_kJalpha model had the most accurate forecasts
 
 
 % latex table generated in R 4.3.1 by xtable 1.8-4 package
-% Thu Feb 22 16:13:50 2024
+% Fri Feb 23 13:37:38 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrrr}
@@ -674,7 +689,7 @@ according to both metrics, although not in exactly the same order (Table \ref{ta
 assigned a MWIS.) Notably, the \texttt{JHUAPL-SLPHospEns} model ranked best on taMWIS but had only the fourth best MAS.
 
 % latex table generated in R 4.3.1 by xtable 1.8-4 package
-% Thu Feb 22 16:13:55 2024
+% Fri Feb 23 13:37:42 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrr}
