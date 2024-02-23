@@ -290,28 +290,26 @@ Decision theory investigates how decisions are made by formalizing a decision as
 \emph{action} $x$ from a specified set $\mathcal{X}$ of potential actions while taking into consideration the possible
 consequences of $x$ under future states of the world. Let $Y$ be a quantifiable aspect of the future which will help to
 determine the consequences of $x$. $Y$ is a random variable inasmuch as it is indeterminate when the decision is made.
-We refer to a realization $y$ of $Y$ as an \emph{outcome}. A fundamental strategy in decision
-theory is to assume that the consequences of an action $x$ under outcome $y$ can be assigned a numeric value, or
-\emph{loss}, measuring the (lack of) success of $x$.
+We refer to a realization $y$ of $Y$ as an \emph{outcome}. A fundamental strategy in decision theory is to assume that
+the consequences of an action $x$ under outcome $y$ can be assigned a numeric value, or \emph{loss}, measuring the (lack
+of) success of $x$.
 
-Some examples of actions are levels of investment in measures designed to mitigate severe
-disease outcomes such as hospital beds, ventilators, medication, or medical staff, with $\mathcal{X}$ being the set of
-all feasible levels of investment. An outcome $y$ determining the consequences of such an action might be the number of
-individuals who eventually become sick and would benefit from the mitigation measure. In our example, $x$ will succeed to
-the extent that it meets the realized need $y$, so that greater unmet need will incur greater loss.
+Some examples of actions are levels of investment in measures designed to mitigate severe disease outcomes such as
+hospital beds, ventilators, medication, or medical staff, with $\mathcal{X}$ being the set of all feasible levels of
+investment. An outcome $y$ determining the consequences of such an action might be the number of individuals who
+eventually become sick and would benefit from the mitigation measure. In our example, $x$ will succeed to the extent
+that it meets the realized need $y$, so that greater unmet need will incur greater loss.
 
-When a forecast $F$ of $Y$ is available, a decision maker might choose that action
-$x$ which yields the lowest expected loss according to $F$.
-The loss of the action $x$ chosen according to $F$ can then, in turn, be interpreted as the value of $F$ as an
-input to the decision making process under the realized outcome $y$ of $Y$.
+When a forecast $F$ of $Y$ is available, a decision maker might choose that action $x$ which yields the lowest expected
+loss according to $F$. The loss of the action $x$ chosen according to $F$ can then, in turn, be interpreted as the value
+of $F$ as an input to the decision making process under the realized outcome $y$ of $Y$.
 
-The strategy of minimizing the expected loss according to $F$ might be used if the
-decision maker trusted that $F$ was accurate and did not have any additional information that was not captured
-in $F$. However, here we use it only as a device for evaluating forecasts by examining the consequences of
-hypothetical decisions that would be made when using only $F$ as an input.
-We return to this point in the discussion.
+The strategy of minimizing the expected loss according to $F$ might be used if the decision maker trusted that $F$ was
+accurate and did not have any additional information that was not captured in $F$. However, here we use it only as a
+device for evaluating forecasts by examining the consequences of hypothetical decisions that would be made when using
+only $F$ as an input. We return to this point in the discussion.
 
-Through this discussion, we arrive at a three-step procedure for developing scoring rules for probabilistic forecasts:
+We arrive at a three-step procedure for developing scoring rules for probabilistic forecasts:
 \begin{enumerate}
   \item Specify a \emph{loss function} $s(x, y)$ that measures the loss associated with taking action $x$ when outcome $y$
     eventually occurs.
@@ -321,7 +319,8 @@ Through this discussion, we arrive at a three-step procedure for developing scor
     $S(F, y) = s(x^F, y)$.
 \end{enumerate}
 This is a general procedure that may be applied in settings where it is possible to specify a quantitative loss
-function. We call a scoring rule obtained from this procedure a \emph{Bayes scoring rule} (noting that to our knowledge, this terminology is not standard).  In appendix \ref{sec:proper} we review the
+function. We call a scoring rule obtained from this procedure a \emph{Bayes scoring rule} (noting that to our knowledge, 
+this terminology is not standard).  In appendix \ref{sec:proper} we review the
 result from the scoring rule literature (e.g., \cite{dawid2007geometry,gneiting2007strictly}) that Bayes scoring
 rules are proper by construction.
 
@@ -701,7 +700,7 @@ FL_allocs <- Kat15k_alloscores |>
 FL_diff <- round(FL_allocs["CU-select"] - FL_allocs["JHUAPL-Bucky"])
 @
 
-<<thermometer-plot, fig.height=7, fig.width=7.5, fig.cap="Probabilistic forecasts for new COVID-19 hospital admissions on January 3, 2022 and their suggested resource allocations for the states with the ten highest (eventually observed) hospitalization counts. For each state, the dark black line shows the data observed when the forecast was made, the grey line shows counts observed after the forecast was made, and the horizontal dark red segment shows the count observed on the target date. The side-by-side shaded regions show the median (grey horizontal line) and 50\\%, 80\\% and 95\\% prediction intervals for the two selected models. The forecasts were made for new hospitalizations on January 3, 2022 (vertical dashed line, with number of hospitalizations indicated by red horizontal line segment at the intersection of the dashed line and the grey line of data). The vertical bars with purple, blue and red shading show the allocations. The purple bar goes from zero to the amount of need that was met by the allocation from that model to a specific location. A red bar indicates need that exceeded the resource allocation for a location, and a light blue bar shows the amount by which the resource allocation suggested by that model exceeded the need for that location.">>=
+<<thermometer-plot, fig.height=7, fig.pos = "H", fig.width=7.5, fig.cap="Probabilistic forecasts for new COVID-19 hospital admissions on January 3, 2022 and their suggested resource allocations for the states with the ten highest (eventually observed) hospitalization counts. For each state, the dark black line shows the data observed when the forecast was made, the grey line shows counts observed after the forecast was made, and the horizontal dark red segment shows the count observed on the target date. The side-by-side shaded regions show the median (grey horizontal line) and 50\\%, 80\\% and 95\\% prediction intervals for the two selected models. The forecasts were made for new hospitalizations on January 3, 2022 (vertical dashed line, with number of hospitalizations indicated by red horizontal line segment at the intersection of the dashed line and the grey line of data). The vertical bars with purple, blue and red shading show the allocations. The purple bar goes from zero to the amount of need that was met by the allocation from that model to a specific location. A red bar indicates need that exceeded the resource allocation for a location, and a light blue bar shows the amount by which the resource allocation suggested by that model exceeded the need for that location.">>=
 source("R/plot_functions.R")
 
 locs_to_plot <- truth_data |>
@@ -979,23 +978,25 @@ rank. This contrasts with a clearly positive correlation between MWIS and AS ran
 Table \ref{tab:multi-week-performance-summary}, \texttt{CMU-TimeSeries} is an interesting example of a model that
 performed consistently well on AS but had only middling MWIS ranks.
 
-<<metrics-correlation, fig.width=8, fig.height=9, fig.cap="Association of standardized ranks for MWIS and allocation score by model and week. Each facet of the plot corresponds to one model. Within each facet, each point corresponds to a week. The $x$- and $y$-values correspond to the MWIS standardized rank and the allocation score standardized rank for that week. Points corresponding to earlier dates have darker shading. The size of the point corresponds to the observed value on the date for which the prediction was made. Models show different degrees of association between the two metrics.">>=
+<<metrics-correlation, fig.width=8, fig.height=6, fig.pos="H", fig.cap="Association of standardized ranks for MWIS and allocation score by model and week. Each facet of the plot corresponds to one model. Within each facet, each point corresponds to a week. The $x$- and $y$-values correspond to the MWIS standardized rank and the allocation score standardized rank for that week. Points corresponding to earlier dates have darker shading. The size of the point corresponds to the observed value on the date for which the prediction was made. Models show different degrees of association between the two metrics.">>=
 all_scores |>
   filter(as.Date(reference_date.x) < as.Date("2022-02-01"),
-         model != "per-capita") |>
+         model != "per-capita", model != "JHU_IDD-CovidSP") |>
   dplyr::mutate(target_end_date = as.Date(target_end_date)) |>
   ggplot(aes(x=mwis_rank_std, y=allo_rank_std, color=target_end_date, size=yobs)) +
     geom_point(alpha=.7) +
-    scale_x_continuous("MWIS standardized rank", limits=c(0,1)) +
-    scale_y_continuous("Allocation score standardized rank", limits=c(0,1)) +
+    scale_x_continuous("MWIS standardized rank", limits=c(0,1), 
+                       breaks = c(0,.5,1), labels = c("0",".5","1")) +
+    scale_y_continuous("Allocation score standardized rank", limits=c(0,1), 
+                       breaks = c(0,.5,1), labels = c("0",".5","1")) +
 #    scale_color_gradient("Target date") +
     scale_color_date(
       name="Target date",
       breaks = seq.Date(from=as.Date("2021-12-13"), by = 14, length.out=5)) +
     scale_size_continuous("Observed\nhospitalizations") +
-    facet_wrap(.~model, ncol=3) +
-    geom_abline(slope=1, intercept=0, linetype=2, color="gray") #+
-#    theme(legend.pos="bottom")
+    facet_wrap(.~model, ncol=4) +
+    geom_abline(slope=1, intercept=0, linetype=2, color="gray") +
+    theme(strip.text = element_text(size = 7))
 
 @
 
@@ -1031,7 +1032,7 @@ the higher correlation coming from the weighting centered at $K=15,000$ (Figure 
 based on the AS and the centered IAS were roughly similar, with the top and bottom three approaches being the same for
 both scores (Table \ref{tab:multi-k-scores}).
 
-<<multi-k, fig.height=4, fig.width = 8, fig.cap = "Allocation scores (AS) across different resource constraints ($K$) for 10 models that made forecasts on 2021-12-20. Panel A shows, for each model, the AS for values of $K$ between 200 and 60,000 at increments of 200. The AS show a sharp peak just under 20,000, near the eventually observed number of hospitalizations. Two possible weighting functions for the Integrated Allocation Score (IAS) are shown. The first (blue shaded area) computes weights proportional to a normal distribution centered at 15,000 with a standard deviation of 3,000, and truncated to be between 5,000 and 25,000. The second (orange shaded area) uses a uniform weight for all possible values of $K$. Note that the AS used in earlier sections of the application uses the single fixed value of $K=15,000$.  Panel B shows how the two versions of the IAS ($y$-axis) correlate with the AS at $K=15,000$ ($x$-axis). Every point represents the AS at 15,000 and a version of the IAS for one model. As we would expect, the IAS centered at 15,000 (circles) is more closely correlated with the AS at 15,000 than is the uniform IAS (triangles).">>=
+<<multi-k, fig.height=4, fig.width = 8, fig.pos="H", fig.cap = "Allocation scores (AS) across different resource constraints ($K$) for 10 models that made forecasts on 2021-12-20. Panel A shows, for each model, the AS for values of $K$ between 200 and 60,000 at increments of 200. The AS show a sharp peak just under 20,000, near the eventually observed number of hospitalizations. Two possible weighting functions for the Integrated Allocation Score (IAS) are shown. The first (blue shaded area) computes weights proportional to a normal distribution centered at 15,000 with a standard deviation of 3,000, and truncated to be between 5,000 and 25,000. The second (orange shaded area) uses a uniform weight for all possible values of $K$. Note that the AS used in earlier sections of the application uses the single fixed value of $K=15,000$.  Panel B shows how the two versions of the IAS ($y$-axis) correlate with the AS at $K=15,000$ ($x$-axis). Every point represents the AS at 15,000 and a version of the IAS for one model. As we would expect, the IAS centered at 15,000 (circles) is more closely correlated with the AS at 15,000 than is the uniform IAS (triangles).">>=
 
   
 ias_to_plot <- left_join(ias, as) |>
