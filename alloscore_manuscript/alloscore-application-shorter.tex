@@ -52,6 +52,8 @@
 
 \usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
 \usepackage{appendix}
+\usepackage{authblk}
+\usepackage{authblk}
 \usepackage{amsmath, amsfonts, amssymb}
 \usepackage{graphicx}
 \usepackage{algorithm}
@@ -85,8 +87,14 @@
 \bibliographystyle{unsrtnat-abbr}
 
 
+\author{Aaron Gerding\thanks{Corresponding Author: \texttt{agerding@umass.edu}}}
+\author{Nicholas G. Reich}
+\author{Benjamin Rogers}
+\author{Evan L. Ray}
+\affil{Department of Biostatistics and Epidemiology, School of Public Health and Health
+Sciences, University of Massachusetts at Amherst}
+
 \title{Evaluating infectious disease forecasts \\ with allocation scoring rules}
-\author{Aaron Gerding, Nicholas G. Reich, Benjamin Rogers, Evan L. Ray}
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 
@@ -588,7 +596,7 @@ allocation score while the USC-SI\_kJalpha model had the most accurate forecasts
 
 
 % latex table generated in R 4.3.1 by xtable 1.8-4 package
-% Fri Feb 23 18:40:36 2024
+% Fri Feb 23 19:04:47 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrrr}
@@ -685,7 +693,7 @@ according to both metrics, although not in exactly the same order (Table \ref{ta
 assigned a MWIS.) Notably, the \texttt{JHUAPL-SLPHospEns} model ranked best on taMWIS but had only the fourth best MAS.
 
 % latex table generated in R 4.3.1 by xtable 1.8-4 package
-% Fri Feb 23 18:40:41 2024
+% Fri Feb 23 19:04:51 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrr}
@@ -1149,7 +1157,7 @@ resource constraint $K$) in advance, so that forecasters can identify the Bayes 
 report.
 
 If the parametric family used to represent forecast distributions is flexible enough, the reporting scoring rule $S_R$
-and the allocation score are equivalent in the sense that they will yield the same score for any distribution $F$.
+and the allocation score will coincide.
 Suppose that for a given resource constraint $K$, for any forecast distribution $F$ it is possible to find a member
 $G_{\theta^\star}$ of the specified parametric family $\mathcal{P}$ with the same allocation as $F$ (i.e., 
 $x^F = x^{G_{\theta^\star}}$). Then $\theta^\star$ is a Bayes act for the reporting problem since for any other
@@ -1161,13 +1169,11 @@ $\theta$,
 &\leq \Ex_F[ s_A(x^{G_\theta}, Y) ]  \quad \text{ (by definition of $x^F$)} \\
 &= \Ex_F[ s_R(\theta, Y)].
 \end{align*}
-It therefore follows that
-\begin{align*}
-S_R(F, y) &= s_R(\theta^\star, y) \\
-&= s_A(x^{G_{\theta^\star}}, y) \\
-&= s_A(x^F, y) \\
-&= S_A(F, y).
-\end{align*}
+Thus $S_R(F, y) = s_R(\theta^\star, y) 
+= s_A(x^{G_{\theta^\star}}, y) 
+= s_A(x^F, y) 
+= S_A(F, y)$.
+
 
 For the particular choice of the parametric family $\mathcal{P}_{\text{dfq}}$ (i.e., using the \verb`distfromq`
 package), this flexibility requirement is satisfied. For instance, the forecaster could pick one required quantile level
