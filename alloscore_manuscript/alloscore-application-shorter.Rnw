@@ -174,7 +174,7 @@ outbreak creates sudden and highly variable demand for potentially scarce resour
 
 We begin with an informal description of the allocation score and some examples illustrating its key characteristics in
 section \ref{sec:methods.overview}. In section \ref{sec:methods.detailed} we develop the allocation score more
-carefully, using a decision theoretic procedure for deriving proper scoring rules. (See appendix \ref{sec:proper}
+carefully, using a decision theoretic procedure for deriving proper scoring rules. (See appendix \ref{sec:a:proper}
 for a definition of a proper scoring rule and a more technical discussion of the procedure). In section
 \ref{sec:methods.related}, we note that another group of common scores including the quantile score, WIS, and CRPS, can
 also be derived from decision theoretic foundations \textemdash starting from a different decision making context.
@@ -220,7 +220,7 @@ that met more need than the allocation suggested by $F$.
 and $F_2 = \mathrm{Exp}(1 / \sigma_2)$, where $\sigma_1 = 1$ and $\sigma_2 = 4$. The means of these distributions are
 given by the scale parameters $\sigma_i$. When the marginal forecasts are exponential distributions, it can be shown
 that the optimal allocation divides the available resources among the locations proportionally to the scale parameters
-$\sigma_i$ (see appendices \ref{sec:bayes-quantiles}). If $K = 5$ units of the resource are
+$\sigma_i$ (see appendix \ref{sec:a:bayes-quantiles}). If $K = 5$ units of the resource are
 available, the optimal allocation according to $F$ would be 1 and 4 resource units in locations 1 and 2, respectively. 
 Increasing $K$ to $10$ changes this optimal allocation to 2 and 8. Figure~\ref{fig:exp_alloc_example} illustrates the 
 situation.
@@ -328,7 +328,7 @@ We arrive at a three-step procedure for developing scoring rules for probabilist
 \end{enumerate}
 This is a general procedure that may be applied in settings where it is possible to specify a quantitative loss
 function. We call a scoring rule obtained from this procedure a \emph{Bayes scoring rule} (noting that to our knowledge, 
-this terminology is not standard).  In appendix \ref{sec:proper} we review the
+this terminology is not standard).  In appendix \ref{sec:a:proper} we review the
 result from the scoring rule literature (e.g., \cite{dawid2007geometry,gneiting2007strictly}) that Bayes scoring
 rules are proper by construction.
 
@@ -379,12 +379,12 @@ forecast, $x^{F,K}$, is the allocation that minimizes the expected loss, that is
 problem} associated with $K$:
 \begin{align}
   \underset{0 \leq x}{\mathrm{minimize}}\,\, \mathbb{E}_{F} [s_A(x, Y)] \text{ subject to }
-  \, \sum_{i=1}^N x_i = K, \label{AP}
+  \, \sum_{i=1}^N x_i = K, \label{eqn:AP}
 \end{align}
 where $\mathbb{E}_{F} [s_A(x, Y)] = \sum_{i=1}^{N} L \cdot \mathbb{E}_{F_i}[\max(0, Y_i - x_i)]$ sums the expected loss
 due to unmet need across all locations.
 
-In appendix \ref{sec:bayes-quantiles} we show that the components of the Bayes act are quantiles 
+In appendix \ref{sec:a:bayes-quantiles} we show that the components of the Bayes act are quantiles 
 $x_i^{F,K} = F_i^{-1}(\tau^{F,K})$ at a probability level $\tau^{F,K}$ that depends on the forecast $F$ and the resource
 constraint $K$, but is shared across all locations. This probability level is the level at which the resource constraint
 is satisfied: $\sum_{i=1}^N F_i^{-1}(\tau^{F,K}) = K$. This tells us that in order to allocate optimally (according to
@@ -508,13 +508,14 @@ standardized rank lies in the interval $[0, 1]$, where 0 corresponds to the wors
 a tie between one or more models, all models received the better rank.
 
 As described above, predictions were submitted to the Forecast Hub in the form of a set of 23 quantiles of the
-predictive distribution. The WIS can be directly calculated from these quantiles. However, calculation of the AS
-requires that the full cumulative distribution functions of the forecast distributions for each location are available.
-For the purpose of this analysis, to calculate the allocation score we approximated the full cumulative distribution
-functions based on the provided quantiles. On the interior of the provided quantiles we used a monotonic cubic spline to
-interpolate the quantiles, and in the lower and upper tails we used normal distributions with parameters selected so as
-to match the two lowest and two highest quantiles (see appendix \ref{sec:distfromq} for further details).
-In appendix \ref{sec:propriety_of_parametric_approximation}, we show that if this evaluation procedure
+predictive distribution. The WIS can be directly calculated from these quantiles. However, our numerical method for calculating 
+the AS (outlined in appendix \ref{sec:a:numeric})
+requires a full cumulative distribution function (CDF) for the forecast in each location.
+For the purpose of this analysis, we imputed CDFs based on the provided quantiles following a procedure detailed in 
+appendix \ref{sec:a:distfromq}. Briefly, this involves interpolating the provided quantiles between the lowest (.01) and highest 
+(.99) probability levels using monotonic cubic splinea, and then extending outside of these level with normal distribution tails
+parametrized to match the two lowest and two highest quantiles. In appendix \ref{sec:a:propriety_of_parametric_approximation}, 
+we show that if this evaluation procedure
 had been specified prospectively, the resulting score would be proper, \textemdash but that a post hoc application of this
 procedure is improper. We use the procedure here to illustrate the properties of the AS, and note that a collaborative
 forecasting hub interested in using the AS for evaluation could circumvent propriety issues by communicating the
@@ -1152,7 +1153,7 @@ specific public health decision problems.  This could help end users better unde
 as inputs to their particular decision making contexts. (We note that issues of propriety are raised when forecasts are
 evaluated with scoring rules for which they were not elicited or via parameters imputed by a hub after submission, both
 of which are done in our application example.  We consider these issues briefly in appendices
-\ref{sec:distfromq} and \ref{sec:propriety_of_parametric_approximation}.)
+\ref{sec:a:distfromq} and \ref{sec:a:propriety_of_parametric_approximation}.)
 
 There are several important limitations to the current work. The allocation score we developed here does not directly
 account for important considerations such as fairness or equity of allocations, or more broadly, individual and group
@@ -1200,27 +1201,21 @@ official views of NIGMS, the National Institutes of Health, or CDC.
 \appendixpage
 \addappheadtotoc
 
-\section{Introduction}
-\label{sec:intro}
-
-We address some technical and methodological points from the main text. We begin in section \ref{sec:proper} by defining
-proper scoring rules and showing that the allocation score is proper. In section \ref{sec:ex-shortage}, we formalize the
-concept of a \emph{shortage} of resources, give some key results about expected resource shortages under a distribution
-characterizing uncertainty about (future) levels of resource need, and illustrate how quantiles arise as the Bayes act
-in a decision making problem about the quantity of a resource to purchase. Section \ref{sec:bayes-quantiles} gives a
+We address some technical and methodological points from the main text. We begin in section \ref{sec:a:proper} by defining
+proper scoring rules and showing that the allocation score is proper. Section \ref{sec:a:bayes-quantiles} gives a
 justification for the result that the Bayes act for the allocation problem is given by a vector of quantiles of the
 forecast distributions in each location at a shared probability level, which was stated in section
 \ref{sec:methods.detailed.specific_allocation}. We describe the algorithm that we use to compute allocations given a
-forecast distribution in each location in section \ref{sec:numeric}. In section \ref{sec:distfromq}, we describe the
+forecast distribution in each location in section \ref{sec:a:numeric}. In section \ref{sec:a:distfromq}, we describe the
 methods for approximating a full distribution from a set of quantiles, implemented in the R package \verb`distfromq`,
 that we used to support computation of allocation scores from quantile forecasts that were submitted to the US COVID-19
 Forecast Hub for the application in section \ref{sec:application}. Finally, in section
-\ref{sec:propriety_of_parametric_approximation} we examine implications for propriety of an analysis that uses summaries
+\ref{sec:a:propriety_of_parametric_approximation} we examine implications for propriety of an analysis that uses summaries
 of forecasts (such as predictive quantiles) rather than the full forecast distributions for computation of allocation
 scores.
 
 \section{Proper scoring rules}
-\label{sec:proper}
+\label{sec:a:proper}
 
 In decision theory, a loss function $l$ is used to formalize a decision problem by assigning numerical value $l(x,y)$ to
 the \emph{result} of taking an \emph{action} $x$ in preparation for an \emph{outcome} $y$. A \emph{scoring rule} $S$ is
@@ -1244,7 +1239,7 @@ than the forecast $F$ which they believe describes $Y$ could be superior to the 
 for a forecaster seeking to minimize their expected loss is to state the forecast they believe to be true.
 
 \subsection{The allocation score is proper}
-\label{sec:alloscore_proper}
+\label{sec:a:alloscore_proper}
 
 Our primary decision theoretical procedure, outlined in section \ref{sec:methods.detailed.decisiontheory},
 uses a decision problem with loss function $s(x,y)$ to define a scoring rule
@@ -1272,16 +1267,32 @@ function that is consistent for $x^F$. Our orientation is different from this in
 decision problem and a loss function of subject matter relevance and use the Bayes act only as a bridge to a proper
 scoring rule.  Consistency is never in doubt.
 
+\section{Allocation Bayes acts as vectors of marginal quantiles.}
+\label{sec:a:bayes-quantiles}
 
-\section{Expected shortages}
-\label{sec:ex-shortage}
+Here we study the form of the Bayes act for the allocation problem (AP) (equation \eqref{eqn:AP} in section
+\ref{sec:methods.detailed.specific_allocation}) of the text:
+\begin{align}
+    \underset{0 \leq x}{\mathrm{minimize}}\,\, 
+    \mathbb{E}_{F} [s_A(x, Y)]= \sum_{i=1}^{N} L \cdot \mathbb{E}_{F_i}[\max(0, Y_i - x_i)]
+     \text{ subject to }
+     \, \sum_{i=1}^N x_i = K, \label{eqn:AP-long}
+\end{align}
+where the marginal forecasts $F_i$ for $i=1,\dots,N$ represent forecasts for $N$ distinct locations. We show that the
+Bayes act $x^{F,K} = (x_1^{F,K},\ldots,x_N^{F,K})$ for a forecast $F$ and resource constraint level $K$ is a vector of
+quantiles of the marginal forecast distributions $F_i$ at a single probability level $\tau^{F,K}$, that is, $x_i^{F,K} =
+q_{F_i,\tau^{F,K}}$. An immediate consequence used in the examples in Section \ref {sec:methods.overview} is that if
+$F_i = \mathrm{Exp}(1/\sigma_i)$ for all $i$, then the Bayes act is proportional to $(\sigma_1,\ldots,\sigma_N)$, since
+$q_{\mathrm{Exp}(1/\sigma),\tau} = -\sigma \log(1-\tau)$.
 
-A key feature of loss functions for decision problems used to define quantiles and related scoring rules such as the
+We begin by noting that a key feature of each term of the loss function $s_A(x, Y)$ defining the AP is the presence of 
+a \emph{shortage}: an amount $\max\{0,y-x\}$ by which a resource demand $y$ exceeds a supply decision variable $x$,
+which, for convenience, we write as $(y-x)_{+}$.  This is a feature shared with decision problems used to define quantiles 
+and related scoring rules such as the
 CRPS and the WIS (see e.g., \cite{gneiting2011quantiles}, \cite{jose2009evaluating}, and \cite{royset2022optimization},
-sections 1.C and 3.C), as well as the allocation loss function presented in this work, is the presence of a
-\emph{shortage}: the amount $\max\{0,y-x\}$ by which a resource demand $y$ exceeds a supply decision variable $x$,
-which, for convenience, we write as $(y-x)_{+}$. In particular, a quantile at probability level $\alpha$ of a
-distribution $F$ on $\mathbb{R}^1$ (which we assume to have a well-defined density $f(x)$) is a Bayes act for the loss
+sections 1.C and 3.C). In particular, 
+a quantile at probability level $\alpha$ of a
+distribution $F$ on $\mathbb{R}$ (which we assume to have a well-defined density $f(x)$) is a Bayes act for the loss
 function
 \[
 l(x,y) = Cx + L(y-x)_{+}
@@ -1303,53 +1314,38 @@ The formula $\dby{}{x}\Ex_F\left[(Y-x)_+\right] = F(x) - 1$ for the derivative o
 	&= \int_{x}^{\infty} \frac{d}{dx}(y-x) f_Y(y)dy - (x-x) f_Y(x) = -\int_{x}^{\infty} f_Y(y)dy = F(x)-1. \label{eqn:shortage_deriv}
 \end{align}
 Note that more care is required when $F$ does not have a density.
-We will also use this result below in deriving the Bayes act for the allocation loss.
 
-\section{Allocation Bayes acts as vectors of marginal quantiles.}
-\label{sec:bayes-quantiles}
-
-Here we study the form of the Bayes act for the allocation problem (AP) (equation \eqref{eqn:loss_fn} in section
-\ref{sec:methods.detailed.specific_allocation}) of the text:
-\begin{align}
-    \underset{0 \leq x}{\mathrm{minimize}}\,\, \mathbb{E}_{F} [s_A(x, Y)]= \sum_{i=1}^{N} L \cdot \mathbb{E}_{F_i}[(Y_i - x_i)_{+}]
-     \text{ subject to }
-     \, \sum_{i=1}^N x_i = K, \label{AP-long}
-\end{align}
-where the marginal forecasts $F_i$ for $i=1,\dots,N$ represent forecasts for $N$ distinct locations. We show that the
-Bayes act $x^{F,K} = (x_1^{F,K},\ldots,x_N^{F,K})$ for a forecast $F$ and resource constraint level $K$ is a vector of
-quantiles of the marginal forecast distributions $F_i$ at a single probability level $\tau^{F,K}$, that is, $x_i^{F,K} =
-q_{F_i,\tau^{F,K}}$. An immediate consequence used in the examples in Section \ref {sec:methods.overview} is that if
-$F_i = \mathrm{Exp}(1/\sigma_i)$ for all $i$, then the Bayes act is proportional to $(\sigma_1,\ldots,\sigma_N)$, since
-$q_{\mathrm{Exp}(1/\sigma),\tau} = -\sigma \log(1-\tau)$.
-
-In order for $x^{\star} \in \mathbb{R}^N_{+}$ to solve the AP it must be true that reallocating $\delta > 0$ units of
+Returning to the AP \eqref{eqn:AP-long}, notice that in order for $x^{\star} \in \mathbb{R}^N_{+}$ to be a Bayes act it must be true that reallocating $\delta > 0$ units of
 the resource from location $i$ to location $j$ will lead to a net increase in expected shortage --- in other words, the
 reallocation increases the expected shortage in location $i$ at least as much as it decreases the expected shortage
 in location $j$:
 \begin{align*}
 &\mathbb{E}_{F_i}[(Y_i - (x^{\star}_i - \delta))_{+}] - \mathbb{E}_{F_i}[(Y_i - x^{\star}_i)_{+}]
-\text{ (increase in $i$) } \nonumber \\
+\text{ (detriment in $i$) } \nonumber \\
 &\qquad \geq
 \mathbb{E}_{F_j}[(Y_j - x^{\star}_j)_{+}] - \mathbb{E}_{F_j}[(Y_j - (x^{\star}_j + \delta))_{+}]
-\text{ (decrease in $j$) }.
+\text{ (benefit in $j$) }.
 \end{align*}
 
 Dividing by $\delta$ and letting $\delta \searrow 0$, this implies from
 \eqref{eqn:shortage_deriv} that
 \begin{align}
-1-F_i(x^{\star}_i) &= -\frac{d}{dx_i}\mathbb{E}_{F_i}[(Y_i - x^{\star}_i)_{+}] \nonumber \\
+1-F_i(x^{\star}_i) &= -\frac{d}{dx_i}\mathbb{E}_{F_i}[(Y_i - x^{\star}_i)_{+}] 
+\text{ (rate of detriment in $i$) }\nonumber \\
 &= \lim_{\delta \searrow 0} \frac{1}{\delta}
 \left\{\mathbb{E}_{F_i}[(Y_i - (x^{\star}_i - \delta))_{+}] - \mathbb{E}_{F_i}[(Y_i - x^{\star}_i)_{+}]\right\}
-\text{ (increase in $i$) } \nonumber \\
+\nonumber \\
 &\geq
 \lim_{\delta \searrow 0} \frac{1}{\delta}
 \left\{\mathbb{E}_{F_j}[(Y_j - x^{\star}_j)_{+}] - \mathbb{E}_{F_j}[(Y_j - (x^{\star}_j + \delta))_{+}]\right\}
-\text{ (decrease in $j$) } \nonumber \\
- &= -\dby{}{x_j}\mathbb{E}_{F_j}[(Y_j - x^{\star}_j)_{+}] = 1-F_j(x^{\star}_j) \label{eqn:ASoptimal1}
+ \nonumber \\
+ &= -\dby{}{x_j}\mathbb{E}_{F_j}[(Y_j - x^{\star}_j)_{+}] = 1-F_j(x^{\star}_j) 
+ \text{ (rate of benefit in $j$).}\label{eqn:ASoptimal1}
 \end{align}
+(Negative derivatives appear here because our optimality condition addresses how a \emph{decrease} in resources will
+ \emph{increase} the expected shortage in $i$ and vice versa in $j$.) 
 
-Note that negative derivatives appear because our optimality condition addresses how a \emph{decrease} in resources will
-\emph{increase} the expected shortage in $i$ and vice versa in $j$. Since \eqref{eqn:ASoptimal1} also holds with $i$ and $j$
+Since \eqref{eqn:ASoptimal1} also holds with $i$ and $j$
 reversed, a number $\lambda$ (a \emph{Lagrange multiplier}) exists such that
 $L(1-F_k(x^{\star}_k)) = \lambda$ for all $k \in 1,\ldots,N$.
 (We scale by $L$ to facilitate possible future interpretations of $\lambda$ in terms of the partial derivatives
@@ -1362,11 +1358,12 @@ $\tau = 1 - \lambda/L$. The value of $\tau$ is then determined by the constraint
 It is important to note that $\tau$ depends on $F$ and $K$ and is \emph{not} a fixed parameter
 of the allocation scoring rule.
 
+
 \section{Numerical computation of allocation Bayes acts}
-\label{sec:numeric}
+\label{sec:a:numeric}
 
 To compute an allocation score $S_A(F,y;K) := s_A(x^{F,K},y)$, we require numerical values for a Bayes act solving the
-AP \eqref{AP-long} --- that is, we must find the specific resource allocations for each location that are determined by
+AP \eqref{eqn:AP-long} --- that is, we must find the specific resource allocations for each location that are determined by
 the forecast $F$ under the resource constraint $K$. Assuming we have reliable means of calculating quantiles
 $q_{\alpha,F_i}$ of the marginal forecasts $F_i$, these allocations are given by $q_{\tau^{\star},F_i}$ where
 $\tau^{\star}$ solves the equation \eqref{eqn:quantiles-sum-to-K}. However, this equation is not analytically tractable
@@ -1398,7 +1395,7 @@ extensive experimentation, we have determined that these conditions seem to addr
 we are working with, but we leave a more rigorous approximation error analysis for later work.
 
 \section{Computing allocations from finite quantile forecast representations}
-\label{sec:distfromq}
+\label{sec:a:distfromq}
 
 In section \ref{sec:application}, we used the allocation score to evaluate forecasts of COVID-19
 hospitalizations that have been submitted to the US COVID-19 Forecast Hub. These forecasts are submitted to the Hub
@@ -1413,7 +1410,7 @@ quantiles at level $\tau_k$ sum across locations to the resource constraint $K$,
 is given by those quantiles. However, generally this will not be the case; the optimal allocation will typically be at
 some probability level $\tau^\star \notin \mathcal{T}$.
 
-To address this situation and support the numerical allocation algorithm outlined in section \ref{sec:numeric}, we need
+To address this situation and support the numerical allocation algorithm outlined in section \ref{sec:a:numeric}, we need
 a mechanism to approximate the full cumulative distribution functions $F_i$, $i = 1, \ldots, N$ based on the provided
 quantiles. We have developed functionality for this purpose in the \verb`distfromq` package for R \citep{ray-distfromq}.
 This functionality represents a distribution as a mixture of discrete and continuous parts, and it works in two steps:
@@ -1437,7 +1434,7 @@ the cumulative distribution function resulting from this procedure as an input t
 We refer the reader to the \verb`distfromq` documentation for further detail \citep{ray-distfromq}.
 
 \section{Propriety of parametric approximation} % (fold)
-\label{sec:propriety_of_parametric_approximation}
+\label{sec:a:propriety_of_parametric_approximation}
 
 In practice, open forecasting exercises are generally not able to collect a perfect description of the forecast
 distribution $F$ other than in simple settings such as for a categorical variable with a relatively small number of
@@ -1482,7 +1479,7 @@ denote this Bayes act:
 
 We then arrive at the scoring rule
 $$S_R(F, y) = s_R(\theta^\star(F), y) = s_A(x^{G_{\theta^\star(F)}}, y).$$
-It follows from the discussion in section \ref{sec:alloscore_proper} that this is a proper scoring rule for $F$.
+It follows from the discussion in section \ref{sec:a:alloscore_proper} that this is a proper scoring rule for $F$.
 Although the full forecast distribution $F$ is not available in the forecast submission, the score $S_R(F, y)$ can be
 calculated from the reported parameter values as long as the forecaster submits the optimal parameters
 $\theta^\star(F)$.
@@ -1538,7 +1535,7 @@ be severe if the tail extrapolations performed by \verb`distfromq` do not match 
 allocations are in the tails of the predictive distribution.
 
 We define
-$$G^{\star}(F) := \argmin_{G \in \mathcal{P}_{\mathrm{dfq}}} E_{F}[S_A(G, Y)].$$
+$$G^{\star}(F) := \argmin_{G \in \mathcal{P}_{sec:propriety_of_parametric_approximation\mathrm{dfq}}} E_{F}[S_A(G, Y)].$$
 Since $S_R$ is defined as the Bayes scoring rule for the forecaster's loss \eqref{eqn:forecaster_theta_loss}, $G^{\star}(F)$ coincides
 with $G_{\theta^{\star}(F)}$, the distribution in $\mathcal{P}_{\mathrm{dfq}}$ given by the
 optimal submission parameters $\theta^{\star}(F)$ for the forecaster with predictive distribution $F$.
