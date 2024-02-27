@@ -982,7 +982,7 @@ We can gain some insight into the discordance between MAS and taMWIS by examinin
 AS and MWIS values of the various models in Figure \ref{fig:metrics-correlation}. We find, for example, no clear
 association between the consistent and high MWIS rank of the \texttt{JHUAPL-SLPHospEns} model and its highly variable AS
 rank. This contrasts with a clearly positive correlation between MWIS and AS ranks in other models such as
-\texttt{Karlen-pypm} and \texttt{USC-SI\_kJalpha}. We also can see in more detail the consistently high performance
+\texttt{Karlen-pypm} and \texttt{USC-SI\_kJalpha}. We also can see in more detail the consistently high performance of the
 \texttt{COVIDhub-ensemble} on both scores. And while it did not submit forecasts for enough weeks to be included in
 Table \ref{tab:multi-week-performance-summary}, \texttt{CMU-TimeSeries} is an interesting example of a model that
 performed consistently well on AS but had only middling MWIS ranks.
@@ -1113,7 +1113,7 @@ underlying decision problem from which the score might be derivable as a Bayes s
 We argue that the value of collaborative forecasting efforts, such as the COVID-19 Forecasting Hub, could be enhanced by
 including evaluations of forecasts with
 scoring rules that directly consider the success of forecasts in supporting specific public health decisions. As evidence for this
-possibility, we have demonstrated how tying forecast evaluation to a specific decision problem (via the allocation
+possibility, we have demonstrated how tying forecast evaluation to a specific decision problem (e.g., via the allocation
 score) can yield model rankings that differ substantively from those based a current standard measure of forecast
 accuracy, the WIS, which does not refer to any decision problem that has been clearly connected to outbreak response.
 This result aligns with findings in other fields, especially those where the monetary consequences of using a forecast
