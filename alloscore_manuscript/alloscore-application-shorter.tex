@@ -255,7 +255,8 @@ that nothing is wasted in one location while it could be put to use in another. 
 score is 0.  A positive allocation score indicates that an oracle with perfect foreknowledge could have selected an allocation 
 that met more need than the allocation suggested by $F$.
 
-\paragraph{Example 1} Suppose we have a forecast $F$ for need in two locations such that $F_1$ and $F_2$ have marginal exponential distributions with scale parameters $\sigma_1 = 1$ and $\sigma_2 = 4$, respectively.  The means of these distributions are
+\paragraph{Example 1} Suppose we have a forecast $F$ for need in two locations with $F_1 = \mathrm{Exp}(1 / \sigma_1)$
+and $F_2 = \mathrm{Exp}(1 / \sigma_2)$, where $\sigma_1 = 1$ and $\sigma_2 = 4$. The means of these distributions are
 given by the scale parameters $\sigma_i$. When the marginal forecasts are exponential distributions, it can be shown
 that the optimal allocation divides the available resources among the locations proportionally to the scale parameters
 $\sigma_i$ (see appendix \ref{sec:a:bayes-quantiles}). If $K = 5$ units of the resource are
@@ -374,12 +375,12 @@ rules are proper by construction.
 \label{sec:methods.detailed.specific_allocation}
 
 In our setting an action is a vector $x = (x_1, \ldots, x_N)$ specifying the amount of resources allocated to each of
-$N$ locations. We require that each $x_i$ is non-negative, and that the total allocation across
+$N$ locations. We require that $0 \leq x$, i.e., that each $x_i$ is non-negative, and that the total allocation across
 all locations equals the amount of available resources, $K$: $\sum_{i=1}^N x_i = K$. The set $\mathcal{X}$ consists of
 all possible allocations that satisfy these constraints. The eventually realized resource need in each location is
 denoted by $y = (y_1, \ldots, y_N)$; this is a realization (unknown at the
 time of decision making) of the random vector $Y = (Y_1, \ldots, Y_N)$. A forecast of the random need $Y$ for each
-location is written as $F = (F_1, \ldots, F_N)$. We assume need is non-negative and that the forecasts reflect that, i.e. the
+location is written as $F = (F_1, \ldots, F_N)$. We assume need is non-negative and the forecasts reflect that, i.e. the
 support of each $F_i$ is a subset of $\mathbb{R}^+$. Finally, we assume that each unmet unit of need in any location
 incurs a fixed loss of $L>0$, so that if the selected resource level $x_i$ in location $i$ is less than the realized
 need $y_i$, a loss of $L \cdot (y_i - x_i)$ results. A variety of extensions to this setup are possible; for example, we
@@ -465,13 +466,16 @@ $$S_{IAS}(F, y) = \int S_A(F,y; K) p(K) \, dK$$
 We note that the device of considering a range of hypothetical decision makers or decision making problems with
 different problem parameters has been employed in the past \cite[e.g.,][]{murphy1993whatisagoodforecast}.
 
-\subsection{Connections to Weighted Interval Score}
+\subsection{Connections to Other Scores}
 \label{sec:methods.related}
 
-The weighted interval score (WIS) was proposed in 2021 as a way to score forecasts that were being made in the early
+The weighted interval score (WIS) was proposed in 2020 as a way to score forecasts that were being made in the early
 stages of the COVID-19 pandemic \citep{bracher2021evaluating}; equivalent scores had also been used in previous forecast
 evaluation efforts \cite[e.g.,][]{hong2016probabilisticEnergyForecasting}. The WIS is a proper scoring rule for
-forecasts that use a set of quantiles to represent a probabilistic forecast distribution and scores forecasts as a weighted sum of interval scores at different probability levels (e.g., 50\% prediction intervals, 80\% PIs, 95\% PIs, etc...). Larger interval scores indicate less skillful forecasts. An interval score consists of (a) the width of the interval, with
+forecasts that use a set of quantiles to represent a probabilistic forecast distribution. While pointing a reader
+interested in more mathematical detail to \cite{bracher2021evaluating}, we note simply that the WIS is a weighted sum of
+interval scores at different probability levels (e.g., 50\% prediction intervals, 80\% PIs, 95\% PIs, etc...). Larger
+interval scores indicate less skillful forecasts. An interval score consists of (a) the width of the interval, with
 larger intervals receiving higher scores (higher scores indicate less accuracy), and (b) a penalty if the interval does
 not cover the eventual observation, which increases the further away the interval is from the observed value.
 Equivalently, the WIS can also be characterized as a weighted sum of quantile scores for each individual predictive
@@ -480,7 +484,7 @@ high or too low, with the relative sizes of the penalties set so that in expecta
 quantile of the distribution. The most commonly used version of WIS is one that uses an equal weighting of all quantile
 levels, in which case WIS approximates the continuous ranked probability score (CRPS), a commonly used score for
 probabilistic forecasts. \emph{It is important to note that this weighting was proposed because the resulting score
-approximates the CRPS, and not because it aligned with any particular public health decision-making rationale.} For more mathematical detail, we point readers to \cite{bracher2021evaluating}.
+approximates the CRPS, and not because it aligned with any particular public health decision-making rationale.}
 
 That said, the quantile score and WIS can be derived using the same decision theoretic procedure that we outlined in
 section \ref{sec:methods.detailed}. In fields such as meteorology and supply chain management, a great deal of attention
@@ -593,7 +597,7 @@ allocation score while the USC-SI\_kJalpha model had the most accurate forecasts
 
 
 % latex table generated in R 4.3.1 by xtable 1.8-4 package
-% Tue Feb 27 15:06:55 2024
+% Wed Feb 28 17:15:20 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrrr}
@@ -690,7 +694,7 @@ according to both metrics, although not in exactly the same order (Table \ref{ta
 assigned a MWIS.) Notably, the \texttt{JHUAPL-SLPHospEns} model ranked best on taMWIS but had only the fourth best MAS.
 
 % latex table generated in R 4.3.1 by xtable 1.8-4 package
-% Tue Feb 27 15:06:59 2024
+% Wed Feb 28 17:15:24 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrr}
@@ -721,7 +725,7 @@ We can gain some insight into the discordance between MAS and taMWIS by examinin
 AS and MWIS values of the various models in Figure \ref{fig:metrics-correlation}. We find, for example, no clear
 association between the consistent and high MWIS rank of the \texttt{JHUAPL-SLPHospEns} model and its highly variable AS
 rank. This contrasts with a clearly positive correlation between MWIS and AS ranks in other models such as
-\texttt{Karlen-pypm} and \texttt{USC-SI\_kJalpha}. We also can see in more detail the consistently high performance
+\texttt{Karlen-pypm} and \texttt{USC-SI\_kJalpha}. We also can see in more detail the consistently high performance of the
 \texttt{COVIDhub-ensemble} on both scores. And while it did not submit forecasts for enough weeks to be included in
 Table \ref{tab:multi-week-performance-summary}, \texttt{CMU-TimeSeries} is an interesting example of a model that
 performed consistently well on AS but had only middling MWIS ranks.
@@ -748,9 +752,9 @@ calculations highlight that AS was highest at at values of $K$ near the observed
 to be an substantial interval around the observed value over which ranks are constant.
 
 The integrated allocation score (IAS) summarizes allocation scores (AS) across a range of possible values of the
-constraint ($K$), allowing one to place higher weights to more likely values of $K$ (Section
+constraint ($K$), possibly assigning higher weights to more likely values of $K$ (Section
 \ref{sec:methods.detailed.integrated_allocation}). IAS was computed for two weight distributions on $K$, one uniform
-across the entire range and the other a truncated normal distribution centered at 15,000 (the orange and blue shaded areas in Figure
+across the entire range and the other a symmetric distribution around 15,000 (the orange and blue shaded areas in Figure
 \ref{fig:multi-k}A, respectively). Both versions of the IAS were correlated with the original AS for $K=15,000$, with
 the higher correlation coming from the weighting centered at $K=15,000$ (Figure \ref{fig:multi-k}B). Model rankings
 based on the AS and the centered IAS were roughly similar, with the top and bottom three approaches being the same for
@@ -772,7 +776,7 @@ underlying decision problem from which the score might be derivable as a Bayes s
 We argue that the value of collaborative forecasting efforts, such as the COVID-19 Forecasting Hub, could be enhanced by
 including evaluations of forecasts with
 scoring rules that directly consider the success of forecasts in supporting specific public health decisions. As evidence for this
-possibility, we have demonstrated how tying forecast evaluation to a specific decision problem (via the allocation
+possibility, we have demonstrated how tying forecast evaluation to a specific decision problem (e.g., via the allocation
 score) can yield model rankings that differ substantively from those based a current standard measure of forecast
 accuracy, the WIS, which does not refer to any decision problem that has been clearly connected to outbreak response.
 This result aligns with findings in other fields, especially those where the monetary consequences of using a forecast
