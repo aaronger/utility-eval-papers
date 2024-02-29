@@ -255,8 +255,7 @@ that nothing is wasted in one location while it could be put to use in another. 
 score is 0.  A positive allocation score indicates that an oracle with perfect foreknowledge could have selected an allocation 
 that met more need than the allocation suggested by $F$.
 
-\paragraph{Example 1} Suppose we have a forecast $F$ for need in two locations with $F_1 = \mathrm{Exp}(1 / \sigma_1)$
-and $F_2 = \mathrm{Exp}(1 / \sigma_2)$, where $\sigma_1 = 1$ and $\sigma_2 = 4$. The means of these distributions are
+\paragraph{Example 1} Suppose we have a forecast $F$ for need in two locations such that $F_1$ and $F_2$ have exponential marginal distribution with scale parameters $\sigma_1 = 1$ and $\sigma_2 = 4$. The means of these distributions are
 given by the scale parameters $\sigma_i$. When the marginal forecasts are exponential distributions, it can be shown
 that the optimal allocation divides the available resources among the locations proportionally to the scale parameters
 $\sigma_i$ (see appendix \ref{sec:a:bayes-quantiles}). If $K = 5$ units of the resource are
@@ -375,12 +374,12 @@ rules are proper by construction.
 \label{sec:methods.detailed.specific_allocation}
 
 In our setting an action is a vector $x = (x_1, \ldots, x_N)$ specifying the amount of resources allocated to each of
-$N$ locations. We require that $0 \leq x$, i.e., that each $x_i$ is non-negative, and that the total allocation across
+$N$ locations. We require that each $x_i$ is non-negative, and that the total allocation across
 all locations equals the amount of available resources, $K$: $\sum_{i=1}^N x_i = K$. The set $\mathcal{X}$ consists of
 all possible allocations that satisfy these constraints. The eventually realized resource need in each location is
 denoted by $y = (y_1, \ldots, y_N)$; this is a realization (unknown at the
 time of decision making) of the random vector $Y = (Y_1, \ldots, Y_N)$. A forecast of the random need $Y$ for each
-location is written as $F = (F_1, \ldots, F_N)$. We assume need is non-negative and the forecasts reflect that, i.e. the
+location is written as $F = (F_1, \ldots, F_N)$. We assume need is non-negative and that the forecasts reflect that, i.e. the
 support of each $F_i$ is a subset of $\mathbb{R}^+$. Finally, we assume that each unmet unit of need in any location
 incurs a fixed loss of $L>0$, so that if the selected resource level $x_i$ in location $i$ is less than the realized
 need $y_i$, a loss of $L \cdot (y_i - x_i)$ results. A variety of extensions to this setup are possible; for example, we
@@ -388,8 +387,8 @@ might account for storage costs for resources that go unused, allow for a differ
 location, or account for resource transportation costs. In this work, we choose to keep the loss function relatively
 simple to focus on the core ideas.
 
-It is helpful to clearly distinguish between the time $t_d$ when a \emph{d}ecision is made about a public health
-resource allocation and the time $t_r$ when \emph{r}esource needs that might be addressed by that allocation occur. Our
+It is helpful to clearly distinguish between the time $t_d$ when a decision is made about a public health
+resource allocation and the time $t_r$ when resource needs that might be addressed by that allocation occur. Our
 setup assumes that $t_d < t_r$ and that the resource in question can only meet the need realized at $t_r$, not prevent
 it. That is, we stipulate that the choice of allocation $x$ has no effect on the distribution of the random vector $Y$. In the
 context of infectious disease, this means that we do not consider resources, such as vaccines, that are intended to
@@ -432,7 +431,7 @@ that the allocation is sufficient to meet resource need. This solution to the al
 inventory management and is often attributed to \cite{hadleywhitin1963}.
 
 \paragraph{Step 3: Define the scoring rule.} We can now use the Bayes act to define a proper scoring rule for the
-probabilistic forecast $F$. Consider first the ``raw'' score defined as
+probabilistic forecast $F$. Consider first the raw score defined as
 \begin{align}
   S_A^{\text{raw}}(F, y; K) = s_A(x^{F,K}, y) = \sum_{i=1}^N L \cdot \max(0, y_i - x_i^{F,K}).
 \end{align}
@@ -449,8 +448,8 @@ The oracle-adjusted score can therefore be written as
   S_A(F, y; K)  &= S_A^{\text{raw}}(F, y; K) - L \cdot \max\left(0,\sum_{i=1}^{N}y_i - K\right) \\
   &= L\left\{\sum_{i=1}^N \max(0, y_i - x_i^{F,K}) -  \max\left(0,\sum_{i=1}^{N}y_i - K\right)\right\}.
 \end{align}
-The oracle adjustment aligns with a common theme in economic decision theory that \emph{opportunity loss} (often known
-as \emph{regret} or (negative) \emph{relative utility}) is often a more important quantity than absolute loss (see e.g.,
+The oracle adjustment aligns with a common theme in economic decision theory that opportunity loss (often known
+as regret or (negative) relative utility) is often a more important quantity than absolute loss (see e.g.,
 \cite{DIECIDUE201788}).
 
 \subsubsection{Integrating the allocation score across resource constraint levels}{}
@@ -472,8 +471,7 @@ different problem parameters has been employed in the past \cite[e.g.,][]{murphy
 The weighted interval score (WIS) was proposed in 2020 as a way to score forecasts that were being made in the early
 stages of the COVID-19 pandemic \citep{bracher2021evaluating}; equivalent scores had also been used in previous forecast
 evaluation efforts \cite[e.g.,][]{hong2016probabilisticEnergyForecasting}. The WIS is a proper scoring rule for
-forecasts that use a set of quantiles to represent a probabilistic forecast distribution. While pointing a reader
-interested in more mathematical detail to \cite{bracher2021evaluating}, we note simply that the WIS is a weighted sum of
+forecasts that use a set of quantiles to represent a probabilistic forecast distribution. Scores are calculated as a weighted sum of
 interval scores at different probability levels (e.g., 50\% prediction intervals, 80\% PIs, 95\% PIs, etc...). Larger
 interval scores indicate less skillful forecasts. An interval score consists of (a) the width of the interval, with
 larger intervals receiving higher scores (higher scores indicate less accuracy), and (b) a penalty if the interval does
@@ -483,8 +481,8 @@ quantile. The quantile score for a particular quantile level assigns an asymmetr
 high or too low, with the relative sizes of the penalties set so that in expectation the score is minimized by the given
 quantile of the distribution. The most commonly used version of WIS is one that uses an equal weighting of all quantile
 levels, in which case WIS approximates the continuous ranked probability score (CRPS), a commonly used score for
-probabilistic forecasts. \emph{It is important to note that this weighting was proposed because the resulting score
-approximates the CRPS, and not because it aligned with any particular public health decision-making rationale.}
+probabilistic forecasts. It is important to note that this weighting was proposed because the resulting score
+approximates the CRPS, and not because it aligned with any particular public health decision-making rationale. For more mathematical detail on the WIS, we point readers to \cite{bracher2021evaluating}.
 
 That said, the quantile score and WIS can be derived using the same decision theoretic procedure that we outlined in
 section \ref{sec:methods.detailed}. In fields such as meteorology and supply chain management, a great deal of attention
@@ -597,7 +595,7 @@ allocation score while the USC-SI\_kJalpha model had the most accurate forecasts
 
 
 % latex table generated in R 4.3.1 by xtable 1.8-4 package
-% Wed Feb 28 17:15:20 2024
+% Thu Feb 29 18:53:54 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrrr}
@@ -694,7 +692,7 @@ according to both metrics, although not in exactly the same order (Table \ref{ta
 assigned a MWIS.) Notably, the \texttt{JHUAPL-SLPHospEns} model ranked best on taMWIS but had only the fourth best MAS.
 
 % latex table generated in R 4.3.1 by xtable 1.8-4 package
-% Wed Feb 28 17:15:24 2024
+% Thu Feb 29 18:53:58 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrr}
@@ -752,9 +750,9 @@ calculations highlight that AS was highest at at values of $K$ near the observed
 to be an substantial interval around the observed value over which ranks are constant.
 
 The integrated allocation score (IAS) summarizes allocation scores (AS) across a range of possible values of the
-constraint ($K$), possibly assigning higher weights to more likely values of $K$ (Section
+constraint ($K$), allowing one to assign higher weights to more likely values of $K$ (Section
 \ref{sec:methods.detailed.integrated_allocation}). IAS was computed for two weight distributions on $K$, one uniform
-across the entire range and the other a symmetric distribution around 15,000 (the orange and blue shaded areas in Figure
+across the entire range and the other a truncated normal distribution centered at 15,000 (the orange and blue shaded areas in Figure
 \ref{fig:multi-k}A, respectively). Both versions of the IAS were correlated with the original AS for $K=15,000$, with
 the higher correlation coming from the weighting centered at $K=15,000$ (Figure \ref{fig:multi-k}B). Model rankings
 based on the AS and the centered IAS were roughly similar, with the top and bottom three approaches being the same for
@@ -826,20 +824,20 @@ response, where there can be immense social and political pressure on public hea
 base of evidence for their policy choices and recommendations. The proposed framework also does not attempt to capture
 the broader context of decision making. For example, in practice it may be possible to increase the resource constraint
 $K$ by shifting funding from other disease mitigation measures. Finally, we emphasize that we opted at this stage of
-development to explicitly rule out situations where a ``successful''
+development to explicitly rule out situations where a successful
 epidemiological forecast could lead to policy decisions that change the distribution of the predicted outcome $Y$. Our
 framework would need considerable enhancements before being applicable to forecast evaluation beyond horizons for which
 causal feedback can be neglected.
 
 An opportunity for further investigation is to more carefully evaluate whether forecasts add value to 
-``standard operating procedures'' already in place for making public health decisions. In the context of allocations,
+standard  procedures already in place for making public health decisions. In the context of allocations,
 such a procedure might extrapolate need from current observed need and population levels (similarly to the two benchmark
 approaches presented above), with adjustments based on other political or real-world considerations. For example, in
 many settings public health stakeholders will make decisions after synthesizing information from a variety of
 quantitative and qualitative sources coupled with expert judgment. The allocation score presented in this work does not
 directly measure whether a given forecast adds useful information to such an existing decision-making process. While the
 scoring procedures as presented do not directly address this question, they could be modified (say, by comparison to a
-`baseline' model or expert-elicited allocations in the absence of forecast data) to quantify the benefit of using a
+baseline model or expert-elicited allocations in the absence of forecast data) to quantify the benefit of using a
 forecast to inform a specific decision.
 
 In conclusion, we argue that when possible, the way modelers and policymakers view and evaluate forecasts should more explicitly depend on
