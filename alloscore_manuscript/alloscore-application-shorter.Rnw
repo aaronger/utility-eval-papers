@@ -511,10 +511,10 @@ the AS (outlined in appendix \ref{sec:a:numeric})
 requires a full cumulative distribution function (CDF) for the forecast in each location.
 For the purpose of this analysis, we imputed CDFs based on the provided quantiles following a procedure detailed in 
 appendix \ref{sec:a:distfromq}. Briefly, this involves interpolating the provided quantiles between the lowest (.01) and highest 
-(.99) probability levels using monotonic cubic splinea, and then extending outside of these level with normal distribution tails
-parametrized to match the two lowest and two highest quantiles. In appendix \ref{sec:a:propriety_of_parametric_approximation}, 
-we show that if this evaluation procedure
-had been specified prospectively, the resulting score would be proper, \textemdash but that a post hoc application of this
+(.99) probability levels using monotonic cubic splines, and then extending outside these levels with normal distribution tails
+parametrized to match the two lowest and two highest quantiles. We show in appendix \ref{sec:a:propriety_of_parametric_approximation}
+that if this evaluation procedure
+had been specified prospectively, the resulting score would be proper, but that a post hoc application of this
 procedure is improper. We use the procedure here to illustrate the properties of the AS, and note that a collaborative
 forecasting hub interested in using the AS for evaluation could circumvent propriety issues by communicating the
 definition of the AS to forecasters and then collecting allocations at specified resource levels as part of forecast
