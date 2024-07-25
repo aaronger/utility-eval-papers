@@ -1,13 +1,13 @@
 \documentclass{article}
 
 \usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+\usepackage[T1]{fontenc}
 \usepackage{appendix}
 \usepackage{authblk}
 \usepackage{authblk}
 \usepackage{amsmath, amsfonts, amssymb}
 \usepackage{graphicx}
 \usepackage{algorithm}
-\usepackage[noend]{algpseudocode}
 \usepackage{amsthm}
 \usepackage{bm}
 \usepackage{cases}
@@ -22,7 +22,7 @@
 
 
 \usepackage{setspace}
-\onehalfspacing
+\singlespacing
 
 \usepackage{parskip}
 
@@ -76,7 +76,6 @@ knitr::opts_knit$set(root.dir = '../')
 @
 
 \begin{abstract}
-
 Recent years have seen increasing efforts to forecast infectious disease burdens, with a primary goal being to help
 public health workers make informed policy decisions. However, there has only been limited discussion of how
 predominant forecast evaluation metrics might indicate the success of policies based in part on those forecasts. We
@@ -88,8 +87,9 @@ ranking given by this allocation scoring rule can vary substantially from the ra
 score. We see this as evidence that the allocation scoring rule detects forecast value that is missed by traditional
 accuracy measures and that the general strategy of designing scoring rules that are directly linked to policy
 performance is a promising direction for epidemic forecast evaluation.
-
 \end{abstract}
+
+\noindent \textbf{Keywords:} public health, forecast evaluation, proper scoring rules, resource allocation, epidemiology
 
 \section{Introduction}
 
@@ -1533,7 +1533,7 @@ be severe if the tail extrapolations performed by \verb`distfromq` do not match 
 allocations are in the tails of the predictive distribution.
 
 We define
-$$G^{\star}(F) := \argmin_{G \in \mathcal{P}_{sec:propriety_of_parametric_approximation\mathrm{dfq}}} E_{F}[S_A(G, Y)].$$
+$$G^{\star}(F) := \argmin_{G \in \mathcal{P}_{\mathrm{dfq}}} E_{F}[S_A(G, Y)].$$
 Since $S_R$ is defined as the Bayes scoring rule for the forecaster's loss \eqref{eqn:forecaster_theta_loss}, $G^{\star}(F)$ coincides
 with $G_{\theta^{\star}(F)}$, the distribution in $\mathcal{P}_{\mathrm{dfq}}$ given by the
 optimal submission parameters $\theta^{\star}(F)$ for the forecaster with predictive distribution $F$.
