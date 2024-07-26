@@ -13,10 +13,10 @@
 
 \definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
 \newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
-\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlsng}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
 \newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
 \newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
-\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hldef}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
 \newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
 \newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
 \newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
@@ -525,7 +525,7 @@ forecast for at least 4 of the 15 weeks in the analysis to be eligible for inclu
 
 
 
-The hospitalization data used for scoring forecasts were downloaded on February 07, 2024.
+The hospitalization data used for scoring forecasts were downloaded on July 26, 2024.
 
 \subsection{Evaluation metrics}
 
@@ -572,7 +572,7 @@ All forecast data used in this evaluation are available through the COVID-19 For
 R package implementing the allocation score is available at \url{https://github.com/aaronger/alloscore}. All code and
 data for the analyses presented in this manuscript are available at
 \url{https://github.com/aaronger/utility-eval-papers}. The analyses were generated using a reproducible workflow using
-R version 4.3.1 (2023-06-16) and the {\tt targets} package \citep{Rcore-2023, landau_2021_targets}.
+R version 4.4.1 (2024-06-14) and the {\tt targets} package \citep{Rcore-2023, landau_2021_targets}.
 
 \subsection{Application results}
 
@@ -594,8 +594,8 @@ allocation score while the USC-SI\_kJalpha model had the most accurate forecasts
 
 
 
-% latex table generated in R 4.3.1 by xtable 1.8-4 package
-% Fri Mar  1 16:18:50 2024
+% latex table generated in R 4.4.1 by xtable 1.8-4 package
+% Fri Jul 26 10:21:35 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrrr}
@@ -691,8 +691,8 @@ according to both metrics, although not in exactly the same order (Table \ref{ta
 (This comparison excludes the \texttt{per-capita} allocation which does not use forecasts and therefore cannot be
 assigned a MWIS.) Notably, the \texttt{JHUAPL-SLPHospEns} model ranked best on taMWIS but had only the fourth best MAS.
 
-% latex table generated in R 4.3.1 by xtable 1.8-4 package
-% Fri Mar  1 16:18:55 2024
+% latex table generated in R 4.4.1 by xtable 1.8-4 package
+% Fri Jul 26 10:21:39 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrr}
