@@ -883,7 +883,7 @@ p2 <- ggplot(alloscore_data_summaries,
   scale_shape_manual(values=c(15:18, 4, 6, 15:18, 4, 6, 15:18, 4, 6)) +
   scale_linewidth_manual(values = model_linewidths) +
   ylab("Allocation score") +
-  theme(legend.pos="none") +
+  theme(legend.position="none") +
   xlab(NULL)
 
 p4 <- ggplot(bind_rows(score_data_summaries, percap %>%
@@ -899,7 +899,7 @@ p4 <- ggplot(bind_rows(score_data_summaries, percap %>%
   guides(colour = guide_legend(title=NULL, ncol = 4),
          shape = guide_legend(title=NULL, ncol = 4),
          linewidth = guide_legend(title=NULL, ncol = 4)) +
-  theme(legend.pos="bottom")
+  theme(legend.position="bottom")
 
 cowplot::plot_grid(p1, p2, p4,
                    nrow=3,
