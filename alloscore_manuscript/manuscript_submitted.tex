@@ -461,10 +461,7 @@ constant. However, if $K$ is not precisely known at the time of decision making 
 value of forecasts across a range of decision making scenarios with different resource constraints, we can use an
 \emph{integrated allocation score} (IAS) that integrates the allocation score across values of $K$, weighting by a
 distribution $p$:
-\begin{align} 
-  S_{IAS}(F, y) &= \int S_A(F,y; K) p(K) \, dK \label{eq:IASintegral}\\
-    & = \sum_{K=1}^{\infty} S_A(F,y; K) p(K) \quad (\text{assumming non-divisible resource units})\label{eq:IASsum}.
-\end{align}
+$$S_{IAS}(F, y) = \int S_A(F,y; K) p(K) \, dK$$
 We note that the device of considering a range of hypothetical decision makers or decision making problems with
 different problem parameters has been employed in the past \cite[e.g.,][]{murphy1993whatisagoodforecast}.
 
@@ -598,7 +595,7 @@ allocation score while the USC-SI\_kJalpha model had the most accurate forecasts
 
 
 % latex table generated in R 4.4.1 by xtable 1.8-4 package
-% Sun Aug  4 23:47:08 2024
+% Thu Aug  1 13:13:10 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrrr}
@@ -695,7 +692,7 @@ according to both metrics, although not in exactly the same order (Table \ref{ta
 assigned a MWIS.) Notably, the \texttt{JHUAPL-SLPHospEns} model ranked best on taMWIS but had only the fourth best MAS.
 
 % latex table generated in R 4.4.1 by xtable 1.8-4 package
-% Sun Aug  4 23:47:13 2024
+% Thu Aug  1 13:13:14 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrr}
@@ -740,8 +737,9 @@ performed consistently well on AS but had only middling MWIS ranks.
 
 
 
-\subsubsection{Sensitivity of allocation score to values of K}
-\label{sec:sensitivity}
+
+\subsubsection{Integrated allocation score across values of K}
+\label{sec:ias_examp}
 
 
 
@@ -751,18 +749,9 @@ calculations highlight that AS was highest at at values of $K$ near the observed
 19,581 that day. Model ranks by AS were fairly stable across all $K$, and there appears
 to be an substantial interval around the observed value over which ranks are constant.
 
-\subsubsection{Integrated allocation score across values of K}
-\label{sec:ias_examp}
-
 The integrated allocation score (IAS) summarizes allocation scores (AS) across a range of possible values of the
 constraint ($K$), allowing one to assign higher weights to more likely values of $K$ (Section
-\ref{sec:methods.detailed.integrated_allocation}). 
-Calculating exact IAS as defined in equation \eqref{eq:IASsum} is computationally intensive so an approximate IAS, denoted $\hat{S}(F,y)$, was used such that
-\begin{align*}
-	\hat{S}(F,y) = \sum_{k=1}^{600} S_A(F,y; 200k) p(200k),
-\end{align*}
-where summation terms were calculated at every 200 beds with an upper bound of 60,000, or four times the estimated available beds.
-An approximate IAS was computed for two weight distributions on $K$, one uniform
+\ref{sec:methods.detailed.integrated_allocation}). IAS was computed for two weight distributions on $K$, one uniform
 across the entire range and the other a truncated normal distribution centered at 15,000 (the orange and blue shaded areas in Figure
 \ref{fig:multi-k}A, respectively). Both versions of the IAS were correlated with the original AS for $K=15,000$, with
 the higher correlation coming from the weighting centered at $K=15,000$ (Figure \ref{fig:multi-k}B). Model rankings
@@ -784,11 +773,12 @@ rules such as the LS, CRPS, and WIS. Often models are ranked according to such a
 underlying decision problem from which the score might be derivable as a Bayes scoring rule or be otherwise motivated.
 We argue that the value of collaborative forecasting efforts, such as the COVID-19 Forecasting Hub, could be enhanced by
 including evaluations of forecasts with
-scoring rules that directly consider the success of forecasts in supporting specific public health decisions. The work presented here has applications in many other fields such as economics, where the monetary consequences of using a forecast
-can be clearly juxtaposed with standard accuracy measures of the forecast \cite{bannigidadmath2016stock, zhang2019forecasting}, resource allocation in urban planning \citep{burnett2014urban, liang2013resource}, sustainability initiatives such as water and energy allocation \cite{syme1999defining, gebre2021multi, colett2016using}. We have demonstrated how tying forecast evaluation to a specific decision problem (e.g., via the allocation
+scoring rules that directly consider the success of forecasts in supporting specific public health decisions. As evidence for this
+possibility, we have demonstrated how tying forecast evaluation to a specific decision problem (e.g., via the allocation
 score) can yield model rankings that differ substantively from those based a current standard measure of forecast
 accuracy, the WIS, which does not refer to any decision problem that has been clearly connected to outbreak response.
-This result aligns with findings in other fields \citep{leitch1991economicForecastEval,
+This result aligns with findings in other fields, especially those where the monetary consequences of using a forecast
+can be clearly juxtaposed with standard accuracy measures of the forecast \citep{leitch1991economicForecastEval,
 murphy1993whatisagoodforecast, cenesizoglu2012returnPredictionEconValue}. Additionally, we show that an existing
 ensemble forecast approach was the only method to outperform (in terms of this new evaluation method) two benchmark
 allocation approaches in a hypothetical application, suggesting that there is room for innovation of current
@@ -826,10 +816,6 @@ evaluated with scoring rules for which they were not elicited or via parameters 
 of which are done in our application example.  We consider these issues briefly in appendices
 \ref{sec:a:distfromq} and \ref{sec:a:propriety_of_parametric_approximation}.)
 
-Additionally, during an epidemic, public health decision makers may be faced with an ongoing series of decisions over time in response to changes in conditions such as resource availability or the current effective allocations of resources. The AS presented here looks at a single snapshot in time  and ignores many of the possible complexities related to adjusting existing allocations. The example presented in section 
-\ref{sec:application} is based on a prospective estimate of bed availability, but one could also use observed total resource availability to target an optimal set of prospective AS parameters. 
-Alternatively, the impact of unmet need often differs across different locations and demographics, which could be accounted for by incorporating a function of location and demographics which defines the cost of unmet need. Future work is needed to explore the use of AS while accounting for the dynamic nature of disease spread and resource availability.
-
 There are several important limitations to the current work. The allocation score we developed here does not directly
 account for important considerations such as fairness or equity of allocations, or more broadly, individual and group
 preference relations that are difficult or even impossible to encode into a loss or utility function.  Ambiguity aversion
@@ -857,7 +843,7 @@ forecast to inform a specific decision.
 In conclusion, we argue that when possible, the way modelers and policymakers view and evaluate forecasts should more explicitly depend on
 the specific decision-making context. Defaulting to standard forecast evaluation metrics can mask the utility (or
 disutility) of certain forecasts, or lead to forecasts being used in decision making contexts very different from those
-for which they are able to offer useful guidance. New collaborative work between decision-makers and modeling teams is
+for which they are able to offer useful guidance. New collaborative work between public health officials and modeling teams is
 needed to assess the value and relevance of the initial findings presented here, including real-time pilot studies or
 simulation exercises that could be used to inform further development of new or alternative scoring metrics. We see this
 work as an initial overture for what we hope will grow to be a large, collaborative body of work more closely coupling

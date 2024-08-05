@@ -1,4 +1,7 @@
 \documentclass{article}\usepackage[]{graphicx}\usepackage[]{xcolor}
+%DIF LATEXDIFF DIFFERENCE FILE
+%DIF DEL manuscript_submitted.tex   Mon Aug  5 00:01:35 2024
+%DIF ADD manuscript.tex             Sun Aug  4 23:47:14 2024
 % maxwidth is the original width if it is less than linewidth
 % otherwise use linewidth (to make sure the graphics do not exceed the margin)
 \makeatletter
@@ -96,6 +99,88 @@ Sciences, University of Massachusetts at Amherst}
 
 \title{Evaluating infectious disease forecasts \\ with allocation scoring rules}
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF
+%DIF UNDERLINE PREAMBLE %DIF PREAMBLE
+\RequirePackage[normalem]{ulem} %DIF PREAMBLE
+\RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1} %DIF PREAMBLE
+\providecommand{\DIFaddtex}[1]{{\protect\color{blue}\uwave{#1}}} %DIF PREAMBLE
+\providecommand{\DIFdeltex}[1]{{\protect\color{red}\sout{#1}}}                      %DIF PREAMBLE
+%DIF SAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddbegin}{} %DIF PREAMBLE
+\providecommand{\DIFaddend}{} %DIF PREAMBLE
+\providecommand{\DIFdelbegin}{} %DIF PREAMBLE
+\providecommand{\DIFdelend}{} %DIF PREAMBLE
+\providecommand{\DIFmodbegin}{} %DIF PREAMBLE
+\providecommand{\DIFmodend}{} %DIF PREAMBLE
+%DIF FLOATSAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddFL}[1]{\DIFadd{#1}} %DIF PREAMBLE
+\providecommand{\DIFdelFL}[1]{\DIFdel{#1}} %DIF PREAMBLE
+\providecommand{\DIFaddbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFaddendFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelendFL}{} %DIF PREAMBLE
+%DIF HYPERREF PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFadd}[1]{\texorpdfstring{\DIFaddtex{#1}}{#1}} %DIF PREAMBLE
+\providecommand{\DIFdel}[1]{\texorpdfstring{\DIFdeltex{#1}}{}} %DIF PREAMBLE
+\newcommand{\DIFscaledelfig}{0.5}
+%DIF HIGHLIGHTGRAPHICS PREAMBLE %DIF PREAMBLE
+\RequirePackage{settobox} %DIF PREAMBLE
+\RequirePackage{letltxmacro} %DIF PREAMBLE
+\newsavebox{\DIFdelgraphicsbox} %DIF PREAMBLE
+\newlength{\DIFdelgraphicswidth} %DIF PREAMBLE
+\newlength{\DIFdelgraphicsheight} %DIF PREAMBLE
+% store original definition of \includegraphics %DIF PREAMBLE
+\LetLtxMacro{\DIFOincludegraphics}{\includegraphics} %DIF PREAMBLE
+\newcommand{\DIFaddincludegraphics}[2][]{{\color{blue}\fbox{\DIFOincludegraphics[#1]{#2}}}} %DIF PREAMBLE
+\newcommand{\DIFdelincludegraphics}[2][]{% %DIF PREAMBLE
+\sbox{\DIFdelgraphicsbox}{\DIFOincludegraphics[#1]{#2}}% %DIF PREAMBLE
+\settoboxwidth{\DIFdelgraphicswidth}{\DIFdelgraphicsbox} %DIF PREAMBLE
+\settoboxtotalheight{\DIFdelgraphicsheight}{\DIFdelgraphicsbox} %DIF PREAMBLE
+\scalebox{\DIFscaledelfig}{% %DIF PREAMBLE
+\parbox[b]{\DIFdelgraphicswidth}{\usebox{\DIFdelgraphicsbox}\\[-\baselineskip] \rule{\DIFdelgraphicswidth}{0em}}\llap{\resizebox{\DIFdelgraphicswidth}{\DIFdelgraphicsheight}{% %DIF PREAMBLE
+\setlength{\unitlength}{\DIFdelgraphicswidth}% %DIF PREAMBLE
+\begin{picture}(1,1)% %DIF PREAMBLE
+\thicklines\linethickness{2pt} %DIF PREAMBLE
+{\color[rgb]{1,0,0}\put(0,0){\framebox(1,1){}}}% %DIF PREAMBLE
+{\color[rgb]{1,0,0}\put(0,0){\line( 1,1){1}}}% %DIF PREAMBLE
+{\color[rgb]{1,0,0}\put(0,1){\line(1,-1){1}}}% %DIF PREAMBLE
+\end{picture}% %DIF PREAMBLE
+}\hspace*{3pt}}} %DIF PREAMBLE
+} %DIF PREAMBLE
+\LetLtxMacro{\DIFOaddbegin}{\DIFaddbegin} %DIF PREAMBLE
+\LetLtxMacro{\DIFOaddend}{\DIFaddend} %DIF PREAMBLE
+\LetLtxMacro{\DIFOdelbegin}{\DIFdelbegin} %DIF PREAMBLE
+\LetLtxMacro{\DIFOdelend}{\DIFdelend} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFaddbegin}{\DIFOaddbegin \let\includegraphics\DIFaddincludegraphics} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFaddend}{\DIFOaddend \let\includegraphics\DIFOincludegraphics} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFdelbegin}{\DIFOdelbegin \let\includegraphics\DIFdelincludegraphics} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFdelend}{\DIFOaddend \let\includegraphics\DIFOincludegraphics} %DIF PREAMBLE
+\LetLtxMacro{\DIFOaddbeginFL}{\DIFaddbeginFL} %DIF PREAMBLE
+\LetLtxMacro{\DIFOaddendFL}{\DIFaddendFL} %DIF PREAMBLE
+\LetLtxMacro{\DIFOdelbeginFL}{\DIFdelbeginFL} %DIF PREAMBLE
+\LetLtxMacro{\DIFOdelendFL}{\DIFdelendFL} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFaddbeginFL}{\DIFOaddbeginFL \let\includegraphics\DIFaddincludegraphics} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFaddendFL}{\DIFOaddendFL \let\includegraphics\DIFOincludegraphics} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFdelbeginFL}{\DIFOdelbeginFL \let\includegraphics\DIFdelincludegraphics} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFdelendFL}{\DIFOaddendFL \let\includegraphics\DIFOincludegraphics} %DIF PREAMBLE
+%DIF COLORLISTINGS PREAMBLE %DIF PREAMBLE
+\RequirePackage{listings} %DIF PREAMBLE
+\RequirePackage{color} %DIF PREAMBLE
+\lstdefinelanguage{DIFcode}{ %DIF PREAMBLE
+%DIF DIFCODE_UNDERLINE %DIF PREAMBLE
+  moredelim=[il][\color{red}\sout]{\%DIF\ <\ }, %DIF PREAMBLE
+  moredelim=[il][\color{blue}\uwave]{\%DIF\ >\ } %DIF PREAMBLE
+} %DIF PREAMBLE
+\lstdefinestyle{DIFverbatimstyle}{ %DIF PREAMBLE
+	language=DIFcode, %DIF PREAMBLE
+	basicstyle=\ttfamily, %DIF PREAMBLE
+	columns=fullflexible, %DIF PREAMBLE
+	keepspaces=true %DIF PREAMBLE
+} %DIF PREAMBLE
+\lstnewenvironment{DIFverbatim}{\lstset{style=DIFverbatimstyle}}{} %DIF PREAMBLE
+\lstnewenvironment{DIFverbatim*}{\lstset{style=DIFverbatimstyle,showspaces=true}}{} %DIF PREAMBLE
+%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF
+
 \begin{document}
 
 \newcommand{\del}[2]{\frac{\partial {#1} }{\partial {#2}} }
@@ -461,10 +546,11 @@ constant. However, if $K$ is not precisely known at the time of decision making 
 value of forecasts across a range of decision making scenarios with different resource constraints, we can use an
 \emph{integrated allocation score} (IAS) that integrates the allocation score across values of $K$, weighting by a
 distribution $p$:
-\begin{align} 
-  S_{IAS}(F, y) &= \int S_A(F,y; K) p(K) \, dK \label{eq:IASintegral}\\
-    & = \sum_{K=1}^{\infty} S_A(F,y; K) p(K) \quad (\text{assumming non-divisible resource units})\label{eq:IASsum}.
-\end{align}
+\DIFdelbegin \begin{displaymath}\DIFdel{S_{IAS}(F, y) = \int S_A(F,y; K) p(K) \, dK}\end{displaymath}%DIFAUXCMD
+\DIFdelend \DIFaddbegin \begin{align} 
+  \DIFadd{S_{IAS}(F, y) }&\DIFadd{= \int S_A(F,y; K) p(K) \, dK \label{eq:IASintegral}}\\
+    & \DIFadd{= \sum_{K=1}^{\infty} S_A(F,y; K) p(K) \quad (\text{assumming non-divisible resource units})\label{eq:IASsum}.
+}\end{align}\DIFaddend 
 We note that the device of considering a range of hypothetical decision makers or decision making problems with
 different problem parameters has been employed in the past \cite[e.g.,][]{murphy1993whatisagoodforecast}.
 
@@ -598,7 +684,8 @@ allocation score while the USC-SI\_kJalpha model had the most accurate forecasts
 
 
 % latex table generated in R 4.4.1 by xtable 1.8-4 package
-% Sun Aug  4 23:47:08 2024
+%DIF <  Thu Aug  1 13:13:10 2024
+%DIF >  Sun Aug  4 23:47:08 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrrr}
@@ -695,7 +782,8 @@ according to both metrics, although not in exactly the same order (Table \ref{ta
 assigned a MWIS.) Notably, the \texttt{JHUAPL-SLPHospEns} model ranked best on taMWIS but had only the fourth best MAS.
 
 % latex table generated in R 4.4.1 by xtable 1.8-4 package
-% Sun Aug  4 23:47:13 2024
+%DIF <  Thu Aug  1 13:13:14 2024
+%DIF >  Sun Aug  4 23:47:13 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrr}
@@ -740,8 +828,11 @@ performed consistently well on AS but had only middling MWIS ranks.
 
 
 
-\subsubsection{Sensitivity of allocation score to values of K}
-\label{sec:sensitivity}
+\subsubsection{\DIFdelbegin \DIFdel{Integrated }\DIFdelend \DIFaddbegin \DIFadd{Sensitivity of }\DIFaddend allocation score \DIFdelbegin \DIFdel{across }\DIFdelend \DIFaddbegin \DIFadd{to }\DIFaddend values of K}
+\DIFdelbegin %DIFDELCMD < \label{sec:ias_examp}
+%DIFDELCMD < %%%
+\DIFdelend \DIFaddbegin \label{sec:sensitivity}
+\DIFaddend 
 
 
 
@@ -751,18 +842,18 @@ calculations highlight that AS was highest at at values of $K$ near the observed
 19,581 that day. Model ranks by AS were fairly stable across all $K$, and there appears
 to be an substantial interval around the observed value over which ranks are constant.
 
-\subsubsection{Integrated allocation score across values of K}
+\DIFaddbegin \subsubsection{\DIFadd{Integrated allocation score across values of K}}
 \label{sec:ias_examp}
 
-The integrated allocation score (IAS) summarizes allocation scores (AS) across a range of possible values of the
+\DIFaddend The integrated allocation score (IAS) summarizes allocation scores (AS) across a range of possible values of the
 constraint ($K$), allowing one to assign higher weights to more likely values of $K$ (Section
 \ref{sec:methods.detailed.integrated_allocation}). 
-Calculating exact IAS as defined in equation \eqref{eq:IASsum} is computationally intensive so an approximate IAS, denoted $\hat{S}(F,y)$, was used such that
-\begin{align*}
-	\hat{S}(F,y) = \sum_{k=1}^{600} S_A(F,y; 200k) p(200k),
-\end{align*}
-where summation terms were calculated at every 200 beds with an upper bound of 60,000, or four times the estimated available beds.
-An approximate IAS was computed for two weight distributions on $K$, one uniform
+\DIFdelbegin \DIFdel{IAS was }\DIFdelend \DIFaddbegin \DIFadd{Calculating exact IAS as defined in equation \eqref{eq:IASsum} is computationally intensive so an approximate IAS, denoted $\hat{S}(F,y)$, was used such that
+}\begin{align*}
+	\DIFadd{\hat{S}(F,y) = \sum_{k=1}^{600} S_A(F,y; 200k) p(200k),
+}\end{align*}
+\DIFadd{where summation terms were calculated at every 200 beds with an upper bound of 60,000, or four times the estimated available beds.
+An approximate IAS was }\DIFaddend computed for two weight distributions on $K$, one uniform
 across the entire range and the other a truncated normal distribution centered at 15,000 (the orange and blue shaded areas in Figure
 \ref{fig:multi-k}A, respectively). Both versions of the IAS were correlated with the original AS for $K=15,000$, with
 the higher correlation coming from the weighting centered at $K=15,000$ (Figure \ref{fig:multi-k}B). Model rankings
@@ -784,11 +875,19 @@ rules such as the LS, CRPS, and WIS. Often models are ranked according to such a
 underlying decision problem from which the score might be derivable as a Bayes scoring rule or be otherwise motivated.
 We argue that the value of collaborative forecasting efforts, such as the COVID-19 Forecasting Hub, could be enhanced by
 including evaluations of forecasts with
-scoring rules that directly consider the success of forecasts in supporting specific public health decisions. The work presented here has applications in many other fields such as economics, where the monetary consequences of using a forecast
-can be clearly juxtaposed with standard accuracy measures of the forecast \cite{bannigidadmath2016stock, zhang2019forecasting}, resource allocation in urban planning \citep{burnett2014urban, liang2013resource}, sustainability initiatives such as water and energy allocation \cite{syme1999defining, gebre2021multi, colett2016using}. We have demonstrated how tying forecast evaluation to a specific decision problem (e.g., via the allocation
+scoring rules that directly consider the success of forecasts in supporting specific public health decisions. \DIFdelbegin \DIFdel{As evidence for this
+possibility, we }\DIFdelend \DIFaddbegin \DIFadd{The work presented here has applications in many other fields such as economics, where the monetary consequences of using a forecast
+can be clearly juxtaposed with standard accuracy measures of the forecast \mbox{%DIFAUXCMD
+\cite{bannigidadmath2016stock, zhang2019forecasting}}\hskip0pt%DIFAUXCMD
+, resource allocation in urban planning \mbox{%DIFAUXCMD
+\citep{burnett2014urban, liang2013resource}}\hskip0pt%DIFAUXCMD
+, sustainability initiatives such as water and energy allocation \mbox{%DIFAUXCMD
+\cite{syme1999defining, gebre2021multi, colett2016using}}\hskip0pt%DIFAUXCMD
+. We }\DIFaddend have demonstrated how tying forecast evaluation to a specific decision problem (e.g., via the allocation
 score) can yield model rankings that differ substantively from those based a current standard measure of forecast
 accuracy, the WIS, which does not refer to any decision problem that has been clearly connected to outbreak response.
-This result aligns with findings in other fields \citep{leitch1991economicForecastEval,
+This result aligns with findings in other fields \DIFdelbegin \DIFdel{, especially those where the monetary consequences of using a forecast
+can be clearly juxtaposed with standard accuracy measures of the forecast }\DIFdelend \citep{leitch1991economicForecastEval,
 murphy1993whatisagoodforecast, cenesizoglu2012returnPredictionEconValue}. Additionally, we show that an existing
 ensemble forecast approach was the only method to outperform (in terms of this new evaluation method) two benchmark
 allocation approaches in a hypothetical application, suggesting that there is room for innovation of current
@@ -826,11 +925,12 @@ evaluated with scoring rules for which they were not elicited or via parameters 
 of which are done in our application example.  We consider these issues briefly in appendices
 \ref{sec:a:distfromq} and \ref{sec:a:propriety_of_parametric_approximation}.)
 
-Additionally, during an epidemic, public health decision makers may be faced with an ongoing series of decisions over time in response to changes in conditions such as resource availability or the current effective allocations of resources. The AS presented here looks at a single snapshot in time  and ignores many of the possible complexities related to adjusting existing allocations. The example presented in section 
+\DIFaddbegin \DIFadd{Additionally, during an epidemic, public health decision makers may be faced with an ongoing series of decisions over time in response to changes in conditions such as resource availability or the current effective allocations of resources. The AS presented here looks at a single snapshot in time  and ignores many of the possible complexities related to adjusting existing allocations. The example presented in section 
 \ref{sec:application} is based on a prospective estimate of bed availability, but one could also use observed total resource availability to target an optimal set of prospective AS parameters. 
 Alternatively, the impact of unmet need often differs across different locations and demographics, which could be accounted for by incorporating a function of location and demographics which defines the cost of unmet need. Future work is needed to explore the use of AS while accounting for the dynamic nature of disease spread and resource availability.
+}
 
-There are several important limitations to the current work. The allocation score we developed here does not directly
+\DIFaddend There are several important limitations to the current work. The allocation score we developed here does not directly
 account for important considerations such as fairness or equity of allocations, or more broadly, individual and group
 preference relations that are difficult or even impossible to encode into a loss or utility function.  Ambiguity aversion
 (in the sense of \cite{ellsberg1961risk}), for example, seems especially relevant to the use of forecasts in outbreak
@@ -857,7 +957,7 @@ forecast to inform a specific decision.
 In conclusion, we argue that when possible, the way modelers and policymakers view and evaluate forecasts should more explicitly depend on
 the specific decision-making context. Defaulting to standard forecast evaluation metrics can mask the utility (or
 disutility) of certain forecasts, or lead to forecasts being used in decision making contexts very different from those
-for which they are able to offer useful guidance. New collaborative work between decision-makers and modeling teams is
+for which they are able to offer useful guidance. New collaborative work between \DIFdelbegin \DIFdel{public health officials }\DIFdelend \DIFaddbegin \DIFadd{decision-makers }\DIFaddend and modeling teams is
 needed to assess the value and relevance of the initial findings presented here, including real-time pilot studies or
 simulation exercises that could be used to inform further development of new or alternative scoring metrics. We see this
 work as an initial overture for what we hope will grow to be a large, collaborative body of work more closely coupling
