@@ -47,7 +47,6 @@ Sciences, University of Massachusetts at Amherst}
 \title{Evaluating infectious disease forecasts \\ with allocation scoring rules}
 
 \begin{document}
-\SweaveOpts{concordance=TRUE}
 
 \newcommand{\del}[2]{\frac{\partial {#1} }{\partial {#2}} }
 \newcommand{\dby}[2]{\frac{d {#1} }{d {#2}} }
@@ -1447,7 +1446,7 @@ p10 <- p + geom_hline(aes(yintercept = 10)) +
                      breaks = c(.5,.6,.7,.8,0.865,.9,1),
                      labels = c("0.5","0.6",
                                 "0.7","0.8", 
-                                expression(italic(atop(" ", 1 - e^{-1} %~~% 0.865)), "0.9", "1"))) +
+                                expression(italic(atop(" ", 1 - e^{-2} %~~% 0.865)), "0.9", "1"))) +
   scale_y_continuous(limits = c(0,12), breaks = c(0,2,5,8,10,15), expand = c(0,0), 
                      name = element_blank())
 
