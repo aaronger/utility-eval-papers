@@ -47,7 +47,6 @@ Sciences, University of Massachusetts at Amherst}
 \title{Evaluating infectious disease forecasts \\ with allocation scoring rules}
 
 \begin{document}
-\SweaveOpts{concordance=TRUE}
 
 \newcommand{\del}[2]{\frac{\partial {#1} }{\partial {#2}} }
 \newcommand{\dby}[2]{\frac{d {#1} }{d {#2}} }
@@ -1164,7 +1163,7 @@ of which are done in our application example.  We consider these issues briefly 
 
 Additionally, during an epidemic, public health decision makers may be faced with an ongoing series of decisions over time in response to changes in conditions such as resource availability or the current effective allocations of resources. The AS presented here looks at a single snapshot in time  and ignores many of the possible complexities related to adjusting existing allocations. The example presented in section 
 \ref{sec:application} is based on a prospective estimate of bed availability, but one could also use observed total resource availability to target an optimal set of prospective AS parameters. 
-Alternatively, the impact of unmet need often differs across different locations and demographics, which could be accounted for by incorporating a function of location and demographics which defines the cost of unmet need. Future work is needed to explore the use of AS while accounting for the dynamic nature of disease spread and resource availability.
+Alternatively, the impact of unmet need often differs across different locations and demographics, thus one may wish to define a varying cost which depends on some covariates. Future work is needed to explore the use of AS while accounting for the dynamic nature of disease spread and resource availability.
 
 There are several important limitations to the current work. The allocation score we developed here does not directly
 account for important considerations such as fairness or equity of allocations, or more broadly, individual and group
