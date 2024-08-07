@@ -216,7 +216,7 @@ that nothing is wasted in one location while it could be put to use in another. 
 score is 0.  A positive allocation score indicates that an oracle with perfect foreknowledge could have selected an allocation 
 that met more need than the allocation suggested by $F$.
 
-\paragraph{Example 1} Suppose we have a forecast $F$ for need in two locations such that $F_1$ and $F_2$ have exponential marginal distribution with scale parameters $\sigma_1 = 1$ and $\sigma_2 = 4$. The means of these distributions are
+\paragraph{Example 1} \label{examp1} Suppose we have a forecast $F$ for need in two locations such that $F_1$ and $F_2$ have exponential marginal distribution with scale parameters $\sigma_1 = 1$ and $\sigma_2 = 4$. The means of these distributions are
 given by the scale parameters $\sigma_i$. When the marginal forecasts are exponential distributions, it can be shown
 that the optimal allocation divides the available resources among the locations proportionally to the scale parameters
 $\sigma_i$ (see appendix \ref{sec:a:bayes-quantiles}). If $K = 5$ units of the resource are
@@ -259,7 +259,7 @@ receive enough resources to meet their need. In either of these extremes of reso
 need that arises from the allocation suggested by a forecast (i.e., the forecast's allocation score) will tend to be
 small.
 
-\paragraph{Example 2} Now consider a different forecast that also has exponential distributions for resource need in
+\paragraph{Example 2} \label{examp2} Now consider a different forecast that also has exponential distributions for resource need in
 each location, but that has the scale parameters $\sigma_1 = 2$ and $\sigma_2 = 8$, twice as large as the scale
 parameters of the forecast in Example 1. Because the optimal allocation is proportional to the scale parameters, this
 forecast would lead to the same allocations as the forecast in Example 1, and would therefore be assigned the same
@@ -1295,7 +1295,9 @@ Bayes act $x^{F,K} = (x_1^{F,K},\ldots,x_N^{F,K})$ for a forecast $F$ and resour
 quantiles of the marginal forecast distributions $F_i$ at a single probability level $\tau^{F,K}$, that is, $x_i^{F,K} =
 q_{F_i,\tau^{F,K}}$. An immediate consequence used in the examples in Section \ref {sec:methods.overview} is that if
 $F_i = \mathrm{Exp}(1/\sigma_i)$ for all $i$, then the Bayes act is proportional to $(\sigma_1,\ldots,\sigma_N)$, since
-$q_{\mathrm{Exp}(1/\sigma),\tau} = -\sigma \log(1-\tau)$.
+\begin{align}
+q_{\mathrm{Exp}(1/\sigma),\tau} = -\sigma \log(1-\tau). \label{eqn:exp-quantile}
+\end{align}
 
 We begin by noting that a key feature of each term of the loss function $s_A(x, Y)$ defining the AP is the presence of 
 a \emph{shortage}: an amount $\max\{0,y-x\}$ by which a resource demand $y$ exceeds a supply decision variable $x$,
@@ -1378,11 +1380,13 @@ To compute an allocation score $S_A(F,y;K) := s_A(x^{F,K},y)$, we require numeri
 AP \eqref{eqn:AP-long} --- that is, we must find the specific resource allocations for each location that are determined by
 the forecast $F$ under the resource constraint $K$. Assuming we have reliable means of calculating quantiles
 $q_{\alpha,F_i}$ of the marginal forecasts $F_i$, these allocations are given by $q_{\tau^{\star},F_i}$ where
-$\tau^{\star}$ solves the equation \eqref{eqn:quantiles-sum-to-K}. However, this equation is not analytically tractable
-and we must resort to a numerical method for finding an approximation $\tilde{\tau}$ of $\tau^{\star}$.
+$\tau^{\star}$ solves the equation \eqref{eqn:quantiles-sum-to-K}. This equation is not analytically tractable in general, but because the left-hand side of \eqref{eqn:quantiles-sum-to-K} is non-decreasing in $\tau$, it is straightforward to find arbitrarily accurate approximations to a solution using an iterative bisection method.
 
-We have implemented an iterative bisection method that makes use of the fact that $\sum_{i=1}^N q_{\tau,F_i}$ is an
-increasing function of $\tau$. The algorithm begins with an initial search interval $[\tau_{L,1}, \tau_{U,1}]$ (such as
+We have
+implemented such a method along with the resulting score computations in the R package \verb`alloscore`
+\citep{gerding-alloscore} which provided all allocation score values used in the analysis of section
+\ref{sec:application}.
+The procedure begins with an initial search interval $[\tau_{L,1}, \tau_{U,1}]$ (such as
 $[0,\max_{i}F_i(K)]$) that clearly contains the solution $\tau^{\star}$. At each step $j$ of the algorithm, we evaluate
 the total allocation $\sum_{i=1}^N q_{\tau_{M,j},F_i}$ at the midpoint of the search interval,
 $\tau_{M,j} = \frac{1}{2}(\tau_{L,j} + \tau_{U,j})$ and continue the search on the narrowed sub-interval
@@ -1393,10 +1397,64 @@ $\tau_{M,j} = \frac{1}{2}(\tau_{L,j} + \tau_{U,j})$ and continue the search on t
 [\tau_{M,j}, \tau_{U,j}] & \text{if } \sum_{i=1}^N q_{\tau_{M,j},F_i} < K.
 \end{cases} \nonumber
 \end{align}
-This search continues until $\tau_{U,j+1} < (1+\varepsilon)\tau_{L,j+1}$ for a suitably small $\varepsilon>0$. We have
-implemented this procedure along with the resulting score computations in the R package \verb`alloscore`
-\citep{gerding-alloscore} which provided all allocation score values used in the analysis of section
-\ref{sec:application}.
+This search continues until $\tau_{U,j+1} < (1+\varepsilon)\tau_{L,j+1}$ 
+for a suitably small $\varepsilon>0$. 
+
+Figure \ref{fig:bisection} illustrates this bisection method in the context of the examples of Section \ref {sec:methods.overview}, where it quickly finds close approximations to the analytic solutions $\tau^{\star} = 1-e^{-1}, 1-e^{-2}$ (for $K= 5,10$ respectively) which, in this case, are available (c.f. \eqref{eqn:exp-quantile}).
+
+<<bisection, fig.height=4, fig.width = 8, fig.pos="H", fig.cap = "Illustrations of bisection method for the examples of Section \\ref{sec:methods.overview}. In each plot the thinner black lines are the quantile functions of the exponential forecasts for Location 1, with $\\sigma_1=1$ (lower), and Location 2, with $\\sigma_2=4$ (upper), while the thicker black line gives the sum of these quantiles, which must meet the resource constraints of $K = 5$ on the left and $K=10$ on the right. The red segments show the iterates $\\tau_{M,j}$ and their associated total resource demands as given by the function \\texttt{allocate} from the package \\texttt{alloscore} applied to these examples and using an initial search interval $[0,1]$. (The $\\tau_{M,j}$ are in this case just sums of terms $\\pm 2^{-j}$.) The horizontal dashed lines show the resulting allocations (c.f. Figure \\ref{fig:exp_alloc_example} ).">>=
+expexamp <- tibble(
+  target_names = LETTERS[1:2],
+  dist = "exp",
+  rate = c(1,.25),
+) %>% add_pdqr_funs(types = c("p", "d", "q"))
+
+alloc <- allocate(df = expexamp, K = c(5,10))
+
+q1 <- expexamp$Q[[1]]
+q2 <- expexamp$Q[[2]]
+q_sum <- function(tau) q1(tau) + q2(tau)
+iters5 <- tibble(taus = 1-alloc$lam_seq[[1]], qtot = q_sum(taus))
+iters10 <- tibble(taus = 1-alloc$lam_seq[[2]], qtot = q_sum(taus))
+
+p <- ggplot() +
+  geom_function(fun = q1, n=1000) +
+  geom_function(fun = q2, n=1000) +
+  geom_function(fun = q_sum, n=1000, linewidth = 1) +
+  labs(
+    x = expression(tau),
+    y = expression(paste(italic(q[tau * "," * F[1]]),
+                         ", ", 
+                         italic(q[tau * "," * F[2]]),
+                         "  and  ", 
+                         italic(q[tau * "," * F[1]] + q[tau * "," * F[2]])))) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.ticks.length.x = unit(.25, "cm"))
+
+p5 <- p + geom_hline(aes(yintercept = 5)) +
+  geom_hline(aes(yintercept = c(1,4)), linetype = 2) +
+  geom_segment(data = iters5, aes(x=taus, xend = taus, y=0, yend = qtot), color = "red", alpha = .5) +
+  scale_x_continuous(limits = c(.45,1), expand = c(0,0), 
+                     breaks = c(.5,.6,0.632,.7,.8,.9,1),
+                     labels = c("0.5","0.6",expression(italic(atop(" ", 1 - e^{-1} %~~% 0.632))),
+                                "0.7","0.8","0.9","1")) +
+  scale_y_continuous(limits = c(0,12), breaks = c(0,1,4,5,10,15), expand = c(0,0))
+
+p10 <- p + geom_hline(aes(yintercept = 10)) +
+  geom_hline(aes(yintercept = c(2,8)), linetype = 2) +
+  geom_segment(data = iters10, aes(x=taus, xend = taus, y=0, yend = qtot), color = "red", alpha = .5) +
+  scale_x_continuous(limits = c(.45,1), expand = c(0,0), 
+                     breaks = c(.5,.6,.7,.8,0.865,.9,1),
+                     labels = c("0.5","0.6",
+                                "0.7","0.8", 
+                                expression(italic(atop(" ", 1 - e^{-1} %~~% 0.865)), "0.9", "1"))) +
+  scale_y_continuous(limits = c(0,12), breaks = c(0,2,5,8,10,15), expand = c(0,0), 
+                     name = element_blank())
+
+cowplot::plot_grid(p5, p10, align = "h")
+
+@
 
 Subtleties can arise when the forecast densities $f_i$ vanish or are very small, in which case quantiles are non-unique
 or highly variable near a probability level, leading to ambiguity or numerical instabilities{} in the evaluation of

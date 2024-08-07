@@ -41,12 +41,13 @@ make_iter_pic <- function(K, alpha = 1, w = 1, dists_and_params) {
          p1 <- ggplot() + xlim(c(0,xmax)) + ylim(0, ymax) +
            geom_hline(yintercept = 0) +
            map(lam_seq[[1]], ~ geom_hline(yintercept = ., alpha = .3)) +
-           geom_label(data = enframe(lam_seq[[1]]), aes(x=0,y=value,label=name)) +
+           geom_label(data = enframe(lam_seq[[1]]), aes(x=0,y=value,label=name), label.size = .05) +
            map(1:n, ~ geom_function(aes(color = dat$name[[.]]), fun = dat$Lambda[[.]])) +
            map(1:n, ~ geom_vline(aes(xintercept = x[[1]][.], color = dat$name[[.]]), alpha=.5)) +
            labs(color = "Distribution",
-                y = expression(lambda(x)),
+                y = expression(1-tau),
                 x = expression(x[i])) +
+           scale_x_continuous(breaks = seq(0, xmax, by = 1)) +
            theme_classic() +
            theme(legend.position = "left")
 
@@ -61,7 +62,8 @@ make_iter_pic <- function(K, alpha = 1, w = 1, dists_and_params) {
            # #geom_line(aes(x =  K_funfac(forecasts = c(1,2,4))(y))) +
            #map(1:n, ~ geom_line(aes(x = K_funfac(forecasts = c(.))(y), color = name[[.]]))) +
            geom_vline(xintercept = K) +
-           labs(x = expression(w ^ T * Q(alpha - w * lambda))) +
+           labs(x =expression(sum( q[tau * ", " * F[i]],i == 1, N))
+                ) +
            theme(
              axis.text.y = element_blank(),
              axis.ticks.y = element_blank(),

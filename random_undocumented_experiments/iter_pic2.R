@@ -18,9 +18,9 @@ library(alloscore)
     add_pdqr_funs() %>% mutate(
       q_scale = map2_dbl(Q, alpha, exec),
       # add marginal expected benefit functions scaled to fit on single [0,1] interval,
-      Lambda_scaled = pmap(., margexb_fun),
+      Lambda_scaled = pmap(select(., F, alpha), alloscore::dexp_gpl_loss),
       # and unscaled as well, which are not yet being used
-      Lambda = pmap(.[names(.) != "q_scale"], margexb_fun),
+      Lambda = pmap(select(., F, alpha),  alloscore::dexp_gpl_loss),
       #Eloss = pmap(.[c("alpha", "f")], gpl_loss_exp_fun)
     )
 )

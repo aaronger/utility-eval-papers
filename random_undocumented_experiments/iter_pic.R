@@ -22,7 +22,13 @@ make_iter_pic(K = 20,
                 list(dist = "unif", min = 7, max = 15)
               ))
 
-make_iter_pic(K = 2,
+pk10 <- make_iter_pic(K = 10,
+              dists_and_params = list(
+                list(dist = "exp", rate = 1),
+                list(dist = "exp", rate = 1/4)
+              ))
+
+pk5 <- make_iter_pic(K = 5,
               dists_and_params = list(
                 list(dist = "exp", rate = 1),
                 list(dist = "exp", rate = 1/4)
