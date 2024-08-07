@@ -1115,7 +1115,7 @@ cowplot::plot_grid(
 
 Probabilistic forecasts of infectious disease outbreaks have typically been evaluated using well-known proper scoring
 rules such as the LS, CRPS, and WIS. Often models are ranked according to such a score, but without reference to any
-underlying decision problem from which the score might be derivable as a Bayes scoring rule or be otherwise motivated.The 
+underlying decision problem from which the score might be derivable as a Bayes scoring rule or be otherwise motivated. 
 We argue that the value of collaborative forecasting efforts, such as the COVID-19 Forecasting Hub, could be enhanced by
 including evaluations of forecasts with
 scoring rules that directly consider the success of forecasts in supporting specific decisions. The allocation score was developed for this explicit purpose, evaluating forecasts in the context of the decisions they lead to. The AS is expressed in units that are directly relevant to decisions, which helps not only with ranking forecasts in the context of a specific action, but also allows decision-makers to contextualize the magnitude of differences between forecasts. The benefits of the work presented here generalize beyond public health, to any application of probability forecasts for decision-making, such as economics, where the monetary consequences of using a forecast
