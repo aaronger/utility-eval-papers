@@ -47,6 +47,7 @@ Sciences, University of Massachusetts at Amherst}
 \title{Evaluating infectious disease forecasts \\ with allocation scoring rules}
 
 \begin{document}
+\SweaveOpts{concordance=TRUE}
 
 \newcommand{\del}[2]{\frac{\partial {#1} }{\partial {#2}} }
 \newcommand{\dby}[2]{\frac{d {#1} }{d {#2}} }
@@ -123,11 +124,7 @@ to assess probabilistic forecasts (based on random effect models) of dengue inci
 of observed cases, hospitalizations and deaths in the US and Europe, as reported by municipal, state, and federal
 surveillance systems \citep{cramer_evaluation_2022,fox_real-time_2022,sherratt2023predictive}.
 
-While it should be noted that there are ways to interpret any of these scores abstractly through the lens of decision
-theory, and that all of the application-specific papers cited above benefited from direct collaboration with public
-health agencies, a key impetus for the present work has been that we were not able to find in any of them, nor in the
-literature they represent, explicit connections between how a forecast was evaluated and how that forecast was used in
-practice.
+While any of these scores can be interpreted through the lens of decision theory, they lack explicit connections between how a forecast is evaluated and how that forecast was used in practice. A key impetus for the present work was to develop a score that is interpretable to decision makers by measuring the extent to which forecasts lead to improved decisions. In addition, the allocation score we propose is expressed in units that are intelligible to decision makers.
 
 A general phenomenon at play here --- one that has been observed repeatedly over the past few decades in other fields
 such as finance, supply chain management, and meteorology --- is that while scores such as RMSE, MAE, LS, CRPS, and WIS
@@ -1118,11 +1115,13 @@ cowplot::plot_grid(
 
 Probabilistic forecasts of infectious disease outbreaks have typically been evaluated using well-known proper scoring
 rules such as the LS, CRPS, and WIS. Often models are ranked according to such a score, but without reference to any
-underlying decision problem from which the score might be derivable as a Bayes scoring rule or be otherwise motivated.
+underlying decision problem from which the score might be derivable as a Bayes scoring rule or be otherwise motivated. 
 We argue that the value of collaborative forecasting efforts, such as the COVID-19 Forecasting Hub, could be enhanced by
 including evaluations of forecasts with
-scoring rules that directly consider the success of forecasts in supporting specific public health decisions. The work presented here has applications in many other fields such as economics, where the monetary consequences of using a forecast
-can be clearly juxtaposed with standard accuracy measures of the forecast \cite{bannigidadmath2016stock, zhang2019forecasting}, resource allocation in urban planning \citep{burnett2014urban, liang2013resource}, sustainability initiatives such as water and energy allocation \cite{syme1999defining, gebre2021multi, colett2016using}. We have demonstrated how tying forecast evaluation to a specific decision problem (e.g., via the allocation
+scoring rules that directly consider the success of forecasts in supporting specific decisions. The allocation score was developed for this explicit purpose, evaluating forecasts in the context of the decisions they lead to. The AS is expressed in units that are directly relevant to decisions, which helps not only with ranking forecasts in the context of a specific action, but also allows decision-makers to contextualize the magnitude of differences between forecasts. The benefits of the work presented here generalize beyond public health, to any application of probability forecasts for decision-making, such as economics, where the monetary consequences of using a forecast
+can be clearly juxtaposed with standard accuracy measures of the forecast \cite{bannigidadmath2016stock, zhang2019forecasting}, resource allocation in urban planning \citep{burnett2014urban, liang2013resource}, or sustainability initiatives such as water and energy allocation \cite{syme1999defining, gebre2021multi, colett2016using}.
+
+We have demonstrated how tying forecast evaluation to a specific decision problem (e.g., via the allocation
 score) can yield model rankings that differ substantively from those based a current standard measure of forecast
 accuracy, the WIS, which does not refer to any decision problem that has been clearly connected to outbreak response.
 This result aligns with findings in other fields \citep{leitch1991economicForecastEval,
