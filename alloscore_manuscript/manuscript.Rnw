@@ -119,7 +119,7 @@ forecasts targeting surveillance measures of dengue incidence in Peru and Puerto
 recently, the continuous ranked probability score (CRPS) and a discretized version adapted to multi-quantile forecasts,
 the weighted interval score (WIS) \citep{bracher2021evaluating}, have gained prominence. For example, the CRPS was used
 to assess probabilistic forecasts (based on random effect models) of dengue incidence at the district level in Vietnam
-\citep{colon-gonzalez_probabilistic_2021}. And the WIS has been used during the COVID-19 pandemic to evaluate forecasts
+\citep{colon-gonzalez_probabilistic_2021}. Likewise, the WIS has been used during the COVID-19 pandemic to evaluate forecasts
 of observed cases, hospitalizations and deaths in the US and Europe, as reported by municipal, state, and federal
 surveillance systems \citep{cramer_evaluation_2022,fox_real-time_2022,sherratt2023predictive}.
 
@@ -135,7 +135,7 @@ to \cite{pesaran2002decision_based_eval} for a clear discussion from an economet
 
 Despite this now well-developed discussion of the quality-value distinction in the larger forecasting community, we are
 aware of only a limited literature attempting to connect the value of \emph{infectious disease} forecasts to their
-impact on and through policy.  And within this body of work we have found the discussion of such a connection to still
+impact on and through policy.  Even within this body of work we have found the discussion of such a connection to
 be at a formally and quantitatively imprecise stage. In \cite{ioannidis2022forecastingCOVIDfailed}, the possible negative
 consequences of inaccurate forecasts of infectious disease are discussed, but there is no attempt to quantify the
 utility or loss incurred as a result of those forecasts. \cite{bilinski_adaptive_2023} explore ways in which predictive
@@ -1163,7 +1163,7 @@ of which are done in our application example.  We consider these issues briefly 
 
 Additionally, during an epidemic, public health decision makers may be faced with an ongoing series of decisions over time in response to changes in conditions such as resource availability or the current effective allocations of resources. The AS presented here looks at a single snapshot in time  and ignores many of the possible complexities related to adjusting existing allocations. The example presented in section 
 \ref{sec:application} is based on a prospective estimate of bed availability, but one could also use observed total resource availability to target an optimal set of prospective AS parameters. 
-Alternatively, the impact of unmet need often differs across different locations and demographics, which could be accounted for by incorporating a function of location and demographics which defines the cost of unmet need. Future work is needed to explore the use of AS while accounting for the dynamic nature of disease spread and resource availability.
+Alternatively, the impact of unmet need often differs across different locations and demographics, thus one may wish to define a varying cost which depends on some covariates. Future work is needed to explore the use of AS while accounting for the dynamic nature of disease spread and resource availability.
 
 There are several important limitations to the current work. The allocation score we developed here does not directly
 account for important considerations such as fairness or equity of allocations, or more broadly, individual and group
