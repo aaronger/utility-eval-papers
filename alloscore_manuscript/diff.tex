@@ -1,7 +1,7 @@
 \documentclass{article}\usepackage[]{graphicx}\usepackage[]{xcolor}
 %DIF LATEXDIFF DIFFERENCE FILE
 %DIF DEL manuscript_submitted.tex   Mon Aug  5 00:01:35 2024
-%DIF ADD manuscript.tex             Sun Aug  4 23:47:14 2024
+%DIF ADD manuscript.tex             Wed Aug  7 23:13:48 2024
 % maxwidth is the original width if it is less than linewidth
 % otherwise use linewidth (to make sure the graphics do not exceed the margin)
 \makeatletter
@@ -243,15 +243,14 @@ forecasts targeting surveillance measures of dengue incidence in Peru and Puerto
 recently, the continuous ranked probability score (CRPS) and a discretized version adapted to multi-quantile forecasts,
 the weighted interval score (WIS) \citep{bracher2021evaluating}, have gained prominence. For example, the CRPS was used
 to assess probabilistic forecasts (based on random effect models) of dengue incidence at the district level in Vietnam
-\citep{colon-gonzalez_probabilistic_2021}. And the WIS has been used during the COVID-19 pandemic to evaluate forecasts
+\citep{colon-gonzalez_probabilistic_2021}. \DIFdelbegin \DIFdel{And }\DIFdelend \DIFaddbegin \DIFadd{Likewise, }\DIFaddend the WIS has been used during the COVID-19 pandemic to evaluate forecasts
 of observed cases, hospitalizations and deaths in the US and Europe, as reported by municipal, state, and federal
 surveillance systems \citep{cramer_evaluation_2022,fox_real-time_2022,sherratt2023predictive}.
 
-While it should be noted that there are ways to interpret any of these scores abstractly through the lens of decision
-theory, and that all of the application-specific papers cited above benefited from direct collaboration with public
+While \DIFdelbegin \DIFdel{it should be noted that there are ways to interpret }\DIFdelend any of these scores \DIFdelbegin \DIFdel{abstractly }\DIFdelend \DIFaddbegin \DIFadd{can be interpreted }\DIFaddend through the lens of decision theory, \DIFdelbegin \DIFdel{and that all of the application-specific papers cited above benefited from direct collaboration with public
 health agencies, a key impetus for the present work has been that we were not able to find in any of them, nor in the
-literature they represent, explicit connections between how a forecast was evaluated and how that forecast was used in
-practice.
+literature they represent, }\DIFdelend \DIFaddbegin \DIFadd{they lack }\DIFaddend explicit connections between how a forecast \DIFdelbegin \DIFdel{was }\DIFdelend \DIFaddbegin \DIFadd{is }\DIFaddend evaluated and how that forecast was used in practice. \DIFaddbegin \DIFadd{A key impetus for the present work was to develop a score that is interpretable to decision makers by measuring the extent to which forecasts lead to improved decisions. In addition, the allocation score we propose is expressed in units that are intelligible to decision makers.
+}\DIFaddend 
 
 A general phenomenon at play here --- one that has been observed repeatedly over the past few decades in other fields
 such as finance, supply chain management, and meteorology --- is that while scores such as RMSE, MAE, LS, CRPS, and WIS
@@ -263,8 +262,9 @@ to \cite{pesaran2002decision_based_eval} for a clear discussion from an economet
 
 Despite this now well-developed discussion of the quality-value distinction in the larger forecasting community, we are
 aware of only a limited literature attempting to connect the value of \emph{infectious disease} forecasts to their
-impact on and through policy.  And within this body of work we have found the discussion of such a connection to still
-be at a formally and quantitatively imprecise stage. In \cite{ioannidis2022forecastingCOVIDfailed}, the possible negative
+impact on and through policy.  \DIFdelbegin \DIFdel{And }\DIFdelend \DIFaddbegin \DIFadd{Even }\DIFaddend within this body of work we have found the discussion of such a connection to
+\DIFdelbegin \DIFdel{still
+}\DIFdelend be at a formally and quantitatively imprecise stage. In \cite{ioannidis2022forecastingCOVIDfailed}, the possible negative
 consequences of inaccurate forecasts of infectious disease are discussed, but there is no attempt to quantify the
 utility or loss incurred as a result of those forecasts. \cite{bilinski_adaptive_2023} explore ways in which predictive
 classifiers of local COVID-19 risk levels in the US could be tuned to policymaker preferences for different costs
@@ -340,7 +340,7 @@ that nothing is wasted in one location while it could be put to use in another. 
 score is 0.  A positive allocation score indicates that an oracle with perfect foreknowledge could have selected an allocation 
 that met more need than the allocation suggested by $F$.
 
-\paragraph{Example 1} Suppose we have a forecast $F$ for need in two locations such that $F_1$ and $F_2$ have exponential marginal distribution with scale parameters $\sigma_1 = 1$ and $\sigma_2 = 4$. The means of these distributions are
+\paragraph{Example 1} \DIFaddbegin \label{examp1} \DIFaddend Suppose we have a forecast $F$ for need in two locations such that $F_1$ and $F_2$ have exponential marginal distribution with scale parameters $\sigma_1 = 1$ and $\sigma_2 = 4$. The means of these distributions are
 given by the scale parameters $\sigma_i$. When the marginal forecasts are exponential distributions, it can be shown
 that the optimal allocation divides the available resources among the locations proportionally to the scale parameters
 $\sigma_i$ (see appendix \ref{sec:a:bayes-quantiles}). If $K = 5$ units of the resource are
@@ -383,7 +383,7 @@ receive enough resources to meet their need. In either of these extremes of reso
 need that arises from the allocation suggested by a forecast (i.e., the forecast's allocation score) will tend to be
 small.
 
-\paragraph{Example 2} Now consider a different forecast that also has exponential distributions for resource need in
+\paragraph{Example 2} \DIFaddbegin \label{examp2} \DIFaddend Now consider a different forecast that also has exponential distributions for resource need in
 each location, but that has the scale parameters $\sigma_1 = 2$ and $\sigma_2 = 8$, twice as large as the scale
 parameters of the forecast in Example 1. Because the optimal allocation is proportional to the scale parameters, this
 forecast would lead to the same allocations as the forecast in Example 1, and would therefore be assigned the same
@@ -685,7 +685,7 @@ allocation score while the USC-SI\_kJalpha model had the most accurate forecasts
 
 % latex table generated in R 4.4.1 by xtable 1.8-4 package
 %DIF <  Thu Aug  1 13:13:10 2024
-%DIF >  Sun Aug  4 23:47:08 2024
+%DIF >  Wed Aug  7 23:13:42 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrrr}
@@ -783,7 +783,7 @@ assigned a MWIS.) Notably, the \texttt{JHUAPL-SLPHospEns} model ranked best on t
 
 % latex table generated in R 4.4.1 by xtable 1.8-4 package
 %DIF <  Thu Aug  1 13:13:14 2024
-%DIF >  Sun Aug  4 23:47:13 2024
+%DIF >  Wed Aug  7 23:13:46 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrr}
@@ -872,18 +872,20 @@ both scores (Table \ref{tab:multi-k-scores}).
 
 Probabilistic forecasts of infectious disease outbreaks have typically been evaluated using well-known proper scoring
 rules such as the LS, CRPS, and WIS. Often models are ranked according to such a score, but without reference to any
-underlying decision problem from which the score might be derivable as a Bayes scoring rule or be otherwise motivated.
+underlying decision problem from which the score might be derivable as a Bayes scoring rule or be otherwise motivated. 
 We argue that the value of collaborative forecasting efforts, such as the COVID-19 Forecasting Hub, could be enhanced by
 including evaluations of forecasts with
-scoring rules that directly consider the success of forecasts in supporting specific public health decisions. \DIFdelbegin \DIFdel{As evidence for this
-possibility, we }\DIFdelend \DIFaddbegin \DIFadd{The work presented here has applications in many other fields such as economics, where the monetary consequences of using a forecast
+scoring rules that directly consider the success of forecasts in supporting specific \DIFdelbegin \DIFdel{public health decisions. As evidence for this possibility, we }\DIFdelend \DIFaddbegin \DIFadd{decisions. The allocation score was developed for this explicit purpose, evaluating forecasts in the context of the decisions they lead to. The AS is expressed in units that are directly relevant to decisions, which helps not only with ranking forecasts in the context of a specific action, but also allows decision-makers to contextualize the magnitude of differences between forecasts. The benefits of the work presented here generalize beyond public health, to any application of probability forecasts for decision-making, such as economics, where the monetary consequences of using a forecast
 can be clearly juxtaposed with standard accuracy measures of the forecast \mbox{%DIFAUXCMD
 \cite{bannigidadmath2016stock, zhang2019forecasting}}\hskip0pt%DIFAUXCMD
 , resource allocation in urban planning \mbox{%DIFAUXCMD
 \citep{burnett2014urban, liang2013resource}}\hskip0pt%DIFAUXCMD
-, sustainability initiatives such as water and energy allocation \mbox{%DIFAUXCMD
+, or sustainability initiatives such as water and energy allocation \mbox{%DIFAUXCMD
 \cite{syme1999defining, gebre2021multi, colett2016using}}\hskip0pt%DIFAUXCMD
-. We }\DIFaddend have demonstrated how tying forecast evaluation to a specific decision problem (e.g., via the allocation
+.
+}
+
+\DIFadd{We }\DIFaddend have demonstrated how tying forecast evaluation to a specific decision problem (e.g., via the allocation
 score) can yield model rankings that differ substantively from those based a current standard measure of forecast
 accuracy, the WIS, which does not refer to any decision problem that has been clearly connected to outbreak response.
 This result aligns with findings in other fields \DIFdelbegin \DIFdel{, especially those where the monetary consequences of using a forecast
@@ -927,7 +929,7 @@ of which are done in our application example.  We consider these issues briefly 
 
 \DIFaddbegin \DIFadd{Additionally, during an epidemic, public health decision makers may be faced with an ongoing series of decisions over time in response to changes in conditions such as resource availability or the current effective allocations of resources. The AS presented here looks at a single snapshot in time  and ignores many of the possible complexities related to adjusting existing allocations. The example presented in section 
 \ref{sec:application} is based on a prospective estimate of bed availability, but one could also use observed total resource availability to target an optimal set of prospective AS parameters. 
-Alternatively, the impact of unmet need often differs across different locations and demographics, which could be accounted for by incorporating a function of location and demographics which defines the cost of unmet need. Future work is needed to explore the use of AS while accounting for the dynamic nature of disease spread and resource availability.
+Alternatively, the impact of unmet need often differs across different locations and demographics, thus one may wish to define a varying cost which depends on some covariates. Future work is needed to explore the use of AS while accounting for the dynamic nature of disease spread and resource availability.
 }
 
 \DIFaddend There are several important limitations to the current work. The allocation score we developed here does not directly
@@ -1058,7 +1060,11 @@ Bayes act $x^{F,K} = (x_1^{F,K},\ldots,x_N^{F,K})$ for a forecast $F$ and resour
 quantiles of the marginal forecast distributions $F_i$ at a single probability level $\tau^{F,K}$, that is, $x_i^{F,K} =
 q_{F_i,\tau^{F,K}}$. An immediate consequence used in the examples in Section \ref {sec:methods.overview} is that if
 $F_i = \mathrm{Exp}(1/\sigma_i)$ for all $i$, then the Bayes act is proportional to $(\sigma_1,\ldots,\sigma_N)$, since
-$q_{\mathrm{Exp}(1/\sigma),\tau} = -\sigma \log(1-\tau)$.
+\DIFdelbegin \DIFdel{$q_{\mathrm{Exp}(1/\sigma),\tau} = -\sigma \log(1-\tau)$.
+}\DIFdelend \DIFaddbegin \begin{align}
+\DIFadd{q_{\mathrm{Exp}(1/\sigma),\tau} = -\sigma \log(1-\tau). \label{eqn:exp-quantile}
+}\end{align}
+\DIFaddend 
 
 We begin by noting that a key feature of each term of the loss function $s_A(x, Y)$ defining the AP is the presence of 
 a \emph{shortage}: an amount $\max\{0,y-x\}$ by which a resource demand $y$ exceeds a supply decision variable $x$,
@@ -1141,11 +1147,20 @@ To compute an allocation score $S_A(F,y;K) := s_A(x^{F,K},y)$, we require numeri
 AP \eqref{eqn:AP-long} --- that is, we must find the specific resource allocations for each location that are determined by
 the forecast $F$ under the resource constraint $K$. Assuming we have reliable means of calculating quantiles
 $q_{\alpha,F_i}$ of the marginal forecasts $F_i$, these allocations are given by $q_{\tau^{\star},F_i}$ where
-$\tau^{\star}$ solves the equation \eqref{eqn:quantiles-sum-to-K}. However, this equation is not analytically tractable
-and we must resort to a numerical method for finding an approximation $\tilde{\tau}$ of $\tau^{\star}$.
+$\tau^{\star}$ solves the equation \eqref{eqn:quantiles-sum-to-K}. \DIFdelbegin \DIFdel{However, this }\DIFdelend \DIFaddbegin \DIFadd{This }\DIFaddend equation is not analytically tractable \DIFdelbegin \DIFdel{and we must resort to a numerical method for finding an approximation $\tilde{\tau}$ of $\tau^{\star}$}\DIFdelend \DIFaddbegin \DIFadd{in general, but because the left-hand side of \eqref{eqn:quantiles-sum-to-K} is non-decreasing in $\tau$, it is straightforward to find arbitrarily accurate approximations to a solution using an iterative bisection method}\DIFaddend .
 
-We have implemented an iterative bisection method that makes use of the fact that $\sum_{i=1}^N q_{\tau,F_i}$ is an
-increasing function of $\tau$. The algorithm begins with an initial search interval $[\tau_{L,1}, \tau_{U,1}]$ (such as
+We have
+implemented \DIFdelbegin \DIFdel{an iterative bisection method that makes use of the fact that $\sum_{i=1}^N q_{\tau,F_i}$ is an
+increasing function of $\tau$.
+The algorithm }\DIFdelend \DIFaddbegin \DIFadd{such a method along with the resulting score computations in the R package }{\color{blue}%DIFAUXCMD
+\verb`alloscore`
+%
+}%DIFAUXCMD
+\DIFadd{\mbox{%DIFAUXCMD
+\citep{gerding-alloscore} }\hskip0pt%DIFAUXCMD
+which provided all allocation score values used in the analysis of section
+\ref{sec:application}.
+The procedure }\DIFaddend begins with an initial search interval $[\tau_{L,1}, \tau_{U,1}]$ (such as
 $[0,\max_{i}F_i(K)]$) that clearly contains the solution $\tau^{\star}$. At each step $j$ of the algorithm, we evaluate
 the total allocation $\sum_{i=1}^N q_{\tau_{M,j},F_i}$ at the midpoint of the search interval,
 $\tau_{M,j} = \frac{1}{2}(\tau_{L,j} + \tau_{U,j})$ and continue the search on the narrowed sub-interval
@@ -1156,10 +1171,31 @@ $\tau_{M,j} = \frac{1}{2}(\tau_{L,j} + \tau_{U,j})$ and continue the search on t
 [\tau_{M,j}, \tau_{U,j}] & \text{if } \sum_{i=1}^N q_{\tau_{M,j},F_i} < K.
 \end{cases} \nonumber
 \end{align}
-This search continues until $\tau_{U,j+1} < (1+\varepsilon)\tau_{L,j+1}$ for a suitably small $\varepsilon>0$. We have
-implemented this procedure along with the resulting score computations in the R package \verb`alloscore`
-\citep{gerding-alloscore} which provided all allocation score values used in the analysis of section
-\ref{sec:application}.
+This search continues until $\tau_{U,j+1} < (1+\varepsilon)\tau_{L,j+1}$ 
+for a suitably small $\varepsilon>0$. 
+\DIFdelbegin \DIFdel{We have
+implemented this procedure along with the resulting score computations in the R package }%
+{\color{red}%DIFAUXCMD
+\verb`alloscore`
+%DIFAUXCMD
+}%DIFAUXCMD
+%DIFDELCMD < \verb`alloscore`
+%DIFDELCMD < %%%
+\DIFdel{\mbox{%DIFAUXCMD
+\citep{gerding-alloscore} }\hskip0pt%DIFAUXCMD
+which provided all allocation score values used in the analysis of section
+\ref{sec:application}.}\DIFdelend \DIFaddbegin 
+
+\DIFadd{Figure \ref{fig:bisection} illustrates this bisection method in the context of the examples of Section \ref{sec:methods.overview}, where it quickly finds close approximations to the analytic solutions $\tau^{\star} = 1-e^{-1}, 1-e^{-2}$ (for $K= 5,10$ respectively) which, in this case, are available (c.f. \eqref{eqn:exp-quantile}).
+}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}[H]
+\includegraphics[width=\maxwidth]{figure/bisection-1} \caption{\DIFaddFL{Illustrations of bisection method for the examples of Section \ref{sec:methods.overview}. In each plot the thinner black curves are the quantile functions of the exponential forecasts for Location 1, with $\sigma_1=1$ (lower), and Location 2, with $\sigma_2=4$ (upper), while the thicker black curve gives the sum of these quantiles, which must meet the resource constraints of $K = 5$ on the left and $K=10$ on the right. The red segments show the iterates $\tau_{M,j}$ and their associated total resource demands as given by the function }\texttt{\DIFaddFL{allocate}} \DIFaddFL{from the package }\texttt{\DIFaddFL{alloscore}} \DIFaddFL{applied to these examples and using an initial search interval $[0,1]$. (The $\tau_{M,j}$ are in this case just sums of terms $\pm 2^{-j}$.) The horizontal dashed lines show the resulting allocations (c.f. Figure \ref{fig:exp_alloc_example} ).}}\label{fig:bisection}
+\end{figure}
+
+\end{knitrout}
+\DIFaddend 
 
 Subtleties can arise when the forecast densities $f_i$ vanish or are very small, in which case quantiles are non-unique
 or highly variable near a probability level, leading to ambiguity or numerical instabilities{} in the evaluation of

@@ -1398,9 +1398,9 @@ $\tau_{M,j} = \frac{1}{2}(\tau_{L,j} + \tau_{U,j})$ and continue the search on t
 This search continues until $\tau_{U,j+1} < (1+\varepsilon)\tau_{L,j+1}$ 
 for a suitably small $\varepsilon>0$. 
 
-Figure \ref{fig:bisection} illustrates this bisection method in the context of the examples of Section \ref {sec:methods.overview}, where it quickly finds close approximations to the analytic solutions $\tau^{\star} = 1-e^{-1}, 1-e^{-2}$ (for $K= 5,10$ respectively) which, in this case, are available (c.f. \eqref{eqn:exp-quantile}).
+Figure \ref{fig:bisection} illustrates this bisection method in the context of the examples of Section \ref{sec:methods.overview}, where it quickly finds close approximations to the analytic solutions $\tau^{\star} = 1-e^{-1}, 1-e^{-2}$ (for $K= 5,10$ respectively) which, in this case, are available (c.f. \eqref{eqn:exp-quantile}).
 
-<<bisection, fig.height=4, fig.width = 8, fig.pos="H", fig.cap = "Illustrations of bisection method for the examples of Section \\ref{sec:methods.overview}. In each plot the thinner black lines are the quantile functions of the exponential forecasts for Location 1, with $\\sigma_1=1$ (lower), and Location 2, with $\\sigma_2=4$ (upper), while the thicker black line gives the sum of these quantiles, which must meet the resource constraints of $K = 5$ on the left and $K=10$ on the right. The red segments show the iterates $\\tau_{M,j}$ and their associated total resource demands as given by the function \\texttt{allocate} from the package \\texttt{alloscore} applied to these examples and using an initial search interval $[0,1]$. (The $\\tau_{M,j}$ are in this case just sums of terms $\\pm 2^{-j}$.) The horizontal dashed lines show the resulting allocations (c.f. Figure \\ref{fig:exp_alloc_example} ).">>=
+<<bisection, fig.height=4, fig.width = 8, fig.pos="H", fig.cap = "Illustrations of bisection method for the examples of Section \\ref{sec:methods.overview}. In each plot the thinner black curves are the quantile functions of the exponential forecasts for Location 1, with $\\sigma_1=1$ (lower), and Location 2, with $\\sigma_2=4$ (upper), while the thicker black curve gives the sum of these quantiles, which must meet the resource constraints of $K = 5$ on the left and $K=10$ on the right. The red segments show the iterates $\\tau_{M,j}$ and their associated total resource demands as given by the function \\texttt{allocate} from the package \\texttt{alloscore} applied to these examples and using an initial search interval $[0,1]$. (The $\\tau_{M,j}$ are in this case just sums of terms $\\pm 2^{-j}$.) The horizontal dashed lines show the resulting allocations (c.f. Figure \\ref{fig:exp_alloc_example} ).">>=
 expexamp <- tibble(
   target_names = LETTERS[1:2],
   dist = "exp",
@@ -1448,7 +1448,7 @@ p10 <- p + geom_hline(aes(yintercept = 10)) +
                                 "0.7","0.8", 
                                 expression(italic(atop(" ", 1 - e^{-2} %~~% 0.865)), "0.9", "1"))) +
   scale_y_continuous(limits = c(0,12), breaks = c(0,2,5,8,10,15), expand = c(0,0), 
-                     name = element_blank())
+                     name = "  ")
 
 cowplot::plot_grid(p5, p10, align = "h")
 
