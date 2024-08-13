@@ -388,7 +388,7 @@ resource allocation and the time $t_r$ when resource needs that might be address
 setup assumes that $t_d < t_r$ and that the resource in question can only meet the need realized at $t_r$, not prevent
 it. That is, we stipulate that the choice of allocation $x$ has no effect on the distribution of the random vector $Y$. In the
 context of infectious disease, this means that we do not consider resources, such as vaccines, that are intended to
-reduce the number of people who will become sick at some point in the future. Instead, our setup addresses resources
+reduce the number of people who will become sick within the forecast horizon. Instead, our setup addresses resources
 like hospital beds, oxygen supply, or ventilators which are intended to meet the medical needs of patients who are
 already sick. Additionally, our setup addresses decision-making that is related to resource needs only at the time
 $t_r$; we do not consider sequences of multiple decisions that are made over time or account for the impact of decisions
@@ -398,7 +398,7 @@ decision making settings in the discussion.
 With this problem formulation in place, we can develop a proper scoring rule following the procedure in section
 \ref{sec:methods.detailed.decisiontheory}.
 
-\paragraph{Step 1: specify a loss function.} The loss incurred by an allocation $x$ under an outcome $y$ is the sum of
+\paragraph{Step 1: Specify a loss function.} The loss incurred by an allocation $x$ under an outcome $y$ is the sum of
 contributions from unmet need in each location:
 \begin{equation}
   s_A(x, y) = \sum_{i=1}^N L \cdot \max(0, y_i - x_i). \label{eqn:loss_fn}
@@ -429,7 +429,7 @@ inventory management and is often attributed to \cite{hadleywhitin1963}.
 \paragraph{Step 3: Define the scoring rule.} We can now use the Bayes act to define a proper scoring rule for the
 probabilistic forecast $F$. Consider first the raw score defined as
 \begin{align}
-  S_A^{\text{raw}}(F, y; K) = s_A(x^{F,K}, y) = \sum_{i=1}^N L \cdot \max(0, y_i - x_i^{F,K}).
+  S_A^{\text{raw}}(F, y; K) = s_A(x^{F,K}, y) = \sum_{i=1}^N L \cdot \max(0, y_i - x_i^{F,K}). \label{eqn:AS-raw}
 \end{align}
 This measures the total unmet need across all locations that results from using the Bayes allocation associated with the
 forecast $F$ when the actual level of need in each location is observed to be $y_i$.
@@ -442,7 +442,7 @@ loss of $L \cdot \left(\sum_{i=1}^{N}y_i - K \right) > 0$, we adjust the raw sco
 The oracle-adjusted score can therefore be written as
 \begin{align}
   S_A(F, y; K)  &= S_A^{\text{raw}}(F, y; K) - L \cdot \max\left(0,\sum_{i=1}^{N}y_i - K\right) \\
-  &= L\left\{\sum_{i=1}^N \max(0, y_i - x_i^{F,K}) -  \max\left(0,\sum_{i=1}^{N}y_i - K\right)\right\}.
+  &= L\left\{\sum_{i=1}^N \max(0, y_i - x_i^{F,K}) -  \max\left(0,\sum_{i=1}^{N}y_i - K\right)\right\}. \label{eqn:AS-orc}
 \end{align}
 The oracle adjustment aligns with a common theme in economic decision theory that opportunity loss (often known
 as regret or (negative) relative utility) is often a more important quantity than absolute loss (see e.g.,
@@ -464,7 +464,7 @@ distribution $p$:
 We note that the device of considering a range of hypothetical decision makers or decision making problems with
 different problem parameters has been employed in the past \cite[e.g.,][]{murphy1993whatisagoodforecast}.
 
-\subsection{Connections to Other Scores}
+\subsection{Comparisons with Other Scores}
 \label{sec:methods.related}
 
 The weighted interval score (WIS) was proposed in 2020 as a way to score forecasts that were being made in the early
@@ -491,6 +491,8 @@ unit of unmet need. This leads to the quantile score for the probability level $
 WIS or CRPS can be obtained by averaging across a range of decision making settings with different cost and loss
 parameters, using a similar motivation that we used to obtain the IAS from the AS in section
 \ref{sec:methods.detailed.integrated_allocation} \citep{gneiting2011weightedScoringRules}.
+
+We also note that the AS, just as the (aggregate or mean) quantile score and WIS, depends only on the marginal distributions for each location of a multi-location forecast (cf. equations \eqref{eqn:AS-raw} and \eqref{eqn:quantiles-sum-to-K} in Section \ref{sec:a:bayes-quantiles} of the appendix). It is however the case that when a forecaster modifies a single marginal forecast (holding those for other locations fixed), the aggregate WIS of thier forecast will change only according to the WIS of that marginal forecast, whereas every term in the sum defining the AS (in \eqref{eqn:AS-raw}) will change as the Bayes probability level defined by \eqref{eqn:quantiles-sum-to-K} changes.  In this sense, the AS depends “jointly” on the marginal forecasts while the WIS does not.
 
 \section{Evaluating forecasts of COVID hospitalizations using the allocation score}
 \label{sec:application}
@@ -594,7 +596,7 @@ allocation score while the USC-SI\_kJalpha model had the most accurate forecasts
 
 
 % latex table generated in R 4.4.1 by xtable 1.8-4 package
-% Wed Aug  7 23:13:42 2024
+% Tue Aug 13 15:15:48 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrrr}
@@ -691,7 +693,7 @@ according to both metrics, although not in exactly the same order (Table \ref{ta
 assigned a MWIS.) Notably, the \texttt{JHUAPL-SLPHospEns} model ranked best on taMWIS but had only the fourth best MAS.
 
 % latex table generated in R 4.4.1 by xtable 1.8-4 package
-% Wed Aug  7 23:13:46 2024
+% Tue Aug 13 15:15:52 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrr}
@@ -793,7 +795,7 @@ allocation approaches in a hypothetical application, suggesting that there is ro
 epidemiological modeling techniques that might be spurred on by a reorientation of the field toward practical decision
 problems. For example, in order to surpass benchmark allocation scores, forecasters need to devote effort to capturing
 the \emph{relative} magnitude of future resource need across different locations.  Success at this task is not, however,
-directly rewarded by the WIS. 
+directly rewarded by the WIS (cf. the discussion at the end of Section \ref{sec:methods.related}). 
 
 Our example application of the AS refers to a hypothetical and unspecified resource need that is assumed to pair with
 our forecasted outcome (new hospital admissions) in a manner that might appear overly simplistic and artificially
@@ -801,7 +803,7 @@ direct.  We are optimistic, however, that by augmenting this scheme with a proba
 need and more detailed domain knowledge, it could be meaningfully aligned with a more concrete decision problem such as
 the allocation of ventilators during a respiratory viral pandemic.  This problem was explored from a stochastic
 optimization perspective (not from a forecast evaluation perspective) in \cite{huang_stockpiling_2017} and provided an
-initial motivation for this project. We see it as promising focus for further development of the AS framework since it
+initial motivation for this project. We see this as a promising focus for further development of the AS framework since it
 (a) has been identified as a setting in which allocation decisions are made during respiratory disease outbreaks, (b) involves
 logistical considerations depending on geographical and population scales, and (c) would likely imply a central role for
 hospitalization data. But again, additional modeling and data synthesis would be required since not everyone who is
@@ -824,24 +826,36 @@ evaluated with scoring rules for which they were not elicited or via parameters 
 of which are done in our application example.  We consider these issues briefly in appendices
 \ref{sec:a:distfromq} and \ref{sec:a:propriety_of_parametric_approximation}.)
 
-Additionally, during an epidemic, public health decision makers may be faced with an ongoing series of decisions over time in response to changes in conditions such as resource availability or the current effective allocations of resources. The AS presented here looks at a single snapshot in time  and ignores many of the possible complexities related to adjusting existing allocations. The example presented in section 
-\ref{sec:application} is based on a prospective estimate of bed availability, but one could also use observed total resource availability to target an optimal set of prospective AS parameters. 
-Alternatively, the impact of unmet need often differs across different locations and demographics, thus one may wish to define a varying cost which depends on some covariates. Future work is needed to explore the use of AS while accounting for the dynamic nature of disease spread and resource availability.
+We reiterate three important limitations to the current work which we noted when introducing the AS in 
+Section \ref{sec:methods.detailed.specific_allocation}.  We view these issues as promising avenues for 
+future investigation, but beyond the scope of this paper.
 
-There are several important limitations to the current work. The allocation score we developed here does not directly
-account for important considerations such as fairness or equity of allocations, or more broadly, individual and group
+First, the terms in our loss function  
+\eqref{eqn:loss_fn} do not depend on geographic or demographic covariates.  Policy makers may, however, wish to incorporate 
+differences in the impact of unmet need across populations into a forecast evaluation methodology.  For example, in the state-level forecasting context of Section \ref{sec:application}, it might be
+appropriate to make the loss for failing to
+procuring a bed for a hospitalizable illness an increasing function of the state's median age. 
+Along these lines, it should also be mentioned that the AS does not directly
+take into consideration the fairness or equity of allocations, or more broadly, individual and group
 preference relations that are difficult or even impossible to encode into a loss or utility function.  Ambiguity aversion
 (in the sense of \cite{ellsberg1961risk}), for example, seems especially relevant to the use of forecasts in outbreak
 response, where there can be immense social and political pressure on public health officials to maintain a transparent
-base of evidence for their policy choices and recommendations. The proposed framework also does not attempt to capture
-the broader context of decision making. For example, in practice it may be possible to increase the resource constraint
-$K$ by shifting funding from other disease mitigation measures. Finally, we emphasize that we opted at this stage of
-development to explicitly rule out situations where a successful
-epidemiological forecast could lead to policy decisions that change the distribution of the predicted outcome $Y$. Our
-framework would need considerable enhancements before being applicable to forecast evaluation beyond horizons for which
-causal feedback can be neglected.
+base of evidence for their policy choices and recommendations. 
 
-An opportunity for further investigation is to more carefully evaluate whether forecasts add value to 
+Secondly, our formulation of the AS does not take into
+consideration the temporal inter-dependencies between sequential decisions that public health decision makers are likely to face as an epidemic unfolds. Such dependencies could arise from time-varying inputs such as resource availability or the current effective allocations of resources. The sequential decision problem could also be combined with others allowing constraints for different resources to be modified by time-varying funding shifts between various disease mitigation measures.  Incorporating these possibilities into an AS framework would likely require technical developments involving either dynamic programming 
+(see e.g., \cite{bertsekas2012dynamic}) or a scenario-based approach (see e.g., \cite{pflug2014multistage}).
+
+Thirdly, we emphasize that we opted at this stage of
+development to explicitly rule out situations where a successful
+epidemiological forecast could lead to policy decisions that change the distribution of the predicted outcome $Y$. 
+This excludes the fundamentally important context of vaccine allocation for certain pathogens and
+spatio-temporal scales, but we note that supply-chain decisions made at a national level in the US determining the state-level
+availability of current COVID-19 vaccines are unlikely to affect incidence or exposure levels at a 14-day horizon. In any event,
+we are not yet prepared to suggest how valid forecast evaluation using scores given by \eqref{eqn:AS-orc} would proceed when 
+both disease burden and unmet need are considered as endogenous variables.
+
+Another opportunity for further investigation is to more carefully evaluate whether forecasts add value to 
 standard  procedures already in place for making public health decisions. In the context of allocations,
 such a procedure might extrapolate need from current observed need and population levels (similarly to the two benchmark
 approaches presented above), with adjustments based on other political or real-world considerations. For example, in
@@ -1061,11 +1075,11 @@ $\tau_{M,j} = \frac{1}{2}(\tau_{L,j} + \tau_{U,j})$ and continue the search on t
 This search continues until $\tau_{U,j+1} < (1+\varepsilon)\tau_{L,j+1}$ 
 for a suitably small $\varepsilon>0$. 
 
-Figure \ref{fig:bisection} illustrates this bisection method in the context of the examples of Section \ref{sec:methods.overview}, where it quickly finds close approximations to the analytic solutions $\tau^{\star} = 1-e^{-1}, 1-e^{-2}$ (for $K= 5,10$ respectively) which, in this case, are available (c.f. \eqref{eqn:exp-quantile}).
+Figure \ref{fig:bisection} illustrates this bisection method in the context of the examples of Section \ref{sec:methods.overview}, where it quickly finds close approximations to the analytic solutions $\tau^{\star} = 1-e^{-1}, 1-e^{-2}$ (for $K= 5,10$ respectively) which, in this case, are available (cf. \eqref{eqn:exp-quantile}).
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}[H]
-\includegraphics[width=\maxwidth]{figure/bisection-1} \caption{Illustrations of bisection method for the examples of Section \ref{sec:methods.overview}. In each plot the thinner black curves are the quantile functions of the exponential forecasts for Location 1, with $\sigma_1=1$ (lower), and Location 2, with $\sigma_2=4$ (upper), while the thicker black curve gives the sum of these quantiles, which must meet the resource constraints of $K = 5$ on the left and $K=10$ on the right. The red segments show the iterates $\tau_{M,j}$ and their associated total resource demands as given by the function \texttt{allocate} from the package \texttt{alloscore} applied to these examples and using an initial search interval $[0,1]$. (The $\tau_{M,j}$ are in this case just sums of terms $\pm 2^{-j}$.) The horizontal dashed lines show the resulting allocations (c.f. Figure \ref{fig:exp_alloc_example} ).}\label{fig:bisection}
+\includegraphics[width=\maxwidth]{figure/bisection-1} \caption{Illustrations of bisection method for the examples of Section \ref{sec:methods.overview}. In each plot the thinner black curves are the quantile functions of the exponential forecasts for Location 1, with $\sigma_1=1$ (lower), and Location 2, with $\sigma_2=4$ (upper), while the thicker black curve gives the sum of these quantiles, which must meet the resource constraints of $K = 5$ on the left and $K=10$ on the right. The red segments show the iterates $\tau_{M,j}$ and their associated total resource demands as given by the function \texttt{allocate} from the package \texttt{alloscore} applied to these examples and using an initial search interval $[0,1]$. (The $\tau_{M,j}$ are in this case just sums of terms $\pm 2^{-j}$.) The horizontal dashed lines show the resulting allocations (cf. Figure \ref{fig:exp_alloc_example} ).}\label{fig:bisection}
 \end{figure}
 
 \end{knitrout}
@@ -1224,7 +1238,7 @@ Since $S_R$ is defined as the Bayes scoring rule for the forecaster's loss \eqre
 with $G_{\theta^{\star}(F)}$, the distribution in $\mathcal{P}_{\mathrm{dfq}}$ given by the
 optimal submission parameters $\theta^{\star}(F)$ for the forecaster with predictive distribution $F$.
 In general, $G^q(F)$ and $G^\star(F)$ will be different distributions:  matching $F$ at specific quantiles
-does not require $G^q(F)$ to match $F$ at the quantiles for $\tau^{F,K}$ (c.f. \eqref{eqn:quantiles-sum-to-K}),
+does not require $G^q(F)$ to match $F$ at the quantiles for $\tau^{F,K}$ (cf. \eqref{eqn:quantiles-sum-to-K}),
 which would be necessary for it to share $x^F$ as an optimal allocation.
 
 When an analyst attempts a post hoc computation of the allocation score using $G^q(F)$ (implicitly assuming that $G^q(F)
