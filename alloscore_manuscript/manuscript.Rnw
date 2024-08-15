@@ -1040,7 +1040,7 @@ The integrated allocation score (IAS) summarizes allocation scores (AS) across a
 constraint ($K$), allowing one to assign higher weights to more likely values of $K$ (Section
 \ref{sec:methods.detailed.integrated_allocation}). 
 IAS was computed for two weight distributions on the same grid of values of $K$ used in the sensitivity analysis above,
-one uniform across the entire range and the other with weights proportional a truncated normal distribution centered at 15,000
+one uniform across the entire range and the other with weights proportional to a truncated normal distribution centered at 15,000
 (the orange and blue shaded areas in Figure
 \ref{fig:multi-k}A, respectively).
 With these weight distributions, the IAS defined in Equation~\eqref{eqn:IAS_definition} can be computed as the sum
