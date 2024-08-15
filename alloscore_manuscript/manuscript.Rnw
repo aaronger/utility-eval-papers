@@ -1191,8 +1191,8 @@ epidemiological forecast could lead to policy decisions that change the distribu
 For example, this excludes the important problem of allocation of doses of a preventative vaccine.
 We have not developed a formal approach to forecast evaluation using scores given by \eqref{eqn:AS-orc} when both
 disease burden and unmet need are considered as endogenous variables. Our sense is that such an approach would require some form of
-accounting for the causal effect of the allocation decision on observed measures of disease burden, e.g. estimating the (counterfactual)
-cases or deaths averted from one or another allocation strategy through the available observed data.
+accounting for the causal effect of the allocation decision on observed measures of disease burden, e.g. using the available observed data to estimate the (counterfactual)
+number of cases or deaths averted from one or another allocation strategy.
 
 Another opportunity for further investigation is to more carefully evaluate whether forecasts add value to 
 standard  procedures already in place for making public health decisions. In the context of allocations,
