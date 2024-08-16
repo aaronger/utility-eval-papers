@@ -388,7 +388,7 @@ resource allocation and the time $t_r$ when resource needs that might be address
 setup assumes that $t_d < t_r$ and that the resource in question can only meet the need realized at $t_r$, not prevent
 it. That is, we stipulate that the choice of allocation $x$ has no effect on the distribution of the random vector $Y$. In the
 context of infectious disease, this means that we do not consider resources, such as vaccines, that are intended to
-reduce the number of people who will become sick within the forecast horizon. Instead, our setup addresses resources
+reduce the number of people who will become sick at some point in the future. Instead, our setup addresses resources
 like hospital beds, oxygen supply, or ventilators which are intended to meet the medical needs of patients who are
 already sick. Additionally, our setup addresses decision-making that is related to resource needs only at the time
 $t_r$; we do not consider sequences of multiple decisions that are made over time or account for the impact of decisions
@@ -457,12 +457,15 @@ constant. However, if $K$ is not precisely known at the time of decision making 
 value of forecasts across a range of decision making scenarios with different resource constraints, we can use an
 \emph{integrated allocation score} (IAS) that integrates the allocation score across values of $K$, weighting by a
 distribution $p$:
-\begin{align} 
-  S_{IAS}(F, y) &= \int S_A(F,y; K) p(K) \, dK \label{eq:IASintegral}\\
-    & = \sum_{K=1}^{\infty} S_A(F,y; K) p(K) \quad (\text{assumming non-divisible resource units})\label{eq:IASsum}.
-\end{align}
+\begin{equation}
+S_{IAS}(F, y) = \int S_A(F,y; K) p(K) \, dK \label{eqn:IAS_definition}
+\end{equation}
 We note that the device of considering a range of hypothetical decision makers or decision making problems with
 different problem parameters has been employed in the past \cite[e.g.,][]{murphy1993whatisagoodforecast}.
+
+In practice, it may be challenging to compute the integral in \eqref{eqn:IAS_definition}.
+In the applied investigations below we resort to a discretization, evaluating at a grid of values of the resource constraint $K$.
+A discrete treatment along these lines will often be natural, in settings where the resource in question is non-divisible (e.g., ventilators, masks).
 
 \subsection{Comparisons with Other Scores}
 \label{sec:methods.related}
@@ -596,7 +599,7 @@ allocation score while the USC-SI\_kJalpha model had the most accurate forecasts
 
 
 % latex table generated in R 4.4.1 by xtable 1.8-4 package
-% Tue Aug 13 15:15:48 2024
+% Thu Aug 15 23:41:50 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrrr}
@@ -693,7 +696,7 @@ according to both metrics, although not in exactly the same order (Table \ref{ta
 assigned a MWIS.) Notably, the \texttt{JHUAPL-SLPHospEns} model ranked best on taMWIS but had only the fourth best MAS.
 
 % latex table generated in R 4.4.1 by xtable 1.8-4 package
-% Tue Aug 13 15:15:52 2024
+% Thu Aug 15 23:41:54 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrr}
@@ -743,7 +746,7 @@ performed consistently well on AS but had only middling MWIS ranks.
 
 
 
-AS was computed for a range of $K$ from 200 to 60,000 for forecasts made on December 20, 2020 predicting levels of
+AS was computed for a range of $K$ from 200 to 60,000 at increments of 200 for forecasts made on December 20, 2020 predicting levels of
 hospitalizations on January 3, 2021 as well as for the \texttt{per-capita} allocation (Figure \ref{fig:multi-k}A). These
 calculations highlight that AS was highest at at values of $K$ near the observed nationwide total hospital admissions of
 19,581 that day. Model ranks by AS were fairly stable across all $K$, and there appears
@@ -755,14 +758,14 @@ to be an substantial interval around the observed value over which ranks are con
 The integrated allocation score (IAS) summarizes allocation scores (AS) across a range of possible values of the
 constraint ($K$), allowing one to assign higher weights to more likely values of $K$ (Section
 \ref{sec:methods.detailed.integrated_allocation}). 
-Calculating exact IAS as defined in equation \eqref{eq:IASsum} is computationally intensive so an approximate IAS, denoted $\hat{S}(F,y)$, was used such that
-\begin{align*}
-	\hat{S}(F,y) = \sum_{k=1}^{600} S_A(F,y; 200k) p(200k),
-\end{align*}
-where summation terms were calculated at every 200 beds with an upper bound of 60,000, or four times the estimated available beds.
-An approximate IAS was computed for two weight distributions on $K$, one uniform
-across the entire range and the other a truncated normal distribution centered at 15,000 (the orange and blue shaded areas in Figure
-\ref{fig:multi-k}A, respectively). Both versions of the IAS were correlated with the original AS for $K=15,000$, with
+IAS was computed for two weight distributions on the same grid of values of $K$ used in the sensitivity analysis above,
+one uniform across the entire range and the other with weights proportional to a truncated normal distribution centered at 15,000
+(the orange and blue shaded areas in Figure
+\ref{fig:multi-k}A, respectively).
+With these weight distributions, the IAS defined in Equation~\eqref{eqn:IAS_definition} can be computed as the sum
+$$S_{IAS}(F, y) = \sum_K S_A(F,y; K) p(K)$$
+
+Both versions of the IAS were correlated with the original AS for $K=15,000$, with
 the higher correlation coming from the weighting centered at $K=15,000$ (Figure \ref{fig:multi-k}B). Model rankings
 based on the AS and the centered IAS were roughly similar, with the top and bottom three approaches being the same for
 both scores (Table \ref{tab:multi-k-scores}).
@@ -782,8 +785,8 @@ rules such as the LS, CRPS, and WIS. Often models are ranked according to such a
 underlying decision problem from which the score might be derivable as a Bayes scoring rule or be otherwise motivated. 
 We argue that the value of collaborative forecasting efforts, such as the COVID-19 Forecasting Hub, could be enhanced by
 including evaluations of forecasts with
-scoring rules that directly consider the success of forecasts in supporting specific decisions. The allocation score was developed for this explicit purpose, evaluating forecasts in the context of the decisions they lead to. The AS is expressed in units that are directly relevant to decisions, which helps not only with ranking forecasts in the context of a specific action, but also allows decision-makers to contextualize the magnitude of differences between forecasts. The benefits of the work presented here generalize beyond public health, to any application of probability forecasts for decision-making, such as economics, where the monetary consequences of using a forecast
-can be clearly juxtaposed with standard accuracy measures of the forecast \cite{bannigidadmath2016stock, zhang2019forecasting}, resource allocation in urban planning \citep{burnett2014urban, liang2013resource}, or sustainability initiatives such as water and energy allocation \cite{syme1999defining, gebre2021multi, colett2016using}.
+scoring rules that directly consider the success of forecasts in supporting specific decisions. The allocation score was developed for this purpose. The AS is expressed in units that are directly relevant to decisions, which helps not only with ranking forecasts in the context of a specific action, but also allows decision-makers to contextualize the magnitude of differences between forecast scores. The benefits of the approach to forecast evaluation discussed here generalize beyond public health, to any application of probability forecasts for decision-making, such as economics, where the monetary consequences of using a forecast
+can be clearly juxtaposed with standard accuracy measures of the forecast \citep{bannigidadmath2016stock, zhang2019forecasting}, resource allocation in urban planning \citep{burnett2014urban, liang2013resource}, or sustainability initiatives such as water and energy allocation \citep{syme1999defining, gebre2021multi, colett2016using}.
 
 We have demonstrated how tying forecast evaluation to a specific decision problem (e.g., via the allocation
 score) can yield model rankings that differ substantively from those based a current standard measure of forecast
@@ -795,7 +798,7 @@ allocation approaches in a hypothetical application, suggesting that there is ro
 epidemiological modeling techniques that might be spurred on by a reorientation of the field toward practical decision
 problems. For example, in order to surpass benchmark allocation scores, forecasters need to devote effort to capturing
 the \emph{relative} magnitude of future resource need across different locations.  Success at this task is not, however,
-directly rewarded by the WIS (cf. the discussion at the end of Section \ref{sec:methods.related}). 
+directly rewarded by the WIS (see the discussion at the end of Section \ref{sec:methods.related}). 
 
 Our example application of the AS refers to a hypothetical and unspecified resource need that is assumed to pair with
 our forecasted outcome (new hospital admissions) in a manner that might appear overly simplistic and artificially
@@ -826,15 +829,14 @@ evaluated with scoring rules for which they were not elicited or via parameters 
 of which are done in our application example.  We consider these issues briefly in appendices
 \ref{sec:a:distfromq} and \ref{sec:a:propriety_of_parametric_approximation}.)
 
-We reiterate three important limitations to the current work which we noted when introducing the AS in 
+There are three important limitations to the current work which we noted when introducing the AS in 
 Section \ref{sec:methods.detailed.specific_allocation}.  We view these issues as promising avenues for 
-future investigation, but beyond the scope of this paper.
+future investigation.
 
 First, the terms in our loss function  
 \eqref{eqn:loss_fn} do not depend on geographic or demographic covariates.  Policy makers may, however, wish to incorporate 
 differences in the impact of unmet need across populations into a forecast evaluation methodology.  For example, in the state-level forecasting context of Section \ref{sec:application}, it might be
-appropriate to make the loss for failing to
-procuring a bed for a hospitalizable illness an increasing function of the state's median age. 
+appropriate to adjust the loss so that the costs of unmet need are larger in locations with greater population vulnerability.
 Along these lines, it should also be mentioned that the AS does not directly
 take into consideration the fairness or equity of allocations, or more broadly, individual and group
 preference relations that are difficult or even impossible to encode into a loss or utility function.  Ambiguity aversion
@@ -849,11 +851,11 @@ consideration the temporal inter-dependencies between sequential decisions that 
 Thirdly, we emphasize that we opted at this stage of
 development to explicitly rule out situations where a successful
 epidemiological forecast could lead to policy decisions that change the distribution of the predicted outcome $Y$. 
-This excludes the fundamentally important context of vaccine allocation for certain pathogens and
-spatio-temporal scales, but we note that supply-chain decisions made at a national level in the US determining the state-level
-availability of current COVID-19 vaccines are unlikely to affect incidence or exposure levels at a 14-day horizon. In any event,
-we are not yet prepared to suggest how valid forecast evaluation using scores given by \eqref{eqn:AS-orc} would proceed when 
-both disease burden and unmet need are considered as endogenous variables.
+For example, this excludes the important problem of allocation of doses of a preventative vaccine.
+We have not developed a formal approach to forecast evaluation using scores given by \eqref{eqn:AS-orc} when both
+disease burden and unmet need are considered as endogenous variables. Such an approach would require some form of
+accounting for the causal effect of the allocation decision on observed measures of disease burden, e.g. using the available observed data to estimate the (counterfactual)
+number of cases or deaths averted from one or another allocation strategy.
 
 Another opportunity for further investigation is to more carefully evaluate whether forecasts add value to 
 standard  procedures already in place for making public health decisions. In the context of allocations,
