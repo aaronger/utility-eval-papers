@@ -34,7 +34,7 @@
 \def\ngr#1{{\color{blue}\textbf{NGR:[#1]}}}
 
 \usepackage{natbib}
-\bibliographystyle{unsrtnat-abbr}
+\bibliographystyle{rss-abbr}
 
 
 \author{Aaron Gerding\thanks{Corresponding Author: \texttt{agerding@umass.edu}}}

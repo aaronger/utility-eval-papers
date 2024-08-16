@@ -1,7 +1,7 @@
 \documentclass{article}\usepackage[]{graphicx}\usepackage[]{xcolor}
 %DIF LATEXDIFF DIFFERENCE FILE
 %DIF DEL manuscript_submitted.tex   Mon Aug  5 00:01:35 2024
-%DIF ADD manuscript.tex             Thu Aug 15 23:41:56 2024
+%DIF ADD manuscript.tex             Fri Aug 16 14:45:38 2024
 % maxwidth is the original width if it is less than linewidth
 % otherwise use linewidth (to make sure the graphics do not exceed the margin)
 \makeatletter
@@ -87,7 +87,11 @@
 \def\ngr#1{{\color{blue}\textbf{NGR:[#1]}}}
 
 \usepackage{natbib}
-\bibliographystyle{unsrtnat-abbr}
+%DIF 87c87
+%DIF < \bibliographystyle{unsrtnat-abbr}
+%DIF -------
+\bibliographystyle{rss-abbr} %DIF > 
+%DIF -------
 
 
 \author{Aaron Gerding\thanks{Corresponding Author: \texttt{agerding@umass.edu}}}
@@ -692,7 +696,7 @@ allocation score while the USC-SI\_kJalpha model had the most accurate forecasts
 
 % latex table generated in R 4.4.1 by xtable 1.8-4 package
 %DIF <  Thu Aug  1 13:13:10 2024
-%DIF >  Thu Aug 15 23:41:50 2024
+%DIF >  Fri Aug 16 14:45:32 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrrr}
@@ -790,7 +794,7 @@ assigned a MWIS.) Notably, the \texttt{JHUAPL-SLPHospEns} model ranked best on t
 
 % latex table generated in R 4.4.1 by xtable 1.8-4 package
 %DIF <  Thu Aug  1 13:13:14 2024
-%DIF >  Thu Aug 15 23:41:54 2024
+%DIF >  Fri Aug 16 14:45:37 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrr}
