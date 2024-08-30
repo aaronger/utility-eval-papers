@@ -138,7 +138,7 @@
 % \affil{Department of Biostatistics and Epidemiology, School of Public Health and Health
 % Sciences, University of Massachusetts at Amherst}
 
-\title{Resonse to reviewer comments on \\ manuscript ID JRSSA-Mar-2024-0080}
+\title{Response to reviewer comments on \\ manuscript ID JRSSA-Mar-2024-0080}
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 %DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF
 %DIF UNDERLINE PREAMBLE %DIF PREAMBLE
@@ -275,19 +275,18 @@ and demographics.  Can forecasts from different, likely correlated,
 areas be assessed jointly?
 \end{quotebar}
 
-This is a very subtle and important question, but unfortunately not one that
-we are ready to address directly using the present formulation of the AS. To clarify
+This is a very subtle and important question, but it is not addressed
+directly by the present formulation of the AS. To clarify
 that the AS has no immediate dependence on a forecaster's underlying beliefs regarding
 joint probabilities we added this paragraph at the end of Section 2.3:
 
 \begin{mybox}{pg8-para4}
-  \DIFaddbegin \DIFadd{We also note that the AS, just as the (aggregate or mean) quantile score and WIS, depends only on the marginal distributions for each location of a multi-location forecast (cf. equations (5) and (18) in Section B of the appendix). It is however the case that when a forecaster modifies a single marginal forecast (holding those for other locations fixed), the aggregate WIS of thier forecast will change only according to the WIS of that marginal forecast, whereas every term in the sum defining the AS (in (5)) will change as the Bayes probability level defined by (18) changes.  In this sense, the AS depends “jointly” on the marginal forecasts while the WIS does not.
+  \DIFaddbegin \DIFadd{We also note that the AS, just as the (aggregate or mean) quantile score and WIS, depends only on the marginal distributions for each location of a multi-location forecast (see equations (5) and (18) in Section B of the appendix). It is however the case that when a forecaster modifies a single marginal forecast (holding those for other locations fixed), the aggregate WIS of their forecast will change only according to the WIS of that marginal forecast, whereas every term in the sum defining the AS (in (5)) will change as the Bayes probability level defined by (18) changes.  In this sense, the AS depends “jointly” on the marginal forecasts while the WIS does not.
   }
   \DIFaddend
 \end{mybox}
 
-We certainly see this latter property of the AS as a interesting topic for future work, but delving further into it seems out of scope here. 
-We also renamed the section to better describe these considerations:
+We also renamed the section to better describe our discussion of these considerations:
 
 \begin{mybox}{pg8-para3}
   \DIFaddend \subsection*{2.3 \quad \DIFdelbegin \DIFdel{Connections to }\DIFdelend \DIFaddbegin \DIFadd{Comparisons with }\DIFaddend Other Scores}
@@ -304,9 +303,9 @@ be beyond the scope of the paper, but some limited illustrations will
 be important to reassure users of its relative robustness to assumptions.  
 \end{quotebar}
 
-[\textbf{author response 1}] We agree that demostrating relative rubustness to assumptions is crucial for promoting practical use of the AS, and had this in mind when writing0
+[\textbf{author response 1}] We agree that demonstrating relative robustness to assumptions is crucial for promoting practical use of the AS, and had this in mind when writing
 Section 3.5.4, and especially when composing figure 6.  The section title, however, only mentioned the integrated AS. To better draw attention to
-the issue of robustness we have split the section into two sections, 3.5.4 and 5,
+the issue of robustness we have split the section into two sections, 3.5.4 and 3.5.5,
 and begin the title of the first section with ``Sensitivity'':
 
 \begin{mybox}{pg15-para1}
@@ -357,19 +356,7 @@ Also p2, para 4, l.3:
   [i.e., change "And" to "Even" and delete "still"]
 \end{quotebar}
 
-These changes have been adopted:
-
-\begin{mybox}{pg2-para1}
-\DIFdelbegin \DIFdel{And }\DIFdelend \DIFaddbegin \DIFadd{Likewise, }\DIFaddend the WIS has been used during the COVID-19 pandemic to evaluate forecasts
-of observed cases, hospitalizations and deaths in the US and Europe, as reported by municipal, state, and federal
-surveillance systems (Cramer et al., 2022b; Fox et al., 2022; Sherratt et al., 2023).
-\end{mybox}
-
-\begin{mybox}{pg2-para4}
-  impact on and through policy.  \DIFdelbegin \DIFdel{And }\DIFdelend \DIFaddbegin \DIFadd{Even }\DIFaddend within this body of work we have found the discussion of such a connection to
-  \DIFdelbegin \DIFdel{still
-  }\DIFdelend be at a formally and quantitatively imprecise stage. 
-\end{mybox}
+These changes have been adopted.
 
 \begin{quotebar}
 2. In the Landau (2021) reference (p26, 4th reference), per \\
@@ -378,10 +365,7 @@ both "r" and "m" (in "r package" and "make-like") are capitalized.
 I did not verify the accuracy of all your references (but you should).
 \end{quotebar}
 
-We confirmed that
-the capitalizations in "Landau, W. M. (2021) The targets R package: a dynamic
-Make-like function-oriented pipeline toolkit for reproducibility and high-performance
-computing" are those used by the Journal of Open Source Software.
+We have double checked the accuracy of all of our references, including capitalization.
 
 \begin{quotebar}
 3. Please see JRSSA submissions information for style in "References" (pp 24-27). They
