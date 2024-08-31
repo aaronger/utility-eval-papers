@@ -1,7 +1,7 @@
 \documentclass{article}\usepackage[]{graphicx}\usepackage[]{xcolor}
 %DIF LATEXDIFF DIFFERENCE FILE
 %DIF DEL manuscript_submitted.tex   Mon Aug  5 00:01:35 2024
-%DIF ADD manuscript.tex             Fri Aug 16 14:45:38 2024
+%DIF ADD manuscript.tex             Sat Aug 31 11:00:45 2024
 % maxwidth is the original width if it is less than linewidth
 % otherwise use linewidth (to make sure the graphics do not exceed the margin)
 \makeatletter
@@ -108,7 +108,7 @@ Sciences, University of Massachusetts at Amherst}
 \RequirePackage[normalem]{ulem} %DIF PREAMBLE
 \RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1} %DIF PREAMBLE
 \providecommand{\DIFaddtex}[1]{{\protect\color{blue}\uwave{#1}}} %DIF PREAMBLE
-\providecommand{\DIFdeltex}[1]{{\protect\color{red}\sout{#1}}}                      %DIF PREAMBLE
+\providecommand{\DIFdeltex}[1]{{\protect\color{red}\sout{#1}}} %DIF PREAMBLE
 %DIF SAFE PREAMBLE %DIF PREAMBLE
 \providecommand{\DIFaddbegin}{} %DIF PREAMBLE
 \providecommand{\DIFaddend}{} %DIF PREAMBLE
@@ -167,6 +167,11 @@ Sciences, University of Massachusetts at Amherst}
 \DeclareRobustCommand{\DIFaddendFL}{\DIFOaddendFL \let\includegraphics\DIFOincludegraphics} %DIF PREAMBLE
 \DeclareRobustCommand{\DIFdelbeginFL}{\DIFOdelbeginFL \let\includegraphics\DIFdelincludegraphics} %DIF PREAMBLE
 \DeclareRobustCommand{\DIFdelendFL}{\DIFOaddendFL \let\includegraphics\DIFOincludegraphics} %DIF PREAMBLE
+%DIF AMSMATHULEM PREAMBLE %DIF PREAMBLE
+\makeatletter %DIF PREAMBLE
+\let\sout@orig\sout %DIF PREAMBLE
+\renewcommand{\sout}[1]{\ifmmode\text{\sout@orig{\ensuremath{#1}}}\else\sout@orig{#1}\fi} %DIF PREAMBLE
+\makeatother %DIF PREAMBLE
 %DIF COLORLISTINGS PREAMBLE %DIF PREAMBLE
 \RequirePackage{listings} %DIF PREAMBLE
 \RequirePackage{color} %DIF PREAMBLE
@@ -183,6 +188,8 @@ Sciences, University of Massachusetts at Amherst}
 } %DIF PREAMBLE
 \lstnewenvironment{DIFverbatim}{\lstset{style=DIFverbatimstyle}}{} %DIF PREAMBLE
 \lstnewenvironment{DIFverbatim*}{\lstset{style=DIFverbatimstyle,showspaces=true}}{} %DIF PREAMBLE
+\lstset{extendedchars=\true,inputencoding=utf8}
+
 %DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF
 
 \begin{document}
@@ -590,7 +597,7 @@ WIS or CRPS can be obtained by averaging across a range of decision making setti
 parameters, using a similar motivation that we used to obtain the IAS from the AS in section
 \ref{sec:methods.detailed.integrated_allocation} \citep{gneiting2011weightedScoringRules}.
 
-\DIFaddbegin \DIFadd{We also note that the AS, just as the (aggregate or mean) quantile score and WIS, depends only on the marginal distributions for each location of a multi-location forecast (cf. equations \eqref{eqn:AS-raw} and \eqref{eqn:quantiles-sum-to-K} in Section \ref{sec:a:bayes-quantiles} of the appendix). It is however the case that when a forecaster modifies a single marginal forecast (holding those for other locations fixed), the aggregate WIS of thier forecast will change only according to the WIS of that marginal forecast, whereas every term in the sum defining the AS (in \eqref{eqn:AS-raw}) will change as the Bayes probability level defined by \eqref{eqn:quantiles-sum-to-K} changes.  In this sense, the AS depends “jointly” on the marginal forecasts while the WIS does not.
+\DIFaddbegin \DIFadd{We also note that the AS, just as the (aggregate or mean) quantile score and WIS, depends only on the marginal distributions for each location of a multi-location forecast (cf. equations \eqref{eqn:AS-raw} and \eqref{eqn:quantiles-sum-to-K} in Section \ref{sec:a:bayes-quantiles} of the appendix). It is however the case that when a forecaster modifies a single marginal forecast (holding those for other locations fixed), the aggregate WIS of their forecast will change only according to the WIS of that marginal forecast, whereas every term in the sum defining the AS (in \eqref{eqn:AS-raw}) will change as the Bayes probability level defined by \eqref{eqn:quantiles-sum-to-K} changes.  In this sense, the AS depends “jointly” on the marginal forecasts while the WIS does not.
 }
 
 \DIFaddend \section{Evaluating forecasts of COVID hospitalizations using the allocation score}
@@ -696,7 +703,7 @@ allocation score while the USC-SI\_kJalpha model had the most accurate forecasts
 
 % latex table generated in R 4.4.1 by xtable 1.8-4 package
 %DIF <  Thu Aug  1 13:13:10 2024
-%DIF >  Fri Aug 16 14:45:32 2024
+%DIF >  Tue Aug 20 15:20:10 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrrr}
@@ -794,7 +801,7 @@ assigned a MWIS.) Notably, the \texttt{JHUAPL-SLPHospEns} model ranked best on t
 
 % latex table generated in R 4.4.1 by xtable 1.8-4 package
 %DIF <  Thu Aug  1 13:13:14 2024
-%DIF >  Fri Aug 16 14:45:37 2024
+%DIF >  Tue Aug 20 15:20:15 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrr}
@@ -849,7 +856,7 @@ performed consistently well on AS but had only middling MWIS ranks.
 
 AS was computed for a range of $K$ from 200 to 60,000 \DIFaddbegin \DIFadd{at increments of 200 }\DIFaddend for forecasts made on December 20, 2020 predicting levels of
 hospitalizations on January 3, 2021 as well as for the \texttt{per-capita} allocation (Figure \ref{fig:multi-k}A). These
-calculations highlight that AS was highest at at values of $K$ near the observed nationwide total hospital admissions of
+calculations highlight that AS was highest at \DIFdelbegin \DIFdel{at }\DIFdelend values of $K$ near the observed nationwide total hospital admissions of
 19,581 that day. Model ranks by AS were fairly stable across all $K$, and there appears
 to be an substantial interval around the observed value over which ranks are constant.
 
