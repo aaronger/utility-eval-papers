@@ -411,6 +411,20 @@ As for updating strategies, it seems worth noting that in our implementation the
 disease spread shifts, we would expect the AS to change accordingly and indicate which forecasts were able to better anticipate such shifts for the
 purposes of resource allocation.
 
+That said, sequential decision making could introduce other operational complexities that are not captured by
+the formulation of the AS introduced in this paper, and we have added a new paragraph to the discussion
+outlining these challenges:
+\begin{mybox}{pg17-para6>>pg18-para1}
+\DIFadd{Secondly, our formulation of the AS does not take into
+consideration the temporal inter-dependencies between sequential decisions that public health decision makers are likely to face as an epidemic unfolds. Such dependencies could arise from time-varying inputs such as resource availability or the current effective allocations of resources. The sequential decision problem could also be combined with others allowing constraints for different resources to be modified by time-varying funding shifts between various }\DIFaddend disease mitigation measures.  \DIFdelbegin \DIFdel{Finally, }\DIFdelend \DIFaddbegin \DIFadd{Incorporating these possibilities into an AS framework would likely require technical developments involving either dynamic programming 
+(see e.g., \mbox{%DIFAUXCMD
+\cite{bertsekas2012dynamic}}\hskip0pt%DIFAUXCMD
+) or a scenario-based approach (see e.g., \mbox{%DIFAUXCMD
+\cite{pflug2014multistage}}\hskip0pt%DIFAUXCMD
+).
+}
+\end{mybox}
+
 \begin{quotebar}
 \begin{enumerate}
   \item[2.] Appendix Section C outlines the numerical methods used for computing allocation Bayes acts, but it lacks an evaluation of the effectiveness of these methods. Assessing the accuracy and reliability of these methods is essential for verifying their applicability in public health decision- making. It would be more convincing if the authors could conduct some empirical tests, includ- ing simulated scenarios, to demonstrate the effectiveness of the proposed rule.
