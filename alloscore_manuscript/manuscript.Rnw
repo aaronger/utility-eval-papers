@@ -1428,8 +1428,8 @@ alloc <- allocate(df = expexamp, K = c(5,10))
 q1 <- expexamp$Q[[1]]
 q2 <- expexamp$Q[[2]]
 q_sum <- function(tau) q1(tau) + q2(tau)
-iters5 <- tibble(taus = 1-alloc$lam_seq[[1]], qtot = q_sum(taus))
-iters10 <- tibble(taus = 1-alloc$lam_seq[[2]], qtot = q_sum(taus))
+iters5 <- tibble(taus = 1-alloc$lam_seq[[1]], qtot = q_sum(taus), ind = seq_along(alloc$lam_seq[[1]]))
+iters10 <- tibble(taus = 1-alloc$lam_seq[[2]], qtot = q_sum(taus), ind = seq_along(alloc$lam_seq[[2]]))
 
 p <- ggplot() +
   geom_function(fun = q1, n=1000) +
@@ -1448,16 +1448,19 @@ p <- ggplot() +
 
 p5 <- p + geom_hline(aes(yintercept = 5)) +
   geom_hline(aes(yintercept = c(1,4)), linetype = 2) +
-  geom_segment(data = iters5, aes(x=taus, xend = taus, y=0, yend = qtot), color = "red", alpha = .5) +
+  geom_segment(data = iters5, aes(x=taus, xend = taus, y=0, yend = qtot, color = ind), alpha = .5) +
+  scale_color_viridis_c("Iteration\n index", end = 0.75, direction=-1, limits = c(1, 18), option="B") +
   scale_x_continuous(limits = c(.45,1), expand = c(0,0), 
                      breaks = c(.5,.6,0.632,.7,.8,.9,1),
                      labels = c("0.5","0.6",expression(italic(atop(" ", 1 - e^{-1} %~~% 0.632))),
                                 "0.7","0.8","0.9","1")) +
-  scale_y_continuous(limits = c(0,12), breaks = c(0,1,4,5,10,15), expand = c(0,0))
+  scale_y_continuous(limits = c(0,12), breaks = c(0,1,4,5,10,15), expand = c(0,0)) +
+  theme(legend.position = "none")
 
 p10 <- p + geom_hline(aes(yintercept = 10)) +
   geom_hline(aes(yintercept = c(2,8)), linetype = 2) +
-  geom_segment(data = iters10, aes(x=taus, xend = taus, y=0, yend = qtot), color = "red", alpha = .5) +
+  geom_segment(data = iters10, aes(x=taus, xend = taus, y=0, yend = qtot, color = ind), alpha = .5) +
+  scale_color_viridis_c("Iteration\nindex", end = 0.75, direction=-1, limits = c(1, 18), option="B") +
   scale_x_continuous(limits = c(.45,1), expand = c(0,0), 
                      breaks = c(.5,.6,.7,.8,0.865,.9,1),
                      labels = c("0.5","0.6",
@@ -1466,8 +1469,14 @@ p10 <- p + geom_hline(aes(yintercept = 10)) +
   scale_y_continuous(limits = c(0,12), breaks = c(0,2,5,8,10,15), expand = c(0,0), 
                      name = "  ")
 
-cowplot::plot_grid(p5, p10, align = "h")
+legend <- get_legend(p10 + theme(legend.box.margin = margin(0, 0, 0, 12)))
+p10 <- p10 + theme(legend.position = "none")
 
+plot_grid(
+  cowplot::plot_grid(p5, p10, align = "h"),
+  legend,
+  rel_widths = c(3, 0.4)
+)
 @
 
 Subtleties can arise when the forecast densities $f_i$ vanish or are very small, in which case quantiles are non-unique
