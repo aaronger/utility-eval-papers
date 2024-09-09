@@ -1,4 +1,57 @@
-\documentclass{article}
+\documentclass{article}\usepackage[]{graphicx}\usepackage[]{xcolor}
+%DIF LATEXDIFF DIFFERENCE FILE
+%DIF DEL manuscript_submitted.tex   Mon Aug  5 00:01:35 2024
+%DIF ADD manuscript.tex             Sat Aug 31 11:59:01 2024
+% maxwidth is the original width if it is less than linewidth
+% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlsng}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hldef}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
 
 \usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
 \usepackage[T1]{fontenc}
@@ -12,8 +65,7 @@
 \usepackage{bm}
 \usepackage{cases}
 \usepackage{caption}
-\usepackage{xr-hyper}
-\usepackage{hyperref}
+\usepackage[colorlinks=true, linkcolor=magenta, citecolor=black]{hyperref}
 \usepackage{xurl}
 
 \DeclareMathOperator*{\argmin}{argmin}
@@ -34,7 +86,11 @@
 \def\ngr#1{{\color{blue}\textbf{NGR:[#1]}}}
 
 \usepackage{natbib}
-\bibliographystyle{rss-abbr}
+%DIF 87c87
+%DIF < \bibliographystyle{unsrtnat-abbr}
+%DIF -------
+\bibliographystyle{rss-abbr} %DIF > 
+%DIF -------
 
 
 \author{Aaron Gerding\thanks{Corresponding Author: \texttt{agerding@umass.edu}}}
@@ -45,6 +101,113 @@
 Sciences, University of Massachusetts at Amherst}
 
 \title{Evaluating infectious disease forecasts \\ with allocation scoring rules}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF
+%DIF UNDERLINE PREAMBLE %DIF PREAMBLE
+\RequirePackage[normalem]{ulem} %DIF PREAMBLE
+\RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1} %DIF PREAMBLE
+\providecommand{\DIFaddtex}[1]{{\protect\color{blue}\uwave{#1}}} %DIF PREAMBLE
+\providecommand{\DIFdeltex}[1]{{\protect\color{red}\sout{#1}}} %DIF PREAMBLE
+%DIF SAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddbegin}{} %DIF PREAMBLE
+\providecommand{\DIFaddend}{} %DIF PREAMBLE
+\providecommand{\DIFdelbegin}{} %DIF PREAMBLE
+\providecommand{\DIFdelend}{} %DIF PREAMBLE
+\providecommand{\DIFmodbegin}{} %DIF PREAMBLE
+\providecommand{\DIFmodend}{} %DIF PREAMBLE
+%DIF FLOATSAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddFL}[1]{\DIFadd{#1}} %DIF PREAMBLE
+\providecommand{\DIFdelFL}[1]{\DIFdel{#1}} %DIF PREAMBLE
+\providecommand{\DIFaddbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFaddendFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelendFL}{} %DIF PREAMBLE
+%DIF HYPERREF PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFadd}[1]{\texorpdfstring{\DIFaddtex{#1}}{#1}} %DIF PREAMBLE
+\providecommand{\DIFdel}[1]{\texorpdfstring{\DIFdeltex{#1}}{}} %DIF PREAMBLE
+\newcommand{\DIFscaledelfig}{0.5}
+%DIF HIGHLIGHTGRAPHICS PREAMBLE %DIF PREAMBLE
+\RequirePackage{settobox} %DIF PREAMBLE
+\RequirePackage{letltxmacro} %DIF PREAMBLE
+\newsavebox{\DIFdelgraphicsbox} %DIF PREAMBLE
+\newlength{\DIFdelgraphicswidth} %DIF PREAMBLE
+\newlength{\DIFdelgraphicsheight} %DIF PREAMBLE
+% store original definition of \includegraphics %DIF PREAMBLE
+\LetLtxMacro{\DIFOincludegraphics}{\includegraphics} %DIF PREAMBLE
+\newcommand{\DIFaddincludegraphics}[2][]{{\color{blue}\fbox{\DIFOincludegraphics[#1]{#2}}}} %DIF PREAMBLE
+\newcommand{\DIFdelincludegraphics}[2][]{% %DIF PREAMBLE
+\sbox{\DIFdelgraphicsbox}{\DIFOincludegraphics[#1]{#2}}% %DIF PREAMBLE
+\settoboxwidth{\DIFdelgraphicswidth}{\DIFdelgraphicsbox} %DIF PREAMBLE
+\settoboxtotalheight{\DIFdelgraphicsheight}{\DIFdelgraphicsbox} %DIF PREAMBLE
+\scalebox{\DIFscaledelfig}{% %DIF PREAMBLE
+\parbox[b]{\DIFdelgraphicswidth}{\usebox{\DIFdelgraphicsbox}\\[-\baselineskip] \rule{\DIFdelgraphicswidth}{0em}}\llap{\resizebox{\DIFdelgraphicswidth}{\DIFdelgraphicsheight}{% %DIF PREAMBLE
+\setlength{\unitlength}{\DIFdelgraphicswidth}% %DIF PREAMBLE
+\begin{picture}(1,1)% %DIF PREAMBLE
+\thicklines\linethickness{2pt} %DIF PREAMBLE
+{\color[rgb]{1,0,0}\put(0,0){\framebox(1,1){}}}% %DIF PREAMBLE
+{\color[rgb]{1,0,0}\put(0,0){\line( 1,1){1}}}% %DIF PREAMBLE
+{\color[rgb]{1,0,0}\put(0,1){\line(1,-1){1}}}% %DIF PREAMBLE
+\end{picture}% %DIF PREAMBLE
+}\hspace*{3pt}}} %DIF PREAMBLE
+} %DIF PREAMBLE
+\LetLtxMacro{\DIFOaddbegin}{\DIFaddbegin} %DIF PREAMBLE
+\LetLtxMacro{\DIFOaddend}{\DIFaddend} %DIF PREAMBLE
+\LetLtxMacro{\DIFOdelbegin}{\DIFdelbegin} %DIF PREAMBLE
+\LetLtxMacro{\DIFOdelend}{\DIFdelend} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFaddbegin}{\DIFOaddbegin \let\includegraphics\DIFaddincludegraphics} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFaddend}{\DIFOaddend \let\includegraphics\DIFOincludegraphics} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFdelbegin}{\DIFOdelbegin \let\includegraphics\DIFdelincludegraphics} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFdelend}{\DIFOaddend \let\includegraphics\DIFOincludegraphics} %DIF PREAMBLE
+\LetLtxMacro{\DIFOaddbeginFL}{\DIFaddbeginFL} %DIF PREAMBLE
+\LetLtxMacro{\DIFOaddendFL}{\DIFaddendFL} %DIF PREAMBLE
+\LetLtxMacro{\DIFOdelbeginFL}{\DIFdelbeginFL} %DIF PREAMBLE
+\LetLtxMacro{\DIFOdelendFL}{\DIFdelendFL} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFaddbeginFL}{\DIFOaddbeginFL \let\includegraphics\DIFaddincludegraphics} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFaddendFL}{\DIFOaddendFL \let\includegraphics\DIFOincludegraphics} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFdelbeginFL}{\DIFOdelbeginFL \let\includegraphics\DIFdelincludegraphics} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFdelendFL}{\DIFOaddendFL \let\includegraphics\DIFOincludegraphics} %DIF PREAMBLE
+%DIF AMSMATHULEM PREAMBLE %DIF PREAMBLE
+\makeatletter %DIF PREAMBLE
+\let\sout@orig\sout %DIF PREAMBLE
+\renewcommand{\sout}[1]{\ifmmode\text{\sout@orig{\ensuremath{#1}}}\else\sout@orig{#1}\fi} %DIF PREAMBLE
+\makeatother %DIF PREAMBLE
+%DIF COLORLISTINGS PREAMBLE %DIF PREAMBLE
+\RequirePackage{listings} %DIF PREAMBLE
+\RequirePackage{color} %DIF PREAMBLE
+\lstdefinelanguage{DIFcode}{ %DIF PREAMBLE
+%DIF DIFCODE_UNDERLINE %DIF PREAMBLE
+  moredelim=[il][\color{red}\sout]{\%DIF\ <\ }, %DIF PREAMBLE
+  moredelim=[il][\color{blue}\uwave]{\%DIF\ >\ } %DIF PREAMBLE
+} %DIF PREAMBLE
+\lstdefinestyle{DIFverbatimstyle}{ %DIF PREAMBLE
+	language=DIFcode, %DIF PREAMBLE
+	basicstyle=\ttfamily, %DIF PREAMBLE
+	columns=fullflexible, %DIF PREAMBLE
+	keepspaces=true %DIF PREAMBLE
+} %DIF PREAMBLE
+\lstnewenvironment{DIFverbatim}{\lstset{style=DIFverbatimstyle}}{} %DIF PREAMBLE
+\lstnewenvironment{DIFverbatim*}{\lstset{style=DIFverbatimstyle,showspaces=true}}{} %DIF PREAMBLE
+\lstset{extendedchars=\true,inputencoding=utf8}
+
+%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF
+
+\usepackage[skins,breakable]{tcolorbox}
+\newtcolorbox{quotebar}{%
+  colback=white, % Background color
+  colframe=gray!50, % Border color (left bar)
+  coltitle=black, % Title color
+  left=2mm, % Space on the left of the box
+  right=0mm, % Space on the right of the box
+  top=0mm, % Space at the top of the box
+  parbox=false,         % Allows paragraphs to be separated
+  bottom=0mm, % Space at the bottom of the box
+  boxrule=0mm, % No frame around the box
+  leftrule=.5mm, % Thickness of the left bar
+  arc=0mm, % No rounded corners
+  width=\textwidth, % Width of the box
+  before skip=5pt, % Vertical space before the box
+  after skip=5pt, % Vertical space after the box
+}
 
 \begin{document}
 
@@ -56,24 +219,279 @@ Sciences, University of Massachusetts at Amherst}
 \theoremstyle{remark}
 \newtheorem*{remark}{Remark}
 
+% Preface Section
+\pagenumbering{roman} % Roman numerals for preface
+\section*{
+  \begin{center}
+  {Author response to reviewer comments on \\ manuscript ID JRSSA-Mar-2024-0080}
+  \end{center}
+}
+We would like to thank the referees and the associate editor for their valuable feedback and comments, and we appreciate the opportunity 
+to revise and resubmit the manuscript.  Below, we try to provide responses to each point of concern or inquiry from the reviewers.
+Text from the reviewers is marked by a left-hand bar and our responses follow inline. We refer to changes in the manuscript
+using {\color{magenta}magenta} hyperlinks, which jump to relevant points of a revision-marked manuscript which is included below the response.
+Additions appear there in blue with wavy underlining (or inside of a blue box in
+the case of the added figure) and removed text appears in red and is struck through.
+
+\section*{Comments from the Associate Editor}
+
+\begin{quotebar}
+Two referees and I have read this manuscript carefully; their reviews
+can be viewed in ScholarOne.  I agree with them that the manuscript is
+well written, addresses an important problem in public health with sound
+statistical approaches, and is consistent with the mission of the journal.
+
+The approach is well motivated by recent epidemics (Ebola, H1N1, Covid-19).
+Using the theory of scoring rules, the authors propose a theoretically
+sound AS (allocation score) as a way to evaluate forecasts of resource
+allocations in terms of how much the benefit received actually met the
+resource needs.  This formalization of the problem into one that can be
+approached through the use of scoring rules is creative. As Tukey once
+said, "Sometimes finding the question is harder than finding the problem"
+and the authors have formulated the problem in a clever way to enable a
+sensible and statistically sound approach to it. For policy makers,
+the AS can be related to policy impact.
+\end{quotebar}
+
+We thank the AE for the encouraging words and feel that Tukey's saying frames perfectly
+the project from which this paper emerged.
+
+\begin{quotebar}
+Both referees offer suggestions that, if adopted, will serve to benefit
+the authors, in that their suggestions will strengthen the paper and
+likely inspire greater use of their proposed AS.  Both of the suggestions
+from Referee 2 are echoed within two of the comments from Referee 1.
+
+Referee 1, \#5, and Referee 2, \#1, both ask about the potentially
+joint impacts of multiple locations, both in terms of geography
+and demographics.  Can forecasts from different, likely correlated,
+areas be assessed jointly?
+\end{quotebar}
+
+This is a very subtle and important question, but it is not addressed
+directly by the present formulation of the AS. To clarify
+that the AS has no immediate dependence on a forecaster's underlying beliefs regarding
+joint probabilities we added a paragraph \hyperlink{diff:pg8_para4_joint_disc}{after paragraph 4 on page 8} 
+at the end of Section \ref{sec:methods.related}.
+We also renamed Section \ref{sec:methods.related} to better describe these considerations.
+
+\begin{quotebar}
+The comments from Referee 1, \#4, and Referee 2, \#2, both relate to
+interpretability of AS and how other public health measures, that may
+be under consideration simultaneously, may affect it.
+ 
+The suggestions from Referee 1, \#1, are good ideas that, if implemented,
+will surely strengthen the paper. A full-blown sensitivity analysis may
+be beyond the scope of the paper, but some limited illustrations will
+be important to reassure users of its relative robustness to assumptions.  
+\end{quotebar}
+
+\hypertarget{point1}{\textbf{[author response point 1]}} We agree that demonstrating relative robustness to assumptions is crucial for promoting practical use of the AS, and had this in mind when writing
+Section \ref{sec:sensitivity}, and especially when composing \hyperref[fig:multi-k]{Figure 6}.  The section title, however, only mentioned the integrated AS. To better draw attention to
+the issue of robustness we have split the section into two sections, \ref{sec:sensitivity} and \ref{sec:ias_examp}.
+and begin the title of Section \ref{sec:sensitivity} with ``Sensitivity''.
+
+We see \hyperref[fig:multi-k]{Figure 6A} as demonstrating not only how AS ranks will tend to be stable across a wide range of constraints but 
+also illustrating a key insight about the AS --- that it is,
+in fact, quite sensitive to the resource level outside this central range but that this is a desirable and
+natural feature reflecting the limited impact forecast selection will have when
+resources are too scarce or too abundant for allocation decisions to matter.
+
+
+\begin{quotebar}
+Referee 1's comment 2 refers to clarification of computations and
+can be easily addressed.  I believe the authors address Comment 3
+("practical computation of this score") in Section 3.4, which Referee 1
+may have overlooked.  Comment 6 ("connections with other fields") is
+noted briefly on MS p2, paragraph 3; perhaps a sentence or two along
+these lines can be added in your final Discussion section.
+\end{quotebar}
+
+We are grateful to the AE for organizing the reviewers’ comments and for the helpful suggestions. 
+
+\begin{quotebar}
+Minor:
+1. I advise against starting a sentence with "And"; e.g., p2, l.8:
+"And" is not needed at all, although you could change
+  "And the WIS has beeen used during the pandemic..."
+to
+  "Likewise, the WIS was used during the pandemic..."
+Also p2, para 4, l.3:
+ "And within this body of work we have found the discussion of such
+  a connection to still be at a ..."
+->
+ "Even within this body of work we have found the discussion of such
+  a connection to be at a ..."
+  [i.e., change "And" to "Even" and delete "still"]
+\end{quotebar}
+
+These changes have been adopted \hyperlink{and1}{here} and \hyperlink{and2}{here}.
+
+\begin{quotebar}
+2. In the Landau (2021) reference (p26, 4th reference), per \\
+https://joss.theoj.org/papers/10.21105/joss.02959
+both "r" and "m" (in "r package" and "make-like") are capitalized.
+I did not verify the accuracy of all your references (but you should).
+\end{quotebar}
+
+We have double checked the accuracy of all of our references, including capitalization.
+
+\begin{quotebar}
+3. Please see JRSSA submissions information for style in "References" (pp 24-27). They
+should be ordered alphabetically by Last Name of lead author.
+\end{quotebar}
+
+We have reordered the \hyperlink{refs}{references} alphabetically by lead author last names
+using a version of the \texttt{rss.bst} style file with a slight modification needed to
+truncate the long author lists of several of our references.
+
+
+\section*{Comments from Referee 1}
+
+\begin{quotebar}
+The manuscript presents a novel scoring rule for evaluating infectious disease forecasts based on their utility in resource allocation decisions, specifically in the allocation of medical resources. The work is timely and relevant, aiming to fill a notable gap in the existing literature by directly connecting forecast accuracy with public health decision-making, an aspect that has gained increased relevance due to recent global health crises. While the proposed allocation score (AS) is innovative and poten- tially impactful, especially for public health agencies, there are several areas where the manuscript could be improved to enhance its clarity, completeness, and impact.
+\end{quotebar}
+
+We thank the referee for the optimistic assessment of the manuscript's practical potential. 
+
+\begin{quotebar}
+\begin{enumerate}
+  \item[1.] The authors did not sufficiently discuss how the proposed AS adapts to varying public health scenarios with different resource constraints. Resource availability can vary significantly by region, disease, or over time. It would therefore be advantageous for the authors to include discussions on the following aspects:
+    \begin{itemize}
+    \item Calibration techniques to ensure the score remains meaningful across scenarios with different levels of resource availability.
+    \item A sensitivity analysis demonstrating how the AS reacts to changes in resource constraints, its robustness, and reliability.
+    \item Strategies for updating the AS in real-time, based on fluctuations in resource availability or shifts in disease spread.
+    \end{itemize}
+\end{enumerate}
+\end{quotebar}
+
+We certainly agree that it is important to convey that resource availability is a parameter of the AS for which potential users are responsible, and
+that any forecast evaluation results using the AS should be accompanied by explanations of how the corresponding resource constraint levels were chosen 
+(or weighted in the case of the IAS).  On this issue please see \hyperlink{point1}{author response point 1} above and the changes involving sections \ref{sec:sensitivity} and \ref{sec:ias_examp}
+it discusses.  We see 
+Figure \ref{fig:multi-k} as an efficient means of highlighting how the ranking and relative differences in scores of the forecasts in this example were in fact stable across a
+contextually relevant range of constraint levels.
+
+We are less sure how to address the concern regarding calibration, which we understand to be a property of forecasts rather than scores. Referring again to
+\hyperlink{point1}{author response point 1} we would argue that it is more a feature than a bug of the AS that is becomes less meaningful 
+(and less coherent as seen in the tails in figure \hyperref[fig:multi-k]{Figure 6A}) under extreme scarcity or abundance.
+
+As for updating strategies, it seems worth noting that in our implementation the AS in computed in parallel for a range of constraint levels 
+(as illustrated in sections \hyperref[sec:sensitivity]{3.5.4/5}). Thus fluctuating realized resource constraints would not, in themselves, present a computational barrier. And as
+disease spread shifts, we would expect the AS to change accordingly and indicate which forecasts were able to better anticipate such shifts for the
+purposes of resource allocation.
+
+That said, sequential decision-making would introduce other complexities that are not captured by
+the formulation of the AS introduced in this paper, and we have added a \hyperlink{sequential}{new paragraph} (beginning with ``Secoondly'') to the discussion
+outlining these challenges.
+
+\begin{quotebar}
+\begin{enumerate}
+  \item[2.] Appendix Section C outlines the numerical methods used for computing allocation Bayes acts, but it lacks an evaluation of the effectiveness of these methods. Assessing the accuracy and reliability of these methods is essential for verifying their applicability in public health decision- making. It would be more convincing if the authors could conduct some empirical tests, includ- ing simulated scenarios, to demonstrate the effectiveness of the proposed rule.
+\end{enumerate}
+\end{quotebar}
+
+We have rewritten \hyperref[sec:a:numeric]{Appendix Section C} and created a \hyperref[fig:bisection]{new figure} in order to better convey the simplicity of our numerical methods 
+(which boil down essentially to finding the root of a monotonic function)
+and reassure the reader that they would be unlikely to be the source of any numerical instability jeopardizing the applicability of the AS in
+public health decision-making.
+We also note that in order to refer to the closed form of the allocation levels for the examples of \hyperref[examp1]{section 2.1} we numbered the \hyperref[eqn:exp-quantile]{relevant formula} in 
+\hyperref[sec:a:bayes-quantiles]{Appendix section B}.
+
+\begin{quotebar}
+\begin{enumerate}
+  \item[3.] The manuscript introduces the integrated allocation score (IAS) in Section 2.2.3. While the concept is well-founded, it does not describe the practical computation of this score. Have the authors developed any algorithms for these calculations? If so, it would be better to include a brief discussion.
+\end{enumerate}
+\end{quotebar}
+
+We have not developed any special algorithms for the purpose of calculating the IAS, and see investigations as likely requiring 
+the kind of \textit{ad hoc} approximation we use in (what is now) section \ref{sec:ias_examp}.  To clarify this we have added text after our \hyperref[eqn:IAS_definition]{definition of the IAS}.
+We also added some clarifying text to section \ref{sec:ias_examp} to indicate how an approximation to the IAS was computed in our example.
+We would expect such an approximation to be available and appropriate in general.
+
+\begin{quotebar}
+\begin{enumerate}
+  \item[4.] The proposed AS rule focuses on addressing immediate resource needs like hospital admissions and static resources. While this focus is practically significant, it may be too simplistic to capture the complex, dynamic nature of public health management. The framework notably excludes preventative measures such as vaccines, which are crucial for reducing future disease incidence. It would be beneficial for the authors to discuss the challenges and potential method- ologies for incorporating these preventative aspects and dynamic resources into the scoring rule.
+\end{enumerate}
+\end{quotebar}
+
+In order to be more transparent regarding the scope of this paper we have rewritten \hyperlink{newdiscussion}{part of the discussion section} to collect limitations mentioned earlier 
+(such as those relating to vaccines in \hyperlink{vaxpara}{paragraph 2 of section 2.2.2}) and give some brief methodological suggestions on how they could be confronted.
+
+\begin{quotebar}
+\begin{enumerate}
+  \item[5.] The authors propose using unmet need as a loss function, which simplifies the model. However, this approach may not fully account for the diverse impacts of unmet needs across different locations and demographics. Could the authors explore the possibility of incorporating different weights or more complex loss functions to provide deeper insights, such as considering factors like population vulnerability.
+\end{enumerate}
+\end{quotebar}
+
+We agree that the loss function we have formulated makes many simplifying assumptions, but we feel this simplification 
+is necessary to keep the discussion in the paper of a manageable length.
+Some of the complexities the referee mentions were noted in section \ref{sec:methods.detailed.specific_allocation}, where we first introduce the loss function:
+“A variety of extensions are possible….”
+However, we agree that these are important limitations of our initial formulation of the AS, 
+and we have therefore added an additional mention of these possible extensions in \hyperlink{sequential}{paragraph 7} of the revised discussion section
+(which begins with ``Secondly, our formulation of the AS...'').
+
+
+\begin{quotebar}
+\begin{enumerate}
+  \item[6.] To make the work more accessible to a general audience, it could be beneficial to establish connections with other fields such as economics, sociology, or urban planning. This could enrich the resource allocation framework presented in this paper, while also allow the findings to potentially benefit decision-making processes in those fields.
+\end{enumerate}
+\end{quotebar}
+
+We have added several references to the end of the \hyperref[sec:discussion]{first paragraph in the discussion section}, indicating other fields where decision making based on forecasts 
+might benefit from the perspective we develop.
+We also sought a more general tone in our \hyperlink{lastpara}{concluding paragraph} by addressing it to decision-makers rather than just public health officials.
+
+\section*{Comments from Referee 2}
+
+\begin{quotebar}
+Comments to the Author
+Summary:
+Gerding et al. advocate for new scoring rules for infectious disease forecasts that are explicitly based on resource allocation and other policy decision considerations. The authors consider a situation, where a forecaster produces multiple forecasts for different geographical locations that are under the jurisdiction of the same policy making agency (e.g., counties in a state or states/provinces/regions in a country). This is a reasonable setting that mimics policy decisions that had to be made during the COVID-10 pandemic and that are routinely being made during flu/COVID/RSV seasons. In particular, Gerding et al. develop their scoring rule using a decision theoretic framework with a loss function equal to the number of unmet need in bed allocations across all geographic areas under consideration. I think the manuscript is definitely a step in the right direction. It is really well written, with methods rigorously evaluated. Congrats on a great paper!
+
+
+Paper strengths:
+
+1. Evaluation of probabilistic infectious disease forecasts is an important area of research, so the authors' contribution to this area of research is timely.
+
+2. The authors operate within a rigorous decision theoretic framework when deriving their score of the forecast skill and think deeply about policy decisions. 
+\end{quotebar}
+
+We thank the referee for the positive assessment of our work and highlighting feautures that we also feel make the larger research project worthwhile.
+
+\begin{quotebar}
+1. It is my understanding that currently most forecasts evaluated by the authors operate by producing forecasts independently across spatial locations. In other words, most forecasters do not produce joint probabilistic forecasts of all locations in the region of interest, for example using some complicated method that models all hospital beds in all graphic locations jointly. However, the score suggested by the authors explicitly evaluates these forecasts jointly. So my question is the following: is it possible that if the forecasts were produced jointly, the difference between WIS and AS would be less pronounced? Is it possible to illustrate this point on some toy forecasting problem? I think this could be important for stimulating development of multivariate forecasts across spatial locations -- a difficult problem computationally, but important to solve eventually for us as a community.
+\end{quotebar}
+
+We have tried to offer some initial clarification on the very important issue above in \hyperlink{point1}{author response point 1}, but the referee's question is a broad one
+and we feel that this paper is probably too confined a venue for us to do it justice. It does seem likely to us that if a forecaster tries to improve their forecast by introducing valid and identifiable inter-location dependency terms into their model, that this will tend to improve AS more than it improves WIS.  It also seems likely that the AS will be more effective than WIS at discriminating between forecasters using better or worse inter-location dependency specifications. 
+But testing such conjectures is difficult since we cannot “control” for the marginal forecasts, and these are the only direct inputs that the AS sees.
+
+
+\begin{quotebar}
+2. One of the strengths of the new AS is its interpretability. I would like to encourage the authors to highlight this strengths more. One common complaint about WIS that I hear from applied epidemiologists and policy makers is that it is hard to understand what it means. The AS, if I understand it correctly, doesn't have this problem. This opens an opportunity for not only ranking forecasts but also identifying if they are meaningfully different from each other. For example, two forecasts with AS scores of 400 and 380 may not be considered meaningfully different from each other if the total number of available hospital beds was 15,000. A policy maker may have prior knowledge that says that in practice implementing bed allocations across multiple locations according to a forecast is possible only up to some percentage of the total number of beds available. So +/- 20 beds could be smaller than the number of beds that would be misallocated due to logistical problems, human errors, medical personnel illnesses, etc.
+\end{quotebar}
+
+We appreciate this encouragement and look forward to emphasizing the interpretability advantages of the AS in future applied work.  In order to draw 
+a bit more attention this strength we have rephrased the \hyperlink{strengthpoint}{third paragraph} of the introduction.
+The ability that the AS gives decision-makers to contextualize differences in forecaster scores is also now mentioned in the 
+\hyperref[sec:discussion]{first paragraph of the discussion section}.
+
+\clearpage % Ensure the preface ends and the main article starts on a new page
+
+% Main Article
+\pagenumbering{arabic} % Reset to Arabic numerals
+\setcounter{page}{1} % Start page numbering at 1
+
+
 \maketitle
 
 
 
-<<setup, tidy=FALSE, echo=FALSE, message=FALSE>>=
-knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE)
-@
 
-<<environment-setup>>=
-library(targets)
-library(tidyverse)
-library(ggbump)
 
-theme_set(theme_bw())
 
-## necessary to have project root as wd, to override document directory
-knitr::opts_knit$set(root.dir = '../')
-@
 
 \begin{abstract}
 Recent years have seen increasing efforts to forecast infectious disease burdens, with a primary goal being to help
@@ -119,11 +537,15 @@ forecasts targeting surveillance measures of dengue incidence in Peru and Puerto
 recently, the continuous ranked probability score (CRPS) and a discretized version adapted to multi-quantile forecasts,
 the weighted interval score (WIS) \citep{bracher2021evaluating}, have gained prominence. For example, the CRPS was used
 to assess probabilistic forecasts (based on random effect models) of dengue incidence at the district level in Vietnam
-\citep{colon-gonzalez_probabilistic_2021}. Likewise, the WIS has been used during the COVID-19 pandemic to evaluate forecasts
+\citep{colon-gonzalez_probabilistic_2021}. \hypertarget{and1}{ \DIFdelbegin \DIFdel{And }\DIFdelend \DIFaddbegin \DIFadd{Likewise, }\DIFaddend }the WIS has been used during the COVID-19 pandemic to evaluate forecasts
 of observed cases, hospitalizations and deaths in the US and Europe, as reported by municipal, state, and federal
 surveillance systems \citep{cramer_evaluation_2022,fox_real-time_2022,sherratt2023predictive}.
 
-While any of these scores can be interpreted through the lens of decision theory, they lack explicit connections between how a forecast is evaluated and how that forecast was used in practice. A key impetus for the present work was to develop a score that is interpretable to decision makers by measuring the extent to which forecasts lead to improved decisions. In addition, the allocation score we propose is expressed in units that are intelligible to decision makers.
+While \DIFdelbegin \DIFdel{it should be noted that there are ways to interpret }\DIFdelend any of these scores \DIFdelbegin \DIFdel{abstractly }\DIFdelend \DIFaddbegin \DIFadd{can be interpreted }\DIFaddend through the lens of decision theory, \DIFdelbegin \DIFdel{and that all of the application-specific papers cited above benefited from direct collaboration with public
+health agencies, a key impetus for the present work has been that we were not able to find in any of them, nor in the
+literature they represent, }\DIFdelend \DIFaddbegin \DIFadd{they lack }\DIFaddend explicit connections between how a forecast \DIFdelbegin \DIFdel{was }\DIFdelend \DIFaddbegin \DIFadd{is }\DIFaddend evaluated and how that forecast was used in practice.
+\DIFaddbegin \DIFadd{\hypertarget{strengthpoint}{A key impetus} for the present work was to develop a score that is interpretable to decision makers by measuring the extent to which forecasts lead to improved decisions. In addition, the allocation score we propose is expressed in units that are intelligible to decision makers.
+}\DIFaddend 
 
 A general phenomenon at play here --- one that has been observed repeatedly over the past few decades in other fields
 such as finance, supply chain management, and meteorology --- is that while scores such as RMSE, MAE, LS, CRPS, and WIS
@@ -135,8 +557,9 @@ to \cite{pesaran2002decision_based_eval} for a clear discussion from an economet
 
 Despite this now well-developed discussion of the quality-value distinction in the larger forecasting community, we are
 aware of only a limited literature attempting to connect the value of \emph{infectious disease} forecasts to their
-impact on and through policy.  Even within this body of work we have found the discussion of such a connection to
-be at a formally and quantitatively imprecise stage. In \cite{ioannidis2022forecastingCOVIDfailed}, the possible negative
+impact on and through policy.  \hypertarget{and2}{\DIFdelbegin \DIFdel{And }\DIFdelend \DIFaddbegin \DIFadd{Even }\DIFaddend within this body of work we have found the discussion of such a connection to
+  \DIFdelbegin \DIFdel{still
+}\DIFdelend} be at a formally and quantitatively imprecise stage. In \cite{ioannidis2022forecastingCOVIDfailed}, the possible negative
 consequences of inaccurate forecasts of infectious disease are discussed, but there is no attempt to quantify the
 utility or loss incurred as a result of those forecasts. \cite{bilinski_adaptive_2023} explore ways in which predictive
 classifiers of local COVID-19 risk levels in the US could be tuned to policymaker preferences for different costs
@@ -212,7 +635,7 @@ that nothing is wasted in one location while it could be put to use in another. 
 score is 0.  A positive allocation score indicates that an oracle with perfect foreknowledge could have selected an allocation 
 that met more need than the allocation suggested by $F$.
 
-\paragraph{Example 1} \label{examp1} Suppose we have a forecast $F$ for need in two locations such that $F_1$ and $F_2$ have exponential marginal distribution with scale parameters $\sigma_1 = 1$ and $\sigma_2 = 4$. The means of these distributions are
+\paragraph{Example 1} \DIFaddbegin \label{examp1} \DIFaddend Suppose we have a forecast $F$ for need in two locations such that $F_1$ and $F_2$ have exponential marginal distribution with scale parameters $\sigma_1 = 1$ and $\sigma_2 = 4$. The means of these distributions are
 given by the scale parameters $\sigma_i$. When the marginal forecasts are exponential distributions, it can be shown
 that the optimal allocation divides the available resources among the locations proportionally to the scale parameters
 $\sigma_i$ (see appendix \ref{sec:a:bayes-quantiles}). If $K = 5$ units of the resource are
@@ -255,7 +678,7 @@ receive enough resources to meet their need. In either of these extremes of reso
 need that arises from the allocation suggested by a forecast (i.e., the forecast's allocation score) will tend to be
 small.
 
-\paragraph{Example 2} \label{examp2} Now consider a different forecast that also has exponential distributions for resource need in
+\paragraph{Example 2} \DIFaddbegin \label{examp2} \DIFaddend Now consider a different forecast that also has exponential distributions for resource need in
 each location, but that has the scale parameters $\sigma_1 = 2$ and $\sigma_2 = 8$, twice as large as the scale
 parameters of the forecast in Example 1. Because the optimal allocation is proportional to the scale parameters, this
 forecast would lead to the same allocations as the forecast in Example 1, and would therefore be assigned the same
@@ -344,7 +767,7 @@ might account for storage costs for resources that go unused, allow for a differ
 location, or account for resource transportation costs. In this work, we choose to keep the loss function relatively
 simple to focus on the core ideas.
 
-It is helpful to clearly distinguish between the time $t_d$ when a decision is made about a public health
+\hypertarget{vaxpara}{It is helpful to clearly} distinguish between the time $t_d$ when a decision is made about a public health
 resource allocation and the time $t_r$ when resource needs that might be addressed by that allocation occur. Our
 setup assumes that $t_d < t_r$ and that the resource in question can only meet the need realized at $t_r$, not prevent
 it. That is, we stipulate that the choice of allocation $x$ has no effect on the distribution of the random vector $Y$. In the
@@ -359,7 +782,7 @@ decision making settings in the discussion.
 With this problem formulation in place, we can develop a proper scoring rule following the procedure in section
 \ref{sec:methods.detailed.decisiontheory}.
 
-\paragraph{Step 1: Specify a loss function.} The loss incurred by an allocation $x$ under an outcome $y$ is the sum of
+\paragraph{Step 1: \DIFdelbegin \DIFdel{specify }\DIFdelend \DIFaddbegin \DIFadd{Specify }\DIFaddend a loss function.} The loss incurred by an allocation $x$ under an outcome $y$ is the sum of
 contributions from unmet need in each location:
 \begin{equation}
   s_A(x, y) = \sum_{i=1}^N L \cdot \max(0, y_i - x_i). \label{eqn:loss_fn}
@@ -390,8 +813,8 @@ inventory management and is often attributed to \cite{hadleywhitin1963}.
 \paragraph{Step 3: Define the scoring rule.} We can now use the Bayes act to define a proper scoring rule for the
 probabilistic forecast $F$. Consider first the raw score defined as
 \begin{align}
-  S_A^{\text{raw}}(F, y; K) = s_A(x^{F,K}, y) = \sum_{i=1}^N L \cdot \max(0, y_i - x_i^{F,K}). \label{eqn:AS-raw}
-\end{align}
+  S_A^{\text{raw}}(F, y; K) = s_A(x^{F,K}, y) = \sum_{i=1}^N L \cdot \max(0, y_i - x_i^{F,K}). \DIFaddbegin \label{eqn:AS-raw}
+\DIFaddend \end{align}
 This measures the total unmet need across all locations that results from using the Bayes allocation associated with the
 forecast $F$ when the actual level of need in each location is observed to be $y_i$.
 
@@ -403,8 +826,8 @@ loss of $L \cdot \left(\sum_{i=1}^{N}y_i - K \right) > 0$, we adjust the raw sco
 The oracle-adjusted score can therefore be written as
 \begin{align}
   S_A(F, y; K)  &= S_A^{\text{raw}}(F, y; K) - L \cdot \max\left(0,\sum_{i=1}^{N}y_i - K\right) \\
-  &= L\left\{\sum_{i=1}^N \max(0, y_i - x_i^{F,K}) -  \max\left(0,\sum_{i=1}^{N}y_i - K\right)\right\}. \label{eqn:AS-orc}
-\end{align}
+  &= L\left\{\sum_{i=1}^N \max(0, y_i - x_i^{F,K}) -  \max\left(0,\sum_{i=1}^{N}y_i - K\right)\right\}. \DIFaddbegin \label{eqn:AS-orc}
+\DIFaddend \end{align}
 The oracle adjustment aligns with a common theme in economic decision theory that opportunity loss (often known
 as regret or (negative) relative utility) is often a more important quantity than absolute loss (see e.g.,
 \cite{DIECIDUE201788}).
@@ -418,17 +841,19 @@ constant. However, if $K$ is not precisely known at the time of decision making 
 value of forecasts across a range of decision making scenarios with different resource constraints, we can use an
 \emph{integrated allocation score} (IAS) that integrates the allocation score across values of $K$, weighting by a
 distribution $p$:
-\begin{equation}
-S_{IAS}(F, y) = \int S_A(F,y; K) p(K) \, dK \label{eqn:IAS_definition}
-\end{equation}
+\DIFdelbegin \begin{displaymath}\DIFdel{S_{IAS}(F, y) = \int S_A(F,y; K) p(K) \, dK}\end{displaymath}%DIFAUXCMD
+\DIFdelend \DIFaddbegin \begin{equation}
+\DIFadd{S_{IAS}(F, y) = \int S_A(F,y; K) p(K) \, dK \label{eqn:IAS_definition}
+}\end{equation}\DIFaddend 
 We note that the device of considering a range of hypothetical decision makers or decision making problems with
 different problem parameters has been employed in the past \cite[e.g.,][]{murphy1993whatisagoodforecast}.
 
-In practice, it may be challenging to compute the integral in \eqref{eqn:IAS_definition}.
+\DIFaddbegin \DIFadd{In practice, it may be challenging to compute the integral in \eqref{eqn:IAS_definition}.
 In the applied investigations below we resort to a discretization, evaluating at a grid of values of the resource constraint $K$.
 A discrete treatment along these lines will often be natural, in settings where the resource in question is non-divisible (e.g., ventilators, masks).
+}
 
-\subsection{Comparisons with Other Scores}
+\DIFaddend \subsection{\DIFdelbegin \DIFdel{Connections to }\DIFdelend \DIFaddbegin \DIFadd{Comparisons with }\DIFaddend Other Scores}
 \label{sec:methods.related}
 
 The weighted interval score (WIS) was proposed in 2020 as a way to score forecasts that were being made in the early
@@ -456,18 +881,18 @@ WIS or CRPS can be obtained by averaging across a range of decision making setti
 parameters, using a similar motivation that we used to obtain the IAS from the AS in section
 \ref{sec:methods.detailed.integrated_allocation} \citep{gneiting2011weightedScoringRules}.
 
-We also note that the AS, just as the (aggregate or mean) quantile score and WIS, depends only on the marginal distributions for each location of a multi-location forecast (see equations \eqref{eqn:AS-raw} and \eqref{eqn:quantiles-sum-to-K} in Section \ref{sec:a:bayes-quantiles} of the appendix). It is however the case that when a forecaster modifies a single marginal forecast (holding those for other locations fixed), the aggregate WIS of their forecast will change only according to the WIS of that marginal forecast, whereas every term in the sum defining the AS (in \eqref{eqn:AS-raw}) will change as the Bayes probability level defined by \eqref{eqn:quantiles-sum-to-K} changes.  In this sense, the AS depends “jointly” on the marginal forecasts while the WIS does not.
+\hypertarget{diff:pg8_para4_joint_disc}{
+\DIFaddbegin \DIFadd{We also note that the AS, just as the (aggregate or mean) quantile score and WIS, depends only on the marginal distributions for each location of a multi-location forecast (see equations \eqref{eqn:AS-raw} and \eqref{eqn:quantiles-sum-to-K} in Section \ref{sec:a:bayes-quantiles} of the appendix). It is however the case that when a forecaster modifies a single marginal forecast (holding those for other locations fixed), the aggregate WIS of their forecast will change only according to the WIS of that marginal forecast, whereas every term in the sum defining the AS (in \eqref{eqn:AS-raw}) will change as the Bayes probability level defined by \eqref{eqn:quantiles-sum-to-K} changes.  In this sense, the AS depends “jointly” on the marginal forecasts while the WIS does not.
+}}
 
-\section{Evaluating forecasts of COVID hospitalizations using the allocation score}
+\DIFaddend \section{Evaluating forecasts of COVID hospitalizations using the allocation score}
 \label{sec:application}
 
 We illustrate our new forecast evaluation framework with an application to hospital admissions in the U.S., considering
 a hypothetical problem of allocating a limited supply of medical resources to states.
 
 \subsection{Data}
-<<get-data-dates>>=
-metadata <- tar_meta()
-@
+
 
 The US COVID-19 Forecast Hub collected short-term forecasts of daily new hospital admissions for individuals with
 COVID-19 starting in December 2020 \citep{cramer_united_2022}. The target data for these forecasts were hospital
@@ -490,11 +915,9 @@ they were designated as a ``primary'' model from a team. For a model to have a c
 week, it had to have a 14 day-ahead forecast for all 50 states plus Washington DC. Models had to have a complete
 forecast for at least 4 of the 15 weeks in the analysis to be eligible for inclusion.
 
-<<>>=
-download_date <- format(as.Date(metadata$time[which(metadata$name == "truth_data")]), "%B %d, %Y")
-@
 
-The hospitalization data used for scoring forecasts were downloaded on \Sexpr{download_date}.
+
+The hospitalization data used for scoring forecasts were downloaded on July 26, 2024.
 
 \subsection{Evaluation metrics}
 
@@ -541,63 +964,13 @@ All forecast data used in this evaluation are available through the COVID-19 For
 R package implementing the allocation score is available at \url{https://github.com/aaronger/alloscore}. All code and
 data for the analyses presented in this manuscript are available at
 \url{https://github.com/aaronger/utility-eval-papers}. The analyses were generated using a reproducible workflow using
-\Sexpr{version$version.string} and the {\tt targets} package \citep{Rcore-2023, landau_2021_targets}.
+R version 4.4.1 (2024-06-14) and the {\tt targets} package \citep{Rcore-2023, landau_2021_targets}.
 
 \subsection{Application results}
 
-<<score-computation>>=
-tar_load("Kat15k_alloscores")
-tar_load("score_data")
-tar_load("truth_data")
-tar_load("forecast_data")
-tar_load("percap")
 
 
-Kat15k_alloscores <- bind_rows(Kat15k_alloscores, percap |> filter(K == 15000))
 
-alloscore_data_summaries <- Kat15k_alloscores |>
-  group_by(model, reference_date) |>
-  summarize(alloscore = sum(components), yobs = sum(y)) |>
-  group_by(reference_date) |>
-  mutate(nmodels = n(),
-         allo_rank = rank(alloscore, ties.method = "min"),
-         allo_rank_std = 1- (allo_rank-1)/(nmodels-1)) |>
-  ungroup() |>
-  complete(model, reference_date) |>
-  mutate(target_end_date = as.Date(reference_date) + 14)
-
-alloscore_models <- unique(alloscore_data_summaries$model)
-score_data_summaries <- score_data |>
-  mutate(reference_date = target_end_date - 14) |>
-  filter(model %in% alloscore_models) |>
-  group_by(model, reference_date) |>
-  summarize(mwis = mean(wis)) |>
-  ungroup() |>
-  group_by(reference_date) |>
-  mutate(nmodels = n(),
-         mwis_rank = rank(mwis, ties.method = "min"),
-         mwis_rank_std = 1- (mwis_rank-1)/(nmodels-1)) |>
-  ungroup() |>
-  complete(model, reference_date) |>
-  mutate(target_end_date = as.Date(reference_date) + 14)
-
-all_scores <- left_join(alloscore_data_summaries, score_data_summaries,
-                      by=c("model", "target_end_date"))
-@
-
-<<normalize-model-aesthetics>>=
-model_palette <- setNames(
-  hcl(h = seq(15, 375, length = 18), l = 65, c = 100),
-  c(unique(forecast_data$model), "per-capita"))
-
-model_palette["JHUAPL-Bucky"] <- "thistle"
-model_palette["CU-select"] <- "wheat"
-
-model_linewidths <- setNames(rep(.5,
-  length.out = length(model_palette)
-), names(model_palette))
-model_linewidths["per-capita"] <- 1.5
-@
 
 
 
@@ -611,139 +984,46 @@ Of the 10 models evaluated for this one week, the CU-select model had the most a
 allocation score while the USC-SI\_kJalpha model had the most accurate forecasts based on MWIS (Table
 \ref{tab:multi-k-scores}). The \texttt{JHUAPL-Bucky} model had the second best MWIS but the third worst allocation score.
 
-<<ias-comparison>>=
-tar_load(alloscore_2021.12.20)
-slim_alloscore_2021.12.20 <- alloscore::slim(alloscore_2021.12.20, id_cols = c("model", "reference_date")) %>%
-  bind_rows(percap %>% filter(reference_date == "2021-12-20"))
-
-## for visual context
-## curve(dnorm(x, mean=15000, sd=3000), from=0, to=30000)
-ks <- seq(5000, 25000, by=200)
-kprobs <- data.frame(K = ks,
-                     weight = dnorm(ks, mean=15000, sd=3000)/sum(dnorm(ks, mean=15000, sd=3000)))
 
 
-ias <- slim_alloscore_2021.12.20 |>
-  group_by(model, K) |>
-  summarize(`Allocation score` = sum(components)) |>
-  left_join(kprobs) |>
-  group_by(model) |>
-  summarize(IAS_wt = sum(`Allocation score`*weight, na.rm=TRUE),
-            IAS = mean(`Allocation score`)) |>
-  arrange(IAS)
-
-as <- slim_alloscore_2021.12.20 |>
-  filter(K == 15000) |>
-  group_by(model) |>
-  summarize(AS = sum(components)) |>
-  arrange(AS)
-@
-
-<<multi-k-scores, results='asis'>>=
-wis_vals <- all_scores |>
-  filter(target_end_date == "2022-01-03", !is.na(mwis)) |>
-  select(model,
-# can uncomment the two lines below to check they match
-#         AS = alloscore,
-#         `AS rank` = allo_rank,
-         MWIS = mwis)
-
-left_join(ias, as) |>
-  left_join(wis_vals, by="model") |>
-  rename(Model = model,
-         `IAS centered at 15k` = IAS_wt,
-         `IAS uniform` = IAS) |>
-  select(Model, AS, MWIS, `IAS centered at 15k`, `IAS uniform`) |>
-  mutate(Model = gsub("_", "\\\\_", Model)) |>
-  mutate(Model = sprintf("\\texttt{%s}", Model)) |>
-  arrange(AS) |>
-  xtable::xtable(caption = paste("For one illustrative week, a comparison of allocation scores (AS), mean weighted interval scores (MWIS), and two varieties of Integrated Allocation Scores (IAS), (see Section \\ref{sec:ias_examp}). All metrics are shown for 10 models that made forecasts of hospital admissions for 2022-01-03. Results are sorted by AS. For all metrics, lower scores indicate better accuracy."),
-                 digits = 0,
-                 label = "tab:multi-k-scores") |>
-  print(include.rownames = FALSE, NA.string = "-", sanitize.text.function = function(x) {x})
-@
+% latex table generated in R 4.4.1 by xtable 1.8-4 package
+%DIF <  Thu Aug  1 13:13:10 2024
+%DIF >  Sat Aug 31 11:58:55 2024
+\begin{table}[ht]
+\centering
+\begin{tabular}{lrrrr}
+  \hline
+Model & AS & MWIS & IAS centered at 15k & IAS uniform \\ 
+  \hline
+\texttt{CU-select} & 669 & 133 & 774 & 326 \\ 
+  \texttt{per-capita} & 865 & - & 1029 & 366 \\ 
+  \texttt{COVIDhub-ensemble} & 873 & 159 & 1067 & 438 \\ 
+  \texttt{USC-SI\_kJalpha} & 995 & 91 & 1216 & 1097 \\ 
+  \texttt{JHUAPL-Gecko} & 1034 & 164 & 1141 & 418 \\ 
+  \texttt{MUNI-ARIMA} & 1084 & 169 & 1248 & 440 \\ 
+  \texttt{COVIDhub-trained\_ensemble} & 1089 & 169 & 1271 & 823 \\ 
+  \texttt{COVIDhub-baseline} & 1175 & 170 & 1317 & 535 \\ 
+  \texttt{JHUAPL-Bucky} & 1358 & 102 & 1566 & 1214 \\ 
+  \texttt{JHUAPL-SLPHospEns} & 1540 & 129 & 1604 & 1102 \\ 
+  \texttt{UVA-Ensemble} & 2469 & 213 & 2635 & 2494 \\ 
+   \hline
+\end{tabular}
+\caption{For one illustrative week, a comparison of allocation scores (AS), mean weighted interval scores (MWIS), and two varieties of Integrated Allocation Scores (IAS), (see Section \ref{sec:ias_examp}). All metrics are shown for 10 models that made forecasts of hospital admissions for 2022-01-03. Results are sorted by AS. For all metrics, lower scores indicate better accuracy.} 
+\label{tab:multi-k-scores}
+\end{table}
 
 
-<<metrics-rankings, results = "asis", eval=FALSE>>=
-## NOTE: this content now shown in multi-k-scores chunk
-## for highlighting cells, if we want that https://stackoverflow.com/questions/37448348/color-code-cells-of-xtable
-all_scores |>
-  filter(target_end_date == "2022-01-03", !is.na(mwis)) |>
-  select(model,
-         AS = alloscore,
-         `AS rank` = allo_rank,
-         MWIS = mwis,
-         `MWIS rank` = mwis_rank) |>
-  arrange(`AS rank`) |>
-  xtable::xtable(label = "tab:one-week-results",
-                 caption = "Allocation scores (AS) and mean weighted interval scores (MWIS) for each model' as forecasted's forecasts for ") |>
-  print(include.rownames = FALSE)
-@
 
-<<detailedASinfo>>=
-source("R/run-alloscore.R")
-as_Buck <- run_alloscore(
-  forecast_data = forecast_data,
-  truth_data = truth_data,
-  one_reference_date = "2021-12-20",
-  one_model = "JHUAPL-Bucky",
-  one_K = 15000,
-  slim = FALSE)
 
-as_CU <- run_alloscore(
-  forecast_data = forecast_data,
-  truth_data = truth_data,
-  one_reference_date = "2021-12-20",
-  one_model = "CU-select",
-  one_K = 15000,
-  slim = FALSE)
 
-Buck_quantile <- round(1 - as_Buck$lam,2)*100
-CU_quantile <- round(1 - as_CU$lam,2)*100
 
-FL_allocs <- Kat15k_alloscores |>
-   dplyr::filter(
-     model %in% c("JHUAPL-Bucky", "CU-select"),
-     reference_date == "2021-12-20",
-     abbreviation == "FL") |>
-  dplyr::select(model, x) |>
-  tibble::deframe()
-FL_diff <- round(FL_allocs["CU-select"] - FL_allocs["JHUAPL-Bucky"])
-@
 
-<<thermometer-plot, fig.height=7, fig.pos = "H", fig.width=7.5, fig.cap="Probabilistic forecasts for new COVID-19 hospital admissions on January 3, 2022 and their suggested resource allocations for the states with the ten highest (eventually observed) hospitalization counts. For each state, the dark black line shows the data observed when the forecast was made, the grey line shows counts observed after the forecast was made, and the horizontal dark red segment shows the count observed on the target date. The side-by-side shaded regions show the median (grey horizontal line) and 50\\%, 80\\% and 95\\% prediction intervals for the two selected models. The forecasts were made for new hospitalizations on January 3, 2022 (vertical dashed line, with number of hospitalizations indicated by red horizontal line segment at the intersection of the dashed line and the grey line of data). The vertical bars with purple, blue and red shading show the allocations. The purple bar goes from zero to the amount of need that was met by the allocation from that model to a specific location. A red bar indicates need that exceeded the resource allocation for a location, and a light blue bar shows the amount by which the resource allocation suggested by that model exceeded the need for that location.">>=
-source("R/plot_functions.R")
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}[H]
+\includegraphics[width=\maxwidth]{figure/thermometer-plot-1} \caption[Probabilistic forecasts for new COVID-19 hospital admissions on January 3, 2022 and their suggested resource allocations for the states with the ten highest (eventually observed) hospitalization counts]{Probabilistic forecasts for new COVID-19 hospital admissions on January 3, 2022 and their suggested resource allocations for the states with the ten highest (eventually observed) hospitalization counts. For each state, the dark black line shows the data observed when the forecast was made, the grey line shows counts observed after the forecast was made, and the horizontal dark red segment shows the count observed on the target date. The side-by-side shaded regions show the median (grey horizontal line) and 50\%, 80\% and 95\% prediction intervals for the two selected models. The forecasts were made for new hospitalizations on January 3, 2022 (vertical dashed line, with number of hospitalizations indicated by red horizontal line segment at the intersection of the dashed line and the grey line of data). The vertical bars with purple, blue and red shading show the allocations. The purple bar goes from zero to the amount of need that was met by the allocation from that model to a specific location. A red bar indicates need that exceeded the resource allocation for a location, and a light blue bar shows the amount by which the resource allocation suggested by that model exceeded the need for that location.}\label{fig:thermometer-plot}
+\end{figure}
 
-locs_to_plot <- truth_data |>
-  dplyr::filter(target_end_date == "2022-01-03", location != "US") |>
-  dplyr::arrange(desc(value)) |>
-  head(10) |>
-  dplyr::pull(abbreviation)
-
-plot_hosp(models = c("JHUAPL-Bucky", "CU-select"),
-          start_date = "2021-12-01",
-          stop_date = "2022-01-25",
-          f_date = "2021-12-20",
-          te_date = "2022-01-03",
-          ## highest locations in terms of hospitalizations
-          locations = locs_to_plot,
-          f_width1 = 4, f_alpha = .4,
-          facet_ncol=2,
-          allocations = TRUE,
-          forecasts_hosp = forecast_data %>% filter(reference_date == "2021-12-20") %>%
-            dplyr::mutate(
-              abbreviation = factor(abbreviation, levels=locs_to_plot, ordered=TRUE),
-              geo_value = abbreviation),
-          alloscores = slim_alloscore_2021.12.20 %>%
-            dplyr::mutate(
-              abbreviation = factor(abbreviation, levels=locs_to_plot, ordered=TRUE)),
-          truth = truth_data %>%
-            dplyr::mutate(
-              abbreviation = factor(abbreviation, levels=locs_to_plot, ordered=TRUE),
-              geo_value = abbreviation),
-          f_colors = model_palette[c("JHUAPL-Bucky", "CU-select")],
-          one_K = 15000) + labs(x = NULL)
-@
+\end{knitrout}
 
 A state-wise comparison of the
 \texttt{JHUAPL-Bucky} and \texttt{CU-select} models shows that while the \texttt{JHUAPL-Bucky} forecast distributions
@@ -762,155 +1042,23 @@ and it consistently incurred a large penalty for underprediction (Figure \ref{fi
 hospital admissions. Its MWIS was therefore less severely penalized by under- or over-predictions of the actual
 hospitalization counts.
 
-<<multi-loc-ranks, fig.width=8, fig.cap="Component-wise breakdowns of the allocation score (Panel A) and weighted interval score (Panel B), by location for forecasts of hospitalization admissions on January 3, 2022, for two selected models (\\texttt{JHUAPL-Bucky} and \\texttt{CU-select}). Panel A shows the observed resource need, in this case the observed number of hospitalizations, for each state, along with the hypothetical number of resources allocated to the given location based on the forecasts from each model. The number of available resources was fixed at 15,000 and forecasts from each model were used to determine an optimal allocation strategy before the resource need was known. For most locations the resource need exceeded the resources allocated, indicated by some amount of `unmet resource need' above the `need met by allocated resources'. Panel B shows the breakdown of the weighted interval score (WIS) into components of underprediction, overprediction and dispersion. Larger values of WIS indicate more error, and the full WIS score for each location can be decomposed into the three components shown here.">>=
-## date points to target_end_date of 2022-01-10 to highlight
-ref_date_for_plot <- "2021-12-20"
-models_to_plot <- c("JHUAPL-Bucky", "CU-select", "per-capita")
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}
+\includegraphics[width=\maxwidth]{figure/multi-loc-ranks-1} \caption[Component-wise breakdowns of the allocation score (Panel A) and weighted interval score (Panel B), by location for forecasts of hospitalization admissions on January 3, 2022, for two selected models (\texttt{JHUAPL-Bucky} and \texttt{CU-select})]{Component-wise breakdowns of the allocation score (Panel A) and weighted interval score (Panel B), by location for forecasts of hospitalization admissions on January 3, 2022, for two selected models (\texttt{JHUAPL-Bucky} and \texttt{CU-select}). Panel A shows the observed resource need, in this case the observed number of hospitalizations, for each state, along with the hypothetical number of resources allocated to the given location based on the forecasts from each model. The number of available resources was fixed at 15,000 and forecasts from each model were used to determine an optimal allocation strategy before the resource need was known. For most locations the resource need exceeded the resources allocated, indicated by some amount of `unmet resource need' above the `need met by allocated resources'. Panel B shows the breakdown of the weighted interval score (WIS) into components of underprediction, overprediction and dispersion. Larger values of WIS indicate more error, and the full WIS score for each location can be decomposed into the three components shown here.}\label{fig:multi-loc-ranks}
+\end{figure}
 
-ordered_levels <- truth_data |>
-  filter(target_end_date == as.Date(ref_date_for_plot)+14, location != "US") |>
-  select(location, abbreviation, value) |>
-  arrange(-value)
-
-multiloc_dat <- Kat15k_alloscores |>
-  filter(reference_date == ref_date_for_plot,
-         ## the above date points to target_end_date of 2022-01-03 where things were really wrong
-         model %in% models_to_plot) |>
-  rename(allocation = x, `observed resource need` = y, state = abbreviation) |>
-  mutate(`unmet resource need` = ifelse(allocation < `observed resource need`,
-                                        `observed resource need` - allocation,
-                                        0),
-         `need met by allocated resources` = ifelse(allocation < `observed resource need`,
-                                                    allocation,
-                                                    `observed resource need`),
-         `allocation exceeding need` = ifelse(allocation < `observed resource need`,
-                                        0,
-                                        allocation - `observed resource need`)
-         ) |>
-  # select(model, reference_date, state, allocation, `observed resource need`) |>
-  select(model, reference_date, state,
-         `unmet resource need`, `need met by allocated resources`, `allocation exceeding need`) |>
-  pivot_longer(cols = c("unmet resource need", "need met by allocated resources", "allocation exceeding need")) |>
-  mutate(state = factor(state, levels = ordered_levels$abbreviation),
-         name = factor(name, levels = c("unmet resource need",
-                                        "allocation exceeding need",
-                                        "need met by allocated resources"))) |>
-  arrange(name)
-
-
-## plot all locations observations and allocations
-
-## line plot below here
-# multiloc_plot <- ggplot(multiloc_dat, aes(x=name, y=value, group=state)) +
-#   geom_line() +
-#   geom_line(data=dplyr::filter(multiloc_dat, state=="FL"), color="orange") +
-#   ylab("Daily hospital admissions") +
-#   scale_x_discrete(name=NULL, limits=rev, expand = c(.1,.1)) +
-#   facet_grid(.~model)
-
-
-alloc_plot <- ggplot(multiloc_dat, aes(x=state, y=value, fill=name)) +
-  geom_col(position="stack", alpha=1) +
-  #scale_fill_manual(name=NULL, values = c("#ca0020", "#0571b0", "purple")) +
-  #scale_fill_manual(name=NULL, values = c(  "#e41a1c", "#377eb8", "lightgray")) +
-  scale_fill_manual(name=NULL, values = c("#fb6a4a", "#9ecae1", "#807dba")) +
-  theme(axis.text.x=element_text(angle=90,vjust=.5), legend.position = c(.95,.98), legend.justification = c(1,1), legend.key.size = unit(0.45, "cm"), legend.background = element_rect(fill = "transparent")) +
-  ylab("Resource need and allocation") +
-  xlab(NULL) +
-  facet_grid(model~.)
-
-# alloc_plot <- multiloc_dat |>
-#   mutate(state = factor(state, levels = ordered_levels$abbreviation),
-#          name = factor(name, levels = c("observed resource need", "allocation"))) |>
-#   arrange(name) |>
-#   ggplot(aes(x=state, y=value, fill=name)) +
-#   scale_fill_manual(name=NULL, values = c("#CD2626", "goldenrod")) +
-#   theme(axis.text.x=element_text(angle=90,vjust=.5), legend.position = c(.9,.95), legend.justification = c(1,1)) +
-#   ylab("Resource need and allocation") +
-#   xlab(NULL) +
-#   geom_col(position="identity", alpha=.7) +
-#   facet_grid(model~.)
-
-wis <- covidHubUtils::score_forecasts(
-  forecast_data |> filter(reference_date == "2021-12-20", str_detect(model,"Buck|CU-select")),
-  truth_data,
-  use_median_as_point = TRUE,
-  metrics = "wis_components",
-  return_format="long") |>
-  filter(location != "US", score_name != "true_value") |>
-  left_join(select(ordered_levels, location, abbreviation)) |>
-  mutate(abbreviation = factor(abbreviation, levels=ordered_levels$abbreviation),
-         `WIS component` = factor(score_name, levels = c("overprediction", "dispersion", "underprediction")))
-
-
-## palette from
-## colorspace::divergingx_hcl(palette = "Blue-Yellow 3", n=3)
-
-wis_plot <- ggplot(data = wis, aes(x=abbreviation)) +
-  geom_col(aes(y=score_value, fill=`WIS component`)) +
-  scale_fill_manual(values = c("#9FA2FF", "gray77", "#BAAE00")) +
-  facet_grid(model~.) +
-  theme(axis.text.x=element_text(angle=90,vjust=.5), legend.position = c(.82,.95), legend.justification = c(1,1), legend.key.size = unit(0.45, "cm"), legend.background = element_rect(fill = "transparent")) +
-  xlab(NULL) +
-  ylab("WIS")
-
-cowplot::plot_grid(alloc_plot, wis_plot,
-                   nrow=2,
-                   align="v",
-                   rel_heights = c(1, 1),
-                   labels = "AUTO")
-
-@
+\end{knitrout}
 
 \subsubsection{Forecast scores showed differences in aggregate and over time}
-<<grob-hosps-over-time>>=
-dat_to_plot <- truth_data |>
-  filter(location == "US",
-         target_end_date %in% score_data_summaries$target_end_date)
-p1 <- ggplot(dat_to_plot,
-             aes(x=target_end_date, y=value)) +
-  geom_line() +
-  geom_point() +
-  geom_hline(yintercept=15000, linetype=2) +
-  ylab("Hospital admissions") +
-  xlab(NULL) +
-  ylim(c(0, NA))
-@
 
 
-<<metrics-over-time, fig.height=8, fig.width=8, fig.cap="Hospital admissions and evaluation metrics over time. Panel A shows the number of hospital admissions in the US as a whole due to COVID-19 on a sequence of 15 Mondays from December 2021 through March 2022. These are the dates for which forecasts were made and evaluated. A horizontal dashed line at 15,000 shows the hypothetical resource constraint $K$. Panel B shows allocation scores (AS) for each model's 14 day-ahead forecast, across all US states. The $x$-axis corresponds to the date of the observation that a model's prediction was targeting (i.e., the date the forecast was made plus the forecast horizon). AS typically are high when the observed value is near to the constraint, which occurs during the last Monday in December (on the way up) and the last Monday in January (on the way down). In Panel B, the \\texttt{per-capita} allocation is drawn in a heavier solid line. Panel C shows the MWIS  across weeks. MWIS tends to scale with the observed and predicted values, peaking just after the peak of the Omicron wave.">>=
-p2 <- ggplot(alloscore_data_summaries,
-             aes(x=target_end_date, y=alloscore, color=model, shape=model, linewidth = model)) +
-  geom_point() + geom_line()+
-  scale_x_date(limits=range(score_data_summaries$target_end_date)) +
-  scale_color_manual(values = model_palette) +
-  scale_shape_manual(values=c(15:18, 4, 6, 15:18, 4, 6, 15:18, 4, 6)) +
-  scale_linewidth_manual(values = model_linewidths) +
-  ylab("Allocation score") +
-  theme(legend.position="none") +
-  xlab(NULL)
 
-p4 <- ggplot(bind_rows(score_data_summaries, percap %>%
-                         select(model, reference_date) %>%
-                         mutate(reference_date = as.Date(reference_date))),
-             aes(x=target_end_date, y=mwis, color=model,shape=model, linewidth = model)) +
-  geom_point() + geom_line() +
-  scale_color_manual(values = model_palette) +
-  scale_shape_manual(values=c(15:18, 4, 6, 15:18, 4, 6, 15:18, 4, 6)) +
-  scale_linewidth_manual(values = model_linewidths) +
-  xlab("Forecast target date") +
-  ylab("MWIS")+
-  guides(colour = guide_legend(title=NULL, ncol = 4),
-         shape = guide_legend(title=NULL, ncol = 4),
-         linewidth = guide_legend(title=NULL, ncol = 4)) +
-  theme(legend.position="bottom")
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}
+\includegraphics[width=\maxwidth]{figure/metrics-over-time-1} \caption[Hospital admissions and evaluation metrics over time]{Hospital admissions and evaluation metrics over time. Panel A shows the number of hospital admissions in the US as a whole due to COVID-19 on a sequence of 15 Mondays from December 2021 through March 2022. These are the dates for which forecasts were made and evaluated. A horizontal dashed line at 15,000 shows the hypothetical resource constraint $K$. Panel B shows allocation scores (AS) for each model's 14 day-ahead forecast, across all US states. The $x$-axis corresponds to the date of the observation that a model's prediction was targeting (i.e., the date the forecast was made plus the forecast horizon). AS typically are high when the observed value is near to the constraint, which occurs during the last Monday in December (on the way up) and the last Monday in January (on the way down). In Panel B, the \texttt{per-capita} allocation is drawn in a heavier solid line. Panel C shows the MWIS  across weeks. MWIS tends to scale with the observed and predicted values, peaking just after the peak of the Omicron wave.}\label{fig:metrics-over-time}
+\end{figure}
 
-cowplot::plot_grid(p1, p2, p4,
-                   nrow=3,
-                   align="v",
-                   rel_heights = c(1, 1, 1.85),
-                   labels = "AUTO", hjust = -1)
-@
+\end{knitrout}
 
 Allocation scores varied substantially by date and by model (Figure \ref{fig:metrics-over-time}). For predictions made
 for the first three Mondays in December 2021 and the last three Mondays in February 2022 all models had allocation
@@ -919,33 +1067,11 @@ low on those days. The allocation scores were on the whole highest when the obse
 was closest to the resource threshold of 15,000.  It was on these occasions that models were most likely to waste resources
 in one location that the oracle would have put to use in another.
 
-<<eval=FALSE>>=
-## some analysis to support above statements
-alloscore_data_summaries |>
-  group_by(target_end_date) |>
-  summarize(meanAS = mean(alloscore, na.rm=TRUE),
-            medianAS = median(alloscore, na.rm=TRUE),
-            minAS = min(alloscore, na.rm=TRUE),
-            maxAS = max(alloscore, na.rm=TRUE),
-            range = maxAS-minAS)
-@
 
-<<eval=FALSE>>=
-## analysis for the above statements
-alloscore_data_summaries |>
-  filter(as.Date(reference_date) < as.Date("2022-02-01"), allo_rank == 1)
-@
 
-<<eval=FALSE>>=
-## some analysis to support above statements
-score_data_summaries |>
-  group_by(target_end_date) |>
-  summarize(meanWIS = mean(mwis, na.rm=TRUE),
-            medianWIS = median(mwis, na.rm=TRUE),
-            minWIS = min(mwis, na.rm=TRUE),
-            maxWIS = max(mwis, na.rm=TRUE),
-            range = maxWIS-minWIS)
-@
+
+
+
 
 Averaging across all weeks, the ensemble forecast achieved a better mean allocation score (MAS) than two benchmark
 methods. The \texttt{COVIDhub-ensemble} had the best MAS across all weeks, the \texttt{per-capita} allocation had the
@@ -958,25 +1084,32 @@ according to both metrics, although not in exactly the same order (Table \ref{ta
 (This comparison excludes the \texttt{per-capita} allocation which does not use forecasts and therefore cannot be
 assigned a MWIS.) Notably, the \texttt{JHUAPL-SLPHospEns} model ranked best on taMWIS but had only the fourth best MAS.
 
-<<table-score-summary-all-weeks, results='asis'>>=
-all_scores |>
-  filter( !(reference_date.x %in% c("2021-11-22", "2022-02-28"))) |>
-  group_by(model) |>
-  summarize(N = sum(!is.na(alloscore)),
-            MAS = mean(alloscore, na.rm=TRUE),
-            taMWIS = mean(mwis, na.rm=TRUE)) |>
-  filter(N > 12) |>
-  mutate(`taMWIS rank` = rank(taMWIS, na.last = "keep"),
-         model = gsub("_", "\\\\_", model) %>% 
-           sprintf("\\texttt{%s}", .)) |>
-  arrange(MAS) |>
-  select(model, MAS, taMWIS, `taMWIS rank`) |>
-  xtable::xtable(caption = "Time averaged mean weighted interval scores (taMWIS) and mean allocation scores (MAS) by model across 13 weeks. These results show the average performance across time for the nine models that submitted forecasts for every week from 2021-11-29 through 2022-02-21, as well
-  as for a per-capita allocation. MWIS is not defined for the \\texttt{per-capita} allocation which does not use forecasts.",
-                 digits = 0,
-                 label = "tab:multi-week-performance-summary") |>
-  print(include.rownames = FALSE, NA.string = "-", sanitize.text.function = function(x) {x})
-@
+% latex table generated in R 4.4.1 by xtable 1.8-4 package
+%DIF <  Thu Aug  1 13:13:14 2024
+%DIF >  Sat Aug 31 11:59:00 2024
+\begin{table}[ht]
+\centering
+\begin{tabular}{lrrr}
+  \hline
+model & MAS & taMWIS & taMWIS rank \\ 
+  \hline
+\texttt{COVIDhub-ensemble} & 389 & 70 & 2 \\ 
+  \texttt{per-capita} & 464 & - & - \\ 
+  \texttt{COVIDhub-trained\_ensemble} & 483 & 87 & 4 \\ 
+  \texttt{CU-select} & 502 & 81 & 3 \\ 
+  \texttt{JHUAPL-SLPHospEns} & 526 & 67 & 1 \\ 
+  \texttt{COVIDhub-baseline} & 594 & 93 & 5 \\ 
+  \texttt{JHUAPL-Bucky} & 643 & 112 & 7 \\ 
+  \texttt{MUNI-ARIMA} & 707 & 116 & 8 \\ 
+  \texttt{JHUAPL-Gecko} & 929 & 110 & 6 \\ 
+  \texttt{USC-SI\_kJalpha} & 1473 & 155 & 9 \\ 
+   \hline
+\end{tabular}
+\caption{Time averaged mean weighted interval scores (taMWIS) and mean allocation scores (MAS) by model across 13 weeks. These results show the average performance across time for the nine models that submitted forecasts for every week from 2021-11-29 through 2022-02-21, as well
+  as for a per-capita allocation. MWIS is not defined for the \texttt{per-capita} allocation which does not use forecasts.} 
+\label{tab:multi-week-performance-summary}
+\end{table}
+
 
 \subsubsection{Metrics were not consistently correlated over time}
 
@@ -989,130 +1122,53 @@ rank. This contrasts with a clearly positive correlation between MWIS and AS ran
 Table \ref{tab:multi-week-performance-summary}, \texttt{CMU-TimeSeries} is an interesting example of a model that
 performed consistently well on AS but had only middling MWIS ranks.
 
-<<metrics-correlation, fig.width=8, fig.height=6, fig.pos="H", fig.cap="Association of standardized ranks for MWIS and allocation score by model and week. Each facet of the plot corresponds to one model. Within each facet, each point corresponds to a week. The $x$- and $y$-values correspond to the MWIS standardized rank and the allocation score standardized rank for that week. Points corresponding to earlier dates have darker shading. The size of the point corresponds to the observed value on the date for which the prediction was made. Models show different degrees of association between the two metrics.">>=
-all_scores |>
-  filter(as.Date(reference_date.x) < as.Date("2022-02-01"),
-         model != "per-capita", model != "JHU_IDD-CovidSP") |>
-  dplyr::mutate(target_end_date = as.Date(target_end_date)) |>
-  ggplot(aes(x=mwis_rank_std, y=allo_rank_std, color=target_end_date, size=yobs)) +
-    geom_point(alpha=.7) +
-    scale_x_continuous("MWIS standardized rank", limits=c(0,1), 
-                       breaks = c(0,.5,1), labels = c("0",".5","1")) +
-    scale_y_continuous("Allocation score standardized rank", limits=c(0,1), 
-                       breaks = c(0,.5,1), labels = c("0",".5","1")) +
-#    scale_color_gradient("Target date") +
-    scale_color_date(
-      name="Target date",
-      breaks = seq.Date(from=as.Date("2021-12-13"), by = 14, length.out=5)) +
-    scale_size_continuous("Observed\nhospitalizations") +
-    facet_wrap(.~model, ncol=4) +
-    geom_abline(slope=1, intercept=0, linetype=2, color="gray") +
-    theme(strip.text = element_text(size = 7))
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}[H]
+\includegraphics[width=\maxwidth]{figure/metrics-correlation-1} \caption[Association of standardized ranks for MWIS and allocation score by model and week]{Association of standardized ranks for MWIS and allocation score by model and week. Each facet of the plot corresponds to one model. Within each facet, each point corresponds to a week. The $x$- and $y$-values correspond to the MWIS standardized rank and the allocation score standardized rank for that week. Points corresponding to earlier dates have darker shading. The size of the point corresponds to the observed value on the date for which the prediction was made. Models show different degrees of association between the two metrics.}\label{fig:metrics-correlation}
+\end{figure}
 
-@
+\end{knitrout}
 
-<<eval=FALSE>>=
-alloscore_data_summaries |>
-  group_by(model) |>
-  summarize(top_rank = sum(allo_rank_std==1))
-@
 
-\subsubsection{Sensitivity of allocation score to values of K}
-\label{sec:sensitivity}
 
-<<calc-tot-y>>=
-tot_y <- slim_alloscore_2021.12.20 |>
-  filter(model == "COVIDhub-ensemble", K==200) |>
-  pull(y) |>
-  sum()
-@
+\subsubsection{\DIFdelbegin \DIFdel{Integrated }\DIFdelend \DIFaddbegin \DIFadd{Sensitivity of }\DIFaddend allocation score \DIFdelbegin \DIFdel{across }\DIFdelend \DIFaddbegin \DIFadd{to }\DIFaddend values of K}
+\DIFdelbegin %DIFDELCMD < \label{sec:ias_examp}
+%DIFDELCMD < %%%
+\DIFdelend \DIFaddbegin \label{sec:sensitivity}
+\DIFaddend 
 
-AS was computed for a range of $K$ from 200 to 60,000 at increments of 200 for forecasts made on December 20, 2020 predicting levels of
+
+
+AS was computed for a range of $K$ from 200 to 60,000 \DIFaddbegin \DIFadd{at increments of 200 }\DIFaddend for forecasts made on December 20, 2020 predicting levels of
 hospitalizations on January 3, 2021 as well as for the \texttt{per-capita} allocation (Figure \ref{fig:multi-k}A). These
 calculations highlight that AS was highest at at values of $K$ near the observed nationwide total hospital admissions of
-\Sexpr{format(tot_y, big.mark = ",")} that day. Model ranks by AS were fairly stable across all $K$, and there appears
+19,581 that day. Model ranks by AS were fairly stable across all $K$, and there appears
 to be a substantial interval around the observed value over which ranks are constant.
 
-\subsubsection{Integrated allocation score across values of K}
+\DIFaddbegin \subsubsection{\DIFadd{Integrated allocation score across values of K}}
 \label{sec:ias_examp}
 
-The integrated allocation score (IAS) summarizes allocation scores (AS) across a range of possible values of the
+\DIFaddend The integrated allocation score (IAS) summarizes allocation scores (AS) across a range of possible values of the
 constraint ($K$), allowing one to assign higher weights to more likely values of $K$ (Section
 \ref{sec:methods.detailed.integrated_allocation}). 
-IAS was computed for two weight distributions on the same grid of values of $K$ used in the sensitivity analysis above,
-one uniform across the entire range and the other with weights proportional to a truncated normal distribution centered at 15,000
+IAS was computed for two weight distributions on \DIFaddbegin \DIFadd{the same grid of values of }\DIFaddend $K$ \DIFaddbegin \DIFadd{used in the sensitivity analysis above}\DIFaddend ,
+one uniform across the entire range and the other \DIFaddbegin \DIFadd{with weights proportional to }\DIFaddend a truncated normal distribution centered at 15,000
 (the orange and blue shaded areas in Figure
 \ref{fig:multi-k}A, respectively).
-With these weight distributions, the IAS defined in Equation~\eqref{eqn:IAS_definition} can be computed as the sum
-$$S_{IAS}(F, y) = \sum_K S_A(F,y; K) p(K)$$
+\DIFaddbegin \DIFadd{With these weight distributions, the IAS defined in Equation~\eqref{eqn:IAS_definition} can be computed as the sum
+}$$\DIFadd{S_{IAS}(F, y) = \sum_K S_A(F,y; K) p(K)}$$
 
-Both versions of the IAS were correlated with the original AS for $K=15,000$, with
+\DIFaddend Both versions of the IAS were correlated with the original AS for $K=15,000$, with
 the higher correlation coming from the weighting centered at $K=15,000$ (Figure \ref{fig:multi-k}B). Model rankings
 based on the AS and the centered IAS were roughly similar, with the top and bottom three approaches being the same for
 both scores (Table \ref{tab:multi-k-scores}).
 
-<<multi-k, fig.height=4, fig.width = 8, fig.pos="H", fig.cap = "Allocation scores (AS) across different resource constraints ($K$) for 10 models that made forecasts on 2021-12-20. Panel A shows, for each model, the AS for values of $K$ between 200 and 60,000 at increments of 200. The AS show a sharp peak just under 20,000, near the eventually observed number of hospitalizations. Two possible weighting functions for the Integrated Allocation Score (IAS) are shown. The first (blue shaded area) computes weights proportional to a normal distribution centered at 15,000 with a standard deviation of 3,000, and truncated to be between 5,000 and 25,000. The second (orange shaded area) uses a uniform weight for all possible values of $K$. Note that the AS used in earlier sections of the application uses the single fixed value of $K=15,000$.  Panel B shows how the two versions of the IAS ($y$-axis) correlate with the AS at $K=15,000$ ($x$-axis). Every point represents the AS at 15,000 and a version of the IAS for one model. As we would expect, the IAS centered at 15,000 (circles) is more closely correlated with the AS at 15,000 than is the uniform IAS (triangles).">>=
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}[H]
+\includegraphics[width=\maxwidth]{figure/multi-k-1} \caption[Allocation scores (AS) across different resource constraints ($K$) for 10 models that made forecasts on 2021-12-20]{Allocation scores (AS) across different resource constraints ($K$) for 10 models that made forecasts on 2021-12-20. Panel A shows, for each model, the AS for values of $K$ between 200 and 60,000 at increments of 200. The AS show a sharp peak just under 20,000, near the eventually observed number of hospitalizations. Two possible weighting functions for the Integrated Allocation Score (IAS) are shown. The first (blue shaded area) computes weights proportional to a normal distribution centered at 15,000 with a standard deviation of 3,000, and truncated to be between 5,000 and 25,000. The second (orange shaded area) uses a uniform weight for all possible values of $K$. Note that the AS used in earlier sections of the application uses the single fixed value of $K=15,000$.  Panel B shows how the two versions of the IAS ($y$-axis) correlate with the AS at $K=15,000$ ($x$-axis). Every point represents the AS at 15,000 and a version of the IAS for one model. As we would expect, the IAS centered at 15,000 (circles) is more closely correlated with the AS at 15,000 than is the uniform IAS (triangles).}\label{fig:multi-k}
+\end{figure}
 
-  
-ias_to_plot <- left_join(ias, as) |>
-  pivot_longer(cols = c(IAS, IAS_wt), names_to = "IAS_type", values_to = "IAS") |>
-  mutate(IAS_type = ifelse(IAS_type=="IAS", "uniform", "centered at 15,000"))
-
-model_palette_ias <- model_palette[unique(ias_to_plot$model)]
-model_linetypes <- setNames(rep(
-  c("solid",
-    "dashed",
-    "dotted",
-    "dotdash",
-    "longdash", "twodash"),
-  length.out = length(model_palette_ias)
-), names(model_palette_ias))
-model_linetypes["per-capita"] <- "solid"
-
-p1 <- ggplot(ias_to_plot, aes(x=AS, y=IAS, group=IAS_type, color=model, shape=IAS_type)) +
-  geom_point() +
-  geom_smooth(aes(color = IAS_type), method="lm", se=FALSE, linetype=2) +
-  scale_color_manual(guide = "none", values = c(model_palette, "uniform" = "#fdc086", "centered at 15,000" = "#386cb0")) +
-  #scale_color_manual(name = "Integrated allocation score weighting", values = c("#386cb0", "#fdc086")) +
-  scale_shape_manual(name = "Integrated allocation score weighting", values = c(1, 2)) +
-  geom_abline(slope=1, intercept=0, color="gray") +
-  xlab(expression(paste('Allocation score at ', italic('K'), ' = 15,000'))) +
-  ylab("Integrated allocation score") +
-  theme(legend.position = c(0.03,.95), legend.justification = c(0,1),
-        legend.background=element_rect(fill = alpha("white", 0.2)))
-
-p3 <- slim_alloscore_2021.12.20 |>
-  group_by(model, K) |>
-  summarize(`Allocation score` = sum(components)) |>
-  mutate(model = factor(model, levels = rev(ias$model))) |>
-  ggplot(aes(x=K)) +
-  geom_line(aes(y=`Allocation score`, color=model, linetype = model, 
-                linewidth = model)) +
-  geom_area(data = kprobs, aes(x = K, y=200000*weight), fill = "#386cb0", alpha = .3) +	
-  geom_area(aes(y=200000/length(unique(slim_alloscore_2021.12.20$K))), fill="#fdc086", alpha = .3) +
-  xlab(expression(paste(italic('K')))) +
-  scale_color_manual(values = model_palette) +
-  scale_linetype_manual(values = model_linetypes) +
-  scale_linewidth_manual(values = model_linewidths) +
-  theme(legend.position = "none", legend.title = element_blank()) 
-
-p3_leg <- p3 + theme(legend.position = "bottom", legend.title = element_blank()) 
-
-leg3 <- cowplot::get_legend(p3_leg)
-
-cowplot::plot_grid(
-  cowplot::plot_grid(
-    p3,p1,
-    ncol = 2,
-    align = "h",
-    labels = "AUTO",
-    hjust = -2
-  ),
-  leg3,
-  ncol = 1,
-  rel_heights = c(1, 0.3)
-)
-@
+\end{knitrout}
 
 \section{Discussion}
 \label{sec:discussion}
@@ -1122,22 +1178,30 @@ rules such as the LS, CRPS, and WIS. Often models are ranked according to such a
 underlying decision problem from which the score might be derivable as a Bayes scoring rule or be otherwise motivated. 
 We argue that the value of collaborative forecasting efforts, such as the COVID-19 Forecasting Hub, could be enhanced by
 including evaluations of forecasts with
-scoring rules that directly consider the success of forecasts in supporting specific decisions. The allocation score was developed for this purpose. The AS is expressed in units that are directly relevant to decisions, which helps not only with ranking forecasts in the context of a specific action, but also allows decision-makers to contextualize the magnitude of differences between forecast scores.  For example, it may be the case that differences in AS are small relative to the amount of available resources or the accuracy with which planned resource allocations 
+scoring rules that directly consider the success of forecasts in supporting specific \DIFdelbegin \DIFdel{public health decisions. As evidence for this possibility, we }\DIFdelend \DIFaddbegin \DIFadd{decisions. The allocation score was developed for this purpose. The AS is expressed in units that are directly relevant to decisions, which helps not only with ranking forecasts in the context of a specific action, but also allows decision-makers to contextualize the magnitude of differences between forecast scores.  For example, it may be the case that differences in AS are small relative to the amount of available resources or the accuracy with which planned resource allocations 
 can be executed.
 The benefits of the approach to forecast evaluation discussed here generalize beyond public health, to any application of probability forecasts for decision-making, such as economics, where the monetary consequences of using a forecast
-can be clearly juxtaposed with standard accuracy measures of the forecast \citep{bannigidadmath2016stock, zhang2019forecasting}, resource allocation in urban planning \citep{burnett2014urban, liang2013resource}, or sustainability initiatives such as water and energy allocation \citep{syme1999defining, gebre2021multi, colett2016using}.
+can be clearly juxtaposed with standard accuracy measures of the forecast \mbox{%DIFAUXCMD
+\citep{bannigidadmath2016stock, zhang2019forecasting}}\hskip0pt%DIFAUXCMD
+, resource allocation in urban planning \mbox{%DIFAUXCMD
+\citep{burnett2014urban, liang2013resource}}\hskip0pt%DIFAUXCMD
+, or sustainability initiatives such as water and energy allocation \mbox{%DIFAUXCMD
+\citep{syme1999defining, gebre2021multi, colett2016using}}\hskip0pt%DIFAUXCMD
+.
+}
 
-We have demonstrated how tying forecast evaluation to a specific decision problem (e.g., via the allocation
+\DIFadd{We }\DIFaddend have demonstrated how tying forecast evaluation to a specific decision problem (e.g., via the allocation
 score) can yield model rankings that differ substantively from those based a current standard measure of forecast
 accuracy, the WIS, which does not refer to any decision problem that has been clearly connected to outbreak response.
-This result aligns with findings in other fields \citep{leitch1991economicForecastEval,
+This result aligns with findings in other fields \DIFdelbegin \DIFdel{, especially those where the monetary consequences of using a forecast
+can be clearly juxtaposed with standard accuracy measures of the forecast }\DIFdelend \citep{leitch1991economicForecastEval,
 murphy1993whatisagoodforecast, cenesizoglu2012returnPredictionEconValue}. Additionally, we show that an existing
 ensemble forecast approach was the only method to outperform (in terms of this new evaluation method) two benchmark
 allocation approaches in a hypothetical application, suggesting that there is room for innovation of current
 epidemiological modeling techniques that might be spurred on by a reorientation of the field toward practical decision
 problems. For example, in order to surpass benchmark allocation scores, forecasters need to devote effort to capturing
 the \emph{relative} magnitude of future resource need across different locations.  Success at this task is not, however,
-directly rewarded by the WIS (see the discussion at the end of Section \ref{sec:methods.related}). 
+directly rewarded by the WIS \DIFaddbegin \DIFadd{(see the discussion at the end of Section \ref{sec:methods.related})}\DIFaddend . 
 
 Our example application of the AS refers to a hypothetical and unspecified resource need that is assumed to pair with
 our forecasted outcome (new hospital admissions) in a manner that might appear overly simplistic and artificially
@@ -1145,7 +1209,7 @@ direct.  We are optimistic, however, that by augmenting this scheme with a proba
 need and more detailed domain knowledge, it could be meaningfully aligned with a more concrete decision problem such as
 the allocation of ventilators during a respiratory viral pandemic.  This problem was explored from a stochastic
 optimization perspective (not from a forecast evaluation perspective) in \cite{huang_stockpiling_2017} and provided an
-initial motivation for this project. We see this as a promising focus for further development of the AS framework since it
+initial motivation for this project. We see \DIFdelbegin \DIFdel{it as }\DIFdelend \DIFaddbegin \DIFadd{this as a }\DIFaddend promising focus for further development of the AS framework since it
 (a) has been identified as a setting in which allocation decisions are made during respiratory disease outbreaks, (b) involves
 logistical considerations depending on geographical and population scales, and (c) would likely imply a central role for
 hospitalization data. But again, additional modeling and data synthesis would be required since not everyone who is
@@ -1168,35 +1232,46 @@ evaluated with scoring rules for which they were not elicited or via parameters 
 of which are done in our application example.  We consider these issues briefly in appendices
 \ref{sec:a:distfromq} and \ref{sec:a:propriety_of_parametric_approximation}.)
 
-There are three important limitations to the current work which we noted when introducing the AS in 
+\hypertarget{newdiscussion}{There} are \DIFdelbegin \DIFdel{several }\DIFdelend \DIFaddbegin \DIFadd{three }\DIFaddend important limitations to the current work \DIFdelbegin \DIFdel{. The allocation score we developed here }\DIFdelend \DIFaddbegin \DIFadd{which we noted when introducing the AS in 
 Section \ref{sec:methods.detailed.specific_allocation}.  We view these issues as promising avenues for 
 future investigation.
+}
 
-First, the terms in our loss function  
+\DIFadd{First, the terms in our loss function  
 \eqref{eqn:loss_fn} do not depend on geographic or demographic covariates.  Policy makers may, however, wish to incorporate 
 differences in the impact of unmet need across populations into a forecast evaluation methodology.  For example, in the state-level forecasting context of Section \ref{sec:application}, it might be
 appropriate to adjust the loss so that the costs of unmet need are larger in locations with greater population vulnerability.
-Along these lines, it should also be mentioned that the AS does not directly
-take into consideration the fairness or equity of allocations, or more broadly, individual and group
+Along these lines, it should also be mentioned that the AS }\DIFaddend does not directly
+\DIFdelbegin \DIFdel{account for important considerations such as }\DIFdelend \DIFaddbegin \DIFadd{take into consideration the }\DIFaddend fairness or equity of allocations, or more broadly, individual and group
 preference relations that are difficult or even impossible to encode into a loss or utility function.  Ambiguity aversion
 (in the sense of \cite{ellsberg1961risk}), for example, seems especially relevant to the use of forecasts in outbreak
 response, where there can be immense social and political pressure on public health officials to maintain a transparent
 base of evidence for their policy choices and recommendations. 
+\DIFdelbegin \DIFdel{The proposed framework also does not attempt to capture
+the broader context of decision making. For example, in practice it may be possible to increase the resource constraint
+$K$ by shifting funding from other }\DIFdelend \DIFaddbegin 
 
-Secondly, our formulation of the AS does not take into
-consideration the temporal inter-dependencies between sequential decisions that public health decision makers are likely to face as an epidemic unfolds. Such dependencies could arise from time-varying inputs such as resource availability or the current effective allocations of resources. The sequential decision problem could also be combined with others allowing constraints for different resources to be modified by time-varying funding shifts between various disease mitigation measures.  Incorporating these possibilities into an AS framework would likely require technical developments involving either dynamic programming 
-(see e.g., \cite{bertsekas2012dynamic}) or a scenario-based approach (see e.g., \cite{pflug2014multistage}).
+\hypertarget{sequential}{}\DIFadd{Secondly, our formulation of the AS does not take into
+consideration the temporal inter-dependencies between sequential decisions that public health decision makers are likely to face as an epidemic unfolds. Such dependencies could arise from time-varying inputs such as resource availability or the current effective allocations of resources. The sequential decision problem could also be combined with others allowing constraints for different resources to be modified by time-varying funding shifts between various }\DIFaddend disease mitigation measures.  \DIFdelbegin \DIFdel{Finally, }\DIFdelend \DIFaddbegin \DIFadd{Incorporating these possibilities into an AS framework would likely require technical developments involving either dynamic programming 
+(see e.g., \mbox{%DIFAUXCMD
+\cite{bertsekas2012dynamic}}\hskip0pt%DIFAUXCMD
+) or a scenario-based approach (see e.g., \mbox{%DIFAUXCMD
+\cite{pflug2014multistage}}\hskip0pt%DIFAUXCMD
+).
+}
 
-Thirdly, we emphasize that we opted at this stage of
+\DIFadd{Thirdly, }\DIFaddend we emphasize that we opted at this stage of
 development to explicitly rule out situations where a successful
 epidemiological forecast could lead to policy decisions that change the distribution of the predicted outcome $Y$. 
-For example, this excludes the important problem of allocation of doses of a preventative vaccine.
-We have not developed a formal approach to forecast evaluation using scores given by \eqref{eqn:AS-orc} when both
+\DIFdelbegin \DIFdel{Our
+framework would need considerable enhancements before being applicable }\DIFdelend \DIFaddbegin \DIFadd{For example, this excludes the important problem of allocation of doses of a preventative vaccine.
+We have not developed a formal approach }\DIFaddend to forecast evaluation \DIFdelbegin \DIFdel{beyond horizons for which
+causal feedback can be neglected}\DIFdelend \DIFaddbegin \DIFadd{using scores given by \eqref{eqn:AS-orc} when both
 disease burden and unmet need are considered as endogenous variables. Such an approach would require some form of
 accounting for the causal effect of the allocation decision on observed measures of disease burden, e.g. using the available observed data to estimate the (counterfactual)
-number of cases or deaths averted from one or another allocation strategy.
+number of cases or deaths averted from one or another allocation strategy}\DIFaddend .
 
-Another opportunity for further investigation is to more carefully evaluate whether forecasts add value to 
+\DIFdelbegin \DIFdel{An }\DIFdelend \DIFaddbegin \DIFadd{Another }\DIFaddend opportunity for further investigation is to more carefully evaluate whether forecasts add value to 
 standard  procedures already in place for making public health decisions. In the context of allocations,
 such a procedure might extrapolate need from current observed need and population levels (similarly to the two benchmark
 approaches presented above), with adjustments based on other political or real-world considerations. For example, in
@@ -1210,7 +1285,7 @@ forecast to inform a specific decision.
 In conclusion, we argue that when possible, the way modelers and policymakers view and evaluate forecasts should more explicitly depend on
 the specific decision-making context. Defaulting to standard forecast evaluation metrics can mask the utility (or
 disutility) of certain forecasts, or lead to forecasts being used in decision making contexts very different from those
-for which they are able to offer useful guidance. New collaborative work between decision-makers and modeling teams is
+for which they are able to offer useful guidance. \hypertarget{lastpara}{New} collaborative work between \DIFdelbegin \DIFdel{public health officials }\DIFdelend \DIFaddbegin \DIFadd{decision-makers }\DIFaddend and modeling teams is
 needed to assess the value and relevance of the initial findings presented here, including real-time pilot studies or
 simulation exercises that could be used to inform further development of new or alternative scoring metrics. We see this
 work as an initial overture for what we hope will grow to be a large, collaborative body of work more closely coupling
@@ -1311,9 +1386,11 @@ Bayes act $x^{F,K} = (x_1^{F,K},\ldots,x_N^{F,K})$ for a forecast $F$ and resour
 quantiles of the marginal forecast distributions $F_i$ at a single probability level $\tau^{F,K}$, that is, $x_i^{F,K} =
 q_{F_i,\tau^{F,K}}$. An immediate consequence used in the examples in Section \ref {sec:methods.overview} is that if
 $F_i = \mathrm{Exp}(1/\sigma_i)$ for all $i$, then the Bayes act is proportional to $(\sigma_1,\ldots,\sigma_N)$, since
-\begin{align}
-q_{\mathrm{Exp}(1/\sigma),\tau} = -\sigma \log(1-\tau). \label{eqn:exp-quantile}
-\end{align}
+\DIFdelbegin \DIFdel{$q_{\mathrm{Exp}(1/\sigma),\tau} = -\sigma \log(1-\tau)$.
+}\DIFdelend \DIFaddbegin \begin{align}
+\DIFadd{q_{\mathrm{Exp}(1/\sigma),\tau} = -\sigma \log(1-\tau). \label{eqn:exp-quantile}
+}\end{align}
+\DIFaddend 
 
 We begin by noting that a key feature of each term of the loss function $s_A(x, Y)$ defining the AP is the presence of 
 a \emph{shortage}: an amount $\max\{0,y-x\}$ by which a resource demand $y$ exceeds a supply decision variable $x$,
@@ -1396,13 +1473,20 @@ To compute an allocation score $S_A(F,y;K) := s_A(x^{F,K},y)$, we require numeri
 AP \eqref{eqn:AP-long} --- that is, we must find the specific resource allocations for each location that are determined by
 the forecast $F$ under the resource constraint $K$. Assuming we have reliable means of calculating quantiles
 $q_{\alpha,F_i}$ of the marginal forecasts $F_i$, these allocations are given by $q_{\tau^{\star},F_i}$ where
-$\tau^{\star}$ solves the equation \eqref{eqn:quantiles-sum-to-K}. This equation is not analytically tractable in general, but because the left-hand side of \eqref{eqn:quantiles-sum-to-K} is non-decreasing in $\tau$, it is straightforward to find arbitrarily accurate approximations to a solution using an iterative bisection method.
+$\tau^{\star}$ solves the equation \eqref{eqn:quantiles-sum-to-K}. \DIFdelbegin \DIFdel{However, this }\DIFdelend \DIFaddbegin \DIFadd{This }\DIFaddend equation is not analytically tractable \DIFdelbegin \DIFdel{and we must resort to a numerical method for finding an approximation $\tilde{\tau}$ of $\tau^{\star}$}\DIFdelend \DIFaddbegin \DIFadd{in general, but because the left-hand side of \eqref{eqn:quantiles-sum-to-K} is non-decreasing in $\tau$, it is straightforward to find arbitrarily accurate approximations to a solution using an iterative bisection method}\DIFaddend .
 
 We have
-implemented such a method along with the resulting score computations in the R package \verb`alloscore`
-\citep{gerding-alloscore} which provided all allocation score values used in the analysis of section
+implemented \DIFdelbegin \DIFdel{an iterative bisection method that makes use of the fact that $\sum_{i=1}^N q_{\tau,F_i}$ is an
+increasing function of $\tau$.
+The algorithm }\DIFdelend \DIFaddbegin \DIFadd{such a method along with the resulting score computations in the R package }{\color{blue}%DIFAUXCMD
+\verb`alloscore`
+%
+}%DIFAUXCMD
+\DIFadd{\mbox{%DIFAUXCMD
+\citep{gerding-alloscore} }\hskip0pt%DIFAUXCMD
+which provided all allocation score values used in the analysis of section
 \ref{sec:application}.
-The procedure begins with an initial search interval $[\tau_{L,1}, \tau_{U,1}]$ (such as
+The procedure }\DIFaddend begins with an initial search interval $[\tau_{L,1}, \tau_{U,1}]$ (such as
 $[0,\max_{i}F_i(K)]$) that clearly contains the solution $\tau^{\star}$. At each step $j$ of the algorithm, we evaluate
 the total allocation $\sum_{i=1}^N q_{\tau_{M,j},F_i}$ at the midpoint of the search interval,
 $\tau_{M,j} = \frac{1}{2}(\tau_{L,j} + \tau_{U,j})$ and continue the search on the narrowed sub-interval
@@ -1415,73 +1499,30 @@ $\tau_{M,j} = \frac{1}{2}(\tau_{L,j} + \tau_{U,j})$ and continue the search on t
 \end{align}
 This search continues until $\tau_{U,j+1} < (1+\varepsilon)\tau_{L,j+1}$ 
 for a suitably small $\varepsilon>0$. 
+\DIFdelbegin \DIFdel{We have
+implemented this procedure along with the resulting score computations in the R package }%
+{\color{red}%DIFAUXCMD
+\verb`alloscore`
+%DIFAUXCMD
+}%DIFAUXCMD
+%DIFDELCMD < \verb`alloscore`
+%DIFDELCMD < %%%
+\DIFdel{\mbox{%DIFAUXCMD
+\citep{gerding-alloscore} }\hskip0pt%DIFAUXCMD
+which provided all allocation score values used in the analysis of section
+\ref{sec:application}. }\DIFdelend 
 
-Figure \ref{fig:bisection} illustrates this bisection method in the context of the examples of Section \ref{sec:methods.overview}, where it quickly finds close approximations to the analytic solutions $\tau^{\star} = 1-e^{-1}, 1-e^{-2}$ (for $K= 5,10$ respectively) which, in this case, are available (cf. \eqref{eqn:exp-quantile}).
+\DIFaddbegin \DIFadd{Figure \ref{fig:bisection} illustrates this bisection method in the context of the examples of Section \ref{sec:methods.overview}, where it quickly finds close approximations to the analytic solutions $\tau^{\star} = 1-e^{-1}, 1-e^{-2}$ (for $K= 5,10$ respectively) which, in this case, are available (cf. \eqref{eqn:exp-quantile}).
+}
 
-<<bisection, fig.height=4, fig.width = 8, fig.pos="H", fig.cap = "Illustrations of bisection method for the examples of Section \\ref{sec:methods.overview}. In each plot the thinner black curves are the quantile functions of the exponential forecasts for Location 1, with $\\sigma_1=1$ (lower), and Location 2, with $\\sigma_2=4$ (upper), while the thicker black curve gives the sum of these quantiles, which must meet the resource constraints of $K = 5$ on the left and $K=10$ on the right. The red segments show the iterates $\\tau_{M,j}$ and their associated total resource demands as given by the function \\texttt{allocate} from the package \\texttt{alloscore} applied to these examples and using an initial search interval $[0,1]$. (The $\\tau_{M,j}$ are in this case just sums of terms $\\pm 2^{-j}$.) The horizontal dashed lines show the resulting allocations (cf. Figure \\ref{fig:exp_alloc_example} ).">>=
-expexamp <- tibble(
-  target_names = LETTERS[1:2],
-  dist = "exp",
-  rate = c(1,.25),
-) %>% add_pdqr_funs(types = c("p", "d", "q"))
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}[H]
+\includegraphics[width=\maxwidth]{figure/bisection-1} \caption{\DIFaddFL{Illustrations of bisection method for the examples of Section \ref{sec:methods.overview}. In each plot the thinner black curves are the quantile functions of the exponential forecasts for Location 1, with $\sigma_1=1$ (lower), and Location 2, with $\sigma_2=4$ (upper), while the thicker black curve gives the sum of these quantiles, which must meet the resource constraints of $K = 5$ on the left and $K=10$ on the right. The red segments show the iterates $\tau_{M,j}$ and their associated total resource demands as given by the function }\texttt{\DIFaddFL{allocate}} \DIFaddFL{from the package }\texttt{\DIFaddFL{alloscore}} \DIFaddFL{applied to these examples and using an initial search interval $[0,1]$. (The $\tau_{M,j}$ are in this case just sums of terms $\pm 2^{-j}$.) The horizontal dashed lines show the resulting allocations (cf. Figure \ref{fig:exp_alloc_example} ).}}\label{fig:bisection}
+\end{figure}
 
-alloc <- allocate(df = expexamp, K = c(5,10))
+\end{knitrout}
 
-q1 <- expexamp$Q[[1]]
-q2 <- expexamp$Q[[2]]
-q_sum <- function(tau) q1(tau) + q2(tau)
-iters5 <- tibble(taus = 1-alloc$lam_seq[[1]], qtot = q_sum(taus), ind = seq_along(alloc$lam_seq[[1]]))
-iters10 <- tibble(taus = 1-alloc$lam_seq[[2]], qtot = q_sum(taus), ind = seq_along(alloc$lam_seq[[2]]))
-
-p <- ggplot() +
-  geom_function(fun = q1, n=1000) +
-  geom_function(fun = q2, n=1000) +
-  geom_function(fun = q_sum, n=1000, linewidth = 1) +
-  labs(
-    x = expression(tau),
-    y = expression(paste(italic(q[tau * "," * F[1]]),
-                         ", ", 
-                         italic(q[tau * "," * F[2]]),
-                         "  and  ", 
-                         italic(q[tau * "," * F[1]] + q[tau * "," * F[2]])))) +
-  theme(panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.ticks.length.x = unit(.25, "cm"))
-
-p5 <- p + geom_hline(aes(yintercept = 5)) +
-  geom_hline(aes(yintercept = c(1,4)), linetype = 2) +
-  geom_segment(data = iters5, aes(x=taus, xend = taus, y=0, yend = qtot, color = ind), alpha = .5) +
-  scale_color_viridis_c("Iteration\n index", end = 0.75, direction=-1, limits = c(1, 18), option="B") +
-  scale_x_continuous(limits = c(.45,1), expand = c(0,0), 
-                     breaks = c(.5,.6,0.632,.7,.8,.9,1),
-                     labels = c("0.5","0.6",expression(italic(atop(" ", 1 - e^{-1} %~~% 0.632))),
-                                "0.7","0.8","0.9","1")) +
-  scale_y_continuous(limits = c(0,12), breaks = c(0,1,4,5,10,15), expand = c(0,0)) +
-  theme(legend.position = "none")
-
-p10 <- p + geom_hline(aes(yintercept = 10)) +
-  geom_hline(aes(yintercept = c(2,8)), linetype = 2) +
-  geom_segment(data = iters10, aes(x=taus, xend = taus, y=0, yend = qtot, color = ind), alpha = .5) +
-  scale_color_viridis_c("Iteration\nindex", end = 0.75, direction=-1, limits = c(1, 18), option="B") +
-  scale_x_continuous(limits = c(.45,1), expand = c(0,0), 
-                     breaks = c(.5,.6,.7,.8,0.865,.9,1),
-                     labels = c("0.5","0.6",
-                                "0.7","0.8", 
-                                expression(italic(atop(" ", 1 - e^{-2} %~~% 0.865)), "0.9", "1"))) +
-  scale_y_continuous(limits = c(0,12), breaks = c(0,2,5,8,10,15), expand = c(0,0), 
-                     name = "  ")
-
-legend <- cowplot::get_legend(p10 + theme(legend.box.margin = margin(0, 0, 0, 12)))
-p10 <- p10 + theme(legend.position = "none")
-
-cowplot::plot_grid(
-  cowplot::plot_grid(p5, p10, align = "h"),
-  legend,
-  rel_widths = c(3, 0.4)
-)
-@
-
-Subtleties can arise when the forecast densities $f_i$ vanish or are very small, in which case quantiles are non-unique
+\DIFaddend Subtleties can arise when the forecast densities $f_i$ vanish or are very small, in which case quantiles are non-unique
 or highly variable near a probability level, leading to ambiguity or numerical instabilities{} in the evaluation of
 $\sum_{i=1}^N q_{\tau,F_i}$. Additionally, if point masses are present in any of the $F_i$,
 \eqref{eqn:quantiles-sum-to-K} will not have a unique solution for some discrete set of constraint levels $K$. We have
@@ -1635,7 +1676,7 @@ Since $S_R$ is defined as the Bayes scoring rule for the forecaster's loss \eqre
 with $G_{\theta^{\star}(F)}$, the distribution in $\mathcal{P}_{\mathrm{dfq}}$ given by the
 optimal submission parameters $\theta^{\star}(F)$ for the forecaster with predictive distribution $F$.
 In general, $G^q(F)$ and $G^\star(F)$ will be different distributions:  matching $F$ at specific quantiles
-does not require $G^q(F)$ to match $F$ at the quantiles for $\tau^{F,K}$ (cf. \eqref{eqn:quantiles-sum-to-K}),
+does not require $G^q(F)$ to match $F$ at the quantiles for $\tau^{F,K}$ (\DIFdelbegin \DIFdel{c.f}\DIFdelend \DIFaddbegin \DIFadd{cf}\DIFaddend . \eqref{eqn:quantiles-sum-to-K}),
 which would be necessary for it to share $x^F$ as an optimal allocation.
 
 When an analyst attempts a post hoc computation of the allocation score using $G^q(F)$ (implicitly assuming that $G^q(F)
@@ -1653,6 +1694,7 @@ tails (such as for a lognormal distribution), but normal distributions are used 
 optimal allocations under the distribution $F$, leading to a strict inequality. This demonstrates that $\tilde{S}$ is
 improper.
 
+\hypertarget{refs}{}
 \bibliography{allocation}
 
 \end{document}

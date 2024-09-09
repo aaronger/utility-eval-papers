@@ -1,6 +1,8 @@
 \documentclass{article}
 \usepackage[]{graphicx}
 \usepackage[]{xcolor}
+\usepackage{xr}
+\externaldocument{diff.tex}
 %DIF LATEXDIFF DIFFERENCE FILE
 %DIF DEL manuscript_submitted.tex   Mon Aug  5 00:01:35 2024
 %DIF ADD manuscript.tex             Fri Aug 16 14:45:38 2024
@@ -88,13 +90,6 @@
 \def\bwr#1{{\color{violet}\textbf{BWR:[#1]}}}
 \def\ngr#1{{\color{blue}\textbf{NGR:[#1]}}}
 
-\usepackage{natbib}
-%DIF 87c87
-%DIF < \bibliographystyle{unsrtnat-abbr}
-%DIF -------
-\bibliographystyle{rss-abbr} %DIF > 
-%DIF -------
-
 \usepackage[skins,breakable]{tcolorbox}
 \newtcolorbox[auto counter, number within=section]{mybox}[2][]{%
   enhanced,
@@ -105,8 +100,7 @@
   parbox=false,         % Allows paragraphs to be separated
   fonttitle=\bfseries, % Font used for the title
   title={#2}, % Title of the box
-  label={Box~\thetcbcounter}, % Optional label for the box
-  #1, % Additional options passed as the first argument
+  label={Box~\thetcbcounter}, % Optional label for the box #1, % Additional options passed as the first argument
   breakable = true
 }
 
@@ -130,6 +124,8 @@
 \makeatletter
 \renewcommand{\tagform@}[1]{#1\hspace{-0.15em}} % Removes parentheses from tags
 \makeatother
+\usepackage{natbib}
+\bibliographystyle{rss-abbr} %
 \author{}
 % \author{Aaron Gerding\thanks{Corresponding Author: \texttt{agerding@umass.edu}}}
 % \author{Nicholas G. Reich}
@@ -138,89 +134,89 @@
 % \affil{Department of Biostatistics and Epidemiology, School of Public Health and Health
 % Sciences, University of Massachusetts at Amherst}
 
-\title{Response to reviewer comments on \\ manuscript ID JRSSA-Mar-2024-0080}
-\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
-%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF
-%DIF UNDERLINE PREAMBLE %DIF PREAMBLE
-\RequirePackage[normalem]{ulem} %DIF PREAMBLE
-\RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1} %DIF PREAMBLE
-\providecommand{\DIFaddtex}[1]{{\protect\color{blue}\uwave{#1}}} %DIF PREAMBLE
-\providecommand{\DIFdeltex}[1]{{\protect\color{red}\sout{#1}}}                      %DIF PREAMBLE
-%DIF SAFE PREAMBLE %DIF PREAMBLE
-\providecommand{\DIFaddbegin}{} %DIF PREAMBLE
-\providecommand{\DIFaddend}{} %DIF PREAMBLE
-\providecommand{\DIFdelbegin}{} %DIF PREAMBLE
-\providecommand{\DIFdelend}{} %DIF PREAMBLE
-\providecommand{\DIFmodbegin}{} %DIF PREAMBLE
-\providecommand{\DIFmodend}{} %DIF PREAMBLE
-%DIF FLOATSAFE PREAMBLE %DIF PREAMBLE
-\providecommand{\DIFaddFL}[1]{\DIFadd{#1}} %DIF PREAMBLE
-\providecommand{\DIFdelFL}[1]{\DIFdel{#1}} %DIF PREAMBLE
-\providecommand{\DIFaddbeginFL}{} %DIF PREAMBLE
-\providecommand{\DIFaddendFL}{} %DIF PREAMBLE
-\providecommand{\DIFdelbeginFL}{} %DIF PREAMBLE
-\providecommand{\DIFdelendFL}{} %DIF PREAMBLE
-%DIF HYPERREF PREAMBLE %DIF PREAMBLE
-\providecommand{\DIFadd}[1]{\texorpdfstring{\DIFaddtex{#1}}{#1}} %DIF PREAMBLE
-\providecommand{\DIFdel}[1]{\texorpdfstring{\DIFdeltex{#1}}{}} %DIF PREAMBLE
-\newcommand{\DIFscaledelfig}{0.5}
-%DIF HIGHLIGHTGRAPHICS PREAMBLE %DIF PREAMBLE
-\RequirePackage{settobox} %DIF PREAMBLE
-\RequirePackage{letltxmacro} %DIF PREAMBLE
-\newsavebox{\DIFdelgraphicsbox} %DIF PREAMBLE
-\newlength{\DIFdelgraphicswidth} %DIF PREAMBLE
-\newlength{\DIFdelgraphicsheight} %DIF PREAMBLE
-% store original definition of \includegraphics %DIF PREAMBLE
-\LetLtxMacro{\DIFOincludegraphics}{\includegraphics} %DIF PREAMBLE
-\newcommand{\DIFaddincludegraphics}[2][]{{\color{blue}\fbox{\DIFOincludegraphics[#1]{#2}}}} %DIF PREAMBLE
-\newcommand{\DIFdelincludegraphics}[2][]{% %DIF PREAMBLE
-\sbox{\DIFdelgraphicsbox}{\DIFOincludegraphics[#1]{#2}}% %DIF PREAMBLE
-\settoboxwidth{\DIFdelgraphicswidth}{\DIFdelgraphicsbox} %DIF PREAMBLE
-\settoboxtotalheight{\DIFdelgraphicsheight}{\DIFdelgraphicsbox} %DIF PREAMBLE
-\scalebox{\DIFscaledelfig}{% %DIF PREAMBLE
-\parbox[b]{\DIFdelgraphicswidth}{\usebox{\DIFdelgraphicsbox}\\[-\baselineskip] \rule{\DIFdelgraphicswidth}{0em}}\llap{\resizebox{\DIFdelgraphicswidth}{\DIFdelgraphicsheight}{% %DIF PREAMBLE
-\setlength{\unitlength}{\DIFdelgraphicswidth}% %DIF PREAMBLE
-\begin{picture}(1,1)% %DIF PREAMBLE
-\thicklines\linethickness{2pt} %DIF PREAMBLE
-{\color[rgb]{1,0,0}\put(0,0){\framebox(1,1){}}}% %DIF PREAMBLE
-{\color[rgb]{1,0,0}\put(0,0){\line( 1,1){1}}}% %DIF PREAMBLE
-{\color[rgb]{1,0,0}\put(0,1){\line(1,-1){1}}}% %DIF PREAMBLE
-\end{picture}% %DIF PREAMBLE
-}\hspace*{3pt}}} %DIF PREAMBLE
-} %DIF PREAMBLE
-\LetLtxMacro{\DIFOaddbegin}{\DIFaddbegin} %DIF PREAMBLE
-\LetLtxMacro{\DIFOaddend}{\DIFaddend} %DIF PREAMBLE
-\LetLtxMacro{\DIFOdelbegin}{\DIFdelbegin} %DIF PREAMBLE
-\LetLtxMacro{\DIFOdelend}{\DIFdelend} %DIF PREAMBLE
-\DeclareRobustCommand{\DIFaddbegin}{\DIFOaddbegin \let\includegraphics\DIFaddincludegraphics} %DIF PREAMBLE
-\DeclareRobustCommand{\DIFaddend}{\DIFOaddend \let\includegraphics\DIFOincludegraphics} %DIF PREAMBLE
-\DeclareRobustCommand{\DIFdelbegin}{\DIFOdelbegin \let\includegraphics\DIFdelincludegraphics} %DIF PREAMBLE
-\DeclareRobustCommand{\DIFdelend}{\DIFOaddend \let\includegraphics\DIFOincludegraphics} %DIF PREAMBLE
-\LetLtxMacro{\DIFOaddbeginFL}{\DIFaddbeginFL} %DIF PREAMBLE
-\LetLtxMacro{\DIFOaddendFL}{\DIFaddendFL} %DIF PREAMBLE
-\LetLtxMacro{\DIFOdelbeginFL}{\DIFdelbeginFL} %DIF PREAMBLE
-\LetLtxMacro{\DIFOdelendFL}{\DIFdelendFL} %DIF PREAMBLE
-\DeclareRobustCommand{\DIFaddbeginFL}{\DIFOaddbeginFL \let\includegraphics\DIFaddincludegraphics} %DIF PREAMBLE
-\DeclareRobustCommand{\DIFaddendFL}{\DIFOaddendFL \let\includegraphics\DIFOincludegraphics} %DIF PREAMBLE
-\DeclareRobustCommand{\DIFdelbeginFL}{\DIFOdelbeginFL \let\includegraphics\DIFdelincludegraphics} %DIF PREAMBLE
-\DeclareRobustCommand{\DIFdelendFL}{\DIFOaddendFL \let\includegraphics\DIFOincludegraphics} %DIF PREAMBLE
-%DIF COLORLISTINGS PREAMBLE %DIF PREAMBLE
-\RequirePackage{listings} %DIF PREAMBLE
-\RequirePackage{color} %DIF PREAMBLE
-\lstdefinelanguage{DIFcode}{ %DIF PREAMBLE
-%DIF DIFCODE_UNDERLINE %DIF PREAMBLE
-  moredelim=[il][\color{red}\sout]{\%DIF\ <\ }, %DIF PREAMBLE
-  moredelim=[il][\color{blue}\uwave]{\%DIF\ >\ } %DIF PREAMBLE
-} %DIF PREAMBLE
-\lstdefinestyle{DIFverbatimstyle}{ %DIF PREAMBLE
-	language=DIFcode, %DIF PREAMBLE
-	basicstyle=\ttfamily, %DIF PREAMBLE
-	columns=fullflexible, %DIF PREAMBLE
-	keepspaces=true %DIF PREAMBLE
-} %DIF PREAMBLE
-\lstnewenvironment{DIFverbatim}{\lstset{style=DIFverbatimstyle}}{} %DIF PREAMBLE
-\lstnewenvironment{DIFverbatim*}{\lstset{style=DIFverbatimstyle,showspaces=true}}{} %DIF PREAMBLE
-%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF
+\title{response to reviewer comments on \\ manuscript id jrssa-mar-2024-0080}
+\iffileexists{upquote.sty}{\usepackage{upquote}}{}
+%dif preamble extension added by latexdiff
+%dif underline preamble %dif preamble
+\requirepackage[normalem]{ulem} %dif preamble
+\requirepackage{color}\definecolor{red}{rgb}{1,0,0}\definecolor{blue}{rgb}{0,0,1} %dif preamble
+\providecommand{\difaddtex}[1]{{\protect\color{blue}\uwave{#1}}} %dif preamble
+\providecommand{\difdeltex}[1]{{\protect\color{red}\sout{#1}}}                      %dif preamble
+%dif safe preamble %dif preamble
+\providecommand{\difaddbegin}{} %dif preamble
+\providecommand{\difaddend}{} %dif preamble
+\providecommand{\difdelbegin}{} %dif preamble
+\providecommand{\difdelend}{} %dif preamble
+\providecommand{\difmodbegin}{} %dif preamble
+\providecommand{\difmodend}{} %dif preamble
+%dif floatsafe preamble %dif preamble
+\providecommand{\difaddfl}[1]{\difadd{#1}} %dif preamble
+\providecommand{\difdelfl}[1]{\difdel{#1}} %dif preamble
+\providecommand{\difaddbeginfl}{} %dif preamble
+\providecommand{\difaddendfl}{} %dif preamble
+\providecommand{\difdelbeginfl}{} %dif preamble
+\providecommand{\difdelendfl}{} %dif preamble
+%dif hyperref preamble %dif preamble
+\providecommand{\difadd}[1]{\texorpdfstring{\difaddtex{#1}}{#1}} %dif preamble
+\providecommand{\difdel}[1]{\texorpdfstring{\difdeltex{#1}}{}} %dif preamble
+\newcommand{\difscaledelfig}{0.5}
+%dif highlightgraphics preamble %dif preamble
+\requirepackage{settobox} %dif preamble
+\requirepackage{letltxmacro} %dif preamble
+\newsavebox{\difdelgraphicsbox} %dif preamble
+\newlength{\difdelgraphicswidth} %dif preamble
+\newlength{\difdelgraphicsheight} %dif preamble
+% store original definition of \includegraphics %dif preamble
+\letltxmacro{\difoincludegraphics}{\includegraphics} %dif preamble
+\newcommand{\difaddincludegraphics}[2][]{{\color{blue}\fbox{\difoincludegraphics[#1]{#2}}}} %dif preamble
+\newcommand{\difdelincludegraphics}[2][]{% %dif preamble
+\sbox{\difdelgraphicsbox}{\difoincludegraphics[#1]{#2}}% %dif preamble
+\settoboxwidth{\difdelgraphicswidth}{\difdelgraphicsbox} %dif preamble
+\settoboxtotalheight{\difdelgraphicsheight}{\difdelgraphicsbox} %dif preamble
+\scalebox{\difscaledelfig}{% %dif preamble
+\parbox[b]{\difdelgraphicswidth}{\usebox{\difdelgraphicsbox}\\[-\baselineskip] \rule{\difdelgraphicswidth}{0em}}\llap{\resizebox{\difdelgraphicswidth}{\difdelgraphicsheight}{% %dif preamble
+\setlength{\unitlength}{\difdelgraphicswidth}% %dif preamble
+\begin{picture}(1,1)% %dif preamble
+\thicklines\linethickness{2pt} %dif preamble
+{\color[rgb]{1,0,0}\put(0,0){\framebox(1,1){}}}% %dif preamble
+{\color[rgb]{1,0,0}\put(0,0){\line( 1,1){1}}}% %dif preamble
+{\color[rgb]{1,0,0}\put(0,1){\line(1,-1){1}}}% %dif preamble
+\end{picture}% %dif preamble
+}\hspace*{3pt}}} %dif preamble
+} %dif preamble
+\letltxmacro{\difoaddbegin}{\difaddbegin} %dif preamble
+\letltxmacro{\difoaddend}{\difaddend} %dif preamble
+\letltxmacro{\difodelbegin}{\difdelbegin} %dif preamble
+\letltxmacro{\difodelend}{\difdelend} %dif preamble
+\declarerobustcommand{\difaddbegin}{\difoaddbegin \let\includegraphics\difaddincludegraphics} %dif preamble
+\declarerobustcommand{\difaddend}{\difoaddend \let\includegraphics\difoincludegraphics} %dif preamble
+\declarerobustcommand{\difdelbegin}{\difodelbegin \let\includegraphics\difdelincludegraphics} %dif preamble
+\declarerobustcommand{\difdelend}{\difoaddend \let\includegraphics\difoincludegraphics} %dif preamble
+\letltxmacro{\difoaddbeginfl}{\difaddbeginfl} %dif preamble
+\letltxmacro{\difoaddendfl}{\difaddendfl} %dif preamble
+\letltxmacro{\difodelbeginfl}{\difdelbeginfl} %dif preamble
+\letltxmacro{\difodelendfl}{\difdelendfl} %dif preamble
+\declarerobustcommand{\difaddbeginfl}{\difoaddbeginfl \let\includegraphics\difaddincludegraphics} %dif preamble
+\declarerobustcommand{\difaddendfl}{\difoaddendfl \let\includegraphics\difoincludegraphics} %dif preamble
+\declarerobustcommand{\difdelbeginfl}{\difodelbeginfl \let\includegraphics\difdelincludegraphics} %dif preamble
+\declarerobustcommand{\difdelendfl}{\difoaddendfl \let\includegraphics\difoincludegraphics} %dif preamble
+%dif colorlistings preamble %dif preamble
+\requirepackage{listings} %dif preamble
+\requirepackage{color} %dif preamble
+\lstdefinelanguage{difcode}{ %dif preamble
+%dif difcode_underline %dif preamble
+  moredelim=[il][\color{red}\sout]{\%dif\ <\ }, %dif preamble
+  moredelim=[il][\color{blue}\uwave]{\%dif\ >\ } %dif preamble
+} %dif preamble
+\lstdefinestyle{difverbatimstyle}{ %dif preamble
+	language=difcode, %dif preamble
+	basicstyle=\ttfamily, %dif preamble
+	columns=fullflexible, %dif preamble
+	keepspaces=true %dif preamble
+} %dif preamble
+\lstnewenvironment{difverbatim}{\lstset{style=difverbatimstyle}}{} %dif preamble
+\lstnewenvironment{difverbatim*}{\lstset{style=difverbatimstyle,showspaces=true}}{} %dif preamble
+%dif end preamble extension added by latexdiff
 
 \begin{document}
 
@@ -281,9 +277,9 @@ that the AS has no immediate dependence on a forecaster's underlying beliefs reg
 joint probabilities we added this paragraph at the end of Section 2.3:
 
 \begin{mybox}{pg8-para4}
-  \DIFaddbegin \DIFadd{We also note that the AS, just as the (aggregate or mean) quantile score and WIS, depends only on the marginal distributions for each location of a multi-location forecast (see equations (5) and (18) in Section B of the appendix). It is however the case that when a forecaster modifies a single marginal forecast (holding those for other locations fixed), the aggregate WIS of their forecast will change only according to the WIS of that marginal forecast, whereas every term in the sum defining the AS (in (5)) will change as the Bayes probability level defined by (18) changes.  In this sense, the AS depends “jointly” on the marginal forecasts while the WIS does not.
-  }
-  \DIFaddend
+\DIFaddbegin \DIFadd{We also note that the AS, just as the (aggregate or mean) quantile score and WIS, depends only on the marginal distributions for each location of a multi-location forecast (see equations \eqref{eqn:AS-raw} and \eqref{eqn:quantiles-sum-to-K} in Section \ref{sec:a:bayes-quantiles} of the appendix). It is however the case that when a forecaster modifies a single marginal forecast (holding those for other locations fixed), the aggregate WIS of their forecast will change only according to the WIS of that marginal forecast, whereas every term in the sum defining the AS (in \eqref{eqn:AS-raw}) will change as the Bayes probability level defined by \eqref{eqn:quantiles-sum-to-K} changes.  In this sense, the AS depends “jointly” on the marginal forecasts while the WIS does not.
+}
+\DIFaddend 
 \end{mybox}
 
 We also renamed the section to better describe our discussion of these considerations:
@@ -727,4 +723,7 @@ literature they represent, }\DIFdelend \DIFaddbegin \DIFadd{they lack }\DIFadden
 The ability that the AS gives decision-makers to contextualize differences in forecaster scores is also now mention in the first paragraph of the
 Discussion section -- see change \textbf{pg16-para1} above.
 
+\begin{comment}
+\bibliography{allocation}
+\end{comment}
 \end{document}

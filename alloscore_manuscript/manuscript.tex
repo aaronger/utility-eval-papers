@@ -495,7 +495,7 @@ WIS or CRPS can be obtained by averaging across a range of decision making setti
 parameters, using a similar motivation that we used to obtain the IAS from the AS in section
 \ref{sec:methods.detailed.integrated_allocation} \citep{gneiting2011weightedScoringRules}.
 
-We also note that the AS, just as the (aggregate or mean) quantile score and WIS, depends only on the marginal distributions for each location of a multi-location forecast (cf. equations \eqref{eqn:AS-raw} and \eqref{eqn:quantiles-sum-to-K} in Section \ref{sec:a:bayes-quantiles} of the appendix). It is however the case that when a forecaster modifies a single marginal forecast (holding those for other locations fixed), the aggregate WIS of their forecast will change only according to the WIS of that marginal forecast, whereas every term in the sum defining the AS (in \eqref{eqn:AS-raw}) will change as the Bayes probability level defined by \eqref{eqn:quantiles-sum-to-K} changes.  In this sense, the AS depends “jointly” on the marginal forecasts while the WIS does not.
+We also note that the AS, just as the (aggregate or mean) quantile score and WIS, depends only on the marginal distributions for each location of a multi-location forecast (see equations \eqref{eqn:AS-raw} and \eqref{eqn:quantiles-sum-to-K} in Section \ref{sec:a:bayes-quantiles} of the appendix). It is however the case that when a forecaster modifies a single marginal forecast (holding those for other locations fixed), the aggregate WIS of their forecast will change only according to the WIS of that marginal forecast, whereas every term in the sum defining the AS (in \eqref{eqn:AS-raw}) will change as the Bayes probability level defined by \eqref{eqn:quantiles-sum-to-K} changes.  In this sense, the AS depends “jointly” on the marginal forecasts while the WIS does not.
 
 \section{Evaluating forecasts of COVID hospitalizations using the allocation score}
 \label{sec:application}
@@ -599,7 +599,7 @@ allocation score while the USC-SI\_kJalpha model had the most accurate forecasts
 
 
 % latex table generated in R 4.4.1 by xtable 1.8-4 package
-% Tue Aug 20 15:20:10 2024
+% Mon Sep  9 16:35:24 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrrr}
@@ -696,7 +696,7 @@ according to both metrics, although not in exactly the same order (Table \ref{ta
 assigned a MWIS.) Notably, the \texttt{JHUAPL-SLPHospEns} model ranked best on taMWIS but had only the fourth best MAS.
 
 % latex table generated in R 4.4.1 by xtable 1.8-4 package
-% Tue Aug 20 15:20:15 2024
+% Mon Sep  9 16:35:29 2024
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrr}
@@ -748,9 +748,9 @@ performed consistently well on AS but had only middling MWIS ranks.
 
 AS was computed for a range of $K$ from 200 to 60,000 at increments of 200 for forecasts made on December 20, 2020 predicting levels of
 hospitalizations on January 3, 2021 as well as for the \texttt{per-capita} allocation (Figure \ref{fig:multi-k}A). These
-calculations highlight that AS was highest at values of $K$ near the observed nationwide total hospital admissions of
+calculations highlight that AS was highest at at values of $K$ near the observed nationwide total hospital admissions of
 19,581 that day. Model ranks by AS were fairly stable across all $K$, and there appears
-to be an substantial interval around the observed value over which ranks are constant.
+to be a substantial interval around the observed value over which ranks are constant.
 
 \subsubsection{Integrated allocation score across values of K}
 \label{sec:ias_examp}
@@ -785,7 +785,9 @@ rules such as the LS, CRPS, and WIS. Often models are ranked according to such a
 underlying decision problem from which the score might be derivable as a Bayes scoring rule or be otherwise motivated. 
 We argue that the value of collaborative forecasting efforts, such as the COVID-19 Forecasting Hub, could be enhanced by
 including evaluations of forecasts with
-scoring rules that directly consider the success of forecasts in supporting specific decisions. The allocation score was developed for this purpose. The AS is expressed in units that are directly relevant to decisions, which helps not only with ranking forecasts in the context of a specific action, but also allows decision-makers to contextualize the magnitude of differences between forecast scores. The benefits of the approach to forecast evaluation discussed here generalize beyond public health, to any application of probability forecasts for decision-making, such as economics, where the monetary consequences of using a forecast
+scoring rules that directly consider the success of forecasts in supporting specific decisions. The allocation score was developed for this purpose. The AS is expressed in units that are directly relevant to decisions, which helps not only with ranking forecasts in the context of a specific action, but also allows decision-makers to contextualize the magnitude of differences between forecast scores.  For example, it may be the case that differences in AS are small relative to the amount of available resources or the accuracy with which planned resource allocations 
+can be executed.
+The benefits of the approach to forecast evaluation discussed here generalize beyond public health, to any application of probability forecasts for decision-making, such as economics, where the monetary consequences of using a forecast
 can be clearly juxtaposed with standard accuracy measures of the forecast \citep{bannigidadmath2016stock, zhang2019forecasting}, resource allocation in urban planning \citep{burnett2014urban, liang2013resource}, or sustainability initiatives such as water and energy allocation \citep{syme1999defining, gebre2021multi, colett2016using}.
 
 We have demonstrated how tying forecast evaluation to a specific decision problem (e.g., via the allocation
